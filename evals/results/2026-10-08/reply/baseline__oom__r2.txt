@@ -1,0 +1,58 @@
+## 무슨 일이 일어나는가
+
+`OOMKilled`는 컨테이너가 **메모리 limit을 초과**해서 리눅스 커널의 OOM killer가 프로세스를 강제 종료(exit code 137, SIGKILL)했다는 뜻입니다. 이후 kubelet이 `restartPolicy`에 따라 재시작하고, 같은 일이 반복되면 `CrashLoopBackOff`로 보입니다.
+
+핵심은 쿠버네티스가 `resources.limits.memory`를 cgroup 한도로 걸기 때문에, 컨테이너가 이 값을 넘는 순간 바로 죽는다는 점입니다. 노드 전체의 메모리가 부족해서 죽는 경우(노드 pressure로 인한 eviction)와는 다릅니다.
+
+## 원인 후보
+
+1. **limit이 너무 낮음**: 정상 동작에 필요한 메모리보다 작게 설정됨
+2. **메모리 누수**: 시간이 지날수록 사용량이 계속 증가
+3. **런타임 설정 불일치**: 예를 들어 JVM 힙(`-Xmx`)이나 Node.js `--max-old-space-size`가 컨테이너 limit보다 크거나, 힙 외 영역(메타스페이스, 스레드 스택, 네이티브 메모리)을 고려하지 않음
+4. **순간 스파이크**: 대용량 요청 처리, 배치, 캐시 로딩, 시작 시점의 메모리 급증
+5. **사이드카/다른 컨테이너**: 파드 안의 다른 컨테이너가 죽는 것일 수도 있음
+6. **tmpfs/emptyDir(medium: Memory)** 사용량도 메모리로 계산됨
+
+## 확인 방법
+
+```bash
+# 어떤 컨테이너가, 언제, 왜 죽었는지
+kubectl describe pod <pod> -n <ns>
+#  → Last State: Terminated / Reason: OOMKilled / Exit Code: 137
+
+# 현재 사용량 vs limit
+kubectl top pod <pod> -n <ns> --containers
+
+# 직전 컨테이너 로그
+kubectl logs <pod> -n <ns> -c <container> --previous
+
+# 설정된 requests/limits
+kubectl get pod <pod> -n <ns> -o jsonpath='{.spec.containers[*].resources}'
+```
+
+Prometheus가 있다면 `container_memory_working_set_bytes`를 limit과 함께 그래프로 보세요. 계속 우상향이면 누수, 시작 직후 급증이면 스파이크, 평탄하게 limit 근처면 limit 부족입니다.
+
+## 무엇을 바꿔야 하는가
+
+**1. 우선 limit/request 조정 (가장 빠른 조치)**
+```yaml
+resources:
+  requests:
+    memory: "512Mi"
+  limits:
+    memory: "1Gi"   # 실제 피크 사용량 + 20~30% 여유
+```
+request는 평소 사용량, limit은 피크 기준으로 잡습니다. 일반적으로 memory는 request = limit으로 맞추면 예측 가능성이 높아집니다.
+
+**2. 런타임 메모리 설정을 컨테이너에 맞추기**
+- JVM: `-XX:MaxRAMPercentage=70` 처럼 비율로 지정 (limit의 100%를 힙에 주지 마세요)
+- Node.js: `--max-old-space-size`를 limit보다 충분히 작게
+- Go: `GOMEMLIMIT`을 limit의 약 90%로
+
+**3. 누수가 의심되면** 단순히 limit만 올리면 재시작 주기만 늘어납니다. 힙 덤프/프로파일링으로 원인을 찾아야 합니다.
+
+**4. 부하 대응**: 트래픽이 원인이면 HPA로 파드 수를 늘리거나, 요청 크기/동시성/배치 크기를 제한하세요.
+
+## 다음 단계
+
+`kubectl describe pod`의 출력과 현재 limit 값, 사용 중인 언어/런타임을 알려주시면 원인을 더 구체적으로 좁혀 드릴 수 있습니다.

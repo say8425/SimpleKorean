@@ -1,0 +1,13 @@
+{
+  "text": "sqlpipe v2.0 릴리스 노트\n\n호환성 깨짐\n\n`/v2/users`의 `name` 필드가 `first_name`과 `last_name`으로 나뉘었습니다. `name`을 읽는 코드가 있으면 두 필드를 쓰도록 고쳐야 합니다.\n\n새 기능\n\n`--incremental` 플래그가 새로 생겼습니다. 이 플래그를 쓰면 sqlpipe가 바뀐 데이터만 옮깁니다.\n\n성능\n\nParquet 쓰기가 40% 빨라졌습니다.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 203,
+  "cost_usd": 0.0463398,
+  "duration_ms": 3337,
+  "condition": "plain",
+  "scenario": "release-notes",
+  "type": "descriptive",
+  "run": 1
+}

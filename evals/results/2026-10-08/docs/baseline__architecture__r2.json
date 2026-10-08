@@ -1,0 +1,13 @@
+{
+  "text": "sqlpipe는 세 단계 파이프라인으로 동작합니다. 리더 프로세스가 Postgres 테이블의 행을 배치 단위로 스트리밍하면, 컨버터가 각 배치를 Parquet 로우 그룹으로 변환합니다. 마지막으로 업로더가 변환된 데이터를 S3에 멀티파트 객체로 기록하며, 파트 업로드가 실패하면 재시도합니다. 단계 사이를 배치 단위로 연결해 메모리 사용을 일정하게 유지하고, 읽기·변환·업로드를 병행해 처리량을 높입니다.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 225,
+  "cost_usd": 0.025967800000000003,
+  "duration_ms": 3439,
+  "condition": "baseline",
+  "scenario": "architecture",
+  "type": "descriptive",
+  "run": 2
+}

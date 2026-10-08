@@ -1,0 +1,13 @@
+{
+  "text": "마이그레이션 실행 전 백업 존재를 확인하세요.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 27,
+  "cost_usd": 0.0237198,
+  "duration_ms": 1743,
+  "condition": "baseline",
+  "scenario": "runbook-terse",
+  "type": "procedural",
+  "run": 1
+}

@@ -1,0 +1,13 @@
+{
+  "text": "엄격 모드 고지: 한국어 통제 언어 국가 표준은 없으며, 이 기준은 KS A 0001과 공개 연구를 바탕으로 한 비공식 기준입니다.\n\n마이그레이션을 실행하기 전에 백업이 있는지 확인하세요.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 105,
+  "cost_usd": 0.0529838,
+  "duration_ms": 2989,
+  "condition": "strict",
+  "scenario": "runbook-terse",
+  "type": "procedural",
+  "run": 2
+}

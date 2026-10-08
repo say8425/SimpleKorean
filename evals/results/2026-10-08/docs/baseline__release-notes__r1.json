@@ -1,0 +1,13 @@
+{
+  "text": "# sqlpipe v2.0 릴리스 노트\n\n**⚠️ 호환성 깨짐**\n- `/v2/users` 응답의 `name` 필드가 `first_name`과 `last_name`으로 분리되었습니다. `name`을 사용하는 클라이언트는 업그레이드 전에 새 필드를 사용하도록 수정해 주세요.\n\n**새 기능**\n- `--incremental` 플래그가 추가되었습니다. 변경된 데이터만 처리해 반복 실행 시간을 줄일 수 있습니다.\n\n**성능 개선**\n- Parquet 쓰기 속도가 약 40% 향상되었습니다.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 230,
+  "cost_usd": 0.0259938,
+  "duration_ms": 3704,
+  "condition": "baseline",
+  "scenario": "release-notes",
+  "type": "descriptive",
+  "run": 1
+}

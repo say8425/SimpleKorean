@@ -1,0 +1,13 @@
+{
+  "text": "S3 업로드에 실패했습니다. `AccessDenied` 오류가 발생했습니다.\n현재 IAM 자격 증명에 `s3:PutObject` 권한이 없습니다.\nIAM 정책에 `s3:PutObject`를 추가하고 sqlpipe를 다시 실행하세요.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 113,
+  "cost_usd": 0.0453198,
+  "duration_ms": 5843,
+  "condition": "plain",
+  "scenario": "error-message",
+  "type": "procedural",
+  "run": 2
+}

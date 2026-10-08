@@ -1,0 +1,13 @@
+{
+  "text": "S3 업로드 실패: 접근이 거부되었습니다(AccessDenied). 현재 IAM 자격 증명에 s3:PutObject 권한이 없습니다.\n대상 버킷과 경로에 대한 s3:PutObject 권한을 IAM 정책에 추가한 뒤 다시 시도하세요.\n사용 중인 자격 증명(프로필 또는 역할)이 의도한 것인지도 함께 확인하세요.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 160,
+  "cost_usd": 0.0251658,
+  "duration_ms": 3096,
+  "condition": "baseline",
+  "scenario": "error-message",
+  "type": "procedural",
+  "run": 1
+}

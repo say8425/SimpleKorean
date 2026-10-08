@@ -1,0 +1,47 @@
+**백필(backfill)** 은 기존 행들의 새 컬럼을 값으로 채우는 작업입니다. NOT NULL 컬럼은 모든 행에 값이 있어야 하는데, 20GB 테이블의 기존 행은 새 컬럼 값이 비어 있습니다. 그래서 그 값을 채워 넣어야 합니다.
+
+## 왜 멈췄나
+
+`ALTER TABLE ... ADD COLUMN ... NOT NULL DEFAULT ...`를 한 번에 실행하면 DB 종류와 버전에 따라 다음과 같은 일이 생깁니다.
+
+- **테이블 전체를 재작성합니다.** 20GB를 다 다시 쓰는 동안 오래 걸립니다.
+- **테이블 락이 걸립니다.** 읽기/쓰기가 대기하고, 뒤에 요청이 쌓이면 장애로 번집니다.
+- **복제 지연이 생길 수 있습니다.**
+
+PostgreSQL 11 이상은 상수 DEFAULT를 메타데이터로만 처리해서 빠릅니다. MySQL 8.0 이상은 `ALGORITHM=INSTANT`로 가능한 경우가 있습니다. 하지만 DEFAULT가 계산식이거나 기존 데이터에서 값을 가져와야 하면 이 방법을 쓸 수 없습니다.
+
+## 표준 절차 (3단계 이상으로 분리)
+
+1. **컬럼을 NULL 허용으로 추가합니다.** 기본값 없이 추가하면 메타데이터만 바뀌어 즉시 끝납니다.
+   ```sql
+   ALTER TABLE t ADD COLUMN new_col INT NULL;
+   ```
+2. **애플리케이션이 새 행에 값을 쓰도록 배포합니다.** 백필 중에 새로 들어오는 행이 NULL로 남지 않게 하려는 단계입니다. DEFAULT를 걸어도 됩니다.
+3. **기존 행을 배치로 백필합니다.** 한 번에 하지 않고 PK 범위 기준으로 1천~1만 건씩 나눠 업데이트하고, 배치마다 커밋하고 잠깐 쉽니다.
+   ```sql
+   UPDATE t SET new_col = <값>
+   WHERE id >= :start AND id < :end AND new_col IS NULL;
+   ```
+   - 배치마다 짧은 트랜잭션으로 처리합니다.
+   - 복제 지연과 부하를 보면서 배치 크기와 sleep을 조절합니다.
+   - 중간에 멈춰도 `new_col IS NULL` 조건 덕분에 재시작할 수 있습니다.
+4. **NULL이 남았는지 검증합니다.**
+   ```sql
+   SELECT count(*) FROM t WHERE new_col IS NULL;
+   ```
+5. **NOT NULL 제약을 겁니다.**
+   - **PostgreSQL**: 전체 스캔 락을 피하려면 이렇게 합니다.
+     ```sql
+     ALTER TABLE t ADD CONSTRAINT c CHECK (new_col IS NOT NULL) NOT VALID;
+     ALTER TABLE t VALIDATE CONSTRAINT c;  -- 락이 약함
+     ALTER TABLE t ALTER COLUMN new_col SET NOT NULL;  -- 검증된 CHECK가 있으면 스캔 생략 (PG12+)
+     ```
+   - **MySQL**: `pt-online-schema-change`나 `gh-ost` 같은 온라인 스키마 변경 도구를 쓰는 경우가 많습니다.
+
+## 지금 할 일
+
+1. **멈춘 마이그레이션을 먼저 정리합니다.** 락을 잡고 있다면 다른 쿼리가 막히니 DBA와 함께 세션을 확인하고 필요하면 종료합니다. 롤백에도 시간이 걸릴 수 있습니다.
+2. 마이그레이션을 위 단계대로 **분리해서 다시 작성합니다.** 컬럼 추가, 배포, 백필, 제약 추가를 각각 별도 마이그레이션이나 작업으로 나눕니다.
+3. 백필 스크립트는 DBA와 배치 크기, 실행 시간대, 모니터링 지표를 합의한 뒤 돌립니다.
+
+DB 종류(PostgreSQL/MySQL 등)와 버전, 새 컬럼의 값을 어떻게 정할지(상수인지, 다른 컬럼에서 계산하는지) 알려 주시면 그에 맞는 백필 스크립트와 마이그레이션 코드를 구체적으로 작성해 드리겠습니다.

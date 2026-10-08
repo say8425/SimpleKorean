@@ -1,0 +1,41 @@
+**백필(backfill)** 은 기존 행들의 새 컬럼에 값을 채워 넣는 작업입니다. NOT NULL 컬럼은 모든 행에 값이 있어야 하는데, 20GB 테이블의 기존 행들은 새 컬럼 값이 없습니다. 그래서 DB가 이를 한 번에 처리하려고 테이블 전체를 다시 쓰거나 스캔하면서 락을 잡고, 그 결과 마이그레이션이 멈춥니다. 그 사이 해당 테이블의 읽기/쓰기도 막힐 수 있습니다.
+
+## 해결 방법: 단계를 나눠서 진행
+
+1. **먼저 멈춘 마이그레이션 정리**
+   - 실행 중인 `ALTER`를 취소합니다. PostgreSQL이면 `pg_cancel_backend`, MySQL이면 `KILL`을 쓰고, 이 작업은 DBA와 함께 진행하세요.
+   - 대기 중인 락 때문에 다른 쿼리가 쌓여 있지 않은지 확인합니다.
+
+2. **컬럼을 NULL 허용으로 추가**
+   ```sql
+   ALTER TABLE t ADD COLUMN new_col INT NULL;
+   ```
+   이 작업은 보통 메타데이터만 바꾸므로 빠릅니다.
+
+3. **애플리케이션이 새 행에 값을 쓰도록 배포**
+   - 이렇게 해야 백필 중에 NULL인 행이 새로 생기지 않습니다.
+
+4. **배치로 백필**
+   ```sql
+   UPDATE t SET new_col = <값>
+   WHERE id BETWEEN :start AND :end AND new_col IS NULL;
+   ```
+   - 한 번에 1만~10만 행 정도로 나눠 처리합니다. 한 트랜잭션에 전부 넣으면 안 됩니다.
+   - 배치 사이에 짧게 쉬면서 복제 지연과 부하를 확인합니다.
+   - 기본값이 상수라면 아래 5번의 방법으로 이 단계를 건너뛸 수 있습니다.
+
+5. **NOT NULL 제약 추가**
+   - **PostgreSQL**
+     ```sql
+     ALTER TABLE t ADD CONSTRAINT c CHECK (new_col IS NOT NULL) NOT VALID;
+     ALTER TABLE t VALIDATE CONSTRAINT c;  -- 쓰기를 막지 않음
+     ALTER TABLE t ALTER COLUMN new_col SET NOT NULL;  -- PG12+는 위 제약을 활용해 스캔 생략
+     ```
+   - **MySQL 8**: `ALGORITHM=INPLACE, LOCK=NONE`을 지정하거나 `pt-online-schema-change` / `gh-ost`를 사용합니다.
+
+## 참고
+- **상수 기본값**이면 `ADD COLUMN ... NOT NULL DEFAULT 0`이 PostgreSQL 11+와 MySQL 8.0.12+(INSTANT)에서는 즉시 끝납니다. 이 경우 백필이 필요 없을 수 있습니다. 어떤 DB와 버전인지, 기본값이 상수인지 알려주시면 더 정확히 안내할 수 있습니다.
+- 값을 다른 컬럼에서 계산해야 하면 위 2~5단계가 필요합니다.
+- 마이그레이션 도구(Flyway, Rails, Django 등)가 한 트랜잭션으로 묶고 있지 않은지도 확인하세요. 백필은 마이그레이션 파일과 분리해서 별도 잡으로 돌리는 편이 안전합니다.
+
+DB 종류, 버전, 새 컬럼에 넣을 값이 어떤 것인지 알려주시면 구체적인 스크립트를 작성해 드리겠습니다.

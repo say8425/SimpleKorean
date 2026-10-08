@@ -1,0 +1,26 @@
+백필(backfill)은 이미 있는 행에 새 컬럼의 값을 채우는 작업입니다. 지금 멈춘 것은 20GB 테이블의 모든 행에 값을 한 번에 넣으려는 마이그레이션이 길게 잠금을 쥐고 있기 때문입니다. DB 종류를 알려 주지 않으셔서 PostgreSQL을 기준으로 설명합니다. MySQL이면 절차는 같고 명령만 다릅니다.
+
+먼저 멈춘 마이그레이션을 중단해야 합니다. 이 마이그레이션이 테이블 잠금을 쥐고 있으면 그 테이블을 읽고 쓰는 다른 쿼리도 대기합니다. 중단 전에 `pg_stat_activity`에서 해당 세션을 확인하세요. 중단한 트랜잭션은 롤백되므로 데이터는 바뀌지 않지만, 롤백에도 시간이 걸릴 수 있습니다.
+
+그다음 세 단계로 나눠서 다시 적용하세요. 첫째, NULL을 허용하는 컬럼으로 추가합니다. 이 작업은 테이블을 다시 쓰지 않아서 바로 끝납니다. 둘째, 기존 행을 배치(batch, 일정 개수씩 묶은 처리)로 채웁니다. 셋째, 모든 행에 값이 들어간 것을 확인한 뒤 NOT NULL을 겁니다.
+
+```sql
+-- 1단계
+ALTER TABLE orders ADD COLUMN status text;
+
+-- 2단계: 이 UPDATE를 영향받은 행이 0이 될 때까지 반복
+UPDATE orders SET status = 'unknown'
+WHERE id IN (
+  SELECT id FROM orders WHERE status IS NULL LIMIT 10000
+);
+
+-- 3단계
+ALTER TABLE orders ADD CONSTRAINT orders_status_nn
+  CHECK (status IS NOT NULL) NOT VALID;
+ALTER TABLE orders VALIDATE CONSTRAINT orders_status_nn;
+ALTER TABLE orders ALTER COLUMN status SET NOT NULL;
+```
+
+`orders`, `status`, `'unknown'`은 예시 값이므로 실제 테이블, 컬럼, 기본값으로 바꾸세요. 배치마다 별도 트랜잭션으로 커밋해야 잠금이 짧게 유지됩니다. 배치 사이에 잠깐 쉬면 복제 지연도 줄일 수 있습니다. 3단계의 `NOT VALID`는 제약을 새 행에만 먼저 적용하고, `VALIDATE`는 쓰기를 막지 않고 기존 행을 검사합니다. PostgreSQL 12 이상에서는 검증된 제약이 있으면 `SET NOT NULL`이 전체 스캔을 건너뜁니다.
+
+새 컬럼의 값이 모든 행에 같은 상수라면 더 간단합니다. PostgreSQL 11 이상에서는 `ADD COLUMN status text NOT NULL DEFAULT 'unknown'`이 테이블을 다시 쓰지 않고 바로 끝납니다. 값이 행마다 다르거나 다른 컬럼에서 계산해야 할 때만 위의 백필이 필요합니다. DBA에게 사용 중인 DB 버전과 새 컬럼의 값 규칙을 알려 주고 이 순서가 맞는지 확인받으세요.

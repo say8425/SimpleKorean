@@ -1,0 +1,13 @@
+{
+  "text": "## 시작하기\n\nsqlpipe를 설치하려면 다음 명령을 실행하세요.\n\n```\ncurl -sSL https://get.sqlpipe.dev | sh\n```\n\n설치가 끝나면 작업 디렉터리에 설정 파일 `sqlpipe.yaml`을 만드세요. sqlpipe는 이 설정 파일에서 실행 방법을 읽습니다.\n\n설정 파일이 준비되면 같은 디렉터리에서 첫 실행 명령을 입력하세요.\n\n```\nsqlpipe run --config sqlpipe.yaml\n```\n\n`--config` 플래그는 sqlpipe가 읽을 설정 파일의 경로를 지정합니다. 실행이 실패하면 터미널에 출력된 오류 메시지를 읽고 `sqlpipe.yaml`의 내용을 확인하세요.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 298,
+  "cost_usd": 0.0472778,
+  "duration_ms": 3624,
+  "condition": "plain",
+  "scenario": "getting-started",
+  "type": "procedural",
+  "run": 1
+}

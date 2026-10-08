@@ -1,0 +1,13 @@
+{
+  "text": "## 문제 해결\n\n### Postgres 연결 타임아웃\n`connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근할 수 있는지 `nc -zv <호스트> 5432`로 확인하세요. 방화벽이나 보안 그룹, VPN 설정이 원인인 경우가 많습니다. 접근은 되는데 지연된다면 `--connect-timeout 30`으로 대기 시간을 늘리세요. 클라우드 DB라면 SSL이 필요할 수 있으니 연결 문자열에 `sslmode=require`를 추가해 보세요.\n\n### S3 권한 오류\n`AccessDenied` 또는 `403`이 나오면 `aws sts get-caller-identity`로 현재 자격 증명이 의도한 계정과 역할인지 확인하세요. 해당 버킷과 경로에 `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` 권한이 있는지 IAM 정책을 점검하세요. `ListBucket`은 버킷 ARN에, 나머지는 `버킷/*`에 지정해야 합니다. 버킷 정책이나 KMS 키 권한이 접근을 막는 경우도 있습니다. 리전이 다르면 `--region`으로 지정하세요.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 471,
+  "cost_usd": 0.0281678,
+  "duration_ms": 4521,
+  "condition": "baseline",
+  "scenario": "troubleshooting",
+  "type": "procedural",
+  "run": 2
+}

@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-08",
+  "model": "claude-sonnet-5-5",
+  "judge_model": "claude-opus-5-5",
+  "effort": "low",
+  "isolation": {
+    "found": true,
+    "claude_code_version": "2.1.294",
+    "model": "claude-sonnet-5-5",
+    "mcp_servers": [],
+    "plugins": [
+      "cc-plugin-sec-default@builtin",
+      "cc-plugin-agents-md@builtin",
+      "cc-plugin-telemetry@builtin",
+      "cc-plugin-plugin-authoring@builtin"
+    ],
+    "output_style": "default",
+    "memory_paths": [
+      "auto"
+    ]
+  },
+  "isolation_problems": []
+}

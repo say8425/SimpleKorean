@@ -1,0 +1,51 @@
+## 원인
+
+curl이 서버 인증서의 서명 체인을 검증하다가, 중간/루트 CA를 curl이 신뢰하는 CA 목록(CA bundle)에서 찾지 못해서 나는 오류입니다. 사내 API에서 흔한 원인은 다음과 같습니다.
+
+1. **사내 사설 CA**로 서명된 인증서를 쓰는 경우: 사내 루트 CA가 시스템/curl의 신뢰 목록에 없음
+2. **회사 프록시(SSL 인스펙션)**: 프록시가 인증서를 재서명하는데, 그 프록시의 루트 CA가 신뢰 목록에 없음
+3. **서버가 중간 인증서를 누락**해서 체인이 불완전하게 내려오는 경우
+
+## 확인 방법
+
+```bash
+# 서버가 내려주는 체인과 발급자 확인
+openssl s_client -connect api.example.com:443 -showcerts </dev/null
+```
+
+`issuer`가 사내 CA 이름이거나, 체인이 1개뿐이고 `unable to verify the first certificate`가 보이면 각각 1·2번 또는 3번입니다.
+
+## 해결 방법
+
+**1. 사내 루트 CA를 지정해서 사용 (권장)**
+
+IT/보안팀에서 사내 루트 CA 파일(`.pem`/`.crt`)을 받아서:
+
+```bash
+curl --cacert /path/to/company-root-ca.pem https://api.example.com
+```
+
+매번 지정하기 싫으면:
+
+```bash
+export CURL_CA_BUNDLE=/path/to/company-root-ca.pem
+```
+
+**2. macOS 키체인에 등록** (시스템 전체에 적용)
+
+```bash
+sudo security add-trusted-cert -d -r trustRoot \
+  -k /Library/Keychains/System.keychain company-root-ca.pem
+```
+
+Homebrew로 설치한 curl은 키체인을 안 쓰고 자체 번들을 쓰는 경우가 있어서, 이때는 1번의 `--cacert`가 확실합니다. 시스템 curl(`/usr/bin/curl`)로 해보는 것도 방법입니다.
+
+**3. 서버 측 문제(중간 인증서 누락)라면**
+
+서버 관리자가 fullchain(서버 인증서 + 중간 인증서)을 내려주도록 설정을 고쳐야 합니다.
+
+## 피해야 할 것
+
+`curl -k` / `--insecure`는 검증을 완전히 끄는 것이라 임시 확인용으로만 쓰세요. 토큰이나 사내 데이터가 오가는 요청에 쓰면 중간자 공격에 노출됩니다.
+
+원하시면 `openssl s_client` 출력을 붙여주세요. 어느 경우인지 같이 봐드리겠습니다.

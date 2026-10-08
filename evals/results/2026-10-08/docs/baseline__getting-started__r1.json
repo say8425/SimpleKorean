@@ -1,0 +1,13 @@
+{
+  "text": "## 시작하기\n\nsqlpipe는 SQL 파이프라인을 명령줄에서 정의하고 실행하는 CLI 도구입니다. 아래 세 단계로 바로 시작할 수 있습니다.\n\n### 1. 설치\n\n터미널에서 다음 명령을 실행합니다.\n\n```sh\ncurl -sSL https://get.sqlpipe.dev | sh\n```\n\n### 2. 설정 파일 준비\n\n작업 디렉터리에 `sqlpipe.yaml` 파일을 만듭니다. 이 파일에 파이프라인 구성을 작성합니다.\n\n### 3. 첫 실행\n\n설정 파일을 지정해 실행합니다.\n\n```sh\nsqlpipe run --config sqlpipe.yaml\n```\n\n명령이 정상적으로 끝나면 설정한 파이프라인이 한 번 실행된 것입니다. 설정 파일의 구체적인 항목은 다음 절에서 자세히 설명합니다.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 336,
+  "cost_usd": 0.0270578,
+  "duration_ms": 3593,
+  "condition": "baseline",
+  "scenario": "getting-started",
+  "type": "procedural",
+  "run": 1
+}
