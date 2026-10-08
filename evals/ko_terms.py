@@ -78,6 +78,7 @@ def _override(concept, new, reason):
     if c["group"] == 1 and not reason:
         warnings.append(f"{c['id']}: ① 무리의 지정형을 바꾸려면 reason을 적어야 합니다")
     c["accept"] = [f for f in c.get("accept", []) if f != new] + [c["write"]]
+    c["replaced"] = c.get("replaced", []) + [c["write"]]
     c["flag"]["forms"] = [f for f in c["flag"]["forms"] if f != new]
     c["alias"] = [f for f in c.get("alias", []) if f != new]
     c["write"] = new
@@ -150,7 +151,7 @@ def _base_severity(concept, occ, strict):
         if level in (ERROR, WARNING):
             return level, "spelling"
         return (WARNING, "spelling") if strict else (None, None)
-    if occ.role == "accept" and strict:
+    if occ.role == "accept" and (strict or occ.form in concept.get("replaced", ())):
         return WARNING, "term_choice"
     return None, None
 

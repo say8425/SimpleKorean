@@ -141,3 +141,9 @@ def test_load_config_rejects_wrong_value_types():
                 assert str(path) in str(err), (text, err)
             else:
                 raise AssertionError(f"타입이 틀린 설정을 받아들였습니다: {text}")
+
+
+def test_config_override_warns_on_the_replaced_form_in_default_mode():
+    cfg = {"terms": {"column": "컬럼"}}
+    assert term_cats("칼럼을 추가하세요.", config=cfg) == [("term_choice", "warning", "칼럼 → 컬럼")]
+    assert term_cats("컬럼을 추가하세요.", config=cfg) == []
