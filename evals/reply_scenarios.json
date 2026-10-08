@@ -1,0 +1,10 @@
+[
+  {"id": "why-timeout", "term": "멱등성", "prompt": "배포 스크립트가 타임아웃이 나면 /v2/orders에 POST를 다시 보냅니다. 안전한가요? 엔드포인트가 멱등하다는데 정확히 무슨 뜻인지 모르겠어요. 짧게 설명해 주세요."},
+  {"id": "pick-db", "term": "샤딩", "prompt": "Postgres 테이블 하나에 행이 4천만 개 있고 읽기가 느립니다. 누가 샤딩 얘기를 하던데, 먼저 뭘 해야 하나요?"},
+  {"id": "cert-error", "term": "TLS", "prompt": "사내 API에 curl을 보내면 'SSL certificate problem: unable to get local issuer certificate'가 나옵니다. 무슨 일이고 어떻게 고치나요?"},
+  {"id": "queue-lag", "term": "컨슈머 랙", "prompt": "Kafka 대시보드에서 컨슈머 랙이 200만까지 올라갑니다. 나쁜 건가요? 사용자에게는 무슨 뜻인가요?"},
+  {"id": "oom", "term": "OOMKilled", "prompt": "쿠버네티스 파드가 OOMKilled 상태로 계속 재시작됩니다. 무슨 일이 일어나는 건지, 뭘 바꿔야 하는지 설명해 주세요."},
+  {"id": "rate-limit", "term": "토큰 버킷", "prompt": "API를 사용자당 분당 100회로 제한하려고 합니다. 동료가 토큰 버킷을 추천했는데, 쉽게 설명해 주고 맞는 방법인지 알려 주세요."},
+  {"id": "migration", "term": "백필", "prompt": "20GB 테이블에 NOT NULL 컬럼을 추가했더니 마이그레이션이 멈췄어요. DBA가 백필이 필요하다는데, 그게 뭐고 뭘 해야 하나요?"},
+  {"id": "cache", "term": "캐시 무효화", "prompt": "가격을 바꾸면 사용자가 최대 10분 동안 예전 가격을 봅니다. DB 앞에 Redis를 두고 있어요. 왜 그렇고 어떻게 고치나요?"}
+]
