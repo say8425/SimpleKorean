@@ -89,3 +89,44 @@ def test_strict_only_patterns():
     assert cats(text) == []
     assert cats(text, strict=True) == ["strict_condition", "strict_connective", "strict_ending"]
     assert cats("하나 이상을 고르세요. 실행하거나 멈추세요. 그러나 끝납니다.", strict=True) == []
+
+
+def scats(text, text_type="descriptive"):
+    us = units(text)
+    return sorted(h.category for h in ko_rules.sentence_hits(us, text_type) + ko_rules.register_hits(us))
+
+
+def test_length_limits_follow_sentence_kind():
+    assert scats("가 " * 15 + "하세요.") == ["sentence_over_limit"]
+    assert scats("가 " * 19 + "합니다.") == []
+    assert scats("가 " * 20 + "합니다.") == ["sentence_over_limit"]
+
+
+def test_untyped_sentence_uses_text_type():
+    fragment = "가 " * 17 + "끝"
+    assert scats(fragment, "procedural") == ["sentence_over_limit"]
+    assert scats(fragment, "descriptive") == []
+
+
+def test_trailing_condition():
+    assert "trailing_condition" in scats("로그를 확인하세요. 단, 빌드가 실패한 경우에만 확인합니다.")
+    assert "trailing_condition" in scats("로그를 확인하세요(빌드가 실패한 경우).")
+    assert scats("빌드가 실패하면 로그를 확인하세요.") == []
+
+
+def test_noun_ending_only_in_prose():
+    assert scats("설정 변경 필요.") == ["noun_ending"]
+    assert scats("- 설정 변경 필요\n- 로그 확인 완료\n") == []
+    assert scats("백업이 있음.") == ["noun_ending"]
+
+
+def test_register_mix_flags_minority():
+    hits = ko_rules.register_hits(units("서버가 응답합니다. 로그를 읽으세요. 이 값은 기본값이다. 캐시를 지웁니다."))
+    assert [h.text for h in hits] == ["이 값은 기본값이다."]
+
+
+def test_register_accepts_single_styles():
+    assert ko_rules.register_hits(units("값이 바뀐다. 로그를 본다. 다시 시작하라.")) == []
+    assert ko_rules.register_hits(units("값이 바뀌어요. 로그를 보세요.")) == []
+    assert ko_rules.register_hits(units("전원을 끕니다. 커버를 여십시오.")) == []
+    assert len(ko_rules.register_hits(units("로그를 보세요. 커버를 여십시오. 값을 봅니다. 값을 엽니다."))) == 1

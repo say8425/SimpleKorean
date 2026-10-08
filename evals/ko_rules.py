@@ -139,3 +139,46 @@ def lexical_hits(masked, strict=False, slop_rx=None):
             hits += _hits_from(rx, masked, category, severity)
         hits += condition_hits(masked) + connective_hits(masked)
     return hits
+
+
+LIMITS = {"procedural": 15, "descriptive": 20}
+TRAIL_PROVISO = re.compile(r"^(?:단|다만),\s")
+TRAIL_PAREN = re.compile(r"(?:세요|십시오|시오)\s*\([^()]*(?:경우|때|면|시)\)\s*[.!]?$")
+NOUN_END = re.compile(r"(?:함|음|임|됨|필요|예정|가능|불가|완료|요망|바람|것)$")
+STYLES = (
+    frozenset({"hapsyo", "haeyo_imp"}),
+    frozenset({"hapsyo", "hapsyo_imp"}),
+    frozenset({"haera"}),
+    frozenset({"haeyo", "haeyo_imp"}),
+)
+
+
+def _snippet(text, limit=80):
+    return text if len(text) <= limit else text[:limit] + "…"
+
+
+def sentence_hits(units, text_type="descriptive", limits=None):
+    """문장 단위 규칙: 길이, 뒤에 붙은 조건, 명사형 종결."""
+    limits = limits or LIMITS
+    hits = []
+    for u in units:
+        kind = sentence_kind(u.text) or text_type
+        n = eojeol_count(u.text)
+        if n > limits[kind]:
+            hits.append(Hit("sentence_over_limit", WARNING, u.line, f"{n}어절: {_snippet(u.text)}"))
+        if TRAIL_PROVISO.match(u.text) or TRAIL_PAREN.search(u.text):
+            hits.append(Hit("trailing_condition", WARNING, u.line, _snippet(u.text)))
+        if u.kind == "prose" and NOUN_END.search(tail(u.text)):
+            hits.append(Hit("noun_ending", WARNING, u.line, _snippet(u.text)))
+    return hits
+
+
+def register_hits(units):
+    """문체 혼용. 허용 조합 가운데 가장 많은 문장을 덮는 조합을 고르고, 거기서 벗어난 문장을 잡는다."""
+    found = [(u, register(u.text)) for u in units]
+    found = [(u, r) for u, r in found if r]
+    if not found:
+        return []
+    counts = Counter(r for _, r in found)
+    best = max(STYLES, key=lambda style: sum(counts[r] for r in style))
+    return [Hit("register_mix", WARNING, u.line, _snippet(u.text)) for u, r in found if r not in best]
