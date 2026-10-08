@@ -1,0 +1,22 @@
+SimpleKorean
+Copyright (c) 2026 say8425
+
+이 프로젝트는 AminBlg/SimpleEnglish(https://github.com/AminBlg/SimpleEnglish, MIT License,
+Copyright (c) 2026 AminBlg)의 한국어 파생 프로젝트입니다.
+
+제3자 자료
+
+1. evals/slop.tsv
+   tools/slop-lexicon/build_slop.py가 아래 MIT 라이선스 저장소의 고정 커밋에서 말마다 출처 수를
+   세어 만든 목록입니다. 출처 원문은 싣지 않습니다. 저장소와 커밋은
+   tools/slop-lexicon/sources.json에 있습니다.
+   - epoko77-ai/im-not-ai
+   - IsaacEryn/humanizer-ko
+   - HarryJhin/korean-writing
+   - Jeon0976/tech-doc-kr
+   - Yoon-robin/claude-humanizer
+   - nathankim0/humanize-korean
+   - leejonver/kaveman
+   - yoursemo/eli5-ko
+   - yeomin4242/humanize-sepia
+   - kys0213/kys-claude-plugin

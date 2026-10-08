@@ -1,0 +1,22 @@
+[
+  {"repo": "epoko77-ai/im-not-ai", "commit": "2f3d943d08056b612a92e12bfb72ea94dd2acd18", "license": "MIT",
+   "files": ["skills/humanize-korean/references/quick-rules.md", "skills/humanize-korean/references/ai-tell-taxonomy.md"]},
+  {"repo": "IsaacEryn/humanizer-ko", "commit": "7d1a900c014f88e4f019d7cc79a22357494304f9", "license": "MIT",
+   "files": ["SKILL.md"]},
+  {"repo": "HarryJhin/korean-writing", "commit": "d138f9994c8260a068675c00c9004c654aca2f4b", "license": "MIT",
+   "files": ["skills/writing-korean/SKILL.md", "lib/prose-checks.js"]},
+  {"repo": "Jeon0976/tech-doc-kr", "commit": "a1270e41a9b843257d0976c254bce11cc17dc44d", "license": "MIT",
+   "files": [".claude/skills/tech-doc-kr/references/calque-blacklist.md", ".claude/skills/tech-doc-kr/references/rules.md", ".claude/skills/tech-doc-kr/SKILL.md"]},
+  {"repo": "Yoon-robin/claude-humanizer", "commit": "5c81379e2886c165c72f7bdebca1fa8f25969ab5", "license": "MIT",
+   "files": ["skills/humanizer/references/languages/korean.md"]},
+  {"repo": "nathankim0/humanize-korean", "commit": "b51aa5985be0a94a645788f1395b29a118bc9c33", "license": "MIT",
+   "files": ["humanize-korean/references/ai-tell-rulebook.md", "humanize-korean/references/translationese-rules.md"]},
+  {"repo": "leejonver/kaveman", "commit": "0341db98389a383bfaba838f0fe860edc359a94f", "license": "MIT",
+   "files": ["skills/kaveman/SKILL.md"]},
+  {"repo": "yoursemo/eli5-ko", "commit": "714e02549c4c703dd0b9569fb9b05af092b8a831", "license": "MIT",
+   "files": ["skills/eli5/SKILL.md"]},
+  {"repo": "yeomin4242/humanize-sepia", "commit": "528a81ffda18852bb26c293791ee7bf8291dafc6", "license": "MIT",
+   "files": ["skills/humanize-sepia/references/editing.md"]},
+  {"repo": "kys0213/kys-claude-plugin", "commit": "f26829a80c83cfbb7b69b9bbab516cd5db10645a", "license": "MIT",
+   "files": ["plugins/atelier/skills/communicate/references/writing-standards.md"]}
+]
