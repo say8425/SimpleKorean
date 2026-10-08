@@ -69,3 +69,67 @@ def test_hangul_ratio_ignores_code():
     assert ko_text.hangul_ratio("This document is written in English.") == 0.0
     assert ko_text.hangul_ratio("```\nprint('hello world')\n```\n한국어 설명입니다.") > 0.9
     assert ko_text.hangul_ratio("") == 0.0
+
+
+def test_split_sentences_on_terminal_punctuation():
+    got = [s for s, _ in ko_text.split_sentences('로그를 읽으세요. 그다음 "멈춤."이라고 적습니다! 끝?')]
+    assert got == ["로그를 읽으세요.", '그다음 "멈춤."이라고 적습니다!', "끝?"]
+
+
+def test_split_keeps_version_numbers():
+    got = [s for s, _ in ko_text.split_sentences("v2.0 버전을 설치하세요. 다음은 1.5초입니다.")]
+    assert got == ["v2.0 버전을 설치하세요.", "다음은 1.5초입니다."]
+
+
+def test_units_split_list_table_and_prose():
+    text = ("# 제목은 세지 않습니다\n\n"
+            "첫 문장입니다. 둘째 문장은\n줄을 넘어갑니다.\n\n"
+            "- 목록 항목 하나\n- 목록 항목 둘입니다.\n\n"
+            "| 칸 하나 | 칸 둘입니다 |\n|---|---|\n| 셋째 칸 | 넷째 칸 |\n\n"
+            "```\n코드 블록 안의 문장입니다.\n```\n")
+    got = [(u.text, u.line, u.kind) for u in ko_text.units(text)]
+    assert got == [
+        ("첫 문장입니다.", 3, "prose"),
+        ("둘째 문장은 줄을 넘어갑니다.", 3, "prose"),
+        ("목록 항목 하나", 6, "list"),
+        ("목록 항목 둘입니다.", 7, "list"),
+        ("칸 하나", 9, "table"),
+        ("칸 둘입니다", 9, "table"),
+        ("셋째 칸", 11, "table"),
+        ("넷째 칸", 11, "table"),
+    ], got
+
+
+def test_units_count_code_url_quote_as_one_token():
+    got = ko_text.units("`sqlpipe run`을 https://x.dev 에서 \"빠르게\" 실행하세요.")
+    assert got[0].text == "CODE을 URL 에서 QUOTE 실행하세요.", got
+
+
+def test_units_skip_blockquote_marker_and_headings_inside():
+    got = [(u.text, u.kind) for u in ko_text.units("> ## 예시\n>\n> 인용 안의 문장입니다.\n")]
+    assert got == [("인용 안의 문장입니다.", "prose")], got
+
+
+def test_eojeol_count_merges_parentheses_and_units():
+    assert ko_text.eojeol_count("Postgres 포트(기본값 5432)에 연결하지 못하면 멈춥니다.") == 5
+    assert ko_text.eojeol_count("디스크를 5 GB 비우고 10 분 기다리세요.") == 5
+
+
+def test_sentence_kind_by_ending():
+    assert ko_text.sentence_kind("로그를 읽으세요.") == "procedural"
+    assert ko_text.sentence_kind("전원을 끄십시오.") == "procedural"
+    assert ko_text.sentence_kind("실행하자.") == "procedural"
+    assert ko_text.sentence_kind("서버가 응답합니다.") == "descriptive"
+    assert ko_text.sentence_kind("설정 변경 필요.") is None
+    assert ko_text.sentence_kind("결과 목록") is None
+
+
+def test_register_classes():
+    assert ko_text.register("서버가 응답합니다.") == "hapsyo"
+    assert ko_text.register("서버가 응답합니까?") == "hapsyo"
+    assert ko_text.register("전원을 끄십시오.") == "hapsyo_imp"
+    assert ko_text.register("로그를 읽으세요.") == "haeyo_imp"
+    assert ko_text.register("서버가 응답해요.") == "haeyo"
+    assert ko_text.register("서버가 응답한다.") == "haera"
+    assert ko_text.register("설정 변경 필요.") is None
+    assert ko_text.register("대상: 사용자.") is None

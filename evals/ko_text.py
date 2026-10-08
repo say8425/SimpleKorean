@@ -4,6 +4,8 @@
 """
 import re
 import unicodedata
+from bisect import bisect_right
+from collections import namedtuple
 
 HANGUL_FIRST = 0xAC00
 HANGUL_LAST = 0xD7A3
@@ -82,3 +84,129 @@ def hangul_ratio(text):
     latin = sum(1 for c in body if c.isascii() and c.isalpha())
     total = hangul + latin
     return hangul / total if total else 0.0
+
+
+Unit = namedtuple("Unit", "text line kind")  # kind: prose, list, table
+
+HEADING = re.compile(r"^\s{0,3}#{1,6}\s")
+LIST_ITEM = re.compile(r"^\s*(?:[-*+]|\d+[.)])\s+(.*)$")
+TABLE_ROW = re.compile(r"^\s*\|(.*)\|\s*$")
+TABLE_SEP = re.compile(r"^\s*\|[\s:|-]+\|\s*$")
+BLOCKQUOTE = re.compile(r"^\s*(?:>\s?)+")
+SPLIT = re.compile(r"(?<=[.!?])([\"'”’)\]]*)\s+")
+PAREN = re.compile(r"\([^()\n]*\)")
+NUM_UNIT = re.compile(
+    r"(\d[\d,.]*)\s+(%|[A-Za-z]{1,5}|초|분|시간|일|주|개월|년|개|건|회|번|명|배|원|자|줄|행|쪽|장|단계)"
+    r"(?=[\s.,!?)]|$|[가-힣])")
+PROC_ENDINGS = ("세요", "십시오", "시오", "하라", "하자")
+NOUN_YO = ("필요", "중요", "주요", "개요")
+
+
+def tail(sentence):
+    """문장 끝의 부호와 닫는 따옴표를 뗀 문자열."""
+    return sentence.rstrip(" \t.!?:;\"'”’)]")
+
+
+def split_sentences(text):
+    """문장 끝 부호 뒤의 공백에서 나눈다. (문장, 시작 위치) 목록을 돌려준다."""
+    out, pos = [], 0
+    for m in SPLIT.finditer(text):
+        end = m.start() + len(m.group(1))
+        piece = text[pos:end].strip()
+        if piece:
+            out.append((piece, pos))
+        pos = m.end()
+    rest = text[pos:].strip()
+    if rest:
+        out.append((rest, pos))
+    return out
+
+
+def _counting_line(line):
+    """세는 보기 한 줄. 인라인 코드, URL, 인용은 앞 어절에 붙는 한 덩어리로 바꾼다."""
+    line = INLINE_CODE.sub("CODE", line)
+    line = URL.sub("URL", line)
+    for rx in QUOTES:
+        line = rx.sub("QUOTE", line)
+    return line
+
+
+def _paragraph_units(para):
+    """모은 본문 줄 (줄 번호, 내용)을 이어 문장 단위로 나눈다."""
+    if not para:
+        return []
+    joined, starts = "", []
+    for _, line in para:
+        if joined:
+            joined += " "
+        starts.append(len(joined))
+        joined += line.strip()
+    numbers = [number for number, _ in para]
+    return [Unit(sent, numbers[bisect_right(starts, offset) - 1], "prose")
+            for sent, offset in split_sentences(joined)]
+
+
+def units(text):
+    """문장 단위 목록을 만든다.
+
+    코드 블록, HTML 주석, 꺼짐 구역, 제목, 표 구분 줄은 건너뛴다. 표 칸과 목록 항목은 각각
+    나누고, 본문은 문단으로 이은 뒤 문장으로 나눈다. 어절이 둘 미만인 조각은 뺀다.
+    지역 목록만 고치고 입력은 바꾸지 않는다.
+    """
+    base = COMMENT.sub(_blank, FENCE.sub(_blank, OFF_REGION.sub(_blank, nfc(text))))
+    found, para = [], []
+    for number, raw in enumerate(base.split("\n"), 1):
+        line = _counting_line(BLOCKQUOTE.sub("", raw))
+        if not line.strip() or HEADING.match(line) or TABLE_SEP.match(line):
+            found.extend(_paragraph_units(para))
+            para = []
+            continue
+        row, item = TABLE_ROW.match(line), LIST_ITEM.match(line)
+        if row or item:
+            found.extend(_paragraph_units(para))
+            para = []
+            pieces = row.group(1).split("|") if row else [item.group(1)]
+            kind = "table" if row else "list"
+            found.extend(Unit(sent, number, kind)
+                         for piece in pieces for sent, _ in split_sentences(piece.strip()))
+            continue
+        para.append((number, line))
+    found.extend(_paragraph_units(para))
+    return [u for u in found if len(u.text.split()) >= 2]
+
+
+def eojeol_count(sentence):
+    """어절 수를 센다. 괄호 안의 글은 앞 어절에 붙이고, 숫자와 단위는 한 어절로 친다."""
+    s = PAREN.sub("", PAREN.sub("", sentence))
+    s = NUM_UNIT.sub(r"\1\2", s)
+    return len(s.split())
+
+
+def sentence_kind(sentence):
+    """명령형 어미로 끝나면 procedural, 평서·의문 어미로 끝나면 descriptive, 나머지는 None."""
+    t = tail(sentence)
+    if t.endswith(PROC_ENDINGS):
+        return "procedural"
+    if t.endswith(NOUN_YO):
+        return None
+    if t.endswith(("니다", "니까", "다", "요", "죠")):
+        return "descriptive"
+    return None
+
+
+def register(sentence):
+    """문장 끝 어미로 문체를 가린다. 가릴 수 없으면 None."""
+    t = tail(sentence)
+    if t.endswith(("십시오", "시오")):
+        return "hapsyo_imp"
+    if t.endswith(("니다", "니까")):
+        return "hapsyo"
+    if t.endswith("세요"):
+        return "haeyo_imp"
+    if t.endswith(NOUN_YO):
+        return None
+    if t.endswith(("요", "죠")):
+        return "haeyo"
+    if t.endswith(("다", "라", "하자", "까", "냐")):
+        return "haera"
+    return None
