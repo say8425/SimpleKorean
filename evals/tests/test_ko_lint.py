@@ -100,3 +100,12 @@ def test_reply_fillers():
     assert ko_lint.reply_fillers("원인은 디스크입니다. 원하시면 스크립트를 고쳐 드리겠습니다.") == (False, True)
     assert ko_lint.reply_fillers("그래프를 알려주시면 원인을 더 좁혀 드리겠습니다.") == (False, True)
     assert ko_lint.reply_fillers("빌드가 실패한 이유는 디스크입니다.") == (False, False)
+
+
+def test_cli_rejects_type_invalid_config_without_traceback():
+    with tempfile.TemporaryDirectory() as d:
+        Path(d, ".simple-korean.json").write_text('{"terms": {"release": 5}}', encoding="utf-8")
+        doc = Path(d, "a.md")
+        doc.write_text("로그를 읽으세요.\n", encoding="utf-8")
+        r = run_cli(str(doc))
+        assert r.returncode != 0 and ".simple-korean.json" in r.stderr and "Traceback" not in r.stderr, r.stderr

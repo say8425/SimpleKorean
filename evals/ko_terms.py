@@ -50,7 +50,25 @@ def load_config(path):
         raise ValueError(f"{path}: 알 수 없는 키 {unknown}")
     if data.get("spacing", "attached") not in ("attached", "spaced"):
         raise ValueError(f"{path}: spacing은 attached 또는 spaced여야 합니다")
+    _check_types(path, data)
     return data
+
+
+def _check_types(path, data):
+    """terms와 skip 값의 타입을 검사한다. 틀리면 경로를 담은 ValueError를 낸다."""
+    terms = data.get("terms", {})
+    if not isinstance(terms, dict):
+        raise ValueError(f"{path}: terms는 개념 id를 키로 쓰는 객체여야 합니다")
+    for cid, value in terms.items():
+        entry = {"write": value} if isinstance(value, str) else value
+        ok = (isinstance(entry, dict) and set(entry) <= {"write", "reason"}
+              and isinstance(entry.get("write"), str) and entry["write"].strip()
+              and isinstance(entry.get("reason", ""), str))
+        if not ok:
+            raise ValueError(f'{path}: terms.{cid}는 "형태" 문자열이나 {{"write": "형태", "reason": "이유"}} 객체여야 합니다')
+    skip = data.get("skip", [])
+    if not isinstance(skip, list) or not all(isinstance(s, str) and s.strip() for s in skip):
+        raise ValueError(f"{path}: skip은 문자열 목록이어야 합니다")
 
 
 def _override(concept, new, reason):

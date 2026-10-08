@@ -125,3 +125,19 @@ def test_load_config_rejects_bad_files():
                 assert ".simple-korean.json" in str(err), err
             else:
                 raise AssertionError(f"ValueError가 나야 합니다: {content}")
+
+
+def test_load_config_rejects_wrong_value_types():
+    bad = ('{"terms": []}', '{"terms": "릴리즈"}', '{"terms": {"release": 5}}',
+           '{"terms": {"release": {"write": 5}}}', '{"terms": {"release": {"wirte": "릴리즈"}}}',
+           '{"terms": {"release": {"write": "릴리즈", "reason": 3}}}', '{"skip": [1, 2]}', '{"skip": "디렉토리"}')
+    with tempfile.TemporaryDirectory() as d:
+        path = Path(d, ".simple-korean.json")
+        for text in bad:
+            path.write_text(text, encoding="utf-8")
+            try:
+                ko_terms.load_config(path)
+            except ValueError as err:
+                assert str(path) in str(err), (text, err)
+            else:
+                raise AssertionError(f"타입이 틀린 설정을 받아들였습니다: {text}")

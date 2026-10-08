@@ -60,11 +60,15 @@ def excluded(target):
 
 def _detail(lint, text, target):
     """검사 결과와 설정 알림(없으면 None)을 돌려준다. 깨진 설정은 기본 설정으로 대신한다."""
+    terms = lint.ko_terms
     try:
-        return lint.lint_detail(text, "descriptive", path=str(target)), None
+        config = terms.load_config(terms.find_config(str(target)))
     except ValueError as err:
         note = f"설정 파일을 읽지 못해 기본 설정으로 점검했습니다: {err}"
         return lint.lint_detail(text, "descriptive", config={}), note
+    _, warnings = terms.apply_config(terms.load_terms(), config)
+    note = "설정 경고: " + "; ".join(warnings) if warnings else None
+    return lint.lint_detail(text, "descriptive", config=config), note
 
 
 def post_tool_use(event):

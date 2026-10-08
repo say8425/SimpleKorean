@@ -166,6 +166,24 @@ def test_garbage_stdin_exits_zero():
     assert r.returncode == 0
 
 
+def test_post_tool_use_reports_type_invalid_config():
+    with tempfile.TemporaryDirectory() as d:
+        pathlib.Path(d, ".simple-korean.json").write_text('{"skip": "디렉토리"}', encoding="utf-8")
+        path = pathlib.Path(d, "notes.md")
+        path.write_text("디렉토리를 확인하세요.\n", encoding="utf-8")
+        code, out, err = run(post(str(path)))
+    assert code == 2 and "설정 파일을 읽지 못해 기본 설정으로 점검했습니다" in err and "디렉토리 → 디렉터리" in err, (code, err)
+
+
+def test_post_tool_use_shows_config_warnings():
+    with tempfile.TemporaryDirectory() as d:
+        pathlib.Path(d, ".simple-korean.json").write_text('{"terms": {"colum": "컬럼"}}', encoding="utf-8")
+        path = pathlib.Path(d, "notes.md")
+        path.write_text("디렉토리를 확인하세요.\n", encoding="utf-8")
+        code, out, err = run(post(str(path)))
+    assert code == 2 and "colum: 단어 목록에 없는 개념입니다" in err, (code, err)
+
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):
