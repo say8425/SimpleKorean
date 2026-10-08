@@ -1,0 +1,746 @@
+{
+  "version": 1,
+  "measured": "2026-10-07~08",
+  "source": "docs/research/loanword-spelling-usage.md, docs/research/data/loanword-usage/",
+  "severity": "flag.default와 flag.strict: error는 오류, warning은 경고, mix는 문서 안 혼용만 경고",
+  "concepts": [
+    {
+      "id": "message",
+      "group": 1,
+      "write": "메시지",
+      "flag": {
+        "forms": [
+          "메세지"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=message"
+      },
+      "practice": "현지화 95.6%(14:0), 벤더 문서 99.9%(12:0), 블로그 97.4%(21:0), README 70%, velog(2019–22) 65%"
+    },
+    {
+      "id": "application",
+      "group": 1,
+      "write": "애플리케이션",
+      "flag": {
+        "forms": [
+          "어플리케이션"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=application"
+      },
+      "practice": "현지화 90.4%(14:0), 벤더 문서 100%(9:0), 블로그 85.9%(19:2), README 76%, velog(2019–22) 78%"
+    },
+    {
+      "id": "contents",
+      "group": 1,
+      "write": "콘텐츠",
+      "flag": {
+        "forms": [
+          "컨텐츠",
+          "콘텐트",
+          "컨텐트"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=contents"
+      },
+      "practice": "현지화 89.2%(11:1), 벤더 문서 99.6%(10:0), 블로그 89.8%(17:1), README 75%, velog(2019–22) 80%"
+    },
+    {
+      "id": "architecture",
+      "group": 1,
+      "write": "아키텍처",
+      "flag": {
+        "forms": [
+          "아키텍쳐"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=architecture"
+      },
+      "practice": "현지화 96.9%(7:0), 벤더 문서 100%(5:0), 블로그 95.0%(19:0), README 82%, velog(2019–22) 74%"
+    },
+    {
+      "id": "thread",
+      "group": 1,
+      "write": "스레드",
+      "flag": {
+        "forms": [
+          "쓰레드"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=thread"
+      },
+      "practice": "현지화 98.0%(9:0), 벤더 문서 100%(3:0), 블로그 77.7%(18:1), README 80%, velog(2019–22) 70%"
+    },
+    {
+      "id": "method",
+      "group": 1,
+      "write": "메서드",
+      "flag": {
+        "forms": [
+          "메소드"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "표준국어대사전 표제어(온라인가나다 2025-02-04는 관행을 따르라고 답함)",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%A9%94%EC%84%9C%EB%93%9C"
+      },
+      "practice": "현지화 92.2%(10:2), 벤더 문서 99.4%(7:0), 블로그 78.4%(11:3), README 71%, velog(2019–22) 46%"
+    },
+    {
+      "id": "license",
+      "group": 1,
+      "write": "라이선스",
+      "flag": {
+        "forms": [
+          "라이센스"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=license"
+      },
+      "practice": "현지화 86.4%(8:1), 벤더 문서 100%(3:0), 블로그 69.6%(3:1), README 68%, velog(2019–22) 70%"
+    },
+    {
+      "id": "access",
+      "group": 1,
+      "write": "액세스",
+      "flag": {
+        "forms": [
+          "엑세스",
+          "억세스"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=access"
+      },
+      "practice": "현지화 98.9%(10:0), 벤더 문서 100%(8:0), 블로그 94.7%(2:0), README 72%, velog(2019–22) 75%"
+    },
+    {
+      "id": "schedule",
+      "group": 1,
+      "write": "스케줄",
+      "flag": {
+        "forms": [
+          "스케쥴"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=schedule"
+      },
+      "practice": "현지화 97.5%(5:1), 벤더 문서 90.5%(3:0), 블로그 96.2%(16:0), README 84%, velog(2019–22) 50%"
+    },
+    {
+      "id": "business",
+      "group": 1,
+      "write": "비즈니스",
+      "flag": {
+        "forms": [
+          "비지니스"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=business"
+      },
+      "practice": "현지화 92.5%(3:0), 벤더 문서 100%(7:0), 블로그 99.0%(21:0), README 86%, velog(2019–22) 91%"
+    },
+    {
+      "id": "setting",
+      "group": 1,
+      "write": "세팅",
+      "flag": {
+        "forms": [
+          "셋팅"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=setting"
+      },
+      "practice": "현지화 96.6%(3:0), 벤더 문서 100%(4회), 블로그 97.8%(11:0), README 84%, velog(2019–22) 76%"
+    },
+    {
+      "id": "manual",
+      "group": 1,
+      "write": "매뉴얼",
+      "flag": {
+        "forms": [
+          "메뉴얼"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=manual"
+      },
+      "practice": "현지화 94.3%(3:0), 벤더 문서 0회, 블로그 90.9%(33회), README 47%, velog(2019–22) 95%"
+    },
+    {
+      "id": "cache",
+      "group": 1,
+      "write": "캐시",
+      "flag": {
+        "forms": [
+          "캐쉬"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "표준국어대사전 표제어",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%BA%90%EC%8B%9C"
+      },
+      "practice": "현지화 97.4~100%, 벤더 문서 100%, 블로그 96.7~100%, README 89~100%, velog 91~100% (11개 단어 묶음의 범위)"
+    },
+    {
+      "id": "dashboard",
+      "group": 1,
+      "write": "대시보드",
+      "flag": {
+        "forms": [
+          "대쉬보드"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "표준국어대사전 표제어",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C"
+      },
+      "practice": "현지화 97.4~100%, 벤더 문서 100%, 블로그 96.7~100%, README 89~100%, velog 91~100% (11개 단어 묶음의 범위)"
+    },
+    {
+      "id": "hash",
+      "group": 1,
+      "write": "해시",
+      "flag": {
+        "forms": [
+          "해쉬"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=hash"
+      },
+      "practice": "현지화 97.4~100%, 벤더 문서 100%, 블로그 96.7~100%, README 89~100%, velog 91~100% (11개 단어 묶음의 범위)"
+    },
+    {
+      "id": "format",
+      "group": 1,
+      "write": "포맷",
+      "flag": {
+        "forms": [
+          "포멧"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=format"
+      },
+      "practice": "현지화 97.4~100%, 벤더 문서 100%, 블로그 96.7~100%, README 89~100%, velog 91~100% (11개 단어 묶음의 범위)"
+    },
+    {
+      "id": "rendering",
+      "group": 1,
+      "write": "렌더링",
+      "flag": {
+        "forms": [
+          "랜더링"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=rendering"
+      },
+      "practice": "현지화 97.4~100%, 벤더 문서 100%, 블로그 96.7~100%, README 89~100%, velog 91~100% (11개 단어 묶음의 범위)"
+    },
+    {
+      "id": "transaction",
+      "group": 1,
+      "write": "트랜잭션",
+      "flag": {
+        "forms": [
+          "트랜젝션"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=transaction"
+      },
+      "practice": "현지화 97.4~100%, 벤더 문서 100%, 블로그 96.7~100%, README 89~100%, velog 91~100% (11개 단어 묶음의 범위)"
+    },
+    {
+      "id": "version",
+      "group": 1,
+      "write": "버전",
+      "flag": {
+        "forms": [
+          "버젼"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=version"
+      },
+      "practice": "현지화 97.4~100%, 벤더 문서 100%, 블로그 96.7~100%, README 89~100%, velog 91~100% (11개 단어 묶음의 범위)"
+    },
+    {
+      "id": "header",
+      "group": 1,
+      "write": "헤더",
+      "flag": {
+        "forms": [
+          "해더"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=header"
+      },
+      "practice": "현지화 97.4~100%, 벤더 문서 100%, 블로그 96.7~100%, README 89~100%, velog 91~100% (11개 단어 묶음의 범위)"
+    },
+    {
+      "id": "data",
+      "group": 1,
+      "write": "데이터",
+      "flag": {
+        "forms": [
+          "데이타"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=data"
+      },
+      "practice": "현지화 97.4~100%, 벤더 문서 100%, 블로그 96.7~100%, README 89~100%, velog 91~100% (11개 단어 묶음의 범위)"
+    },
+    {
+      "id": "component",
+      "group": 1,
+      "write": "컴포넌트",
+      "flag": {
+        "forms": [
+          "컴퍼넌트"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=component"
+      },
+      "practice": "현지화 97.4~100%, 벤더 문서 100%, 블로그 96.7~100%, README 89~100%, velog 91~100% (11개 단어 묶음의 범위)"
+    },
+    {
+      "id": "framework",
+      "group": 1,
+      "write": "프레임워크",
+      "flag": {
+        "forms": [
+          "프레임웍"
+        ],
+        "default": "error",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "표준국어대사전 표제어",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC"
+      },
+      "practice": "현지화 97.4~100%, 벤더 문서 100%, 블로그 96.7~100%, README 89~100%, velog 91~100% (11개 단어 묶음의 범위)"
+    },
+    {
+      "id": "directory",
+      "group": 2,
+      "write": "디렉터리",
+      "flag": {
+        "forms": [
+          "디렉토리"
+        ],
+        "default": "warning",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=directory"
+      },
+      "practice": "현지화 70.5%(9:4), 벤더 문서 96.6%(6:0), JetBrains 1,647:38, 블로그 49.3%(7:3), README 14%, velog 2019–22 36%, velog 2026 57%"
+    },
+    {
+      "id": "release",
+      "group": 2,
+      "write": "릴리스",
+      "flag": {
+        "forms": [
+          "릴리즈"
+        ],
+        "default": "warning",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=release"
+      },
+      "practice": "현지화 71.1%(6:4), 벤더 문서 89.6%(6:1), 토스페이먼츠 0:20, 블로그 44.3%(6:10), README 32%, velog 2019–22 10%, velog 2026 76%"
+    },
+    {
+      "id": "shell",
+      "group": 2,
+      "write": "셸",
+      "flag": {
+        "forms": [
+          "쉘"
+        ],
+        "default": "warning",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=shell"
+      },
+      "practice": "현지화 91.6%(4:3), 벤더 문서 96.4%(2:0), UI 문자열 3종 100%, 블로그 22.6%(2:3), README 28%, velog 2019–22 0%, velog 2026 83%"
+    },
+    {
+      "id": "redirection",
+      "group": 2,
+      "write": "리디렉션",
+      "flag": {
+        "forms": [
+          "리다이렉션"
+        ],
+        "default": "warning",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "표준국어대사전 표제어",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%A6%AC%EB%94%94%EB%A0%89%EC%85%98"
+      },
+      "practice": "현지화 72.5%(5:1), 벤더 문서 96.6%(3:0), 블로그 1:2회, README 5:3회, velog 0:4회(2019–22), 0:7회(2026)"
+    },
+    {
+      "id": "repository",
+      "group": 3,
+      "write": "레포지토리",
+      "flag": {
+        "forms": [
+          "리포지토리",
+          "레포지터리",
+          "레포"
+        ],
+        "default": "warning",
+        "strict": "error"
+      },
+      "accept": [
+        "리포지터리"
+      ],
+      "basis": {
+        "kind": "우리말샘 규범 표기 지시(리포지토리 ⇒ 리포지터리). 외래어 표기 용례와 표준국어대사전에는 없음",
+        "url": "https://opendict.korean.go.kr/dictionary/view?sense_no=724814&viewType=confirm"
+      },
+      "practice": "규범형 리포지터리: 현지화 24.2%(1:3), 벤더 문서 0/1,104, 블로그 38.3%(2:3), README 0.4%. 블로그의 코드 저장소 뜻: 저장소 41%, 레포 37%, 리포지터리류 22%",
+      "decision": "2026-10-08 사용자 결정: 규범형 리포지터리는 실사용이 거의 없어 관용형 레포지토리를 지정"
+    },
+    {
+      "id": "body",
+      "group": 3,
+      "write": "바디",
+      "flag": {
+        "forms": [],
+        "default": "warning",
+        "strict": "error"
+      },
+      "accept": [
+        "보디"
+      ],
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=body"
+      },
+      "practice": "규범형 보디: 현지화 0%(0:2), 벤더 문서 0%(0:2), 블로그 0:5회, README 0:2회, velog 0:7회",
+      "decision": "2026-10-08 사용자 결정: 규범형 보디는 실사용이 없어 관용형 바디를 지정"
+    },
+    {
+      "id": "column",
+      "group": 3,
+      "write": "칼럼",
+      "flag": {
+        "forms": [
+          "컬럼"
+        ],
+        "default": "warning",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=column"
+      },
+      "practice": "규범형 칼럼: 현지화 43.2%(1:1), 블로그 9.0%(2:16), README 22%, velog 2019–22 10%, velog 2026 6%. 토스페이먼츠 10:1, Microsoft 용어집은 '열'",
+      "decision": "2026-10-08 사용자 결정: 규범형 칼럼을 지정"
+    },
+    {
+      "id": "target",
+      "group": 3,
+      "write": "대상",
+      "flag": {
+        "forms": [
+          "타겟"
+        ],
+        "default": "warning",
+        "strict": "error"
+      },
+      "accept": [
+        "타깃"
+      ],
+      "mix": false,
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=target"
+      },
+      "practice": "규범형 타깃: 현지화 37.0%(2:4), 벤더 문서 4.6%(0:2), JetBrains 822:2, 블로그 22.6%(2:7), README 14%. Microsoft 용어집과 Android는 '대상'",
+      "decision": "2026-10-08 사용자 결정: 우리말 대응어 대상을 지정. 대상은 일반어라 일관성 검사에서 뺌"
+    },
+    {
+      "id": "redirect",
+      "group": 4,
+      "write": "리디렉션",
+      "flag": {
+        "forms": [
+          "리다이렉트",
+          "리디렉트"
+        ],
+        "default": "mix",
+        "strict": "warning"
+      },
+      "basis": {
+        "kind": "공식 표기 없음(온라인가나다 2025-04-16: 따로 규정된 바가 없음)",
+        "url": "https://korean.go.kr/front/onlineQna/onlineQnaView.do?mn_id=216&qna_seq=313045&pageIndex=1"
+      },
+      "practice": "리디렉트: 현지화 7.2%(1:2), 벤더 문서 0%(0:2), 블로그 0:8회, README 0%. Microsoft 용어집의 대응어는 리디렉션"
+    },
+    {
+      "id": "refactoring",
+      "group": 4,
+      "write": "리팩터링",
+      "flag": {
+        "forms": [
+          "리팩토링"
+        ],
+        "default": "mix",
+        "strict": "warning"
+      },
+      "basis": {
+        "kind": "공식 표기 없음(온라인가나다 2026-08-10: 팩터링에 맞춰 리팩터링으로 표기할 수 있음)",
+        "url": "https://korean.go.kr/front/onlineQna/onlineQnaView.do?mn_id=216&qna_seq=334621&pageIndex=1"
+      },
+      "practice": "리팩터링: 현지화 56.5%(3:6), 벤더 문서 100%(2:0), 블로그 21.9%(2:10), README 10%, velog 2026 11%"
+    },
+    {
+      "id": "error",
+      "group": 5,
+      "write": "오류",
+      "flag": {
+        "forms": [
+          "에러"
+        ],
+        "default": "mix",
+        "strict": "warning"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=error"
+      },
+      "practice": "오류: 현지화 50.1%(11:4), UI 문자열 4종 100%, 벤더 문서 49.9%(10:2), 블로그 40.8%(7:14), README 58%"
+    },
+    {
+      "id": "parameter",
+      "group": 5,
+      "write": "매개변수",
+      "alias": [
+        "매개 변수"
+      ],
+      "flag": {
+        "forms": [
+          "파라미터"
+        ],
+        "default": "mix",
+        "strict": "warning"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=parameter"
+      },
+      "practice": "매개변수: 현지화 87.4%(10:3), 벤더 문서 35.1%(3:6), 블로그 13.8%(2:14), README 43%"
+    },
+    {
+      "id": "user",
+      "group": 5,
+      "write": "사용자",
+      "flag": {
+        "forms": [
+          "유저"
+        ],
+        "default": "mix",
+        "strict": "warning"
+      },
+      "basis": {
+        "kind": "표준국어대사전 표제어, 다듬은 말 '유저 → 사용자'(2013 고시)",
+        "url": "https://stdict.korean.go.kr/search/searchView.do?word_no=170113&searchKeywordTo=3"
+      },
+      "practice": "사용자: 현지화 96.9%(15:0), 벤더 문서 99.9%(12:0), 블로그 72.9%(18:4), README 79%"
+    },
+    {
+      "id": "default",
+      "group": 5,
+      "write": "기본값",
+      "alias": [
+        "기본 값"
+      ],
+      "flag": {
+        "forms": [
+          "디폴트"
+        ],
+        "default": "mix",
+        "strict": "warning"
+      },
+      "basis": {
+        "kind": "외래어 표기 용례",
+        "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=default"
+      },
+      "practice": "기본값: 현지화 98.5%(15:0), 벤더 문서 99.4%(10:0), 블로그 97.6%(11:0), README 70%"
+    },
+    {
+      "id": "deploy",
+      "group": 5,
+      "write": "배포",
+      "flag": {
+        "forms": [
+          "디플로이"
+        ],
+        "default": "mix",
+        "strict": "warning"
+      },
+      "basis": {
+        "kind": "표준국어대사전 표제어. 디플로이는 세 자료에 없음",
+        "url": "https://stdict.korean.go.kr/search/searchView.do?word_no=431960&searchKeywordTo=3"
+      },
+      "practice": "배포: 현지화 99% 이상(디플로이먼트 제외), 벤더 문서 100%(9:0), 블로그 99.9%(22:0), README 100%"
+    },
+    {
+      "id": "default_value_spacing",
+      "group": 6,
+      "write": "기본값",
+      "flag": {
+        "forms": [
+          "기본 값"
+        ],
+        "default": "warning",
+        "strict": "error"
+      },
+      "basis": {
+        "kind": "우리말샘 '기본-값' 한 단어",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EA%B8%B0%EB%B3%B8%EA%B0%92"
+      },
+      "practice": "붙여 쓴 비율: 현지화 89.5%, 벤더 문서 91.9%, 블로그 85.1%, README 100%, GitHub 코드 검색 96%"
+    },
+    {
+      "id": "parameter_spacing",
+      "group": 6,
+      "write": "매개변수",
+      "flag": {
+        "forms": [
+          "매개 변수"
+        ],
+        "default": "mix",
+        "strict": "warning"
+      },
+      "basis": {
+        "kind": "표준국어대사전 '매개^변수'(띄어 씀이 원칙, 붙여 씀 허용)",
+        "url": "https://stdict.korean.go.kr/search/searchView.do?word_no=111708&searchKeywordTo=3"
+      },
+      "practice": "붙여 쓴 비율: 현지화 61.9%, 벤더 문서 38.2%, 블로그 97.1%, README 80%, GitHub 코드 검색 92%"
+    },
+    {
+      "id": "return_value_spacing",
+      "group": 6,
+      "write": "반환값",
+      "flag": {
+        "forms": [
+          "반환 값"
+        ],
+        "default": "mix",
+        "strict": "warning"
+      },
+      "basis": {
+        "kind": "사전 미등재. '-값' 붙여 쓰기(표준국어대사전 '값'「8」)에 맞춤",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%B0%98%ED%99%98%EA%B0%92"
+      },
+      "practice": "붙여 쓴 비율: 현지화 17.2%, 벤더 문서 0.6%, 블로그 71.0%(31회), README 82%, GitHub 코드 검색 66%"
+    },
+    {
+      "id": "open_source_spacing",
+      "group": 6,
+      "write": "오픈소스",
+      "flag": {
+        "forms": [
+          "오픈 소스"
+        ],
+        "default": "mix",
+        "strict": "warning"
+      },
+      "basis": {
+        "kind": "우리말샘 '오픈^소스'(띄어 씀이 원칙, 붙여 씀 허용)",
+        "url": "https://opendict.korean.go.kr/dictionary/view?sense_no=832806&viewType=confirm"
+      },
+      "practice": "붙여 쓴 비율: 현지화 47.2%, 벤더 문서 61.0%, 블로그 69.2%, README 89%, GitHub 코드 검색 73%"
+    }
+  ]
+}
