@@ -1,0 +1,1519 @@
+corpus,set,variant,count
+kubernetes,A:directory,디렉터리,305
+kubernetes,A:directory,디렉토리,28
+kubernetes,A:message,메시지,149
+kubernetes,A:message,메세지,6
+kubernetes,A:application,애플리케이션,939
+kubernetes,A:application,어플리케이션,3
+kubernetes,A:repository,리포지터리,95
+kubernetes,A:repository,리포지토리,6
+kubernetes,A:repository,레포지토리,0
+kubernetes,A:repository,레포지터리,1
+kubernetes,A:contents,콘텐츠,129
+kubernetes,A:contents,컨텐츠,19
+kubernetes,A:contents,콘텐트,1
+kubernetes,A:contents,컨텐트,0
+kubernetes,A:shell,셸,126
+kubernetes,A:shell,쉘,15
+kubernetes,A:target,타깃,0
+kubernetes,A:target,타겟,9
+kubernetes,A:release,릴리스,458
+kubernetes,A:release,릴리즈,13
+kubernetes,A:architecture,아키텍처,70
+kubernetes,A:architecture,아키텍쳐,1
+kubernetes,A:column,칼럼,0
+kubernetes,A:column,컬럼,0
+kubernetes,A:body,보디,0
+kubernetes,A:body,바디,0
+kubernetes,A:thread,스레드,5
+kubernetes,A:thread,쓰레드,0
+kubernetes,A:redirect,리디렉트,0
+kubernetes,A:redirect,리다이렉트,21
+kubernetes,A:redirection,리디렉션,19
+kubernetes,A:redirection,리다이렉션,9
+kubernetes,A:cache,캐시,123
+kubernetes,A:cache,캐쉬,0
+kubernetes,A:dashboard,대시보드,70
+kubernetes,A:dashboard,대쉬보드,0
+kubernetes,A:setting,세팅,10
+kubernetes,A:setting,셋팅,0
+kubernetes,A:hash,해시,23
+kubernetes,A:hash,해쉬,0
+kubernetes,A:format,포맷,18
+kubernetes,A:format,포멧,2
+kubernetes,A:rendering,렌더링,12
+kubernetes,A:rendering,랜더링,0
+kubernetes,A:transaction,트랜잭션,2
+kubernetes,A:transaction,트랜젝션,0
+kubernetes,A:version,버전,905
+kubernetes,A:version,버젼,1
+kubernetes,A:method,메서드,5
+kubernetes,A:method,메소드,0
+kubernetes,A:license,라이선스,1
+kubernetes,A:license,라이센스,0
+kubernetes,A:access,액세스,54
+kubernetes,A:access,엑세스,5
+kubernetes,A:access,억세스,0
+kubernetes,A:manual,매뉴얼,5
+kubernetes,A:manual,메뉴얼,1
+kubernetes,A:business,비즈니스,6
+kubernetes,A:business,비지니스,2
+kubernetes,A:refactoring,리팩터링,4
+kubernetes,A:refactoring,리팩토링,0
+kubernetes,A:schedule,스케줄,1041
+kubernetes,A:schedule,스케쥴,11
+kubernetes,A:header,헤더,51
+kubernetes,A:header,해더,0
+kubernetes,A:data,데이터,577
+kubernetes,A:data,데이타,0
+kubernetes,A:component,컴포넌트,378
+kubernetes,A:component,컴퍼넌트,0
+kubernetes,A:framework,프레임워크,27
+kubernetes,A:framework,프레임웍,0
+kubernetes,B:error,오류,164
+kubernetes,B:error,에러,34
+kubernetes,B:repository-word,저장소,125
+kubernetes,B:repository-word,리포지터리,95
+kubernetes,B:repository-word,리포지토리,6
+kubernetes,B:repository-word,레포지토리,0
+kubernetes,B:repository-word,레포지터리,1
+kubernetes,B:repository-word,레포,0
+kubernetes,B:default,기본값,292
+kubernetes,B:default,기본 값,22
+kubernetes,B:default,디폴트,16
+kubernetes,B:deploy,배포,465
+kubernetes,B:deploy,디플로이,744
+kubernetes,B:user,사용자,1186
+kubernetes,B:user,유저,52
+kubernetes,B:parameter,매개변수,16
+kubernetes,B:parameter,매개 변수,6
+kubernetes,B:parameter,파라미터,169
+kubernetes,C:매개변수|매개 변수,매개변수,16
+kubernetes,C:매개변수|매개 변수,매개 변수,6
+kubernetes,C:기본값|기본 값,기본값,292
+kubernetes,C:기본값|기본 값,기본 값,22
+kubernetes,C:반환값|반환 값,반환값,0
+kubernetes,C:반환값|반환 값,반환 값,0
+kubernetes,C:오픈 소스|오픈소스,오픈 소스,12
+kubernetes,C:오픈 소스|오픈소스,오픈소스,25
+kubernetes,X:raw-substring(before exclusions),버전,907
+kubernetes,X:raw-substring(before exclusions),레포,1
+kubernetes,X:diagnostic,디플로이먼트,742
+kubernetes,X:diagnostic,배포판,62
+kubernetes,X:diagnostic,사용자 정의(붙여쓰기 포함),166
+kubernetes,X:diagnostic,앱,122
+kubernetes,X:diagnostic,유저스페이스,6
+kubernetes,X:diagnostic,응용 프로그램(붙여쓰기 포함),3
+kubernetes,X:diagnostic,컨버전|다이버전|인버전 (전/젼),2
+mdn,A:directory,디렉터리,69
+mdn,A:directory,디렉토리,145
+mdn,A:message,메시지,777
+mdn,A:message,메세지,129
+mdn,A:application,애플리케이션,560
+mdn,A:application,어플리케이션,224
+mdn,A:repository,리포지터리,0
+mdn,A:repository,리포지토리,7
+mdn,A:repository,레포지토리,18
+mdn,A:repository,레포지터리,0
+mdn,A:contents,콘텐츠,2547
+mdn,A:contents,컨텐츠,353
+mdn,A:contents,콘텐트,7
+mdn,A:contents,컨텐트,30
+mdn,A:shell,셸,8
+mdn,A:shell,쉘,9
+mdn,A:target,타깃,1
+mdn,A:target,타겟,73
+mdn,A:release,릴리스,3
+mdn,A:release,릴리즈,14
+mdn,A:architecture,아키텍처,23
+mdn,A:architecture,아키텍쳐,5
+mdn,A:column,칼럼,14
+mdn,A:column,컬럼,9
+mdn,A:body,보디,0
+mdn,A:body,바디,38
+mdn,A:thread,스레드,146
+mdn,A:thread,쓰레드,20
+mdn,A:redirect,리디렉트,2
+mdn,A:redirect,리다이렉트,77
+mdn,A:redirection,리디렉션,44
+mdn,A:redirection,리다이렉션,55
+mdn,A:cache,캐시,436
+mdn,A:cache,캐쉬,2
+mdn,A:dashboard,대시보드,3
+mdn,A:dashboard,대쉬보드,0
+mdn,A:setting,세팅,31
+mdn,A:setting,셋팅,2
+mdn,A:hash,해시,96
+mdn,A:hash,해쉬,13
+mdn,A:format,포맷,209
+mdn,A:format,포멧,18
+mdn,A:rendering,렌더링,692
+mdn,A:rendering,랜더링,10
+mdn,A:transaction,트랜잭션,72
+mdn,A:transaction,트랜젝션,2
+mdn,A:version,버전,746
+mdn,A:version,버젼,2
+mdn,A:method,메서드,3614
+mdn,A:method,메소드,650
+mdn,A:license,라이선스,126
+mdn,A:license,라이센스,14
+mdn,A:access,액세스,175
+mdn,A:access,엑세스,10
+mdn,A:access,억세스,0
+mdn,A:manual,매뉴얼,1
+mdn,A:manual,메뉴얼,0
+mdn,A:business,비즈니스,12
+mdn,A:business,비지니스,0
+mdn,A:refactoring,리팩터링,2
+mdn,A:refactoring,리팩토링,3
+mdn,A:schedule,스케줄,7
+mdn,A:schedule,스케쥴,15
+mdn,A:header,헤더,1462
+mdn,A:header,해더,7
+mdn,A:data,데이터,2941
+mdn,A:data,데이타,55
+mdn,A:component,컴포넌트,574
+mdn,A:component,컴퍼넌트,3
+mdn,A:framework,프레임워크,413
+mdn,A:framework,프레임웍,5
+mdn,B:error,오류,782
+mdn,B:error,에러,330
+mdn,B:repository-word,저장소,263
+mdn,B:repository-word,리포지터리,0
+mdn,B:repository-word,리포지토리,7
+mdn,B:repository-word,레포지토리,18
+mdn,B:repository-word,레포지터리,0
+mdn,B:repository-word,레포,0
+mdn,B:default,기본값,492
+mdn,B:default,기본 값,234
+mdn,B:default,디폴트,20
+mdn,B:deploy,배포,91
+mdn,B:deploy,디플로이,0
+mdn,B:user,사용자,3467
+mdn,B:user,유저,250
+mdn,B:parameter,매개변수,1479
+mdn,B:parameter,매개 변수,162
+mdn,B:parameter,파라미터,239
+mdn,C:매개변수|매개 변수,매개변수,1479
+mdn,C:매개변수|매개 변수,매개 변수,162
+mdn,C:기본값|기본 값,기본값,492
+mdn,C:기본값|기본 값,기본 값,234
+mdn,C:반환값|반환 값,반환값,90
+mdn,C:반환값|반환 값,반환 값,675
+mdn,C:오픈 소스|오픈소스,오픈 소스,50
+mdn,C:오픈 소스|오픈소스,오픈소스,19
+mdn,X:raw-substring(before exclusions),쉘,11
+mdn,X:raw-substring(before exclusions),레포,19
+mdn,X:diagnostic,레포트|레포츠,1
+mdn,X:diagnostic,배포판,8
+mdn,X:diagnostic,사용자 정의(붙여쓰기 포함),275
+mdn,X:diagnostic,셸프|쉘프(shelf),2
+mdn,X:diagnostic,앱,646
+mdn,X:diagnostic,응용 프로그램(붙여쓰기 포함),81
+mdn,X:diagnostic,재배포,2
+react,A:directory,디렉터리,8
+react,A:directory,디렉토리,1
+react,A:message,메시지,146
+react,A:message,메세지,0
+react,A:application,애플리케이션,172
+react,A:application,어플리케이션,0
+react,A:repository,리포지터리,0
+react,A:repository,리포지토리,0
+react,A:repository,레포지토리,1
+react,A:repository,레포지터리,0
+react,A:contents,콘텐츠,217
+react,A:contents,컨텐츠,31
+react,A:contents,콘텐트,0
+react,A:contents,컨텐트,0
+react,A:shell,셸,35
+react,A:shell,쉘,0
+react,A:target,타깃,1
+react,A:target,타겟,2
+react,A:release,릴리스,33
+react,A:release,릴리즈,160
+react,A:architecture,아키텍처,24
+react,A:architecture,아키텍쳐,0
+react,A:column,칼럼,0
+react,A:column,컬럼,0
+react,A:body,보디,0
+react,A:body,바디,1
+react,A:thread,스레드,4
+react,A:thread,쓰레드,0
+react,A:redirect,리디렉트,0
+react,A:redirect,리다이렉트,2
+react,A:redirection,리디렉션,1
+react,A:redirection,리다이렉션,0
+react,A:cache,캐시,78
+react,A:cache,캐쉬,0
+react,A:dashboard,대시보드,1
+react,A:dashboard,대쉬보드,0
+react,A:setting,세팅,1
+react,A:setting,셋팅,0
+react,A:hash,해시,21
+react,A:hash,해쉬,0
+react,A:format,포맷,17
+react,A:format,포멧,0
+react,A:rendering,렌더링,2259
+react,A:rendering,랜더링,1
+react,A:transaction,트랜잭션,1
+react,A:transaction,트랜젝션,0
+react,A:version,버전,340
+react,A:version,버젼,0
+react,A:method,메서드,159
+react,A:method,메소드,1
+react,A:license,라이선스,0
+react,A:license,라이센스,0
+react,A:access,액세스,9
+react,A:access,엑세스,1
+react,A:access,억세스,0
+react,A:manual,매뉴얼,0
+react,A:manual,메뉴얼,0
+react,A:business,비즈니스,0
+react,A:business,비지니스,0
+react,A:refactoring,리팩터링,1
+react,A:refactoring,리팩토링,20
+react,A:schedule,스케줄,5
+react,A:schedule,스케쥴,1
+react,A:header,헤더,10
+react,A:header,해더,0
+react,A:data,데이터,750
+react,A:data,데이타,0
+react,A:component,컴포넌트,3574
+react,A:component,컴퍼넌트,0
+react,A:framework,프레임워크,252
+react,A:framework,프레임웍,0
+react,B:error,오류,348
+react,B:error,에러,92
+react,B:repository-word,저장소,34
+react,B:repository-word,리포지터리,0
+react,B:repository-word,리포지토리,0
+react,B:repository-word,레포지토리,1
+react,B:repository-word,레포지터리,0
+react,B:repository-word,레포,0
+react,B:default,기본값,61
+react,B:default,기본 값,0
+react,B:default,디폴트,0
+react,B:deploy,배포,63
+react,B:deploy,디플로이,0
+react,B:user,사용자,595
+react,B:user,유저,1
+react,B:parameter,매개변수,138
+react,B:parameter,매개 변수,0
+react,B:parameter,파라미터,0
+react,C:매개변수|매개 변수,매개변수,138
+react,C:매개변수|매개 변수,매개 변수,0
+react,C:기본값|기본 값,기본값,61
+react,C:기본값|기본 값,기본 값,0
+react,C:반환값|반환 값,반환값,103
+react,C:반환값|반환 값,반환 값,20
+react,C:오픈 소스|오픈소스,오픈 소스,9
+react,C:오픈 소스|오픈소스,오픈소스,12
+react,X:raw-substring(before exclusions),레포,1
+react,X:diagnostic,사용자 정의(붙여쓰기 포함),41
+react,X:diagnostic,앱,507
+vue,A:directory,디렉터리,13
+vue,A:directory,디렉토리,0
+vue,A:message,메시지,8
+vue,A:message,메세지,0
+vue,A:application,애플리케이션,207
+vue,A:application,어플리케이션,0
+vue,A:repository,리포지터리,0
+vue,A:repository,리포지토리,8
+vue,A:repository,레포지토리,0
+vue,A:repository,레포지터리,0
+vue,A:contents,콘텐츠,145
+vue,A:contents,컨텐츠,0
+vue,A:contents,콘텐트,0
+vue,A:contents,컨텐트,0
+vue,A:shell,셸,2
+vue,A:shell,쉘,0
+vue,A:target,타깃,0
+vue,A:target,타겟,4
+vue,A:release,릴리스,45
+vue,A:release,릴리즈,0
+vue,A:architecture,아키텍처,5
+vue,A:architecture,아키텍쳐,0
+vue,A:column,칼럼,0
+vue,A:column,컬럼,0
+vue,A:body,보디,0
+vue,A:body,바디,0
+vue,A:thread,스레드,2
+vue,A:thread,쓰레드,0
+vue,A:redirect,리디렉트,0
+vue,A:redirect,리다이렉트,0
+vue,A:redirection,리디렉션,0
+vue,A:redirection,리다이렉션,0
+vue,A:cache,캐시,37
+vue,A:cache,캐쉬,0
+vue,A:dashboard,대시보드,1
+vue,A:dashboard,대쉬보드,0
+vue,A:setting,세팅,0
+vue,A:setting,셋팅,0
+vue,A:hash,해시,2
+vue,A:hash,해쉬,0
+vue,A:format,포맷,4
+vue,A:format,포멧,0
+vue,A:rendering,렌더링,364
+vue,A:rendering,랜더링,0
+vue,A:transaction,트랜잭션,0
+vue,A:transaction,트랜젝션,0
+vue,A:version,버전,88
+vue,A:version,버젼,0
+vue,A:method,메서드,109
+vue,A:method,메소드,0
+vue,A:license,라이선스,5
+vue,A:license,라이센스,0
+vue,A:access,액세스,0
+vue,A:access,엑세스,0
+vue,A:access,억세스,0
+vue,A:manual,매뉴얼,0
+vue,A:manual,메뉴얼,0
+vue,A:business,비즈니스,9
+vue,A:business,비지니스,0
+vue,A:refactoring,리팩터링,9
+vue,A:refactoring,리팩토링,3
+vue,A:schedule,스케줄,4
+vue,A:schedule,스케쥴,0
+vue,A:header,헤더,0
+vue,A:header,해더,0
+vue,A:data,데이터,146
+vue,A:data,데이타,0
+vue,A:component,컴포넌트,1585
+vue,A:component,컴퍼넌트,0
+vue,A:framework,프레임워크,81
+vue,A:framework,프레임웍,0
+vue,B:error,오류,81
+vue,B:error,에러,39
+vue,B:repository-word,저장소,1
+vue,B:repository-word,리포지터리,0
+vue,B:repository-word,리포지토리,8
+vue,B:repository-word,레포지토리,0
+vue,B:repository-word,레포지터리,0
+vue,B:repository-word,레포,1
+vue,B:default,기본값,56
+vue,B:default,기본 값,0
+vue,B:default,디폴트,0
+vue,B:deploy,배포,34
+vue,B:deploy,디플로이,0
+vue,B:user,사용자,141
+vue,B:user,유저,0
+vue,B:parameter,매개변수,4
+vue,B:parameter,매개 변수,0
+vue,B:parameter,파라미터,10
+vue,C:매개변수|매개 변수,매개변수,4
+vue,C:매개변수|매개 변수,매개 변수,0
+vue,C:기본값|기본 값,기본값,56
+vue,C:기본값|기본 값,기본 값,0
+vue,C:반환값|반환 값,반환값,18
+vue,C:반환값|반환 값,반환 값,4
+vue,C:오픈 소스|오픈소스,오픈 소스,8
+vue,C:오픈 소스|오픈소스,오픈소스,1
+vue,X:raw-substring(before exclusions),레포,27
+vue,X:diagnostic,레포트|레포츠,26
+vue,X:diagnostic,배포판,1
+vue,X:diagnostic,사용자 정의(붙여쓰기 포함),8
+vue,X:diagnostic,앱,102
+python,A:directory,디렉터리,880
+python,A:directory,디렉토리,1
+python,A:message,메시지,1268
+python,A:message,메세지,18
+python,A:application,애플리케이션,19
+python,A:application,어플리케이션,1
+python,A:repository,리포지터리,0
+python,A:repository,리포지토리,0
+python,A:repository,레포지토리,0
+python,A:repository,레포지터리,0
+python,A:contents,콘텐츠,64
+python,A:contents,컨텐츠,0
+python,A:contents,콘텐트,0
+python,A:contents,컨텐트,0
+python,A:shell,셸,220
+python,A:shell,쉘,1
+python,A:target,타깃,49
+python,A:target,타겟,0
+python,A:release,릴리스,76
+python,A:release,릴리즈,3
+python,A:architecture,아키텍처,19
+python,A:architecture,아키텍쳐,0
+python,A:column,칼럼,2
+python,A:column,컬럼,0
+python,A:body,보디,0
+python,A:body,바디,52
+python,A:thread,스레드,738
+python,A:thread,쓰레드,0
+python,A:redirect,리디렉트,6
+python,A:redirect,리다이렉트,0
+python,A:redirection,리디렉션,57
+python,A:redirection,리다이렉션,0
+python,A:cache,캐시,195
+python,A:cache,캐쉬,0
+python,A:dashboard,대시보드,0
+python,A:dashboard,대쉬보드,0
+python,A:setting,세팅,0
+python,A:setting,셋팅,0
+python,A:hash,해시,259
+python,A:hash,해쉬,0
+python,A:format,포맷,480
+python,A:format,포멧,0
+python,A:rendering,렌더링,11
+python,A:rendering,랜더링,0
+python,A:transaction,트랜잭션,10
+python,A:transaction,트랜젝션,0
+python,A:version,버전,976
+python,A:version,버젼,0
+python,A:method,메서드,3766
+python,A:method,메소드,0
+python,A:license,라이선스,5
+python,A:license,라이센스,13
+python,A:access,액세스,621
+python,A:access,엑세스,1
+python,A:access,억세스,0
+python,A:manual,매뉴얼,68
+python,A:manual,메뉴얼,0
+python,A:business,비즈니스,2
+python,A:business,비지니스,0
+python,A:refactoring,리팩터링,1
+python,A:refactoring,리팩토링,11
+python,A:schedule,스케줄,42
+python,A:schedule,스케쥴,0
+python,A:header,헤더,818
+python,A:header,해더,0
+python,A:data,데이터,1729
+python,A:data,데이타,0
+python,A:component,컴포넌트,8
+python,A:component,컴퍼넌트,0
+python,A:framework,프레임워크,63
+python,A:framework,프레임웍,2
+python,B:error,오류,68
+python,B:error,에러,1301
+python,B:repository-word,저장소,62
+python,B:repository-word,리포지터리,0
+python,B:repository-word,리포지토리,0
+python,B:repository-word,레포지토리,0
+python,B:repository-word,레포지터리,0
+python,B:repository-word,레포,0
+python,B:default,기본값,1090
+python,B:default,기본 값,4
+python,B:default,디폴트,0
+python,B:deploy,배포,205
+python,B:deploy,디플로이,0
+python,B:user,사용자,1034
+python,B:user,유저,5
+python,B:parameter,매개변수,151
+python,B:parameter,매개 변수,1127
+python,B:parameter,파라미터,87
+python,C:매개변수|매개 변수,매개변수,151
+python,C:매개변수|매개 변수,매개 변수,1127
+python,C:기본값|기본 값,기본값,1090
+python,C:기본값|기본 값,기본 값,4
+python,C:반환값|반환 값,반환값,13
+python,C:반환값|반환 값,반환 값,297
+python,C:오픈 소스|오픈소스,오픈 소스,4
+python,C:오픈 소스|오픈소스,오픈소스,1
+python,X:raw-substring(before exclusions),쉘,14
+python,X:raw-substring(before exclusions),레포,1
+python,X:diagnostic,레포트|레포츠,1
+python,X:diagnostic,배포판,45
+python,X:diagnostic,사용자 정의(붙여쓰기 포함),369
+python,X:diagnostic,셸프|쉘프(shelf),13
+python,X:diagnostic,앱,11
+python,X:diagnostic,응용 프로그램(붙여쓰기 포함),602
+python,X:diagnostic,재배포,14
+pytorch,A:directory,디렉터리,6
+pytorch,A:directory,디렉토리,22
+pytorch,A:message,메시지,4
+pytorch,A:message,메세지,0
+pytorch,A:application,애플리케이션,14
+pytorch,A:application,어플리케이션,5
+pytorch,A:repository,리포지터리,0
+pytorch,A:repository,리포지토리,0
+pytorch,A:repository,레포지토리,0
+pytorch,A:repository,레포지터리,0
+pytorch,A:contents,콘텐츠,3
+pytorch,A:contents,컨텐츠,0
+pytorch,A:contents,콘텐트,0
+pytorch,A:contents,컨텐트,0
+pytorch,A:shell,셸,0
+pytorch,A:shell,쉘,0
+pytorch,A:target,타깃,4
+pytorch,A:target,타겟,6
+pytorch,A:release,릴리스,4
+pytorch,A:release,릴리즈,3
+pytorch,A:architecture,아키텍처,31
+pytorch,A:architecture,아키텍쳐,0
+pytorch,A:column,칼럼,0
+pytorch,A:column,컬럼,3
+pytorch,A:body,보디,0
+pytorch,A:body,바디,1
+pytorch,A:thread,스레드,16
+pytorch,A:thread,쓰레드,9
+pytorch,A:redirect,리디렉트,0
+pytorch,A:redirect,리다이렉트,0
+pytorch,A:redirection,리디렉션,0
+pytorch,A:redirection,리다이렉션,0
+pytorch,A:cache,캐시,29
+pytorch,A:cache,캐쉬,0
+pytorch,A:dashboard,대시보드,2
+pytorch,A:dashboard,대쉬보드,0
+pytorch,A:setting,세팅,1
+pytorch,A:setting,셋팅,0
+pytorch,A:hash,해시,0
+pytorch,A:hash,해쉬,0
+pytorch,A:format,포맷,4
+pytorch,A:format,포멧,0
+pytorch,A:rendering,렌더링,4
+pytorch,A:rendering,랜더링,0
+pytorch,A:transaction,트랜잭션,0
+pytorch,A:transaction,트랜젝션,0
+pytorch,A:version,버전,58
+pytorch,A:version,버젼,1
+pytorch,A:method,메서드,35
+pytorch,A:method,메소드,101
+pytorch,A:license,라이선스,0
+pytorch,A:license,라이센스,0
+pytorch,A:access,액세스,5
+pytorch,A:access,엑세스,1
+pytorch,A:access,억세스,0
+pytorch,A:manual,매뉴얼,0
+pytorch,A:manual,메뉴얼,0
+pytorch,A:business,비즈니스,0
+pytorch,A:business,비지니스,0
+pytorch,A:refactoring,리팩터링,0
+pytorch,A:refactoring,리팩토링,9
+pytorch,A:schedule,스케줄,8
+pytorch,A:schedule,스케쥴,2
+pytorch,A:header,헤더,2
+pytorch,A:header,해더,0
+pytorch,A:data,데이터,819
+pytorch,A:data,데이타,0
+pytorch,A:component,컴포넌트,5
+pytorch,A:component,컴퍼넌트,0
+pytorch,A:framework,프레임워크,27
+pytorch,A:framework,프레임웍,0
+pytorch,B:error,오류,37
+pytorch,B:error,에러,11
+pytorch,B:repository-word,저장소,22
+pytorch,B:repository-word,리포지터리,0
+pytorch,B:repository-word,리포지토리,0
+pytorch,B:repository-word,레포지토리,0
+pytorch,B:repository-word,레포지터리,0
+pytorch,B:repository-word,레포,0
+pytorch,B:default,기본값,17
+pytorch,B:default,기본 값,0
+pytorch,B:default,디폴트,0
+pytorch,B:deploy,배포,18
+pytorch,B:deploy,디플로이,0
+pytorch,B:user,사용자,121
+pytorch,B:user,유저,1
+pytorch,B:parameter,매개변수,244
+pytorch,B:parameter,매개 변수,9
+pytorch,B:parameter,파라미터,91
+pytorch,C:매개변수|매개 변수,매개변수,244
+pytorch,C:매개변수|매개 변수,매개 변수,9
+pytorch,C:기본값|기본 값,기본값,17
+pytorch,C:기본값|기본 값,기본 값,0
+pytorch,C:반환값|반환 값,반환값,2
+pytorch,C:반환값|반환 값,반환 값,1
+pytorch,C:오픈 소스|오픈소스,오픈 소스,0
+pytorch,C:오픈 소스|오픈소스,오픈소스,1
+pytorch,X:diagnostic,배포판,5
+pytorch,X:diagnostic,사용자 정의(붙여쓰기 포함),60
+pytorch,X:diagnostic,응용 프로그램(붙여쓰기 포함),5
+pytorch,X:diagnostic,하이퍼파라미터,25
+vscode,A:directory,디렉터리,101
+vscode,A:directory,디렉토리,4
+vscode,A:message,메시지,232
+vscode,A:message,메세지,0
+vscode,A:application,애플리케이션,46
+vscode,A:application,어플리케이션,0
+vscode,A:repository,리포지터리,0
+vscode,A:repository,리포지토리,257
+vscode,A:repository,레포지토리,0
+vscode,A:repository,레포지터리,0
+vscode,A:contents,콘텐츠,170
+vscode,A:contents,컨텐츠,0
+vscode,A:contents,콘텐트,0
+vscode,A:contents,컨텐트,0
+vscode,A:shell,셸,137
+vscode,A:shell,쉘,3
+vscode,A:target,타깃,0
+vscode,A:target,타겟,0
+vscode,A:release,릴리스,45
+vscode,A:release,릴리즈,0
+vscode,A:architecture,아키텍처,2
+vscode,A:architecture,아키텍쳐,0
+vscode,A:column,칼럼,0
+vscode,A:column,컬럼,0
+vscode,A:body,보디,0
+vscode,A:body,바디,0
+vscode,A:thread,스레드,33
+vscode,A:thread,쓰레드,0
+vscode,A:redirect,리디렉트,0
+vscode,A:redirect,리다이렉트,0
+vscode,A:redirection,리디렉션,4
+vscode,A:redirection,리다이렉션,0
+vscode,A:cache,캐시,86
+vscode,A:cache,캐쉬,0
+vscode,A:dashboard,대시보드,0
+vscode,A:dashboard,대쉬보드,0
+vscode,A:setting,세팅,0
+vscode,A:setting,셋팅,0
+vscode,A:hash,해시,10
+vscode,A:hash,해쉬,0
+vscode,A:format,포맷,49
+vscode,A:format,포멧,0
+vscode,A:rendering,렌더링,135
+vscode,A:rendering,랜더링,0
+vscode,A:transaction,트랜잭션,0
+vscode,A:transaction,트랜젝션,0
+vscode,A:version,버전,220
+vscode,A:version,버젼,0
+vscode,A:method,메서드,25
+vscode,A:method,메소드,0
+vscode,A:license,라이선스,6
+vscode,A:license,라이센스,1
+vscode,A:access,액세스,248
+vscode,A:access,엑세스,0
+vscode,A:access,억세스,0
+vscode,A:manual,매뉴얼,0
+vscode,A:manual,메뉴얼,0
+vscode,A:business,비즈니스,0
+vscode,A:business,비지니스,0
+vscode,A:refactoring,리팩터링,32
+vscode,A:refactoring,리팩토링,1
+vscode,A:schedule,스케줄,1
+vscode,A:schedule,스케쥴,0
+vscode,A:header,헤더,51
+vscode,A:header,해더,0
+vscode,A:data,데이터,163
+vscode,A:data,데이타,0
+vscode,A:component,컴포넌트,0
+vscode,A:component,컴퍼넌트,0
+vscode,A:framework,프레임워크,1
+vscode,A:framework,프레임웍,0
+vscode,B:error,오류,325
+vscode,B:error,에러,0
+vscode,B:repository-word,저장소,18
+vscode,B:repository-word,리포지터리,0
+vscode,B:repository-word,리포지토리,257
+vscode,B:repository-word,레포지토리,0
+vscode,B:repository-word,레포지터리,0
+vscode,B:repository-word,레포,0
+vscode,B:default,기본값,168
+vscode,B:default,기본 값,0
+vscode,B:default,디폴트,0
+vscode,B:deploy,배포,13
+vscode,B:deploy,디플로이,0
+vscode,B:user,사용자,571
+vscode,B:user,유저,1
+vscode,B:parameter,매개변수,8
+vscode,B:parameter,매개 변수,29
+vscode,B:parameter,파라미터,0
+vscode,C:매개변수|매개 변수,매개변수,8
+vscode,C:매개변수|매개 변수,매개 변수,29
+vscode,C:기본값|기본 값,기본값,168
+vscode,C:기본값|기본 값,기본 값,0
+vscode,C:반환값|반환 값,반환값,0
+vscode,C:반환값|반환 값,반환 값,1
+vscode,C:오픈 소스|오픈소스,오픈 소스,1
+vscode,C:오픈 소스|오픈소스,오픈소스,0
+vscode,X:diagnostic,배포판,1
+vscode,X:diagnostic,사용자 정의(붙여쓰기 포함),8
+vscode,X:diagnostic,앱,13
+vscode,X:diagnostic,응용 프로그램(붙여쓰기 포함),3
+firefox,A:directory,디렉터리,26
+firefox,A:directory,디렉토리,1
+firefox,A:message,메시지,178
+firefox,A:message,메세지,0
+firefox,A:application,애플리케이션,95
+firefox,A:application,어플리케이션,0
+firefox,A:repository,리포지터리,0
+firefox,A:repository,리포지토리,0
+firefox,A:repository,레포지토리,0
+firefox,A:repository,레포지터리,0
+firefox,A:contents,콘텐츠,144
+firefox,A:contents,컨텐츠,0
+firefox,A:contents,콘텐트,2
+firefox,A:contents,컨텐트,0
+firefox,A:shell,셸,1
+firefox,A:shell,쉘,0
+firefox,A:target,타깃,0
+firefox,A:target,타겟,2
+firefox,A:release,릴리스,0
+firefox,A:release,릴리즈,0
+firefox,A:architecture,아키텍처,0
+firefox,A:architecture,아키텍쳐,0
+firefox,A:column,칼럼,0
+firefox,A:column,컬럼,0
+firefox,A:body,보디,0
+firefox,A:body,바디,0
+firefox,A:thread,스레드,37
+firefox,A:thread,쓰레드,0
+firefox,A:redirect,리디렉트,0
+firefox,A:redirect,리다이렉트,1
+firefox,A:redirection,리디렉션,25
+firefox,A:redirection,리다이렉션,1
+firefox,A:cache,캐시,51
+firefox,A:cache,캐쉬,0
+firefox,A:dashboard,대시보드,6
+firefox,A:dashboard,대쉬보드,0
+firefox,A:setting,세팅,0
+firefox,A:setting,셋팅,0
+firefox,A:hash,해시,23
+firefox,A:hash,해쉬,2
+firefox,A:format,포맷,4
+firefox,A:format,포멧,0
+firefox,A:rendering,렌더링,5
+firefox,A:rendering,랜더링,3
+firefox,A:transaction,트랜잭션,1
+firefox,A:transaction,트랜젝션,0
+firefox,A:version,버전,116
+firefox,A:version,버젼,0
+firefox,A:method,메서드,5
+firefox,A:method,메소드,5
+firefox,A:license,라이선스,8
+firefox,A:license,라이센스,0
+firefox,A:access,액세스,23
+firefox,A:access,엑세스,0
+firefox,A:access,억세스,0
+firefox,A:manual,매뉴얼,0
+firefox,A:manual,메뉴얼,1
+firefox,A:business,비즈니스,0
+firefox,A:business,비지니스,0
+firefox,A:refactoring,리팩터링,0
+firefox,A:refactoring,리팩토링,0
+firefox,A:schedule,스케줄,0
+firefox,A:schedule,스케쥴,0
+firefox,A:header,헤더,77
+firefox,A:header,해더,2
+firefox,A:data,데이터,438
+firefox,A:data,데이타,0
+firefox,A:component,컴포넌트,1
+firefox,A:component,컴퍼넌트,0
+firefox,A:framework,프레임워크,2
+firefox,A:framework,프레임웍,0
+firefox,B:error,오류,221
+firefox,B:error,에러,0
+firefox,B:repository-word,저장소,72
+firefox,B:repository-word,리포지터리,0
+firefox,B:repository-word,리포지토리,0
+firefox,B:repository-word,레포지토리,0
+firefox,B:repository-word,레포지터리,0
+firefox,B:repository-word,레포,0
+firefox,B:default,기본값,38
+firefox,B:default,기본 값,0
+firefox,B:default,디폴트,0
+firefox,B:deploy,배포,4
+firefox,B:deploy,디플로이,0
+firefox,B:user,사용자,464
+firefox,B:user,유저,0
+firefox,B:parameter,매개변수,6
+firefox,B:parameter,매개 변수,8
+firefox,B:parameter,파라미터,9
+firefox,C:매개변수|매개 변수,매개변수,6
+firefox,C:매개변수|매개 변수,매개 변수,8
+firefox,C:기본값|기본 값,기본값,38
+firefox,C:기본값|기본 값,기본 값,0
+firefox,C:반환값|반환 값,반환값,0
+firefox,C:반환값|반환 값,반환 값,0
+firefox,C:오픈 소스|오픈소스,오픈 소스,0
+firefox,C:오픈 소스|오픈소스,오픈소스,0
+firefox,X:raw-substring(before exclusions),보디,1
+firefox,X:diagnostic,사용자 정의(붙여쓰기 포함),7
+firefox,X:diagnostic,앱,49
+firefox,X:diagnostic,응용 프로그램(붙여쓰기 포함),1
+firefox,X:diagnostic,캄보디아,1
+aosp,A:directory,디렉터리,2
+aosp,A:directory,디렉토리,0
+aosp,A:message,메시지,134
+aosp,A:message,메세지,0
+aosp,A:application,애플리케이션,62
+aosp,A:application,어플리케이션,0
+aosp,A:repository,리포지터리,0
+aosp,A:repository,리포지토리,0
+aosp,A:repository,레포지토리,0
+aosp,A:repository,레포지터리,0
+aosp,A:contents,콘텐츠,63
+aosp,A:contents,컨텐츠,0
+aosp,A:contents,콘텐트,0
+aosp,A:contents,컨텐트,0
+aosp,A:shell,셸,0
+aosp,A:shell,쉘,0
+aosp,A:target,타깃,0
+aosp,A:target,타겟,0
+aosp,A:release,릴리스,0
+aosp,A:release,릴리즈,0
+aosp,A:architecture,아키텍처,0
+aosp,A:architecture,아키텍쳐,0
+aosp,A:column,칼럼,0
+aosp,A:column,컬럼,0
+aosp,A:body,보디,0
+aosp,A:body,바디,0
+aosp,A:thread,스레드,5
+aosp,A:thread,쓰레드,0
+aosp,A:redirect,리디렉트,0
+aosp,A:redirect,리다이렉트,0
+aosp,A:redirection,리디렉션,3
+aosp,A:redirection,리다이렉션,0
+aosp,A:cache,캐시,14
+aosp,A:cache,캐쉬,0
+aosp,A:dashboard,대시보드,3
+aosp,A:dashboard,대쉬보드,0
+aosp,A:setting,세팅,0
+aosp,A:setting,셋팅,0
+aosp,A:hash,해시,0
+aosp,A:hash,해쉬,0
+aosp,A:format,포맷,25
+aosp,A:format,포멧,0
+aosp,A:rendering,렌더링,0
+aosp,A:rendering,랜더링,0
+aosp,A:transaction,트랜잭션,2
+aosp,A:transaction,트랜젝션,0
+aosp,A:version,버전,26
+aosp,A:version,버젼,0
+aosp,A:method,메서드,0
+aosp,A:method,메소드,1
+aosp,A:license,라이선스,5
+aosp,A:license,라이센스,0
+aosp,A:access,액세스,210
+aosp,A:access,엑세스,0
+aosp,A:access,억세스,0
+aosp,A:manual,매뉴얼,0
+aosp,A:manual,메뉴얼,0
+aosp,A:business,비즈니스,0
+aosp,A:business,비지니스,0
+aosp,A:refactoring,리팩터링,0
+aosp,A:refactoring,리팩토링,0
+aosp,A:schedule,스케줄,0
+aosp,A:schedule,스케쥴,0
+aosp,A:header,헤더,0
+aosp,A:header,해더,0
+aosp,A:data,데이터,364
+aosp,A:data,데이타,0
+aosp,A:component,컴포넌트,0
+aosp,A:component,컴퍼넌트,0
+aosp,A:framework,프레임워크,0
+aosp,A:framework,프레임웍,0
+aosp,B:error,오류,21
+aosp,B:error,에러,0
+aosp,B:repository-word,저장소,34
+aosp,B:repository-word,리포지터리,0
+aosp,B:repository-word,리포지토리,0
+aosp,B:repository-word,레포지토리,0
+aosp,B:repository-word,레포지터리,0
+aosp,B:repository-word,레포,0
+aosp,B:default,기본값,28
+aosp,B:default,기본 값,0
+aosp,B:default,디폴트,0
+aosp,B:deploy,배포,0
+aosp,B:deploy,디플로이,0
+aosp,B:user,사용자,193
+aosp,B:user,유저,0
+aosp,B:parameter,매개변수,1
+aosp,B:parameter,매개 변수,0
+aosp,B:parameter,파라미터,0
+aosp,C:매개변수|매개 변수,매개변수,1
+aosp,C:매개변수|매개 변수,매개 변수,0
+aosp,C:기본값|기본 값,기본값,28
+aosp,C:기본값|기본 값,기본 값,0
+aosp,C:반환값|반환 값,반환값,0
+aosp,C:반환값|반환 값,반환 값,0
+aosp,C:오픈 소스|오픈소스,오픈 소스,0
+aosp,C:오픈 소스|오픈소스,오픈소스,0
+aosp,X:diagnostic,앱,1266
+chromium,A:directory,디렉터리,14
+chromium,A:directory,디렉토리,0
+chromium,A:message,메시지,59
+chromium,A:message,메세지,0
+chromium,A:application,애플리케이션,62
+chromium,A:application,어플리케이션,0
+chromium,A:repository,리포지터리,0
+chromium,A:repository,리포지토리,0
+chromium,A:repository,레포지토리,0
+chromium,A:repository,레포지터리,0
+chromium,A:contents,콘텐츠,219
+chromium,A:contents,컨텐츠,0
+chromium,A:contents,콘텐트,0
+chromium,A:contents,컨텐트,0
+chromium,A:shell,셸,0
+chromium,A:shell,쉘,0
+chromium,A:target,타깃,0
+chromium,A:target,타겟,1
+chromium,A:release,릴리스,0
+chromium,A:release,릴리즈,0
+chromium,A:architecture,아키텍처,1
+chromium,A:architecture,아키텍쳐,0
+chromium,A:column,칼럼,0
+chromium,A:column,컬럼,0
+chromium,A:body,보디,0
+chromium,A:body,바디,0
+chromium,A:thread,스레드,0
+chromium,A:thread,쓰레드,0
+chromium,A:redirect,리디렉트,0
+chromium,A:redirect,리다이렉트,0
+chromium,A:redirection,리디렉션,17
+chromium,A:redirection,리다이렉션,0
+chromium,A:cache,캐시,25
+chromium,A:cache,캐쉬,0
+chromium,A:dashboard,대시보드,3
+chromium,A:dashboard,대쉬보드,0
+chromium,A:setting,세팅,0
+chromium,A:setting,셋팅,0
+chromium,A:hash,해시,4
+chromium,A:hash,해쉬,0
+chromium,A:format,포맷,1
+chromium,A:format,포멧,0
+chromium,A:rendering,렌더링,5
+chromium,A:rendering,랜더링,0
+chromium,A:transaction,트랜잭션,1
+chromium,A:transaction,트랜젝션,0
+chromium,A:version,버전,74
+chromium,A:version,버젼,0
+chromium,A:method,메서드,0
+chromium,A:method,메소드,0
+chromium,A:license,라이선스,6
+chromium,A:license,라이센스,0
+chromium,A:access,액세스,342
+chromium,A:access,엑세스,0
+chromium,A:access,억세스,0
+chromium,A:manual,매뉴얼,0
+chromium,A:manual,메뉴얼,0
+chromium,A:business,비즈니스,4
+chromium,A:business,비지니스,0
+chromium,A:refactoring,리팩터링,0
+chromium,A:refactoring,리팩토링,0
+chromium,A:schedule,스케줄,0
+chromium,A:schedule,스케쥴,0
+chromium,A:header,헤더,5
+chromium,A:header,해더,0
+chromium,A:data,데이터,449
+chromium,A:data,데이타,0
+chromium,A:component,컴포넌트,1
+chromium,A:component,컴퍼넌트,0
+chromium,A:framework,프레임워크,0
+chromium,A:framework,프레임웍,0
+chromium,B:error,오류,125
+chromium,B:error,에러,0
+chromium,B:repository-word,저장소,9
+chromium,B:repository-word,리포지터리,0
+chromium,B:repository-word,리포지토리,0
+chromium,B:repository-word,레포지토리,0
+chromium,B:repository-word,레포지터리,0
+chromium,B:repository-word,레포,0
+chromium,B:default,기본값,34
+chromium,B:default,기본 값,0
+chromium,B:default,디폴트,0
+chromium,B:deploy,배포,1
+chromium,B:deploy,디플로이,0
+chromium,B:user,사용자,404
+chromium,B:user,유저,0
+chromium,B:parameter,매개변수,4
+chromium,B:parameter,매개 변수,0
+chromium,B:parameter,파라미터,0
+chromium,C:매개변수|매개 변수,매개변수,4
+chromium,C:매개변수|매개 변수,매개 변수,0
+chromium,C:기본값|기본 값,기본값,34
+chromium,C:기본값|기본 값,기본 값,0
+chromium,C:반환값|반환 값,반환값,0
+chromium,C:반환값|반환 값,반환 값,0
+chromium,C:오픈 소스|오픈소스,오픈 소스,0
+chromium,C:오픈 소스|오픈소스,오픈소스,2
+chromium,X:diagnostic,앱,569
+libreoffice,A:directory,디렉터리,66
+libreoffice,A:directory,디렉토리,91
+libreoffice,A:message,메시지,102
+libreoffice,A:message,메세지,11
+libreoffice,A:application,애플리케이션,3
+libreoffice,A:application,어플리케이션,0
+libreoffice,A:repository,리포지터리,0
+libreoffice,A:repository,리포지토리,0
+libreoffice,A:repository,레포지토리,0
+libreoffice,A:repository,레포지터리,0
+libreoffice,A:contents,콘텐츠,4
+libreoffice,A:contents,컨텐츠,0
+libreoffice,A:contents,콘텐트,1
+libreoffice,A:contents,컨텐트,4
+libreoffice,A:shell,셸,3
+libreoffice,A:shell,쉘,4
+libreoffice,A:target,타깃,0
+libreoffice,A:target,타겟,18
+libreoffice,A:release,릴리스,1
+libreoffice,A:release,릴리즈,0
+libreoffice,A:architecture,아키텍처,1
+libreoffice,A:architecture,아키텍쳐,0
+libreoffice,A:column,칼럼,0
+libreoffice,A:column,컬럼,4
+libreoffice,A:body,보디,0
+libreoffice,A:body,바디,0
+libreoffice,A:thread,스레드,3
+libreoffice,A:thread,쓰레드,0
+libreoffice,A:redirect,리디렉트,0
+libreoffice,A:redirect,리다이렉트,0
+libreoffice,A:redirection,리디렉션,0
+libreoffice,A:redirection,리다이렉션,0
+libreoffice,A:cache,캐시,5
+libreoffice,A:cache,캐쉬,0
+libreoffice,A:dashboard,대시보드,0
+libreoffice,A:dashboard,대쉬보드,0
+libreoffice,A:setting,세팅,0
+libreoffice,A:setting,셋팅,0
+libreoffice,A:hash,해시,2
+libreoffice,A:hash,해쉬,0
+libreoffice,A:format,포맷,7
+libreoffice,A:format,포멧,1
+libreoffice,A:rendering,렌더링,3
+libreoffice,A:rendering,랜더링,0
+libreoffice,A:transaction,트랜잭션,0
+libreoffice,A:transaction,트랜젝션,0
+libreoffice,A:version,버전,329
+libreoffice,A:version,버젼,0
+libreoffice,A:method,메서드,15
+libreoffice,A:method,메소드,13
+libreoffice,A:license,라이선스,10
+libreoffice,A:license,라이센스,0
+libreoffice,A:access,액세스,125
+libreoffice,A:access,엑세스,0
+libreoffice,A:access,억세스,0
+libreoffice,A:manual,매뉴얼,1
+libreoffice,A:manual,메뉴얼,0
+libreoffice,A:business,비즈니스,2
+libreoffice,A:business,비지니스,1
+libreoffice,A:refactoring,리팩터링,0
+libreoffice,A:refactoring,리팩토링,0
+libreoffice,A:schedule,스케줄,0
+libreoffice,A:schedule,스케쥴,0
+libreoffice,A:header,헤더,3
+libreoffice,A:header,해더,0
+libreoffice,A:data,데이터,3177
+libreoffice,A:data,데이타,0
+libreoffice,A:component,컴포넌트,5
+libreoffice,A:component,컴퍼넌트,0
+libreoffice,A:framework,프레임워크,1
+libreoffice,A:framework,프레임웍,0
+libreoffice,B:error,오류,467
+libreoffice,B:error,에러,2
+libreoffice,B:repository-word,저장소,10
+libreoffice,B:repository-word,리포지터리,0
+libreoffice,B:repository-word,리포지토리,0
+libreoffice,B:repository-word,레포지토리,0
+libreoffice,B:repository-word,레포지터리,0
+libreoffice,B:repository-word,레포,0
+libreoffice,B:default,기본값,196
+libreoffice,B:default,기본 값,24
+libreoffice,B:default,디폴트,1
+libreoffice,B:deploy,배포,29
+libreoffice,B:deploy,디플로이,0
+libreoffice,B:user,사용자,1107
+libreoffice,B:user,유저,0
+libreoffice,B:parameter,매개변수,0
+libreoffice,B:parameter,매개 변수,283
+libreoffice,B:parameter,파라미터,3
+libreoffice,C:매개변수|매개 변수,매개변수,0
+libreoffice,C:매개변수|매개 변수,매개 변수,283
+libreoffice,C:기본값|기본 값,기본값,196
+libreoffice,C:기본값|기본 값,기본 값,24
+libreoffice,C:반환값|반환 값,반환값,5
+libreoffice,C:반환값|반환 값,반환 값,60
+libreoffice,C:오픈 소스|오픈소스,오픈 소스,1
+libreoffice,C:오픈 소스|오픈소스,오픈소스,5
+libreoffice,X:diagnostic,배포판,5
+libreoffice,X:diagnostic,사용자 정의(붙여쓰기 포함),407
+libreoffice,X:diagnostic,응용 프로그램(붙여쓰기 포함),119
+rustbook,A:directory,디렉터리,104
+rustbook,A:directory,디렉토리,0
+rustbook,A:message,메시지,171
+rustbook,A:message,메세지,0
+rustbook,A:application,애플리케이션,12
+rustbook,A:application,어플리케이션,0
+rustbook,A:repository,리포지터리,0
+rustbook,A:repository,리포지토리,0
+rustbook,A:repository,레포지토리,0
+rustbook,A:repository,레포지터리,0
+rustbook,A:contents,콘텐츠,11
+rustbook,A:contents,컨텐츠,0
+rustbook,A:contents,콘텐트,0
+rustbook,A:contents,컨텐트,0
+rustbook,A:shell,셸,4
+rustbook,A:shell,쉘,0
+rustbook,A:target,타깃,0
+rustbook,A:target,타겟,4
+rustbook,A:release,릴리스,0
+rustbook,A:release,릴리즈,62
+rustbook,A:architecture,아키텍처,4
+rustbook,A:architecture,아키텍쳐,0
+rustbook,A:column,칼럼,0
+rustbook,A:column,컬럼,0
+rustbook,A:body,보디,0
+rustbook,A:body,바디,0
+rustbook,A:thread,스레드,396
+rustbook,A:thread,쓰레드,0
+rustbook,A:redirect,리디렉트,0
+rustbook,A:redirect,리다이렉트,0
+rustbook,A:redirection,리디렉션,7
+rustbook,A:redirection,리다이렉션,0
+rustbook,A:cache,캐시,1
+rustbook,A:cache,캐쉬,0
+rustbook,A:dashboard,대시보드,0
+rustbook,A:dashboard,대쉬보드,0
+rustbook,A:setting,세팅,0
+rustbook,A:setting,셋팅,0
+rustbook,A:hash,해시,66
+rustbook,A:hash,해쉬,0
+rustbook,A:format,포맷,20
+rustbook,A:format,포멧,0
+rustbook,A:rendering,렌더링,8
+rustbook,A:rendering,랜더링,0
+rustbook,A:transaction,트랜잭션,0
+rustbook,A:transaction,트랜젝션,0
+rustbook,A:version,버전,112
+rustbook,A:version,버젼,0
+rustbook,A:method,메서드,626
+rustbook,A:method,메소드,0
+rustbook,A:license,라이선스,12
+rustbook,A:license,라이센스,0
+rustbook,A:access,액세스,1
+rustbook,A:access,엑세스,0
+rustbook,A:access,억세스,0
+rustbook,A:manual,매뉴얼,0
+rustbook,A:manual,메뉴얼,0
+rustbook,A:business,비즈니스,1
+rustbook,A:business,비지니스,0
+rustbook,A:refactoring,리팩터링,23
+rustbook,A:refactoring,리팩토링,0
+rustbook,A:schedule,스케줄,2
+rustbook,A:schedule,스케쥴,0
+rustbook,A:header,헤더,7
+rustbook,A:header,해더,0
+rustbook,A:data,데이터,377
+rustbook,A:data,데이타,0
+rustbook,A:component,컴포넌트,9
+rustbook,A:component,컴퍼넌트,0
+rustbook,A:framework,프레임워크,4
+rustbook,A:framework,프레임웍,0
+rustbook,B:error,오류,6
+rustbook,B:error,에러,478
+rustbook,B:repository-word,저장소,6
+rustbook,B:repository-word,리포지터리,0
+rustbook,B:repository-word,리포지토리,0
+rustbook,B:repository-word,레포지토리,0
+rustbook,B:repository-word,레포지터리,0
+rustbook,B:repository-word,레포,0
+rustbook,B:default,기본값,16
+rustbook,B:default,기본 값,0
+rustbook,B:default,디폴트,0
+rustbook,B:deploy,배포,47
+rustbook,B:deploy,디플로이,0
+rustbook,B:user,사용자,154
+rustbook,B:user,유저,0
+rustbook,B:parameter,매개변수,312
+rustbook,B:parameter,매개 변수,0
+rustbook,B:parameter,파라미터,0
+rustbook,C:매개변수|매개 변수,매개변수,312
+rustbook,C:매개변수|매개 변수,매개 변수,0
+rustbook,C:기본값|기본 값,기본값,16
+rustbook,C:기본값|기본 값,기본 값,0
+rustbook,C:반환값|반환 값,반환값,0
+rustbook,C:반환값|반환 값,반환 값,53
+rustbook,C:오픈 소스|오픈소스,오픈 소스,3
+rustbook,C:오픈 소스|오픈소스,오픈소스,0
+rustbook,X:diagnostic,배포판,1
+rustbook,X:diagnostic,사용자 정의(붙여쓰기 포함),1
+rustbook,X:diagnostic,앱,3
+jsinfo,A:directory,디렉터리,1
+jsinfo,A:directory,디렉토리,0
+jsinfo,A:message,메시지,136
+jsinfo,A:message,메세지,0
+jsinfo,A:application,애플리케이션,23
+jsinfo,A:application,어플리케이션,0
+jsinfo,A:repository,리포지터리,0
+jsinfo,A:repository,리포지토리,0
+jsinfo,A:repository,레포지토리,0
+jsinfo,A:repository,레포지터리,0
+jsinfo,A:contents,콘텐츠,44
+jsinfo,A:contents,컨텐츠,0
+jsinfo,A:contents,콘텐트,0
+jsinfo,A:contents,컨텐트,0
+jsinfo,A:shell,셸,0
+jsinfo,A:shell,쉘,0
+jsinfo,A:target,타깃,16
+jsinfo,A:target,타겟,0
+jsinfo,A:release,릴리스,0
+jsinfo,A:release,릴리즈,0
+jsinfo,A:architecture,아키텍처,9
+jsinfo,A:architecture,아키텍쳐,0
+jsinfo,A:column,칼럼,0
+jsinfo,A:column,컬럼,0
+jsinfo,A:body,보디,0
+jsinfo,A:body,바디,1
+jsinfo,A:thread,스레드,0
+jsinfo,A:thread,쓰레드,0
+jsinfo,A:redirect,리디렉트,0
+jsinfo,A:redirect,리다이렉트,0
+jsinfo,A:redirection,리디렉션,0
+jsinfo,A:redirection,리다이렉션,0
+jsinfo,A:cache,캐시,3
+jsinfo,A:cache,캐쉬,0
+jsinfo,A:dashboard,대시보드,0
+jsinfo,A:dashboard,대쉬보드,0
+jsinfo,A:setting,세팅,12
+jsinfo,A:setting,셋팅,0
+jsinfo,A:hash,해시,1
+jsinfo,A:hash,해쉬,0
+jsinfo,A:format,포맷,16
+jsinfo,A:format,포멧,0
+jsinfo,A:rendering,렌더링,10
+jsinfo,A:rendering,랜더링,0
+jsinfo,A:transaction,트랜잭션,0
+jsinfo,A:transaction,트랜젝션,0
+jsinfo,A:version,버전,19
+jsinfo,A:version,버젼,0
+jsinfo,A:method,메서드,853
+jsinfo,A:method,메소드,0
+jsinfo,A:license,라이선스,0
+jsinfo,A:license,라이센스,0
+jsinfo,A:access,액세스,0
+jsinfo,A:access,엑세스,0
+jsinfo,A:access,억세스,0
+jsinfo,A:manual,매뉴얼,7
+jsinfo,A:manual,메뉴얼,0
+jsinfo,A:business,비즈니스,0
+jsinfo,A:business,비지니스,0
+jsinfo,A:refactoring,리팩터링,0
+jsinfo,A:refactoring,리팩토링,5
+jsinfo,A:schedule,스케줄,34
+jsinfo,A:schedule,스케쥴,0
+jsinfo,A:header,헤더,119
+jsinfo,A:header,해더,0
+jsinfo,A:data,데이터,228
+jsinfo,A:data,데이타,0
+jsinfo,A:component,컴포넌트,28
+jsinfo,A:component,컴퍼넌트,0
+jsinfo,A:framework,프레임워크,7
+jsinfo,A:framework,프레임웍,0
+jsinfo,B:error,오류,14
+jsinfo,B:error,에러,478
+jsinfo,B:repository-word,저장소,3
+jsinfo,B:repository-word,리포지터리,0
+jsinfo,B:repository-word,리포지토리,0
+jsinfo,B:repository-word,레포지토리,0
+jsinfo,B:repository-word,레포지터리,0
+jsinfo,B:repository-word,레포,0
+jsinfo,B:default,기본값,40
+jsinfo,B:default,기본 값,0
+jsinfo,B:default,디폴트,2
+jsinfo,B:deploy,배포,2
+jsinfo,B:deploy,디플로이,0
+jsinfo,B:user,사용자,258
+jsinfo,B:user,유저,3
+jsinfo,B:parameter,매개변수,99
+jsinfo,B:parameter,매개 변수,1
+jsinfo,B:parameter,파라미터,0
+jsinfo,C:매개변수|매개 변수,매개변수,99
+jsinfo,C:매개변수|매개 변수,매개 변수,1
+jsinfo,C:기본값|기본 값,기본값,40
+jsinfo,C:기본값|기본 값,기본 값,0
+jsinfo,C:반환값|반환 값,반환값,7
+jsinfo,C:반환값|반환 값,반환 값,40
+jsinfo,C:오픈 소스|오픈소스,오픈 소스,0
+jsinfo,C:오픈 소스|오픈소스,오픈소스,1
+jsinfo,X:diagnostic,사용자 정의(붙여쓰기 포함),3
+jsinfo,X:diagnostic,앱,8
+jsinfo,X:diagnostic,응용 프로그램(붙여쓰기 포함),1
+progit,A:directory,디렉터리,1
+progit,A:directory,디렉토리,383
+progit,A:message,메시지,196
+progit,A:message,메세지,0
+progit,A:application,애플리케이션,13
+progit,A:application,어플리케이션,0
+progit,A:repository,리포지터리,0
+progit,A:repository,리포지토리,0
+progit,A:repository,레포지토리,0
+progit,A:repository,레포지터리,0
+progit,A:contents,콘텐츠,0
+progit,A:contents,컨텐츠,1
+progit,A:contents,콘텐트,0
+progit,A:contents,컨텐트,2
+progit,A:shell,셸,11
+progit,A:shell,쉘,18
+progit,A:target,타깃,0
+progit,A:target,타겟,0
+progit,A:release,릴리스,0
+progit,A:release,릴리즈,14
+progit,A:architecture,아키텍처,0
+progit,A:architecture,아키텍쳐,0
+progit,A:column,칼럼,0
+progit,A:column,컬럼,5
+progit,A:body,보디,0
+progit,A:body,바디,2
+progit,A:thread,스레드,5
+progit,A:thread,쓰레드,0
+progit,A:redirect,리디렉트,0
+progit,A:redirect,리다이렉트,1
+progit,A:redirection,리디렉션,0
+progit,A:redirection,리다이렉션,1
+progit,A:cache,캐시,4
+progit,A:cache,캐쉬,0
+progit,A:dashboard,대시보드,3
+progit,A:dashboard,대쉬보드,0
+progit,A:setting,세팅,0
+progit,A:setting,셋팅,0
+progit,A:hash,해시,58
+progit,A:hash,해쉬,0
+progit,A:format,포맷,18
+progit,A:format,포멧,0
+progit,A:rendering,렌더링,8
+progit,A:rendering,랜더링,0
+progit,A:transaction,트랜잭션,0
+progit,A:transaction,트랜젝션,0
+progit,A:version,버전,169
+progit,A:version,버젼,0
+progit,A:method,메서드,1
+progit,A:method,메소드,20
+progit,A:license,라이선스,0
+progit,A:license,라이센스,1
+progit,A:access,액세스,0
+progit,A:access,엑세스,3
+progit,A:access,억세스,0
+progit,A:manual,매뉴얼,0
+progit,A:manual,메뉴얼,3
+progit,A:business,비즈니스,1
+progit,A:business,비지니스,0
+progit,A:refactoring,리팩터링,0
+progit,A:refactoring,리팩토링,2
+progit,A:schedule,스케줄,0
+progit,A:schedule,스케쥴,0
+progit,A:header,헤더,14
+progit,A:header,해더,0
+progit,A:data,데이터,248
+progit,A:data,데이타,0
+progit,A:component,컴포넌트,0
+progit,A:component,컴퍼넌트,0
+progit,A:framework,프레임워크,4
+progit,A:framework,프레임웍,0
+progit,B:error,오류,11
+progit,B:error,에러,17
+progit,B:repository-word,저장소,800
+progit,B:repository-word,리포지터리,0
+progit,B:repository-word,리포지토리,0
+progit,B:repository-word,레포지토리,0
+progit,B:repository-word,레포지터리,0
+progit,B:repository-word,레포,0
+progit,B:default,기본값,2
+progit,B:default,기본 값,9
+progit,B:default,디폴트,0
+progit,B:deploy,배포,29
+progit,B:deploy,디플로이,0
+progit,B:user,사용자,206
+progit,B:user,유저,5
+progit,B:parameter,매개변수,0
+progit,B:parameter,매개 변수,0
+progit,B:parameter,파라미터,9
+progit,C:매개변수|매개 변수,매개변수,0
+progit,C:매개변수|매개 변수,매개 변수,0
+progit,C:기본값|기본 값,기본값,2
+progit,C:기본값|기본 값,기본 값,9
+progit,C:반환값|반환 값,반환값,0
+progit,C:반환값|반환 값,반환 값,0
+progit,C:오픈 소스|오픈소스,오픈 소스,6
+progit,C:오픈 소스|오픈소스,오픈소스,17
+progit,X:diagnostic,배포판,8
+progit,X:diagnostic,앱,1
+tskr,A:directory,디렉터리,74
+tskr,A:directory,디렉토리,22
+tskr,A:message,메시지,11
+tskr,A:message,메세지,2
+tskr,A:application,애플리케이션,17
+tskr,A:application,어플리케이션,4
+tskr,A:repository,리포지터리,0
+tskr,A:repository,리포지토리,0
+tskr,A:repository,레포지토리,0
+tskr,A:repository,레포지터리,0
+tskr,A:contents,콘텐츠,0
+tskr,A:contents,컨텐츠,2
+tskr,A:contents,콘텐트,0
+tskr,A:contents,컨텐트,0
+tskr,A:shell,셸,0
+tskr,A:shell,쉘,0
+tskr,A:target,타깃,0
+tskr,A:target,타겟,2
+tskr,A:release,릴리스,3
+tskr,A:release,릴리즈,2
+tskr,A:architecture,아키텍처,0
+tskr,A:architecture,아키텍쳐,0
+tskr,A:column,칼럼,0
+tskr,A:column,컬럼,0
+tskr,A:body,보디,0
+tskr,A:body,바디,0
+tskr,A:thread,스레드,0
+tskr,A:thread,쓰레드,0
+tskr,A:redirect,리디렉트,0
+tskr,A:redirect,리다이렉트,1
+tskr,A:redirection,리디렉션,0
+tskr,A:redirection,리다이렉션,1
+tskr,A:cache,캐시,1
+tskr,A:cache,캐쉬,0
+tskr,A:dashboard,대시보드,0
+tskr,A:dashboard,대쉬보드,0
+tskr,A:setting,세팅,1
+tskr,A:setting,셋팅,0
+tskr,A:hash,해시,1
+tskr,A:hash,해쉬,0
+tskr,A:format,포맷,4
+tskr,A:format,포멧,0
+tskr,A:rendering,렌더링,0
+tskr,A:rendering,랜더링,0
+tskr,A:transaction,트랜잭션,0
+tskr,A:transaction,트랜젝션,0
+tskr,A:version,버전,48
+tskr,A:version,버젼,0
+tskr,A:method,메서드,101
+tskr,A:method,메소드,1
+tskr,A:license,라이선스,0
+tskr,A:license,라이센스,0
+tskr,A:access,액세스,1
+tskr,A:access,엑세스,0
+tskr,A:access,억세스,0
+tskr,A:manual,매뉴얼,0
+tskr,A:manual,메뉴얼,0
+tskr,A:business,비즈니스,0
+tskr,A:business,비지니스,0
+tskr,A:refactoring,리팩터링,2
+tskr,A:refactoring,리팩토링,3
+tskr,A:schedule,스케줄,0
+tskr,A:schedule,스케쥴,0
+tskr,A:header,헤더,1
+tskr,A:header,해더,0
+tskr,A:data,데이터,35
+tskr,A:data,데이타,0
+tskr,A:component,컴포넌트,39
+tskr,A:component,컴퍼넌트,0
+tskr,A:framework,프레임워크,6
+tskr,A:framework,프레임웍,0
+tskr,B:error,오류,145
+tskr,B:error,에러,21
+tskr,B:repository-word,저장소,5
+tskr,B:repository-word,리포지터리,0
+tskr,B:repository-word,리포지토리,0
+tskr,B:repository-word,레포지토리,0
+tskr,B:repository-word,레포지터리,0
+tskr,B:repository-word,레포,0
+tskr,B:default,기본값,14
+tskr,B:default,기본 값,7
+tskr,B:default,디폴트,4
+tskr,B:deploy,배포,14
+tskr,B:deploy,디플로이,0
+tskr,B:user,사용자,62
+tskr,B:user,유저,5
+tskr,B:parameter,매개변수,214
+tskr,B:parameter,매개 변수,22
+tskr,B:parameter,파라미터,6
+tskr,C:매개변수|매개 변수,매개변수,214
+tskr,C:매개변수|매개 변수,매개 변수,22
+tskr,C:기본값|기본 값,기본값,14
+tskr,C:기본값|기본 값,기본 값,7
+tskr,C:반환값|반환 값,반환값,2
+tskr,C:반환값|반환 값,반환 값,8
+tskr,C:오픈 소스|오픈소스,오픈 소스,0
+tskr,C:오픈 소스|오픈소스,오픈소스,0
+tskr,X:diagnostic,사용자 정의(붙여쓰기 포함),3
+tskr,X:diagnostic,앱,7

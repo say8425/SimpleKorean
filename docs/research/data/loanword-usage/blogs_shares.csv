@@ -1,0 +1,947 @@
+corpus,set,first_form,first_count,set_total,first_share
+toss.tech,A:directory,디렉터리,0,4,0.0000
+toss.tech,A:message,메시지,17,17,1.0000
+toss.tech,A:application,애플리케이션,5,5,1.0000
+toss.tech,A:repository,리포지터리,0,4,0.0000
+toss.tech,A:contents,콘텐츠,15,15,1.0000
+toss.tech,A:shell,셸,0,0,
+toss.tech,A:target,타깃,0,3,0.0000
+toss.tech,A:release,릴리스,2,21,0.0952
+toss.tech,A:architecture,아키텍처,5,5,1.0000
+toss.tech,A:column,칼럼,0,10,0.0000
+toss.tech,A:body,보디,0,0,
+toss.tech,A:thread,스레드,29,29,1.0000
+toss.tech,A:redirect,리디렉트,0,0,
+toss.tech,A:redirection,리디렉션,0,0,
+toss.tech,A:cache,캐시,20,20,1.0000
+toss.tech,A:dashboard,대시보드,14,14,1.0000
+toss.tech,A:setting,세팅,8,8,1.0000
+toss.tech,A:hash,해시,12,12,1.0000
+toss.tech,A:format,포맷,0,0,
+toss.tech,A:rendering,렌더링,8,8,1.0000
+toss.tech,A:transaction,트랜잭션,2,2,1.0000
+toss.tech,A:version,버전,109,109,1.0000
+toss.tech,A:method,메서드,3,3,1.0000
+toss.tech,A:license,라이선스,0,0,
+toss.tech,A:access,액세스,0,0,
+toss.tech,A:manual,매뉴얼,3,3,1.0000
+toss.tech,A:business,비즈니스,14,14,1.0000
+toss.tech,A:refactoring,리팩터링,0,1,0.0000
+toss.tech,A:schedule,스케줄,11,11,1.0000
+toss.tech,A:header,헤더,1,1,1.0000
+toss.tech,A:data,데이터,151,151,1.0000
+toss.tech,A:component,컴포넌트,16,16,1.0000
+toss.tech,A:framework,프레임워크,11,11,1.0000
+toss.tech,B:error,오류,25,53,0.4717
+toss.tech,B:repository-word,저장소,15,43,0.3488
+toss.tech,B:default,기본값+기본 값,6,6,1.0000
+toss.tech,B:deploy,배포,61,61,1.0000
+toss.tech,B:user,사용자,194,242,0.8017
+toss.tech,B:parameter,매개변수+매개 변수,0,3,0.0000
+toss.tech,C:매개변수 spacing,매개변수,0,0,
+toss.tech,C:기본값 spacing,기본값,6,6,1.0000
+toss.tech,C:반환값 spacing,반환값,1,1,1.0000
+toss.tech,C:오픈 소스 spacing,오픈 소스,1,11,0.0909
+tech.kakao.com,A:directory,디렉터리,5,5,1.0000
+tech.kakao.com,A:message,메시지,70,71,0.9859
+tech.kakao.com,A:application,애플리케이션,16,19,0.8421
+tech.kakao.com,A:repository,리포지터리,0,2,0.0000
+tech.kakao.com,A:contents,콘텐츠,28,28,1.0000
+tech.kakao.com,A:shell,셸,0,0,
+tech.kakao.com,A:target,타깃,8,12,0.6667
+tech.kakao.com,A:release,릴리스,12,12,1.0000
+tech.kakao.com,A:architecture,아키텍처,40,41,0.9756
+tech.kakao.com,A:column,칼럼,0,11,0.0000
+tech.kakao.com,A:body,보디,0,0,
+tech.kakao.com,A:thread,스레드,16,17,0.9412
+tech.kakao.com,A:redirect,리디렉트,0,1,0.0000
+tech.kakao.com,A:redirection,리디렉션,0,0,
+tech.kakao.com,A:cache,캐시,19,19,1.0000
+tech.kakao.com,A:dashboard,대시보드,6,6,1.0000
+tech.kakao.com,A:setting,세팅,14,16,0.8750
+tech.kakao.com,A:hash,해시,1,1,1.0000
+tech.kakao.com,A:format,포맷,9,9,1.0000
+tech.kakao.com,A:rendering,렌더링,2,2,1.0000
+tech.kakao.com,A:transaction,트랜잭션,54,54,1.0000
+tech.kakao.com,A:version,버전,52,52,1.0000
+tech.kakao.com,A:method,메서드,4,5,0.8000
+tech.kakao.com,A:license,라이선스,2,2,1.0000
+tech.kakao.com,A:access,액세스,0,0,
+tech.kakao.com,A:manual,매뉴얼,0,0,
+tech.kakao.com,A:business,비즈니스,24,24,1.0000
+tech.kakao.com,A:refactoring,리팩터링,12,12,1.0000
+tech.kakao.com,A:schedule,스케줄,11,11,1.0000
+tech.kakao.com,A:header,헤더,2,2,1.0000
+tech.kakao.com,A:data,데이터,623,623,1.0000
+tech.kakao.com,A:component,컴포넌트,16,16,1.0000
+tech.kakao.com,A:framework,프레임워크,26,26,1.0000
+tech.kakao.com,B:error,오류,48,66,0.7273
+tech.kakao.com,B:repository-word,저장소,17,20,0.8500
+tech.kakao.com,B:default,기본값+기본 값,9,9,1.0000
+tech.kakao.com,B:deploy,배포,100,100,1.0000
+tech.kakao.com,B:user,사용자,268,315,0.8508
+tech.kakao.com,B:parameter,매개변수+매개 변수,5,33,0.1515
+tech.kakao.com,C:매개변수 spacing,매개변수,5,5,1.0000
+tech.kakao.com,C:기본값 spacing,기본값,9,9,1.0000
+tech.kakao.com,C:반환값 spacing,반환값,3,3,1.0000
+tech.kakao.com,C:오픈 소스 spacing,오픈 소스,1,37,0.0270
+tech.kakaopay.com,A:directory,디렉터리,5,9,0.5556
+tech.kakaopay.com,A:message,메시지,26,26,1.0000
+tech.kakaopay.com,A:application,애플리케이션,100,100,1.0000
+tech.kakaopay.com,A:repository,리포지터리,0,17,0.0000
+tech.kakaopay.com,A:contents,콘텐츠,13,13,1.0000
+tech.kakaopay.com,A:shell,셸,0,1,0.0000
+tech.kakaopay.com,A:target,타깃,0,0,
+tech.kakaopay.com,A:release,릴리스,0,7,0.0000
+tech.kakaopay.com,A:architecture,아키텍처,117,117,1.0000
+tech.kakaopay.com,A:column,칼럼,0,45,0.0000
+tech.kakaopay.com,A:body,보디,0,0,
+tech.kakaopay.com,A:thread,스레드,50,50,1.0000
+tech.kakaopay.com,A:redirect,리디렉트,0,1,0.0000
+tech.kakaopay.com,A:redirection,리디렉션,0,0,
+tech.kakaopay.com,A:cache,캐시,60,60,1.0000
+tech.kakaopay.com,A:dashboard,대시보드,30,30,1.0000
+tech.kakaopay.com,A:setting,세팅,8,8,1.0000
+tech.kakaopay.com,A:hash,해시,1,1,1.0000
+tech.kakaopay.com,A:format,포맷,9,9,1.0000
+tech.kakaopay.com,A:rendering,렌더링,5,5,1.0000
+tech.kakaopay.com,A:transaction,트랜잭션,25,27,0.9259
+tech.kakaopay.com,A:version,버전,73,73,1.0000
+tech.kakaopay.com,A:method,메서드,86,86,1.0000
+tech.kakaopay.com,A:license,라이선스,1,2,0.5000
+tech.kakaopay.com,A:access,액세스,1,1,1.0000
+tech.kakaopay.com,A:manual,매뉴얼,4,4,1.0000
+tech.kakaopay.com,A:business,비즈니스,68,68,1.0000
+tech.kakaopay.com,A:refactoring,리팩터링,0,8,0.0000
+tech.kakaopay.com,A:schedule,스케줄,2,2,1.0000
+tech.kakaopay.com,A:header,헤더,26,26,1.0000
+tech.kakaopay.com,A:data,데이터,717,717,1.0000
+tech.kakaopay.com,A:component,컴포넌트,105,105,1.0000
+tech.kakaopay.com,A:framework,프레임워크,32,32,1.0000
+tech.kakaopay.com,B:error,오류,24,127,0.1890
+tech.kakaopay.com,B:repository-word,저장소,13,31,0.4194
+tech.kakaopay.com,B:default,기본값+기본 값,6,6,1.0000
+tech.kakaopay.com,B:deploy,배포,240,240,1.0000
+tech.kakaopay.com,B:user,사용자,290,308,0.9416
+tech.kakaopay.com,B:parameter,매개변수+매개 변수,3,32,0.0938
+tech.kakaopay.com,C:매개변수 spacing,매개변수,3,3,1.0000
+tech.kakaopay.com,C:기본값 spacing,기본값,6,6,1.0000
+tech.kakaopay.com,C:반환값 spacing,반환값,1,1,1.0000
+tech.kakaopay.com,C:오픈 소스 spacing,오픈 소스,0,14,0.0000
+d2.naver.com,A:directory,디렉터리,3,3,1.0000
+d2.naver.com,A:message,메시지,9,9,1.0000
+d2.naver.com,A:application,애플리케이션,11,11,1.0000
+d2.naver.com,A:repository,리포지터리,0,0,
+d2.naver.com,A:contents,콘텐츠,4,4,1.0000
+d2.naver.com,A:shell,셸,0,0,
+d2.naver.com,A:target,타깃,0,0,
+d2.naver.com,A:release,릴리스,7,8,0.8750
+d2.naver.com,A:architecture,아키텍처,17,17,1.0000
+d2.naver.com,A:column,칼럼,5,7,0.7143
+d2.naver.com,A:body,보디,0,0,
+d2.naver.com,A:thread,스레드,7,7,1.0000
+d2.naver.com,A:redirect,리디렉트,0,0,
+d2.naver.com,A:redirection,리디렉션,0,0,
+d2.naver.com,A:cache,캐시,23,23,1.0000
+d2.naver.com,A:dashboard,대시보드,14,14,1.0000
+d2.naver.com,A:setting,세팅,0,0,
+d2.naver.com,A:hash,해시,2,2,1.0000
+d2.naver.com,A:format,포맷,0,0,
+d2.naver.com,A:rendering,렌더링,2,2,1.0000
+d2.naver.com,A:transaction,트랜잭션,19,19,1.0000
+d2.naver.com,A:version,버전,55,55,1.0000
+d2.naver.com,A:method,메서드,31,31,1.0000
+d2.naver.com,A:license,라이선스,3,3,1.0000
+d2.naver.com,A:access,액세스,0,0,
+d2.naver.com,A:manual,매뉴얼,0,0,
+d2.naver.com,A:business,비즈니스,11,11,1.0000
+d2.naver.com,A:refactoring,리팩터링,0,1,0.0000
+d2.naver.com,A:schedule,스케줄,8,8,1.0000
+d2.naver.com,A:header,헤더,1,1,1.0000
+d2.naver.com,A:data,데이터,194,194,1.0000
+d2.naver.com,A:component,컴포넌트,22,22,1.0000
+d2.naver.com,A:framework,프레임워크,12,12,1.0000
+d2.naver.com,B:error,오류,23,28,0.8214
+d2.naver.com,B:repository-word,저장소,56,56,1.0000
+d2.naver.com,B:default,기본값+기본 값,2,2,1.0000
+d2.naver.com,B:deploy,배포,70,70,1.0000
+d2.naver.com,B:user,사용자,61,61,1.0000
+d2.naver.com,B:parameter,매개변수+매개 변수,7,7,1.0000
+d2.naver.com,C:매개변수 spacing,매개변수,7,7,1.0000
+d2.naver.com,C:기본값 spacing,기본값,2,2,1.0000
+d2.naver.com,C:반환값 spacing,반환값,3,3,1.0000
+d2.naver.com,C:오픈 소스 spacing,오픈 소스,3,7,0.4286
+techblog.woowahan.com,A:directory,디렉터리,7,8,0.8750
+techblog.woowahan.com,A:message,메시지,62,62,1.0000
+techblog.woowahan.com,A:application,애플리케이션,14,14,1.0000
+techblog.woowahan.com,A:repository,리포지터리,5,8,0.6250
+techblog.woowahan.com,A:contents,콘텐츠,7,7,1.0000
+techblog.woowahan.com,A:shell,셸,0,0,
+techblog.woowahan.com,A:target,타깃,8,8,1.0000
+techblog.woowahan.com,A:release,릴리스,0,8,0.0000
+techblog.woowahan.com,A:architecture,아키텍처,51,51,1.0000
+techblog.woowahan.com,A:column,칼럼,0,3,0.0000
+techblog.woowahan.com,A:body,보디,0,0,
+techblog.woowahan.com,A:thread,스레드,11,11,1.0000
+techblog.woowahan.com,A:redirect,리디렉트,0,1,0.0000
+techblog.woowahan.com,A:redirection,리디렉션,0,0,
+techblog.woowahan.com,A:cache,캐시,59,59,1.0000
+techblog.woowahan.com,A:dashboard,대시보드,9,9,1.0000
+techblog.woowahan.com,A:setting,세팅,6,6,1.0000
+techblog.woowahan.com,A:hash,해시,3,3,1.0000
+techblog.woowahan.com,A:format,포맷,10,10,1.0000
+techblog.woowahan.com,A:rendering,렌더링,15,15,1.0000
+techblog.woowahan.com,A:transaction,트랜잭션,9,9,1.0000
+techblog.woowahan.com,A:version,버전,46,46,1.0000
+techblog.woowahan.com,A:method,메서드,15,15,1.0000
+techblog.woowahan.com,A:license,라이선스,1,1,1.0000
+techblog.woowahan.com,A:access,액세스,0,0,
+techblog.woowahan.com,A:manual,매뉴얼,1,1,1.0000
+techblog.woowahan.com,A:business,비즈니스,61,61,1.0000
+techblog.woowahan.com,A:refactoring,리팩터링,1,17,0.0588
+techblog.woowahan.com,A:schedule,스케줄,35,35,1.0000
+techblog.woowahan.com,A:header,헤더,7,7,1.0000
+techblog.woowahan.com,A:data,데이터,293,293,1.0000
+techblog.woowahan.com,A:component,컴포넌트,140,140,1.0000
+techblog.woowahan.com,A:framework,프레임워크,15,15,1.0000
+techblog.woowahan.com,B:error,오류,33,107,0.3084
+techblog.woowahan.com,B:repository-word,저장소,30,51,0.5882
+techblog.woowahan.com,B:default,기본값+기본 값,11,11,1.0000
+techblog.woowahan.com,B:deploy,배포,127,127,1.0000
+techblog.woowahan.com,B:user,사용자,261,288,0.9062
+techblog.woowahan.com,B:parameter,매개변수+매개 변수,0,8,0.0000
+techblog.woowahan.com,C:매개변수 spacing,매개변수,0,0,
+techblog.woowahan.com,C:기본값 spacing,기본값,11,11,1.0000
+techblog.woowahan.com,C:반환값 spacing,반환값,4,4,1.0000
+techblog.woowahan.com,C:오픈 소스 spacing,오픈 소스,0,2,0.0000
+techblog.lycorp.co.jp/ko,A:directory,디렉터리,8,15,0.5333
+techblog.lycorp.co.jp/ko,A:message,메시지,139,139,1.0000
+techblog.lycorp.co.jp/ko,A:application,애플리케이션,37,37,1.0000
+techblog.lycorp.co.jp/ko,A:repository,리포지터리,0,2,0.0000
+techblog.lycorp.co.jp/ko,A:contents,콘텐츠,13,13,1.0000
+techblog.lycorp.co.jp/ko,A:shell,셸,6,6,1.0000
+techblog.lycorp.co.jp/ko,A:target,타깃,2,2,1.0000
+techblog.lycorp.co.jp/ko,A:release,릴리스,30,30,1.0000
+techblog.lycorp.co.jp/ko,A:architecture,아키텍처,76,76,1.0000
+techblog.lycorp.co.jp/ko,A:column,칼럼,8,23,0.3478
+techblog.lycorp.co.jp/ko,A:body,보디,0,3,0.0000
+techblog.lycorp.co.jp/ko,A:thread,스레드,46,46,1.0000
+techblog.lycorp.co.jp/ko,A:redirect,리디렉트,0,0,
+techblog.lycorp.co.jp/ko,A:redirection,리디렉션,0,0,
+techblog.lycorp.co.jp/ko,A:cache,캐시,3,3,1.0000
+techblog.lycorp.co.jp/ko,A:dashboard,대시보드,44,44,1.0000
+techblog.lycorp.co.jp/ko,A:setting,세팅,3,3,1.0000
+techblog.lycorp.co.jp/ko,A:hash,해시,3,3,1.0000
+techblog.lycorp.co.jp/ko,A:format,포맷,1,1,1.0000
+techblog.lycorp.co.jp/ko,A:rendering,렌더링,14,14,1.0000
+techblog.lycorp.co.jp/ko,A:transaction,트랜잭션,3,3,1.0000
+techblog.lycorp.co.jp/ko,A:version,버전,59,59,1.0000
+techblog.lycorp.co.jp/ko,A:method,메서드,4,5,0.8000
+techblog.lycorp.co.jp/ko,A:license,라이선스,9,9,1.0000
+techblog.lycorp.co.jp/ko,A:access,액세스,20,20,1.0000
+techblog.lycorp.co.jp/ko,A:manual,매뉴얼,4,4,1.0000
+techblog.lycorp.co.jp/ko,A:business,비즈니스,62,62,1.0000
+techblog.lycorp.co.jp/ko,A:refactoring,리팩터링,1,5,0.2000
+techblog.lycorp.co.jp/ko,A:schedule,스케줄,6,6,1.0000
+techblog.lycorp.co.jp/ko,A:header,헤더,24,24,1.0000
+techblog.lycorp.co.jp/ko,A:data,데이터,673,673,1.0000
+techblog.lycorp.co.jp/ko,A:component,컴포넌트,20,20,1.0000
+techblog.lycorp.co.jp/ko,A:framework,프레임워크,19,19,1.0000
+techblog.lycorp.co.jp/ko,B:error,오류,48,72,0.6667
+techblog.lycorp.co.jp/ko,B:repository-word,저장소,42,45,0.9333
+techblog.lycorp.co.jp/ko,B:default,기본값+기본 값,3,3,1.0000
+techblog.lycorp.co.jp/ko,B:deploy,배포,66,67,0.9851
+techblog.lycorp.co.jp/ko,B:user,사용자,332,335,0.9910
+techblog.lycorp.co.jp/ko,B:parameter,매개변수+매개 변수,0,12,0.0000
+techblog.lycorp.co.jp/ko,C:매개변수 spacing,매개변수,0,0,
+techblog.lycorp.co.jp/ko,C:기본값 spacing,기본값,3,3,1.0000
+techblog.lycorp.co.jp/ko,C:반환값 spacing,반환값,0,0,
+techblog.lycorp.co.jp/ko,C:오픈 소스 spacing,오픈 소스,1,17,0.0588
+helloworld.kurly.com,A:directory,디렉터리,0,11,0.0000
+helloworld.kurly.com,A:message,메시지,102,108,0.9444
+helloworld.kurly.com,A:application,애플리케이션,38,45,0.8444
+helloworld.kurly.com,A:repository,리포지터리,0,1,0.0000
+helloworld.kurly.com,A:contents,콘텐츠,7,7,1.0000
+helloworld.kurly.com,A:shell,셸,0,0,
+helloworld.kurly.com,A:target,타깃,0,5,0.0000
+helloworld.kurly.com,A:release,릴리스,0,10,0.0000
+helloworld.kurly.com,A:architecture,아키텍처,67,67,1.0000
+helloworld.kurly.com,A:column,칼럼,0,22,0.0000
+helloworld.kurly.com,A:body,보디,0,0,
+helloworld.kurly.com,A:thread,스레드,8,11,0.7273
+helloworld.kurly.com,A:redirect,리디렉트,0,3,0.0000
+helloworld.kurly.com,A:redirection,리디렉션,0,0,
+helloworld.kurly.com,A:cache,캐시,39,39,1.0000
+helloworld.kurly.com,A:dashboard,대시보드,0,0,
+helloworld.kurly.com,A:setting,세팅,4,4,1.0000
+helloworld.kurly.com,A:hash,해시,0,0,
+helloworld.kurly.com,A:format,포맷,9,13,0.6923
+helloworld.kurly.com,A:rendering,렌더링,0,0,
+helloworld.kurly.com,A:transaction,트랜잭션,21,21,1.0000
+helloworld.kurly.com,A:version,버전,109,109,1.0000
+helloworld.kurly.com,A:method,메서드,30,30,1.0000
+helloworld.kurly.com,A:license,라이선스,0,0,
+helloworld.kurly.com,A:access,액세스,0,1,0.0000
+helloworld.kurly.com,A:manual,매뉴얼,2,2,1.0000
+helloworld.kurly.com,A:business,비즈니스,27,28,0.9643
+helloworld.kurly.com,A:refactoring,리팩터링,1,4,0.2500
+helloworld.kurly.com,A:schedule,스케줄,9,10,0.9000
+helloworld.kurly.com,A:header,헤더,2,2,1.0000
+helloworld.kurly.com,A:data,데이터,528,528,1.0000
+helloworld.kurly.com,A:component,컴포넌트,42,42,1.0000
+helloworld.kurly.com,A:framework,프레임워크,4,4,1.0000
+helloworld.kurly.com,B:error,오류,21,169,0.1243
+helloworld.kurly.com,B:repository-word,저장소,8,11,0.7273
+helloworld.kurly.com,B:default,기본값+기본 값,4,5,0.8000
+helloworld.kurly.com,B:deploy,배포,85,85,1.0000
+helloworld.kurly.com,B:user,사용자,55,121,0.4545
+helloworld.kurly.com,B:parameter,매개변수+매개 변수,1,5,0.2000
+helloworld.kurly.com,C:매개변수 spacing,매개변수,1,1,1.0000
+helloworld.kurly.com,C:기본값 spacing,기본값,4,4,1.0000
+helloworld.kurly.com,C:반환값 spacing,반환값,0,0,
+helloworld.kurly.com,C:오픈 소스 spacing,오픈 소스,4,11,0.3636
+blog.banksalad.com/tech,A:directory,디렉터리,1,1,1.0000
+blog.banksalad.com/tech,A:message,메시지,26,26,1.0000
+blog.banksalad.com/tech,A:application,애플리케이션,6,14,0.4286
+blog.banksalad.com/tech,A:repository,리포지터리,0,3,0.0000
+blog.banksalad.com/tech,A:contents,콘텐츠,6,10,0.6000
+blog.banksalad.com/tech,A:shell,셸,0,2,0.0000
+blog.banksalad.com/tech,A:target,타깃,1,9,0.1111
+blog.banksalad.com/tech,A:release,릴리스,0,2,0.0000
+blog.banksalad.com/tech,A:architecture,아키텍처,16,19,0.8421
+blog.banksalad.com/tech,A:column,칼럼,0,13,0.0000
+blog.banksalad.com/tech,A:body,보디,0,0,
+blog.banksalad.com/tech,A:thread,스레드,2,3,0.6667
+blog.banksalad.com/tech,A:redirect,리디렉트,0,1,0.0000
+blog.banksalad.com/tech,A:redirection,리디렉션,0,0,
+blog.banksalad.com/tech,A:cache,캐시,2,2,1.0000
+blog.banksalad.com/tech,A:dashboard,대시보드,8,8,1.0000
+blog.banksalad.com/tech,A:setting,세팅,6,6,1.0000
+blog.banksalad.com/tech,A:hash,해시,1,1,1.0000
+blog.banksalad.com/tech,A:format,포맷,3,4,0.7500
+blog.banksalad.com/tech,A:rendering,렌더링,4,4,1.0000
+blog.banksalad.com/tech,A:transaction,트랜잭션,1,1,1.0000
+blog.banksalad.com/tech,A:version,버전,54,54,1.0000
+blog.banksalad.com/tech,A:method,메서드,0,3,0.0000
+blog.banksalad.com/tech,A:license,라이선스,0,0,
+blog.banksalad.com/tech,A:access,액세스,1,1,1.0000
+blog.banksalad.com/tech,A:manual,매뉴얼,2,3,0.6667
+blog.banksalad.com/tech,A:business,비즈니스,30,35,0.8571
+blog.banksalad.com/tech,A:refactoring,리팩터링,0,12,0.0000
+blog.banksalad.com/tech,A:schedule,스케줄,4,4,1.0000
+blog.banksalad.com/tech,A:header,헤더,2,2,1.0000
+blog.banksalad.com/tech,A:data,데이터,575,575,1.0000
+blog.banksalad.com/tech,A:component,컴포넌트,76,79,0.9620
+blog.banksalad.com/tech,A:framework,프레임워크,5,5,1.0000
+blog.banksalad.com/tech,B:error,오류,16,58,0.2759
+blog.banksalad.com/tech,B:repository-word,저장소,8,15,0.5333
+blog.banksalad.com/tech,B:default,기본값+기본 값,6,6,1.0000
+blog.banksalad.com/tech,B:deploy,배포,116,116,1.0000
+blog.banksalad.com/tech,B:user,사용자,249,308,0.8084
+blog.banksalad.com/tech,B:parameter,매개변수+매개 변수,1,11,0.0909
+blog.banksalad.com/tech,C:매개변수 spacing,매개변수,1,1,1.0000
+blog.banksalad.com/tech,C:기본값 spacing,기본값,2,6,0.3333
+blog.banksalad.com/tech,C:반환값 spacing,반환값,0,1,0.0000
+blog.banksalad.com/tech,C:오픈 소스 spacing,오픈 소스,0,2,0.0000
+hyperconnect.github.io,A:directory,디렉터리,0,1,0.0000
+hyperconnect.github.io,A:message,메시지,46,47,0.9787
+hyperconnect.github.io,A:application,애플리케이션,43,113,0.3805
+hyperconnect.github.io,A:repository,리포지터리,0,0,
+hyperconnect.github.io,A:contents,콘텐츠,6,6,1.0000
+hyperconnect.github.io,A:shell,셸,0,1,0.0000
+hyperconnect.github.io,A:target,타깃,0,4,0.0000
+hyperconnect.github.io,A:release,릴리스,0,5,0.0000
+hyperconnect.github.io,A:architecture,아키텍처,18,21,0.8571
+hyperconnect.github.io,A:column,칼럼,0,35,0.0000
+hyperconnect.github.io,A:body,보디,0,0,
+hyperconnect.github.io,A:thread,스레드,40,40,1.0000
+hyperconnect.github.io,A:redirect,리디렉트,0,0,
+hyperconnect.github.io,A:redirection,리디렉션,1,1,1.0000
+hyperconnect.github.io,A:cache,캐시,11,12,0.9167
+hyperconnect.github.io,A:dashboard,대시보드,24,24,1.0000
+hyperconnect.github.io,A:setting,세팅,4,4,1.0000
+hyperconnect.github.io,A:hash,해시,6,6,1.0000
+hyperconnect.github.io,A:format,포맷,7,7,1.0000
+hyperconnect.github.io,A:rendering,렌더링,1,1,1.0000
+hyperconnect.github.io,A:transaction,트랜잭션,67,67,1.0000
+hyperconnect.github.io,A:version,버전,72,72,1.0000
+hyperconnect.github.io,A:method,메서드,6,23,0.2609
+hyperconnect.github.io,A:license,라이선스,0,0,
+hyperconnect.github.io,A:access,액세스,0,1,0.0000
+hyperconnect.github.io,A:manual,매뉴얼,0,1,0.0000
+hyperconnect.github.io,A:business,비즈니스,75,75,1.0000
+hyperconnect.github.io,A:refactoring,리팩터링,0,13,0.0000
+hyperconnect.github.io,A:schedule,스케줄,6,6,1.0000
+hyperconnect.github.io,A:header,헤더,0,0,
+hyperconnect.github.io,A:data,데이터,590,590,1.0000
+hyperconnect.github.io,A:component,컴포넌트,26,26,1.0000
+hyperconnect.github.io,A:framework,프레임워크,14,14,1.0000
+hyperconnect.github.io,B:error,오류,37,76,0.4868
+hyperconnect.github.io,B:repository-word,저장소,75,75,1.0000
+hyperconnect.github.io,B:default,기본값+기본 값,9,10,0.9000
+hyperconnect.github.io,B:deploy,배포,126,126,1.0000
+hyperconnect.github.io,B:user,사용자,185,535,0.3458
+hyperconnect.github.io,B:parameter,매개변수+매개 변수,0,18,0.0000
+hyperconnect.github.io,C:매개변수 spacing,매개변수,0,0,
+hyperconnect.github.io,C:기본값 spacing,기본값,1,9,0.1111
+hyperconnect.github.io,C:반환값 spacing,반환값,0,3,0.0000
+hyperconnect.github.io,C:오픈 소스 spacing,오픈 소스,1,13,0.0769
+tech.devsisters.com,A:directory,디렉터리,0,3,0.0000
+tech.devsisters.com,A:message,메시지,39,42,0.9286
+tech.devsisters.com,A:application,애플리케이션,18,27,0.6667
+tech.devsisters.com,A:repository,리포지터리,0,3,0.0000
+tech.devsisters.com,A:contents,콘텐츠,14,39,0.3590
+tech.devsisters.com,A:shell,셸,1,18,0.0556
+tech.devsisters.com,A:target,타깃,0,0,
+tech.devsisters.com,A:release,릴리스,1,5,0.2000
+tech.devsisters.com,A:architecture,아키텍처,30,44,0.6818
+tech.devsisters.com,A:column,칼럼,1,9,0.1111
+tech.devsisters.com,A:body,보디,0,0,
+tech.devsisters.com,A:thread,스레드,78,206,0.3786
+tech.devsisters.com,A:redirect,리디렉트,0,0,
+tech.devsisters.com,A:redirection,리디렉션,0,0,
+tech.devsisters.com,A:cache,캐시,27,27,1.0000
+tech.devsisters.com,A:dashboard,대시보드,64,64,1.0000
+tech.devsisters.com,A:setting,세팅,1,1,1.0000
+tech.devsisters.com,A:hash,해시,3,4,0.7500
+tech.devsisters.com,A:format,포맷,17,17,1.0000
+tech.devsisters.com,A:rendering,렌더링,2,2,1.0000
+tech.devsisters.com,A:transaction,트랜잭션,19,20,0.9500
+tech.devsisters.com,A:version,버전,30,30,1.0000
+tech.devsisters.com,A:method,메서드,4,53,0.0755
+tech.devsisters.com,A:license,라이선스,0,5,0.0000
+tech.devsisters.com,A:access,액세스,0,0,
+tech.devsisters.com,A:manual,매뉴얼,2,2,1.0000
+tech.devsisters.com,A:business,비즈니스,18,18,1.0000
+tech.devsisters.com,A:refactoring,리팩터링,5,18,0.2778
+tech.devsisters.com,A:schedule,스케줄,13,16,0.8125
+tech.devsisters.com,A:header,헤더,3,3,1.0000
+tech.devsisters.com,A:data,데이터,668,668,1.0000
+tech.devsisters.com,A:component,컴포넌트,15,15,1.0000
+tech.devsisters.com,A:framework,프레임워크,15,15,1.0000
+tech.devsisters.com,B:error,오류,22,71,0.3099
+tech.devsisters.com,B:repository-word,저장소,10,15,0.6667
+tech.devsisters.com,B:default,기본값+기본 값,7,8,0.8750
+tech.devsisters.com,B:deploy,배포,53,53,1.0000
+tech.devsisters.com,B:user,사용자,107,304,0.3520
+tech.devsisters.com,B:parameter,매개변수+매개 변수,3,5,0.6000
+tech.devsisters.com,C:매개변수 spacing,매개변수,2,3,0.6667
+tech.devsisters.com,C:기본값 spacing,기본값,3,7,0.4286
+tech.devsisters.com,C:반환값 spacing,반환값,0,2,0.0000
+tech.devsisters.com,C:오픈 소스 spacing,오픈 소스,3,12,0.2500
+oliveyoung.tech,A:directory,디렉터리,0,2,0.0000
+oliveyoung.tech,A:message,메시지,191,193,0.9896
+oliveyoung.tech,A:application,애플리케이션,29,29,1.0000
+oliveyoung.tech,A:repository,리포지터리,0,0,
+oliveyoung.tech,A:contents,콘텐츠,28,28,1.0000
+oliveyoung.tech,A:shell,셸,0,0,
+oliveyoung.tech,A:target,타깃,1,19,0.0526
+oliveyoung.tech,A:release,릴리스,0,2,0.0000
+oliveyoung.tech,A:architecture,아키텍처,73,74,0.9865
+oliveyoung.tech,A:column,칼럼,0,7,0.0000
+oliveyoung.tech,A:body,보디,0,0,
+oliveyoung.tech,A:thread,스레드,30,30,1.0000
+oliveyoung.tech,A:redirect,리디렉트,0,0,
+oliveyoung.tech,A:redirection,리디렉션,0,0,
+oliveyoung.tech,A:cache,캐시,32,32,1.0000
+oliveyoung.tech,A:dashboard,대시보드,13,13,1.0000
+oliveyoung.tech,A:setting,세팅,7,8,0.8750
+oliveyoung.tech,A:hash,해시,1,1,1.0000
+oliveyoung.tech,A:format,포맷,7,7,1.0000
+oliveyoung.tech,A:rendering,렌더링,10,10,1.0000
+oliveyoung.tech,A:transaction,트랜잭션,86,86,1.0000
+oliveyoung.tech,A:version,버전,34,34,1.0000
+oliveyoung.tech,A:method,메서드,13,18,0.7222
+oliveyoung.tech,A:license,라이선스,3,3,1.0000
+oliveyoung.tech,A:access,액세스,0,0,
+oliveyoung.tech,A:manual,매뉴얼,3,3,1.0000
+oliveyoung.tech,A:business,비즈니스,78,78,1.0000
+oliveyoung.tech,A:refactoring,리팩터링,1,1,1.0000
+oliveyoung.tech,A:schedule,스케줄,5,5,1.0000
+oliveyoung.tech,A:header,헤더,6,6,1.0000
+oliveyoung.tech,A:data,데이터,510,510,1.0000
+oliveyoung.tech,A:component,컴포넌트,43,43,1.0000
+oliveyoung.tech,A:framework,프레임워크,25,25,1.0000
+oliveyoung.tech,B:error,오류,41,101,0.4059
+oliveyoung.tech,B:repository-word,저장소,8,17,0.4706
+oliveyoung.tech,B:default,기본값+기본 값,2,2,1.0000
+oliveyoung.tech,B:deploy,배포,112,113,0.9912
+oliveyoung.tech,B:user,사용자,101,106,0.9528
+oliveyoung.tech,B:parameter,매개변수+매개 변수,13,42,0.3095
+oliveyoung.tech,C:매개변수 spacing,매개변수,13,13,1.0000
+oliveyoung.tech,C:기본값 spacing,기본값,2,2,1.0000
+oliveyoung.tech,C:반환값 spacing,반환값,3,4,0.7500
+oliveyoung.tech,C:오픈 소스 spacing,오픈 소스,0,13,0.0000
+tech.inflab.com,A:directory,디렉터리,10,31,0.3226
+tech.inflab.com,A:message,메시지,36,43,0.8372
+tech.inflab.com,A:application,애플리케이션,63,70,0.9000
+tech.inflab.com,A:repository,리포지터리,0,11,0.0000
+tech.inflab.com,A:contents,콘텐츠,26,28,0.9286
+tech.inflab.com,A:shell,셸,0,17,0.0000
+tech.inflab.com,A:target,타깃,0,8,0.0000
+tech.inflab.com,A:release,릴리스,1,15,0.0667
+tech.inflab.com,A:architecture,아키텍처,16,16,1.0000
+tech.inflab.com,A:column,칼럼,2,5,0.4000
+tech.inflab.com,A:body,보디,0,1,0.0000
+tech.inflab.com,A:thread,스레드,31,42,0.7381
+tech.inflab.com,A:redirect,리디렉트,0,0,
+tech.inflab.com,A:redirection,리디렉션,0,0,
+tech.inflab.com,A:cache,캐시,147,147,1.0000
+tech.inflab.com,A:dashboard,대시보드,41,41,1.0000
+tech.inflab.com,A:setting,세팅,5,5,1.0000
+tech.inflab.com,A:hash,해시,3,3,1.0000
+tech.inflab.com,A:format,포맷,24,24,1.0000
+tech.inflab.com,A:rendering,렌더링,22,22,1.0000
+tech.inflab.com,A:transaction,트랜잭션,28,30,0.9333
+tech.inflab.com,A:version,버전,126,126,1.0000
+tech.inflab.com,A:method,메서드,89,103,0.8641
+tech.inflab.com,A:license,라이선스,1,2,0.5000
+tech.inflab.com,A:access,액세스,7,7,1.0000
+tech.inflab.com,A:manual,매뉴얼,0,0,
+tech.inflab.com,A:business,비즈니스,20,22,0.9091
+tech.inflab.com,A:refactoring,리팩터링,3,17,0.1765
+tech.inflab.com,A:schedule,스케줄,4,4,1.0000
+tech.inflab.com,A:header,헤더,76,76,1.0000
+tech.inflab.com,A:data,데이터,163,163,1.0000
+tech.inflab.com,A:component,컴포넌트,186,186,1.0000
+tech.inflab.com,A:framework,프레임워크,19,19,1.0000
+tech.inflab.com,B:error,오류,30,102,0.2941
+tech.inflab.com,B:repository-word,저장소,21,71,0.2958
+tech.inflab.com,B:default,기본값+기본 값,18,18,1.0000
+tech.inflab.com,B:deploy,배포,155,155,1.0000
+tech.inflab.com,B:user,사용자,87,128,0.6797
+tech.inflab.com,B:parameter,매개변수+매개 변수,2,17,0.1176
+tech.inflab.com,C:매개변수 spacing,매개변수,2,2,1.0000
+tech.inflab.com,C:기본값 spacing,기본값,18,18,1.0000
+tech.inflab.com,C:반환값 spacing,반환값,4,6,0.6667
+tech.inflab.com,C:오픈 소스 spacing,오픈 소스,52,64,0.8125
+meetup.nhncloud.com,A:directory,디렉터리,7,13,0.5385
+meetup.nhncloud.com,A:message,메시지,50,50,1.0000
+meetup.nhncloud.com,A:application,애플리케이션,185,185,1.0000
+meetup.nhncloud.com,A:repository,리포지터리,34,34,1.0000
+meetup.nhncloud.com,A:contents,콘텐츠,14,14,1.0000
+meetup.nhncloud.com,A:shell,셸,0,0,
+meetup.nhncloud.com,A:target,타깃,4,4,1.0000
+meetup.nhncloud.com,A:release,릴리스,49,50,0.9800
+meetup.nhncloud.com,A:architecture,아키텍처,24,25,0.9600
+meetup.nhncloud.com,A:column,칼럼,8,8,1.0000
+meetup.nhncloud.com,A:body,보디,0,0,
+meetup.nhncloud.com,A:thread,스레드,9,9,1.0000
+meetup.nhncloud.com,A:redirect,리디렉트,0,0,
+meetup.nhncloud.com,A:redirection,리디렉션,0,1,0.0000
+meetup.nhncloud.com,A:cache,캐시,3,3,1.0000
+meetup.nhncloud.com,A:dashboard,대시보드,11,11,1.0000
+meetup.nhncloud.com,A:setting,세팅,0,0,
+meetup.nhncloud.com,A:hash,해시,3,3,1.0000
+meetup.nhncloud.com,A:format,포맷,6,6,1.0000
+meetup.nhncloud.com,A:rendering,렌더링,25,25,1.0000
+meetup.nhncloud.com,A:transaction,트랜잭션,17,17,1.0000
+meetup.nhncloud.com,A:version,버전,24,24,1.0000
+meetup.nhncloud.com,A:method,메서드,56,56,1.0000
+meetup.nhncloud.com,A:license,라이선스,8,8,1.0000
+meetup.nhncloud.com,A:access,액세스,1,1,1.0000
+meetup.nhncloud.com,A:manual,매뉴얼,0,0,
+meetup.nhncloud.com,A:business,비즈니스,12,12,1.0000
+meetup.nhncloud.com,A:refactoring,리팩터링,1,1,1.0000
+meetup.nhncloud.com,A:schedule,스케줄,9,9,1.0000
+meetup.nhncloud.com,A:header,헤더,5,5,1.0000
+meetup.nhncloud.com,A:data,데이터,359,359,1.0000
+meetup.nhncloud.com,A:component,컴포넌트,25,25,1.0000
+meetup.nhncloud.com,A:framework,프레임워크,25,25,1.0000
+meetup.nhncloud.com,B:error,오류,66,66,1.0000
+meetup.nhncloud.com,B:repository-word,저장소,16,53,0.3019
+meetup.nhncloud.com,B:default,기본값+기본 값,10,10,1.0000
+meetup.nhncloud.com,B:deploy,배포,45,45,1.0000
+meetup.nhncloud.com,B:user,사용자,111,116,0.9569
+meetup.nhncloud.com,B:parameter,매개변수+매개 변수,0,11,0.0000
+meetup.nhncloud.com,C:매개변수 spacing,매개변수,0,0,
+meetup.nhncloud.com,C:기본값 spacing,기본값,9,10,0.9000
+meetup.nhncloud.com,C:반환값 spacing,반환값,0,0,
+meetup.nhncloud.com,C:오픈 소스 spacing,오픈 소스,12,35,0.3429
+devocean.sk.com,A:directory,디렉터리,8,16,0.5000
+devocean.sk.com,A:message,메시지,34,34,1.0000
+devocean.sk.com,A:application,애플리케이션,18,23,0.7826
+devocean.sk.com,A:repository,리포지터리,0,0,
+devocean.sk.com,A:contents,콘텐츠,25,26,0.9615
+devocean.sk.com,A:shell,셸,5,5,1.0000
+devocean.sk.com,A:target,타깃,0,2,0.0000
+devocean.sk.com,A:release,릴리스,3,5,0.6000
+devocean.sk.com,A:architecture,아키텍처,28,28,1.0000
+devocean.sk.com,A:column,칼럼,0,7,0.0000
+devocean.sk.com,A:body,보디,0,0,
+devocean.sk.com,A:thread,스레드,2,2,1.0000
+devocean.sk.com,A:redirect,리디렉트,0,1,0.0000
+devocean.sk.com,A:redirection,리디렉션,0,0,
+devocean.sk.com,A:cache,캐시,29,29,1.0000
+devocean.sk.com,A:dashboard,대시보드,6,6,1.0000
+devocean.sk.com,A:setting,세팅,5,5,1.0000
+devocean.sk.com,A:hash,해시,3,3,1.0000
+devocean.sk.com,A:format,포맷,7,7,1.0000
+devocean.sk.com,A:rendering,렌더링,6,6,1.0000
+devocean.sk.com,A:transaction,트랜잭션,3,3,1.0000
+devocean.sk.com,A:version,버전,50,50,1.0000
+devocean.sk.com,A:method,메서드,2,2,1.0000
+devocean.sk.com,A:license,라이선스,18,32,0.5625
+devocean.sk.com,A:access,액세스,0,0,
+devocean.sk.com,A:manual,매뉴얼,2,2,1.0000
+devocean.sk.com,A:business,비즈니스,16,16,1.0000
+devocean.sk.com,A:refactoring,리팩터링,1,5,0.2000
+devocean.sk.com,A:schedule,스케줄,42,43,0.9767
+devocean.sk.com,A:header,헤더,3,3,1.0000
+devocean.sk.com,A:data,데이터,218,218,1.0000
+devocean.sk.com,A:component,컴포넌트,17,17,1.0000
+devocean.sk.com,A:framework,프레임워크,15,15,1.0000
+devocean.sk.com,B:error,오류,14,27,0.5185
+devocean.sk.com,B:repository-word,저장소,22,22,1.0000
+devocean.sk.com,B:default,기본값+기본 값,15,15,1.0000
+devocean.sk.com,B:deploy,배포,42,42,1.0000
+devocean.sk.com,B:user,사용자,150,152,0.9868
+devocean.sk.com,B:parameter,매개변수+매개 변수,0,19,0.0000
+devocean.sk.com,C:매개변수 spacing,매개변수,0,0,
+devocean.sk.com,C:기본값 spacing,기본값,15,15,1.0000
+devocean.sk.com,C:반환값 spacing,반환값,3,3,1.0000
+devocean.sk.com,C:오픈 소스 spacing,오픈 소스,3,15,0.2000
+tech.socar.kr,A:directory,디렉터리,2,8,0.2500
+tech.socar.kr,A:message,메시지,175,186,0.9409
+tech.socar.kr,A:application,애플리케이션,47,49,0.9592
+tech.socar.kr,A:repository,리포지터리,2,11,0.1818
+tech.socar.kr,A:contents,콘텐츠,9,9,1.0000
+tech.socar.kr,A:shell,셸,0,10,0.0000
+tech.socar.kr,A:target,타깃,2,2,1.0000
+tech.socar.kr,A:release,릴리스,2,2,1.0000
+tech.socar.kr,A:architecture,아키텍처,38,52,0.7308
+tech.socar.kr,A:column,칼럼,6,33,0.1818
+tech.socar.kr,A:body,보디,0,0,
+tech.socar.kr,A:thread,스레드,10,10,1.0000
+tech.socar.kr,A:redirect,리디렉트,0,0,
+tech.socar.kr,A:redirection,리디렉션,0,0,
+tech.socar.kr,A:cache,캐시,73,73,1.0000
+tech.socar.kr,A:dashboard,대시보드,11,11,1.0000
+tech.socar.kr,A:setting,세팅,24,24,1.0000
+tech.socar.kr,A:hash,해시,0,0,
+tech.socar.kr,A:format,포맷,21,21,1.0000
+tech.socar.kr,A:rendering,렌더링,1,1,1.0000
+tech.socar.kr,A:transaction,트랜잭션,9,9,1.0000
+tech.socar.kr,A:version,버전,93,93,1.0000
+tech.socar.kr,A:method,메서드,6,11,0.5455
+tech.socar.kr,A:license,라이선스,2,2,1.0000
+tech.socar.kr,A:access,액세스,2,2,1.0000
+tech.socar.kr,A:manual,매뉴얼,1,2,0.5000
+tech.socar.kr,A:business,비즈니스,153,153,1.0000
+tech.socar.kr,A:refactoring,리팩터링,6,10,0.6000
+tech.socar.kr,A:schedule,스케줄,47,50,0.9400
+tech.socar.kr,A:header,헤더,2,2,1.0000
+tech.socar.kr,A:data,데이터,1055,1055,1.0000
+tech.socar.kr,A:component,컴포넌트,107,107,1.0000
+tech.socar.kr,A:framework,프레임워크,31,31,1.0000
+tech.socar.kr,B:error,오류,50,100,0.5000
+tech.socar.kr,B:repository-word,저장소,28,84,0.3333
+tech.socar.kr,B:default,기본값+기본 값,4,4,1.0000
+tech.socar.kr,B:deploy,배포,149,149,1.0000
+tech.socar.kr,B:user,사용자,206,223,0.9238
+tech.socar.kr,B:parameter,매개변수+매개 변수,0,6,0.0000
+tech.socar.kr,C:매개변수 spacing,매개변수,0,0,
+tech.socar.kr,C:기본값 spacing,기본값,4,4,1.0000
+tech.socar.kr,C:반환값 spacing,반환값,0,0,
+tech.socar.kr,C:오픈 소스 spacing,오픈 소스,4,21,0.1905
+engineering.ab180.co,A:directory,디렉터리,12,13,0.9231
+engineering.ab180.co,A:message,메시지,67,67,1.0000
+engineering.ab180.co,A:application,애플리케이션,12,13,0.9231
+engineering.ab180.co,A:repository,리포지터리,0,3,0.0000
+engineering.ab180.co,A:contents,콘텐츠,0,0,
+engineering.ab180.co,A:shell,셸,0,0,
+engineering.ab180.co,A:target,타깃,2,4,0.5000
+engineering.ab180.co,A:release,릴리스,0,27,0.0000
+engineering.ab180.co,A:architecture,아키텍처,51,51,1.0000
+engineering.ab180.co,A:column,칼럼,0,24,0.0000
+engineering.ab180.co,A:body,보디,0,1,0.0000
+engineering.ab180.co,A:thread,스레드,21,21,1.0000
+engineering.ab180.co,A:redirect,리디렉트,0,0,
+engineering.ab180.co,A:redirection,리디렉션,0,1,0.0000
+engineering.ab180.co,A:cache,캐시,25,25,1.0000
+engineering.ab180.co,A:dashboard,대시보드,25,25,1.0000
+engineering.ab180.co,A:setting,세팅,3,3,1.0000
+engineering.ab180.co,A:hash,해시,0,0,
+engineering.ab180.co,A:format,포맷,16,16,1.0000
+engineering.ab180.co,A:rendering,렌더링,24,24,1.0000
+engineering.ab180.co,A:transaction,트랜잭션,5,5,1.0000
+engineering.ab180.co,A:version,버전,47,47,1.0000
+engineering.ab180.co,A:method,메서드,1,5,0.2000
+engineering.ab180.co,A:license,라이선스,0,0,
+engineering.ab180.co,A:access,액세스,0,0,
+engineering.ab180.co,A:manual,매뉴얼,0,0,
+engineering.ab180.co,A:business,비즈니스,40,40,1.0000
+engineering.ab180.co,A:refactoring,리팩터링,0,13,0.0000
+engineering.ab180.co,A:schedule,스케줄,8,9,0.8889
+engineering.ab180.co,A:header,헤더,0,0,
+engineering.ab180.co,A:data,데이터,420,420,1.0000
+engineering.ab180.co,A:component,컴포넌트,98,98,1.0000
+engineering.ab180.co,A:framework,프레임워크,4,4,1.0000
+engineering.ab180.co,B:error,오류,21,48,0.4375
+engineering.ab180.co,B:repository-word,저장소,30,52,0.5769
+engineering.ab180.co,B:default,기본값+기본 값,1,1,1.0000
+engineering.ab180.co,B:deploy,배포,198,198,1.0000
+engineering.ab180.co,B:user,사용자,80,119,0.6723
+engineering.ab180.co,B:parameter,매개변수+매개 변수,0,2,0.0000
+engineering.ab180.co,C:매개변수 spacing,매개변수,0,0,
+engineering.ab180.co,C:기본값 spacing,기본값,1,1,1.0000
+engineering.ab180.co,C:반환값 spacing,반환값,0,0,
+engineering.ab180.co,C:오픈 소스 spacing,오픈 소스,0,2,0.0000
+medium.com/daangn,A:directory,디렉터리,0,0,
+medium.com/daangn,A:message,메시지,8,8,1.0000
+medium.com/daangn,A:application,애플리케이션,16,16,1.0000
+medium.com/daangn,A:repository,리포지터리,0,2,0.0000
+medium.com/daangn,A:contents,콘텐츠,25,25,1.0000
+medium.com/daangn,A:shell,셸,0,0,
+medium.com/daangn,A:target,타깃,0,4,0.0000
+medium.com/daangn,A:release,릴리스,6,39,0.1538
+medium.com/daangn,A:architecture,아키텍처,17,17,1.0000
+medium.com/daangn,A:column,칼럼,0,15,0.0000
+medium.com/daangn,A:body,보디,0,0,
+medium.com/daangn,A:thread,스레드,9,9,1.0000
+medium.com/daangn,A:redirect,리디렉트,0,0,
+medium.com/daangn,A:redirection,리디렉션,0,0,
+medium.com/daangn,A:cache,캐시,28,28,1.0000
+medium.com/daangn,A:dashboard,대시보드,15,15,1.0000
+medium.com/daangn,A:setting,세팅,1,1,1.0000
+medium.com/daangn,A:hash,해시,2,2,1.0000
+medium.com/daangn,A:format,포맷,0,0,
+medium.com/daangn,A:rendering,렌더링,27,27,1.0000
+medium.com/daangn,A:transaction,트랜잭션,17,17,1.0000
+medium.com/daangn,A:version,버전,24,24,1.0000
+medium.com/daangn,A:method,메서드,0,0,
+medium.com/daangn,A:license,라이선스,0,0,
+medium.com/daangn,A:access,액세스,0,0,
+medium.com/daangn,A:manual,매뉴얼,2,2,1.0000
+medium.com/daangn,A:business,비즈니스,10,10,1.0000
+medium.com/daangn,A:refactoring,리팩터링,0,6,0.0000
+medium.com/daangn,A:schedule,스케줄,7,8,0.8750
+medium.com/daangn,A:header,헤더,3,3,1.0000
+medium.com/daangn,A:data,데이터,359,359,1.0000
+medium.com/daangn,A:component,컴포넌트,53,53,1.0000
+medium.com/daangn,A:framework,프레임워크,4,4,1.0000
+medium.com/daangn,B:error,오류,13,21,0.6190
+medium.com/daangn,B:repository-word,저장소,22,27,0.8148
+medium.com/daangn,B:default,기본값+기본 값,2,2,1.0000
+medium.com/daangn,B:deploy,배포,113,113,1.0000
+medium.com/daangn,B:user,사용자,183,249,0.7349
+medium.com/daangn,B:parameter,매개변수+매개 변수,0,10,0.0000
+medium.com/daangn,C:매개변수 spacing,매개변수,0,0,
+medium.com/daangn,C:기본값 spacing,기본값,1,2,0.5000
+medium.com/daangn,C:반환값 spacing,반환값,0,0,
+medium.com/daangn,C:오픈 소스 spacing,오픈 소스,0,2,0.0000
+techblog.musinsa.com (medium),A:directory,디렉터리,0,0,
+techblog.musinsa.com (medium),A:message,메시지,16,16,1.0000
+techblog.musinsa.com (medium),A:application,애플리케이션,7,7,1.0000
+techblog.musinsa.com (medium),A:repository,리포지터리,0,1,0.0000
+techblog.musinsa.com (medium),A:contents,콘텐츠,24,24,1.0000
+techblog.musinsa.com (medium),A:shell,셸,0,0,
+techblog.musinsa.com (medium),A:target,타깃,2,18,0.1111
+techblog.musinsa.com (medium),A:release,릴리스,0,2,0.0000
+techblog.musinsa.com (medium),A:architecture,아키텍처,4,4,1.0000
+techblog.musinsa.com (medium),A:column,칼럼,0,7,0.0000
+techblog.musinsa.com (medium),A:body,보디,0,0,
+techblog.musinsa.com (medium),A:thread,스레드,82,82,1.0000
+techblog.musinsa.com (medium),A:redirect,리디렉트,0,0,
+techblog.musinsa.com (medium),A:redirection,리디렉션,0,0,
+techblog.musinsa.com (medium),A:cache,캐시,44,44,1.0000
+techblog.musinsa.com (medium),A:dashboard,대시보드,9,9,1.0000
+techblog.musinsa.com (medium),A:setting,세팅,1,1,1.0000
+techblog.musinsa.com (medium),A:hash,해시,3,3,1.0000
+techblog.musinsa.com (medium),A:format,포맷,0,0,
+techblog.musinsa.com (medium),A:rendering,렌더링,1,1,1.0000
+techblog.musinsa.com (medium),A:transaction,트랜잭션,3,3,1.0000
+techblog.musinsa.com (medium),A:version,버전,6,6,1.0000
+techblog.musinsa.com (medium),A:method,메서드,5,5,1.0000
+techblog.musinsa.com (medium),A:license,라이선스,0,0,
+techblog.musinsa.com (medium),A:access,액세스,0,0,
+techblog.musinsa.com (medium),A:manual,매뉴얼,3,3,1.0000
+techblog.musinsa.com (medium),A:business,비즈니스,22,22,1.0000
+techblog.musinsa.com (medium),A:refactoring,리팩터링,0,0,
+techblog.musinsa.com (medium),A:schedule,스케줄,0,0,
+techblog.musinsa.com (medium),A:header,헤더,2,2,1.0000
+techblog.musinsa.com (medium),A:data,데이터,128,128,1.0000
+techblog.musinsa.com (medium),A:component,컴포넌트,1,1,1.0000
+techblog.musinsa.com (medium),A:framework,프레임워크,1,1,1.0000
+techblog.musinsa.com (medium),B:error,오류,0,7,0.0000
+techblog.musinsa.com (medium),B:repository-word,저장소,4,5,0.8000
+techblog.musinsa.com (medium),B:default,기본값+기본 값,2,2,1.0000
+techblog.musinsa.com (medium),B:deploy,배포,20,20,1.0000
+techblog.musinsa.com (medium),B:user,사용자,6,126,0.0476
+techblog.musinsa.com (medium),B:parameter,매개변수+매개 변수,0,4,0.0000
+techblog.musinsa.com (medium),C:매개변수 spacing,매개변수,0,0,
+techblog.musinsa.com (medium),C:기본값 spacing,기본값,2,2,1.0000
+techblog.musinsa.com (medium),C:반환값 spacing,반환값,0,0,
+techblog.musinsa.com (medium),C:오픈 소스 spacing,오픈 소스,0,0,
+medium.com/29cm,A:directory,디렉터리,0,0,
+medium.com/29cm,A:message,메시지,17,17,1.0000
+medium.com/29cm,A:application,애플리케이션,0,0,
+medium.com/29cm,A:repository,리포지터리,0,1,0.0000
+medium.com/29cm,A:contents,콘텐츠,6,6,1.0000
+medium.com/29cm,A:shell,셸,0,0,
+medium.com/29cm,A:target,타깃,0,13,0.0000
+medium.com/29cm,A:release,릴리스,0,0,
+medium.com/29cm,A:architecture,아키텍처,2,2,1.0000
+medium.com/29cm,A:column,칼럼,0,0,
+medium.com/29cm,A:body,보디,0,0,
+medium.com/29cm,A:thread,스레드,0,0,
+medium.com/29cm,A:redirect,리디렉트,0,0,
+medium.com/29cm,A:redirection,리디렉션,0,0,
+medium.com/29cm,A:cache,캐시,1,1,1.0000
+medium.com/29cm,A:dashboard,대시보드,0,0,
+medium.com/29cm,A:setting,세팅,3,3,1.0000
+medium.com/29cm,A:hash,해시,0,0,
+medium.com/29cm,A:format,포맷,0,0,
+medium.com/29cm,A:rendering,렌더링,0,0,
+medium.com/29cm,A:transaction,트랜잭션,0,0,
+medium.com/29cm,A:version,버전,1,1,1.0000
+medium.com/29cm,A:method,메서드,0,0,
+medium.com/29cm,A:license,라이선스,0,0,
+medium.com/29cm,A:access,액세스,0,0,
+medium.com/29cm,A:manual,매뉴얼,0,0,
+medium.com/29cm,A:business,비즈니스,3,3,1.0000
+medium.com/29cm,A:refactoring,리팩터링,0,2,0.0000
+medium.com/29cm,A:schedule,스케줄,1,1,1.0000
+medium.com/29cm,A:header,헤더,0,0,
+medium.com/29cm,A:data,데이터,24,24,1.0000
+medium.com/29cm,A:component,컴포넌트,29,29,1.0000
+medium.com/29cm,A:framework,프레임워크,2,2,1.0000
+medium.com/29cm,B:error,오류,5,6,0.8333
+medium.com/29cm,B:repository-word,저장소,0,1,0.0000
+medium.com/29cm,B:default,기본값+기본 값,0,0,
+medium.com/29cm,B:deploy,배포,16,16,1.0000
+medium.com/29cm,B:user,사용자,10,16,0.6250
+medium.com/29cm,B:parameter,매개변수+매개 변수,0,0,
+medium.com/29cm,C:매개변수 spacing,매개변수,0,0,
+medium.com/29cm,C:기본값 spacing,기본값,0,0,
+medium.com/29cm,C:반환값 spacing,반환값,0,0,
+medium.com/29cm,C:오픈 소스 spacing,오픈 소스,2,3,0.6667
+techblog.yogiyo.co.kr (medium),A:directory,디렉터리,0,1,0.0000
+techblog.yogiyo.co.kr (medium),A:message,메시지,12,12,1.0000
+techblog.yogiyo.co.kr (medium),A:application,애플리케이션,19,19,1.0000
+techblog.yogiyo.co.kr (medium),A:repository,리포지터리,0,1,0.0000
+techblog.yogiyo.co.kr (medium),A:contents,콘텐츠,1,1,1.0000
+techblog.yogiyo.co.kr (medium),A:shell,셸,0,0,
+techblog.yogiyo.co.kr (medium),A:target,타깃,0,4,0.0000
+techblog.yogiyo.co.kr (medium),A:release,릴리스,0,6,0.0000
+techblog.yogiyo.co.kr (medium),A:architecture,아키텍처,5,5,1.0000
+techblog.yogiyo.co.kr (medium),A:column,칼럼,0,1,0.0000
+techblog.yogiyo.co.kr (medium),A:body,보디,0,0,
+techblog.yogiyo.co.kr (medium),A:thread,스레드,8,8,1.0000
+techblog.yogiyo.co.kr (medium),A:redirect,리디렉트,0,0,
+techblog.yogiyo.co.kr (medium),A:redirection,리디렉션,0,0,
+techblog.yogiyo.co.kr (medium),A:cache,캐시,2,2,1.0000
+techblog.yogiyo.co.kr (medium),A:dashboard,대시보드,0,0,
+techblog.yogiyo.co.kr (medium),A:setting,세팅,4,4,1.0000
+techblog.yogiyo.co.kr (medium),A:hash,해시,6,6,1.0000
+techblog.yogiyo.co.kr (medium),A:format,포맷,1,1,1.0000
+techblog.yogiyo.co.kr (medium),A:rendering,렌더링,11,11,1.0000
+techblog.yogiyo.co.kr (medium),A:transaction,트랜잭션,2,2,1.0000
+techblog.yogiyo.co.kr (medium),A:version,버전,16,16,1.0000
+techblog.yogiyo.co.kr (medium),A:method,메서드,2,2,1.0000
+techblog.yogiyo.co.kr (medium),A:license,라이선스,0,0,
+techblog.yogiyo.co.kr (medium),A:access,액세스,0,0,
+techblog.yogiyo.co.kr (medium),A:manual,매뉴얼,0,0,
+techblog.yogiyo.co.kr (medium),A:business,비즈니스,12,12,1.0000
+techblog.yogiyo.co.kr (medium),A:refactoring,리팩터링,0,0,
+techblog.yogiyo.co.kr (medium),A:schedule,스케줄,1,1,1.0000
+techblog.yogiyo.co.kr (medium),A:header,헤더,5,5,1.0000
+techblog.yogiyo.co.kr (medium),A:data,데이터,43,43,1.0000
+techblog.yogiyo.co.kr (medium),A:component,컴포넌트,7,7,1.0000
+techblog.yogiyo.co.kr (medium),A:framework,프레임워크,5,5,1.0000
+techblog.yogiyo.co.kr (medium),B:error,오류,2,13,0.1538
+techblog.yogiyo.co.kr (medium),B:repository-word,저장소,3,11,0.2727
+techblog.yogiyo.co.kr (medium),B:default,기본값+기본 값,1,1,1.0000
+techblog.yogiyo.co.kr (medium),B:deploy,배포,40,40,1.0000
+techblog.yogiyo.co.kr (medium),B:user,사용자,50,59,0.8475
+techblog.yogiyo.co.kr (medium),B:parameter,매개변수+매개 변수,0,0,
+techblog.yogiyo.co.kr (medium),C:매개변수 spacing,매개변수,0,0,
+techblog.yogiyo.co.kr (medium),C:기본값 spacing,기본값,1,1,1.0000
+techblog.yogiyo.co.kr (medium),C:반환값 spacing,반환값,0,0,
+techblog.yogiyo.co.kr (medium),C:오픈 소스 spacing,오픈 소스,0,1,0.0000
+techblog.gccompany.co.kr (medium),A:directory,디렉터리,6,6,1.0000
+techblog.gccompany.co.kr (medium),A:message,메시지,13,13,1.0000
+techblog.gccompany.co.kr (medium),A:application,애플리케이션,12,13,0.9231
+techblog.gccompany.co.kr (medium),A:repository,리포지터리,0,0,
+techblog.gccompany.co.kr (medium),A:contents,콘텐츠,6,6,1.0000
+techblog.gccompany.co.kr (medium),A:shell,셸,2,2,1.0000
+techblog.gccompany.co.kr (medium),A:target,타깃,0,3,0.0000
+techblog.gccompany.co.kr (medium),A:release,릴리스,3,5,0.6000
+techblog.gccompany.co.kr (medium),A:architecture,아키텍처,4,4,1.0000
+techblog.gccompany.co.kr (medium),A:column,칼럼,0,47,0.0000
+techblog.gccompany.co.kr (medium),A:body,보디,0,0,
+techblog.gccompany.co.kr (medium),A:thread,스레드,7,9,0.7778
+techblog.gccompany.co.kr (medium),A:redirect,리디렉트,0,0,
+techblog.gccompany.co.kr (medium),A:redirection,리디렉션,0,0,
+techblog.gccompany.co.kr (medium),A:cache,캐시,27,27,1.0000
+techblog.gccompany.co.kr (medium),A:dashboard,대시보드,14,14,1.0000
+techblog.gccompany.co.kr (medium),A:setting,세팅,11,11,1.0000
+techblog.gccompany.co.kr (medium),A:hash,해시,2,2,1.0000
+techblog.gccompany.co.kr (medium),A:format,포맷,0,0,
+techblog.gccompany.co.kr (medium),A:rendering,렌더링,7,7,1.0000
+techblog.gccompany.co.kr (medium),A:transaction,트랜잭션,1,1,1.0000
+techblog.gccompany.co.kr (medium),A:version,버전,27,27,1.0000
+techblog.gccompany.co.kr (medium),A:method,메서드,2,2,1.0000
+techblog.gccompany.co.kr (medium),A:license,라이선스,0,0,
+techblog.gccompany.co.kr (medium),A:access,액세스,3,3,1.0000
+techblog.gccompany.co.kr (medium),A:manual,매뉴얼,1,1,1.0000
+techblog.gccompany.co.kr (medium),A:business,비즈니스,8,8,1.0000
+techblog.gccompany.co.kr (medium),A:refactoring,리팩터링,0,0,
+techblog.gccompany.co.kr (medium),A:schedule,스케줄,14,14,1.0000
+techblog.gccompany.co.kr (medium),A:header,헤더,11,11,1.0000
+techblog.gccompany.co.kr (medium),A:data,데이터,164,164,1.0000
+techblog.gccompany.co.kr (medium),A:component,컴포넌트,30,30,1.0000
+techblog.gccompany.co.kr (medium),A:framework,프레임워크,3,3,1.0000
+techblog.gccompany.co.kr (medium),B:error,오류,15,33,0.4545
+techblog.gccompany.co.kr (medium),B:repository-word,저장소,33,33,1.0000
+techblog.gccompany.co.kr (medium),B:default,기본값+기본 값,3,3,1.0000
+techblog.gccompany.co.kr (medium),B:deploy,배포,79,79,1.0000
+techblog.gccompany.co.kr (medium),B:user,사용자,72,77,0.9351
+techblog.gccompany.co.kr (medium),B:parameter,매개변수+매개 변수,0,7,0.0000
+techblog.gccompany.co.kr (medium),C:매개변수 spacing,매개변수,0,0,
+techblog.gccompany.co.kr (medium),C:기본값 spacing,기본값,3,3,1.0000
+techblog.gccompany.co.kr (medium),C:반환값 spacing,반환값,0,0,
+techblog.gccompany.co.kr (medium),C:오픈 소스 spacing,오픈 소스,0,0,
+tech.remember.co.kr (medium),A:directory,디렉터리,0,0,
+tech.remember.co.kr (medium),A:message,메시지,3,3,1.0000
+tech.remember.co.kr (medium),A:application,애플리케이션,4,6,0.6667
+tech.remember.co.kr (medium),A:repository,리포지터리,0,3,0.0000
+tech.remember.co.kr (medium),A:contents,콘텐츠,4,4,1.0000
+tech.remember.co.kr (medium),A:shell,셸,0,0,
+tech.remember.co.kr (medium),A:target,타깃,0,9,0.0000
+tech.remember.co.kr (medium),A:release,릴리스,0,1,0.0000
+tech.remember.co.kr (medium),A:architecture,아키텍처,6,6,1.0000
+tech.remember.co.kr (medium),A:column,칼럼,0,0,
+tech.remember.co.kr (medium),A:body,보디,0,0,
+tech.remember.co.kr (medium),A:thread,스레드,12,12,1.0000
+tech.remember.co.kr (medium),A:redirect,리디렉트,0,0,
+tech.remember.co.kr (medium),A:redirection,리디렉션,0,0,
+tech.remember.co.kr (medium),A:cache,캐시,4,4,1.0000
+tech.remember.co.kr (medium),A:dashboard,대시보드,0,0,
+tech.remember.co.kr (medium),A:setting,세팅,15,15,1.0000
+tech.remember.co.kr (medium),A:hash,해시,0,0,
+tech.remember.co.kr (medium),A:format,포맷,1,1,1.0000
+tech.remember.co.kr (medium),A:rendering,렌더링,40,40,1.0000
+tech.remember.co.kr (medium),A:transaction,트랜잭션,0,0,
+tech.remember.co.kr (medium),A:version,버전,19,19,1.0000
+tech.remember.co.kr (medium),A:method,메서드,0,0,
+tech.remember.co.kr (medium),A:license,라이선스,0,0,
+tech.remember.co.kr (medium),A:access,액세스,1,1,1.0000
+tech.remember.co.kr (medium),A:manual,매뉴얼,0,0,
+tech.remember.co.kr (medium),A:business,비즈니스,5,5,1.0000
+tech.remember.co.kr (medium),A:refactoring,리팩터링,0,0,
+tech.remember.co.kr (medium),A:schedule,스케줄,9,9,1.0000
+tech.remember.co.kr (medium),A:header,헤더,0,0,
+tech.remember.co.kr (medium),A:data,데이터,75,75,1.0000
+tech.remember.co.kr (medium),A:component,컴포넌트,11,11,1.0000
+tech.remember.co.kr (medium),A:framework,프레임워크,0,0,
+tech.remember.co.kr (medium),B:error,오류,3,15,0.2000
+tech.remember.co.kr (medium),B:repository-word,저장소,0,5,0.0000
+tech.remember.co.kr (medium),B:default,기본값+기본 값,0,0,
+tech.remember.co.kr (medium),B:deploy,배포,17,17,1.0000
+tech.remember.co.kr (medium),B:user,사용자,108,152,0.7105
+tech.remember.co.kr (medium),B:parameter,매개변수+매개 변수,0,1,0.0000
+tech.remember.co.kr (medium),C:매개변수 spacing,매개변수,0,0,
+tech.remember.co.kr (medium),C:기본값 spacing,기본값,0,0,
+tech.remember.co.kr (medium),C:반환값 spacing,반환값,0,0,
+tech.remember.co.kr (medium),C:오픈 소스 spacing,오픈 소스,1,4,0.2500
