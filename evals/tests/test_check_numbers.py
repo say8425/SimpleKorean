@@ -77,7 +77,8 @@ def test_check_benchmark_catches_stale_numbers_and_missing_changelog_path():
     with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
         root = _results(d)
         rel = root.resolve().relative_to(cn.ROOT).as_posix()
-        readme = report.replace_readme_block("<!-- benchmark:start x -->\n\n<!-- benchmark:end -->\n", root,
+        readme = report.replace_readme_block("문서와 답변은 `m`이 쓰고 판정은 `j`가 했습니다.\n"
+                                             "<!-- benchmark:start x -->\n\n<!-- benchmark:end -->\n", root,
                                              report.readme_block(root, scenarios))
         (root / "RESULTS.md").write_text(report.results_md(root, scenarios), encoding="utf-8")
         changelog = f"결과는 {rel}/RESULTS.md에 있습니다."
@@ -85,6 +86,8 @@ def test_check_benchmark_catches_stale_numbers_and_missing_changelog_path():
         stale = readme.replace("| 스킬 없음 | 1 |", "| 스킬 없음 | 2 |", 1)
         assert any("README 벤치마크 블록" in p for p in cn.check_benchmark(stale, changelog, scenarios, require_easy=False))
         assert any("CHANGELOG.md가 측정 결과" in p for p in cn.check_benchmark(readme, "", scenarios, require_easy=False))
+        no_judge = readme.replace("`j`", "Claude")
+        assert any("판정 모델 `j`" in p for p in cn.check_benchmark(no_judge, changelog, scenarios, require_easy=False))
     assert cn.check_benchmark("블록 없음", "", scenarios) == ["README.md에 벤치마크 블록이 없습니다"]
 
 
@@ -116,3 +119,10 @@ def test_main_reports_missing_files():
             assert cn.main() == 1
         finally:
             cn.ROOT = old
+
+
+def test_check_block_size_matches_the_rule_block():
+    prompt = f"# 시스템 프롬프트\n\n---\n{BLOCK}\n---\n"
+    n = len(BLOCK)
+    assert cn.check_block_size(f"훅은 세션마다 규칙 블록 {n:,}자를 넣습니다.", prompt) == []
+    assert cn.check_block_size(f"훅은 세션마다 규칙 블록 {n + 1:,}자를 넣습니다.", prompt) != []

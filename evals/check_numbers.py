@@ -57,7 +57,9 @@ def check_benchmark(readme, changelog, scenarios, require_easy=True):
     rel, results_dir = m.group(1), ROOT / m.group(1)
     if require_easy and metrics.easy_word_counts("확인합니다.") is None:
         return ["kiwipiepy가 없어 쉬운 단어 비율을 다시 계산하지 못했습니다. .venv/bin/python으로 돌리세요"]
-    problems = []
+    meta = json.loads((results_dir / "meta.json").read_text(encoding="utf-8"))
+    problems = [f"README.md가 {label} `{meta[key]}`를 밝히지 않습니다"
+                for key, label in (("model", "작성 모델"), ("judge_model", "판정 모델")) if f"`{meta[key]}`" not in readme]
     block = report.readme_block(results_dir, scenarios)
     if m.group(2) != block:
         problems.append(_diff("README 벤치마크 블록", block, m.group(2)))
@@ -103,6 +105,12 @@ def check_rule_block(prompt_md, style_md, skill_md):
     return problems
 
 
+def check_block_size(readme, prompt_md):
+    """README가 밝힌 규칙 블록 글자 수가 훅이 넣는 블록의 실제 길이와 같은지 본다."""
+    size = f"규칙 블록 {len(bench_common.rule_block(prompt_md)):,}자"
+    return [] if size in readme else [f"README.md에 '{size}'가 없습니다. 훅이 세션마다 넣는 블록의 길이를 적으세요"]
+
+
 def check_versions(texts):
     """{경로: 글}에서 버전 문자열을 꺼내 모두 같은지 본다."""
     found = {}
@@ -133,6 +141,7 @@ def main():
                 + check_calibration(changelog)
                 + check_rule_block(_read("prompts/system-prompt.md"), _read("output-styles/simple-korean.md"),
                                    _read("skills/simple-korean/SKILL.md"))
+                + check_block_size(readme, _read("prompts/system-prompt.md"))
                 + check_versions({name: _read(name) for name in VERSION_PATTERNS}))
     if problems:
         print("MISMATCH")
