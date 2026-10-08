@@ -1,0 +1,13 @@
+{
+  "text": "sqlpipe: S3 업로드에 실패했습니다. AccessDenied: 현재 IAM 자격 증명에 s3:PutObject 권한이 없습니다.\n대상 버킷과 키 경로(s3://<bucket>/<key>)에 대한 s3:PutObject 권한을 IAM 정책에 추가한 뒤 다시 시도하세요.\n사용 중인 자격 증명은 `aws sts get-caller-identity`로 확인할 수 있습니다.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 172,
+  "cost_usd": 0.0253018,
+  "duration_ms": 2668,
+  "condition": "baseline",
+  "scenario": "error-message",
+  "type": "procedural",
+  "run": 1
+}

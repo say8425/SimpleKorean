@@ -53,6 +53,8 @@ WILL = re.compile(r"(\S)\s것(?:입니다|이다|이며|이고|이니)")
 COND = re.compile(r"(\S)\s경우(?=에|,|\s|$)")
 NA_LIST = re.compile(r"(?<![가-힣A-Za-z0-9])([가-힣A-Za-z0-9]+?)(이나|나)\s(?=[가-힣A-Za-z0-9])")
 NA_STOP = frozenset({"하나", "그러나", "아무나", "누구나", "언제나", "어디나", "무엇이나", "뭐나"})
+# 나열의 '(이)나' 뒤에는 명사가 온다. 보조 용언이 바로 오면 '어긋나 있다' 같은 '-나다' 동사다.
+NA_AUX = ("있", "버리", "버렸", "버린", "버려", "버립")
 CHECK_VERB = re.compile(r"(?<![가-힣])(확인|검증|점검|체크|검사)(?=하|합|했|해|한|할|됩|된|되|될)")
 CONFIG_NOUN = re.compile(r"(?<![가-힣])(설정\s?파일|구성\s?파일|컨피그(?:\s?파일)?|컨피규레이션)")
 SLOP_CORE = ("원활", "효율적", "강력한", "혁신적", "획기적", "손쉽게", "간편하게", "매끄럽게", "포괄적",
@@ -120,7 +122,7 @@ def connective_hits(masked):
     hits = []
     for m in NA_LIST.finditer(masked):
         word = m.group(1) + m.group(2)
-        if word in NA_STOP or word.endswith("거나"):
+        if word in NA_STOP or word.endswith("거나") or masked.startswith(NA_AUX, m.end()):
             continue
         hits.append(Hit("strict_connective", WARNING, line_of(masked, m.start()), word))
     return hits

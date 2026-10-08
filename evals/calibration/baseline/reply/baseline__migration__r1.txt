@@ -1,0 +1,45 @@
+**백필(backfill)**은 기존 행들의 새 컬럼에 값을 채워 넣는 작업입니다. NOT NULL 컬럼은 모든 행에 값이 있어야 하는데, 기존 행들에는 값이 없기 때문에 문제가 생깁니다.
+
+## 왜 멈췄나
+
+`ALTER TABLE ... ADD COLUMN ... NOT NULL DEFAULT ...`를 한 번에 실행하면 DB 종류와 버전에 따라 다음 중 하나가 일어납니다.
+
+- **테이블 전체 재작성**: 20GB를 통째로 다시 쓰는 동안 테이블에 락이 걸려 읽기/쓰기가 막힙니다. 이게 "멈춘" 것처럼 보이는 원인일 가능성이 큽니다.
+- **락 대기**: 긴 트랜잭션이나 다른 세션이 테이블을 잡고 있으면 ALTER가 락을 못 얻고 대기합니다. 그 뒤에 들어오는 쿼리도 줄줄이 막힙니다.
+
+참고로 PostgreSQL 11+는 상수 DEFAULT를 쓰면 재작성 없이 메타데이터만 바꿉니다. MySQL 8.0도 `ALGORITHM=INSTANT`가 가능한 경우가 있습니다. 어떤 DB와 버전인지에 따라 상황이 달라집니다.
+
+## 해야 할 일: 3단계로 나누기
+
+**0. 먼저 멈춘 마이그레이션을 정리합니다.**
+실행 중인 ALTER를 취소(kill)하고, 락을 잡고 있는 세션이 있는지 확인합니다. DBA와 함께 하세요.
+
+**1. 컬럼을 NULL 허용으로 추가합니다.** 빠르게 끝납니다.
+```sql
+ALTER TABLE big_table ADD COLUMN new_col INT NULL;
+```
+
+**2. 배치로 백필합니다.** 한 번에 하지 말고 작은 단위로 나눠서 실행합니다.
+```sql
+-- 예: id 범위 기준 1만~10만 건씩 반복
+UPDATE big_table
+SET new_col = <값>
+WHERE id BETWEEN :start AND :end
+  AND new_col IS NULL;
+```
+- 배치마다 커밋해서 락 시간과 WAL/redo 로그 증가를 줄입니다.
+- 배치 사이에 잠깐 쉬어 복제 지연(replication lag)을 확인합니다.
+- 신규 insert 행은 앱 코드에서 값을 넣도록 먼저 배포해야 합니다. 안 그러면 백필하는 동안에도 NULL 행이 계속 생깁니다.
+- 스크립트는 중단 후 재실행해도 안전하게(idempotent) 만드세요.
+
+**3. NOT NULL 제약을 걸고, 필요하면 DEFAULT도 설정합니다.**
+- PostgreSQL: 먼저 `ADD CONSTRAINT ... CHECK (new_col IS NOT NULL) NOT VALID`를 추가하고, `VALIDATE CONSTRAINT`로 검증한 뒤 `SET NOT NULL`을 실행합니다. 이렇게 하면 긴 락을 피할 수 있습니다.
+- MySQL: `pt-online-schema-change`나 `gh-ost` 같은 온라인 스키마 변경 도구를 쓰는 방법도 있습니다.
+
+## 먼저 확인할 것
+
+- DB 종류와 버전 (PostgreSQL, MySQL 등)
+- 기본값이 상수인지, 다른 컬럼에서 계산해야 하는 값인지
+- 마이그레이션 도구 (Flyway, Alembic, Rails 등). 대부분 마이그레이션 하나가 트랜잭션 하나라서, 백필은 별도 스크립트나 잡으로 분리하는 것이 좋습니다.
+
+DB 종류와 기본값을 알려주시면 구체적인 SQL과 배치 스크립트를 작성해 드리겠습니다.

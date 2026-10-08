@@ -130,3 +130,9 @@ def test_register_accepts_single_styles():
     assert ko_rules.register_hits(units("값이 바뀌어요. 로그를 보세요.")) == []
     assert ko_rules.register_hits(units("전원을 끕니다. 커버를 여십시오.")) == []
     assert len(ko_rules.register_hits(units("로그를 보세요. 커버를 여십시오. 값을 봅니다. 값을 엽니다."))) == 1
+
+
+def test_calibration_fp_na_verb_stem_before_auxiliary_is_not_connective():
+    # hits.tsv의 FP 행(baseline__troubleshooting__r1.json 7행), note "'-나다' 동사 어간 뒤 보조 용언(어긋나 있다)"
+    masked = mask("버킷 정책이나 리전 설정이 어긋나 있지 않은지 확인하세요. 값이 늘어나 버리면 다시 시작하세요.\n")
+    assert [h.text for h in ko_rules.connective_hits(masked)] == ["정책이나"]

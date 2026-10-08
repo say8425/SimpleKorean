@@ -1,0 +1,13 @@
+{
+  "text": "**[해결됨] API 요청 일부 502 오류 발생**\n\n14:02~14:31(UTC) 동안 API 요청의 약 12%가 HTTP 502 오류로 실패했습니다. 원인은 배포 과정에서 캐시 예열 단계가 누락된 것입니다. 14:27에 해당 배포를 이전 버전으로 되돌렸고, 14:31에 서비스가 정상화되었습니다. 불편을 드려 죄송합니다. 향후 배포 절차에 캐시 예열 단계를 필수 검증 항목으로 추가해 재발을 방지하겠습니다.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 218,
+  "cost_usd": 0.0258498,
+  "duration_ms": 2695,
+  "condition": "baseline",
+  "scenario": "incident-report",
+  "type": "descriptive",
+  "run": 1
+}
