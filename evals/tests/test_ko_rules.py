@@ -136,3 +136,13 @@ def test_calibration_fp_na_verb_stem_before_auxiliary_is_not_connective():
     # hits.tsv의 FP 행(baseline__troubleshooting__r1.json 7행), note "'-나다' 동사 어간 뒤 보조 용언(어긋나 있다)"
     masked = mask("버킷 정책이나 리전 설정이 어긋나 있지 않은지 확인하세요. 값이 늘어나 버리면 다시 시작하세요.\n")
     assert [h.text for h in ko_rules.connective_hits(masked)] == ["정책이나"]
+
+
+def test_noun_list_items_do_not_outvote_a_correct_sentence():
+    text = "이 도구는 세 가지를 지원합니다.\n\n- 클라우드 인프라\n- 환경에 따라\n- 약 5분 소요\n"
+    assert ko_rules.register_hits(units(text)) == []
+
+
+def test_parenthetical_tail_is_not_a_noun_ending():
+    text = "백업이 있는지 확인하세요(선택 사항임).\n"
+    assert [h.category for h in ko_rules.sentence_hits(units(text), "procedural")] == []

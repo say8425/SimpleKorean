@@ -133,3 +133,22 @@ def test_register_classes():
     assert ko_text.register("서버가 응답한다.") == "haera"
     assert ko_text.register("설정 변경 필요.") is None
     assert ko_text.register("대상: 사용자.") is None
+
+
+def test_trailing_parenthetical_is_not_the_sentence_ending():
+    assert ko_text.sentence_kind('"-되어지다"를 쓰지 마세요(예: 변경되어지다).') == "procedural"
+    assert ko_text.register('"-되어지다"를 쓰지 마세요(예: 변경되어지다).') == "haeyo_imp"
+    assert ko_text.register("설정 파일을 엽니다(경로는 플랫폼마다 다르다).") == "hapsyo"
+    assert ko_text.tail("로그를 확인하세요(선택 사항임).") == "로그를 확인하세요"
+    assert ko_text.register("(이 값은 실행할 때마다 바뀝니다.)") == "hapsyo"
+
+
+def test_noun_phrases_ending_in_ra_or_yo_have_no_register():
+    for phrase in ("클라우드 인프라", "환경에 따라", "약 5분 소요", "필요", "데이터 수요", "문서 개요"):
+        assert ko_text.register(phrase) is None, phrase
+        assert ko_text.sentence_kind(phrase) is None, phrase
+    for sentence, style in (("파드가 메모리 때문에 죽었어요", "haeyo"), ("내일 다시 확인할게요", "haeyo"),
+                            ("벌써 끝났군요", "haeyo"), ("버전이 다르거든요", "haeyo"), ("이건 버그죠", "haeyo"),
+                            ("설정을 바꿔요", "haeyo"), ("서버가 멈춰요", "haeyo"), ("로그를 확인하라", "haera"),
+                            ("값을 바꾼다", "haera"), ("두 값이 같은가", None)):
+        assert ko_text.register(sentence) == style, (sentence, ko_text.register(sentence))

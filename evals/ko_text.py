@@ -99,12 +99,28 @@ NUM_UNIT = re.compile(
     r"(\d[\d,.]*)\s+(%|[A-Za-z]{1,5}|초|분|시간|일|주|개월|년|개|건|회|번|명|배|원|자|줄|행|쪽|장|단계)"
     r"(?=[\s.,!?)]|$|[가-힣])")
 PROC_ENDINGS = ("세요", "십시오", "시오", "하라", "하자")
-NOUN_YO = ("필요", "중요", "주요", "개요")
+NOUN_YO = ("필요", "중요", "주요", "개요", "소요", "수요", "강요", "동요")
+# '요' 앞 음절이 이 모음으로 끝나는 열린 음절이면 해요체 어미다(해요, 바꿔요, 할게요, 지요).
+YO_VOWELS = frozenset({0, 1, 4, 5, 6, 7, 8, 9, 10, 14, 15, 20})  # ㅏㅐㅓㅔㅕㅖㅗㅘㅙㅝㅞㅣ
+YO_CLOSED = ("든요", "군요", "걸요")
+HAERA_RA = ("하라", "말라", "으라", "보라", "두라", "쓰라")
+TRAIL_GROUP = re.compile(r"(?<=[^\s(])\s*\([^()]*\)$")
 
 
 def tail(sentence):
-    """문장 끝의 부호와 닫는 따옴표를 뗀 문자열."""
-    return sentence.rstrip(" \t.!?:;\"'”’)]")
+    """문장 끝의 부호, 닫는 따옴표, 맨 끝의 괄호 하나를 뗀 문자열. 문장 전체가 괄호이면 괄호는 둔다."""
+    t = TRAIL_GROUP.sub("", sentence.rstrip(" \t.!?:;\"'”’"))
+    return t.rstrip(" \t.!?:;\"'”’)]")
+
+
+def _haeyo(t):
+    """'요'로 끝나는 말이 해요체 어미인지 가린다. '소요', '필요' 같은 명사는 아니다."""
+    if not t.endswith("요") or t.endswith(NOUN_YO) or len(t) < 2:
+        return False
+    if t.endswith(YO_CLOSED):
+        return True
+    before = t[-2]
+    return is_hangul(before) and jongseong(before) == 0 and (ord(before) - 0xAC00) // 28 % 21 in YO_VOWELS
 
 
 def split_sentences(text):
@@ -187,9 +203,7 @@ def sentence_kind(sentence):
     t = tail(sentence)
     if t.endswith(PROC_ENDINGS):
         return "procedural"
-    if t.endswith(NOUN_YO):
-        return None
-    if t.endswith(("니다", "니까", "다", "요", "죠")):
+    if t.endswith(("니다", "니까", "다", "죠")) or _haeyo(t):
         return "descriptive"
     return None
 
@@ -203,10 +217,8 @@ def register(sentence):
         return "hapsyo"
     if t.endswith("세요"):
         return "haeyo_imp"
-    if t.endswith(NOUN_YO):
-        return None
-    if t.endswith(("요", "죠")):
+    if t.endswith("죠") or _haeyo(t):
         return "haeyo"
-    if t.endswith(("다", "라", "하자", "까", "냐")):
+    if t.endswith(("다", "하자", "까", "냐") + HAERA_RA):
         return "haera"
     return None
