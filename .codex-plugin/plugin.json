@@ -1,0 +1,38 @@
+{
+  "name": "simple-korean",
+  "version": "1.0.0",
+  "description": "기술 문서와 답변을 쉬운 한국어로 쓰게 합니다. ASD-STE100의 규칙을 한국어 문법에 맞게 다시 세웠습니다. 짧은 문장, 명령 앞의 조건, 한 단어 한 뜻, 번역투와 AI 슬롭 제거, 정해진 외래어 표기를 지킵니다.",
+  "author": {
+    "name": "say8425"
+  },
+  "homepage": "https://github.com/say8425/SimpleKorean",
+  "repository": "https://github.com/say8425/SimpleKorean",
+  "license": "MIT",
+  "keywords": [
+    "technical-writing",
+    "documentation",
+    "korean",
+    "plain-language",
+    "ste",
+    "asd-ste100"
+  ],
+  "skills": "./skills/",
+  "hooks": "./.codex-plugin/hooks.json",
+  "interface": {
+    "displayName": "Simple Korean",
+    "shortDescription": "기술 문서를 쉬운 한국어 규칙으로 씁니다.",
+    "longDescription": "문서, 절차서, 오류 메시지, 런북, 릴리스 노트, 장애 보고서를 쓸 때 쉬운 한국어 규칙을 자동으로 불러옵니다.",
+    "developerName": "say8425",
+    "category": "Productivity",
+    "capabilities": [
+      "Write"
+    ],
+    "websiteURL": "https://github.com/say8425/SimpleKorean",
+    "defaultPrompt": [
+      "이 기술 문서를 쉬운 한국어로 고쳐 주세요.",
+      "이 절차를 엄격 모드로 써 주세요.",
+      "이 문서를 SimpleKorean 규칙으로 확인해 주세요."
+    ],
+    "brandColor": "#0F766E"
+  }
+}

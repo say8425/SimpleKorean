@@ -1,0 +1,19 @@
+{
+  "description": "Codex 세션마다 SimpleKorean 규칙을 자동으로 불러옵니다.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "^(startup|resume|clear|compact)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"${PLUGIN_ROOT}\" ] && node \"${PLUGIN_ROOT}/src/hooks/simple-korean-activate.js\" || true",
+            "timeout": 5,
+            "statusMessage": "SimpleKorean 규칙을 불러오는 중...",
+            "additionalContextLimit": 0
+          }
+        ]
+      }
+    ]
+  }
+}

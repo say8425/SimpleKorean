@@ -1,0 +1,16 @@
+{
+  "name": "simple-korean",
+  "interface": {
+    "displayName": "Simple Korean"
+  },
+  "plugins": [
+    {
+      "name": "simple-korean",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
