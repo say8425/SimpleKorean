@@ -1,0 +1,14 @@
+OOMKilled는 컨테이너가 허용된 메모리 한도를 넘어서 쿠버네티스가 프로세스를 강제로 종료했다는 뜻이에요. OOM은 Out Of Memory(메모리 부족)의 약자예요.
+
+파드의 컨테이너에는 `resources.limits.memory`로 메모리 상한을 정할 수 있어요. 컨테이너가 이 값보다 많은 메모리를 쓰면 리눅스 커널의 OOM killer가 프로세스를 종료해요. 종료 코드는 137이고, `kubectl describe pod`의 `Last State`에 `Reason: OOMKilled`로 나와요. 파드의 `restartPolicy`가 `Always`나 `OnFailure`이면 kubelet이 컨테이너를 다시 시작해요. 같은 일이 반복되면 `CrashLoopBackOff` 상태가 돼요.
+
+원인은 크게 세 가지예요. 첫째, 한도가 실제 사용량보다 낮게 잡혀 있어요. 둘째, 애플리케이션에 메모리 누수가 있어요. 셋째, 트래픽이 갑자기 늘거나 큰 데이터를 한꺼번에 처리해서 순간적으로 메모리가 치솟아요. 자바처럼 힙 크기를 따로 정하는 런타임은 힙 설정이 컨테이너 한도보다 크면 같은 문제가 생겨요.
+
+확인은 다음 명령으로 하세요.
+
+```
+kubectl describe pod <파드 이름> -n <네임스페이스>
+kubectl top pod <파드 이름> -n <네임스페이스> --containers
+```
+
+`kubectl top`은 metrics-server가 설치돼 있어야 동작해요. 사용량이 한도에 계속 가까우면 `limits.memory`를 늘리세요. 사용량이 시간이 지날수록 계속 오르면 누수를 의심하고 애플리케이션을 프로파일링해야 해요.

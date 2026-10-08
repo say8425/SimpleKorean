@@ -1,0 +1,27 @@
+OOMKilled는 컨테이너가 허용된 메모리 한도를 넘어서 리눅스 커널의 OOM Killer에게 강제 종료됐다는 뜻이에요. OOM은 Out Of Memory의 약자예요.
+
+**동작 방식**
+- 컨테이너에 `resources.limits.memory`를 설정하면, 쿠버네티스가 이 값을 cgroup 메모리 한도로 걸어요.
+- 컨테이너의 프로세스가 이 한도를 넘어 메모리를 쓰려고 하면 커널이 해당 프로세스를 SIGKILL(종료 코드 137)로 죽여요.
+- 그 후 파드의 `restartPolicy`에 따라 컨테이너가 재시작돼요. 이게 반복되면 `CrashLoopBackOff` 상태로 보일 수 있어요.
+
+**확인 방법**
+```bash
+kubectl describe pod <파드이름>
+```
+출력에서 `Last State: Terminated`, `Reason: OOMKilled`, `Exit Code: 137`을 확인할 수 있어요.
+
+**주요 원인**
+1. 메모리 limit이 애플리케이션의 실제 사용량보다 너무 낮게 설정된 경우
+2. 애플리케이션의 메모리 누수
+3. 트래픽이나 데이터 처리량이 갑자기 늘어난 경우
+4. JVM 같은 런타임의 힙 설정이 컨테이너 limit과 맞지 않는 경우 (힙 외에 메타스페이스나 스레드 스택 등도 메모리를 써요)
+5. 노드 자체의 메모리가 부족해서 파드가 축출되는 경우 (이때는 OOMKilled가 아니라 보통 `Evicted`로 나타나요)
+
+**해결 방법**
+- `kubectl top pod`나 모니터링 도구(Prometheus, Grafana 등)로 실제 메모리 사용 패턴을 확인해요.
+- 사용량에 맞게 `limits.memory`와 `requests.memory`를 늘려요.
+- 메모리 누수가 의심되면 프로파일링으로 코드를 고쳐요.
+- JVM이라면 `-XX:MaxRAMPercentage` 같은 옵션으로 컨테이너 한도에 맞게 힙을 조정해요.
+
+원하시면 사용 중인 환경(언어, 매니페스트 등)을 알려 주세요. 더 구체적으로 같이 살펴볼게요.

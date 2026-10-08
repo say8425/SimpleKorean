@@ -1,0 +1,71 @@
+# sqlpipe
+
+## 소개
+
+sqlpipe는 Postgres 테이블을 Parquet 파일로 변환해 S3에 동기화하는 CLI 도구입니다. 분석용 데이터 레이크를 만들 때 별도의 ETL 파이프라인 없이 명령 한 줄로 운영 DB의 데이터를 옮길 수 있습니다.
+
+주요 특징은 다음과 같습니다.
+
+- 테이블 단위 또는 쿼리 단위로 내보내기
+- 컬럼 타입을 Parquet 스키마로 자동 변환
+- 대용량 테이블을 위한 청크 분할 업로드
+- 증분 동기화(`--since`)로 변경된 행만 전송
+
+## 시작하기
+
+### 1. 설치
+
+```bash
+brew install sqlpipe
+# 또는
+cargo install sqlpipe
+```
+
+### 2. 설정 파일 작성
+
+`sqlpipe.toml`을 작업 디렉터리에 만듭니다.
+
+```toml
+[source]
+url = "postgres://user:password@localhost:5432/mydb"
+
+[destination]
+bucket = "my-data-lake"
+prefix = "exports/"
+region = "ap-northeast-2"
+```
+
+S3 자격 증명은 AWS 기본 방식(환경 변수, `~/.aws/credentials`, IAM 역할)을 따릅니다.
+
+### 3. 첫 동기화
+
+```bash
+sqlpipe sync --table public.orders
+```
+
+완료되면 `s3://my-data-lake/exports/public.orders/` 아래에 Parquet 파일이 생성됩니다. 여러 테이블은 `--table`을 반복해 지정하고, 실행 전 확인만 하려면 `--dry-run`을 붙입니다.
+
+## 문제 해결
+
+### 연결 타임아웃
+
+`connection timed out` 오류가 나오면 다음을 순서대로 확인하세요.
+
+1. 호스트와 포트가 올바른지, 네트워크에서 접근 가능한지 확인합니다. (`nc -zv <host> 5432`)
+2. 방화벽, 보안 그룹, VPN 설정이 현재 IP에서의 접속을 허용하는지 확인합니다.
+3. 응답이 느린 DB라면 타임아웃을 늘립니다.
+
+```toml
+[source]
+connect_timeout = 30   # 초, 기본값 10
+```
+
+### 권한 오류
+
+- `permission denied for table ...`: 해당 계정에 `SELECT` 권한이 필요합니다.
+  ```sql
+  GRANT SELECT ON public.orders TO sync_user;
+  ```
+- `AccessDenied` (S3): IAM 정책에 대상 버킷의 `s3:PutObject`, `s3:ListBucket` 권한이 있는지 확인합니다. 접두사(`prefix`)에 맞는 리소스 경로가 허용되어야 합니다.
+
+문제가 계속되면 `--verbose` 옵션으로 상세 로그를 확인하세요.

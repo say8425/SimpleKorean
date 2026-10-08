@@ -1,0 +1,29 @@
+sqlpipe의 S3 AccessDenied 오류 메시지 예시입니다.
+
+```
+오류: S3 업로드에 실패했습니다. (AccessDenied)
+
+  대상:   s3://<bucket>/<key>
+  리전:   <region>
+  원인:   현재 자격 증명에 이 버킷에 쓸 권한이 없습니다.
+
+확인할 사항:
+  1. IAM 정책에 s3:PutObject 권한이 있는지 확인하세요.
+     (멀티파트 업로드를 쓰면 s3:AbortMultipartUpload, s3:ListMultipartUploadParts도 필요합니다.)
+  2. 버킷 정책이나 SCP에 명시적 Deny가 없는지 확인하세요.
+  3. 버킷이 KMS 암호화를 쓴다면 kms:GenerateDataKey, kms:Encrypt 권한도 필요합니다.
+  4. 올바른 프로필/역할로 실행 중인지 확인하세요.
+       aws sts get-caller-identity
+
+현재 자격 증명: <arn>
+요청 ID: <request-id>
+```
+
+구현할 때 참고할 점:
+
+- **자리표시자**(`<bucket>`, `<key>`, `<region>`, `<arn>`, `<request-id>`)는 실제 값으로 채웁니다. 요청 ID는 AWS 지원팀에 문의할 때 필요하므로 꼭 포함하세요.
+- **민감 정보**: 액세스 키나 시크릿은 절대 출력하지 않고, 식별용으로 ARN만 보여줍니다.
+- **종료 코드**: 일반 오류와 구분되도록 별도의 0이 아닌 코드(예: 13)를 쓰면 스크립트에서 처리하기 편합니다.
+- **한 줄 요약형**이 필요하면 `S3 업로드 실패 (AccessDenied): s3://<bucket>/<key> — s3:PutObject 권한을 확인하세요.`처럼 줄일 수 있습니다.
+
+sqlpipe 코드베이스가 이 디렉터리에 없어서 메시지 문구만 작성했습니다. 오류 처리 코드의 위치를 알려주시면 거기에 맞춰 반영하겠습니다.
