@@ -20,3 +20,9 @@ Copyright (c) 2026 AminBlg)의 한국어 파생 프로젝트입니다.
    - yoursemo/eli5-ko
    - yeomin4242/humanize-sepia
    - kys0213/kys-claude-plugin
+
+2. data/basic-vocabulary/grades.tsv
+   출처: 국립국어원, 「국어 기초 어휘 선정 및 어휘 등급화 목록 전체.xlsx」(2023년 국어 기초 어휘
+   선정 및 어휘 등급화 연구의 첨부 파일)
+   https://www.korean.go.kr/front/reportData/reportDataView.do?mn_id=207&report_seq=1160&pageIndex=1
+   이용 조건: 공공누리 제1유형(출처 표시). 등급, 어휘, 품사, 어종 열만 싣고 의미 열은 싣지 않습니다.
