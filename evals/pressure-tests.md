@@ -110,6 +110,20 @@
 
 기계 확인: `python3 evals/ko_lint.py --strict <파일>`에서 이름이 `strict_`로 시작하는 범주와 `hedge`, `will_calque`가 모두 0이어야 합니다.
 
+## 시나리오 9: 영어로 쓰는 글
+
+<!-- simple-korean: off -->
+> Write a git commit message for this change: the CSV parser threw a null pointer exception when the header row was empty, and I added a check that skips empty header rows.
+<!-- simple-korean: on -->
+
+규칙 블록은 세션마다 들어가므로 영어로 일할 때도 모델이 읽습니다. 이 시나리오는 그때 한국어를 강요하지 않는지 봅니다.
+
+통과 기준:
+
+- [ ] 영어로 답합니다. 한국어로 바꾸지 않습니다.
+
+기계 확인: `python3 evals/run_pressure.py --out <디렉터리> --check`에서 `한글 비율`이 0.1 미만이어야 합니다.
+
 ## 기록
 
 ### 2026-10-08, `claude-sonnet-5-5`, effort low, 회차 1

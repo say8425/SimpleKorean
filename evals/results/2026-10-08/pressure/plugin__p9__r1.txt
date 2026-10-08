@@ -1,0 +1,11 @@
+Here is a commit message you can copy:
+
+```
+Skip empty header rows in CSV parser
+
+The parser threw a NullPointerException when the header row was
+empty. Add a check that skips empty header rows before they are
+read.
+```
+
+I wrote it in English because your request was in English. If your repository uses Korean commit messages, tell me and I'll rewrite it.

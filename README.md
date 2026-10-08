@@ -30,7 +30,7 @@ Claude Code에는 플러그인으로 설치하세요. 플러그인에는 세션 
 claude plugin marketplace add say8425/SimpleKorean && claude plugin install simple-korean@simple-korean
 ```
 
-출력 스타일 이름은 `simple-korean:simple-korean`입니다. 짧은 이름으로는 찾지 못합니다. `/config`의 Output style에서 고르거나, `~/.claude/settings.json`에 `{"outputStyle": "simple-korean:simple-korean"}`을 넣으세요. 토큰 비용은 `claude plugin details simple-korean`으로 볼 수 있습니다.
+출력 스타일 이름은 `simple-korean:simple-korean`입니다. 짧은 이름으로는 찾지 못합니다. `/config`의 Output style에서 고르거나, `~/.claude/settings.json`에 `{"outputStyle": "simple-korean:simple-korean"}`을 넣으세요. 세션 시작 훅은 세션마다 규칙 블록 2,271자를 넣습니다. `claude plugin details simple-korean`이 보여 주는 토큰 수에는 이 블록이 들어가지 않습니다.
 
 Codex에는 플러그인으로 설치하세요. 세션 시작 훅이 함께 설치됩니다.
 
@@ -159,7 +159,7 @@ Codex는 훅을 처음 돌리기 전에 믿을지 묻습니다. 세션 시작 �
 
 ## 벤치마크
 
-아래 수치는 모두 커밋한 원본 출력에서 다시 계산한 값입니다. CI가 푸시마다 `evals/check_numbers.py`로 대조합니다. 모든 실행은 `claude-sonnet-5-5`, effort low이고, 사용자 설정과 MCP 서버를 읽지 않았습니다. 판정 모델도 Claude라서 같은 계열에 유리한 편향이 있을 수 있습니다.
+아래 수치는 모두 커밋한 원본 출력에서 다시 계산한 값입니다. CI가 푸시마다 `evals/check_numbers.py`로 대조합니다. 문서와 답변은 `claude-sonnet-5-5`(effort low)가 썼고, 판정은 `claude-opus-5-5`가 했습니다. 모든 실행은 사용자 설정과 MCP 서버를 읽지 않았습니다. 판정 모델도 Claude라서 같은 계열에 유리한 편향이 있을 수 있습니다.
 
 <!-- benchmark:start evals/results/2026-10-08 -->
 답변: 전문용어가 하나씩 든 질문 8개를 조건마다 2번씩 물었습니다. 답변은 모두 32개입니다. 스킬을 켜면 독자가 보는 결함(em-dash, 굵은 글씨, 헤더, 불릿)이 99% 줄었습니다(394개에서 3개). 블라인드 판정에서 SimpleKorean 답변은 16쌍 가운데 16쌍에서 이겼고, 0쌍에서 비겼고, 0쌍에서 졌습니다.
@@ -236,7 +236,7 @@ STE 한국어판입니까? 아니요. ASD-STE100에는 한국어판이 없고, �
 
 레포지토리와 바디는 왜 규범과 다릅니까? 국립국어원 용례는 "리포지터리"와 "보디"입니다. 그런데 이 두 형태는 실제 문서에서 거의 쓰이지 않습니다. 벤더 문서 표본에서 "리포지터리"는 1,104회 가운데 0회였습니다. 그래서 독자가 알아보는 관용형을 지정형으로 정했습니다.
 
-회사 표기가 다르면 어떻게 합니까? 레포지토리 맨 위에 `.simple-korean.json`을 두세요. 린터와 글쓰기 점검 훅이 이 파일의 지정형을 따릅니다.
+회사 표기가 다르면 어떻게 합니까? 레포지토리 맨 위에 `.simple-korean.json`을 두세요. 세션 시작 훅이 이 파일을 찾아 바뀐 지정형을 모델에게 알립니다. 린터와 글쓰기 점검 훅도 이 파일을 따르고, 바꾸기 전의 지정형을 쓰면 경고합니다.
 
 ```json
 {"terms": {"release": {"write": "릴리즈"}, "column": "컬럼"}, "spacing": "attached"}
@@ -257,7 +257,7 @@ SimpleKorean은 [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish
 질문과 버그는 이슈로 알려 주세요. PR을 환영합니다. 공개한 수치를 바꾸는 변경은 원본 출력을 함께 올리고 수치 검증을 통과해야 합니다. 수치 검증에는 kiwipiepy가 필요합니다.
 
 ```bash
-uv venv .venv --python 3.12 && uv pip install --python .venv/bin/python kiwipiepy==0.24.0
+uv venv .venv --python 3.12 && uv pip install --python .venv/bin/python kiwipiepy==0.24.0 kiwipiepy-model==0.24.0
 .venv/bin/python evals/check_numbers.py
 ```
 

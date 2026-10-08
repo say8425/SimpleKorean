@@ -90,6 +90,8 @@ def machine_report(n, text):
         report.update({"요청한 문체 문장": wanted, "다른 문체 문장": sum(styles.values()) - wanted})
     if n == 7:
         report["visible_total"] = ko_lint.reader_check(text)["visible_total"]
+    if n == 9:
+        report["한글 비율"] = round(ko_text.hangul_ratio(text), 2)
     return report
 
 

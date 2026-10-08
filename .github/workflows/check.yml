@@ -9,7 +9,7 @@ jobs:
         with: { node-version: 24 }
       - uses: actions/setup-python@v7
         with: { python-version: "3.12" }
-      - run: python3 -m pip install kiwipiepy==0.24.0
+      - run: python3 -m pip install kiwipiepy==0.24.0 kiwipiepy-model==0.24.0
       - run: python3 evals/ko_lint.py --self-test
       - run: python3 evals/tests/run.py
       - run: node --test src/hooks/simple-korean-activate.test.js

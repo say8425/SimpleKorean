@@ -43,6 +43,52 @@ function skillPath(pluginRoot, hookDirectory) {
   return found ? path.resolve(found) : '';
 }
 
+const CONFIG_NAME = '.simple-korean.json';
+
+// 작업 디렉터리에서 위로 올라가며 프로젝트 설정을 찾는다(evals/ko_terms.py의 find_config와 같다).
+function findConfig(start) {
+  let dir = path.resolve(start || '.');
+  for (;;) {
+    const candidate = path.join(dir, CONFIG_NAME);
+    try {
+      if (fs.statSync(candidate).isFile()) {
+        return candidate;
+      }
+    } catch (error) {
+      // 없다. 한 단계 위를 본다.
+    }
+    const parent = path.dirname(dir);
+    if (parent === dir) {
+      return '';
+    }
+    dir = parent;
+  }
+}
+
+// 모델은 설정 파일을 스스로 읽지 않는다. 바뀐 지정형을 문맥에 직접 적어 준다.
+function configNote(configPath) {
+  if (!configPath) {
+    return '';
+  }
+  let config;
+  try {
+    config = JSON.parse(fs.readFileSync(configPath, 'utf8')) || {};
+  } catch (error) {
+    return `${configPath}을 읽지 못했습니다. 위 지정형을 쓰세요.`;
+  }
+  const pairs = Object.entries(config.terms || {})
+    .map(([id, value]) => [id, typeof value === 'string' ? value : value && value.write])
+    .filter(([, write]) => typeof write === 'string' && write.trim());
+  const parts = [];
+  if (pairs.length) {
+    parts.push(`이 레포지토리의 ${CONFIG_NAME}이 지정형을 바꿨습니다. 위 목록보다 이 형태를 먼저 쓰세요: ${pairs.map(([id, write]) => `${id} → ${write}`).join(', ')}.`);
+  }
+  if (config.spacing === 'spaced') {
+    parts.push('이 레포지토리는 전문 용어 합성어를 띄어 쓰세요(매개 변수, 반환 값, 기본 값, 오픈 소스).');
+  }
+  return parts.join(' ');
+}
+
 function readFirstFile(list) {
   for (const candidate of list) {
     try {
@@ -71,11 +117,11 @@ function ruleBlock(content) {
   return second === -1 ? rest : rest.slice(0, second);
 }
 
-function buildContext(promptText, skill = '') {
+function buildContext(promptText, skill = '', note = '') {
   if (!promptText) {
     return FALLBACK_CONTEXT;
   }
-  const out = header(skill) + ruleBlock(stripFrontmatter(promptText)).trim();
+  const out = header(skill) + ruleBlock(stripFrontmatter(promptText)).trim() + (note ? `\n\n${note}` : '');
   if (out.length > MAX_CHARS) {
     process.stderr.write(`simple-korean 훅: 규칙이 ${out.length}자로 상한 ${MAX_CHARS}자를 넘어 짧은 대체 규칙을 보냅니다\n`);
     return FALLBACK_CONTEXT;
@@ -86,7 +132,8 @@ function buildContext(promptText, skill = '') {
 function main() {
   const pluginRoot = process.env.PLUGIN_ROOT || process.env.CLAUDE_PLUGIN_ROOT;
   const prompt = readFirstFile(promptCandidates(pluginRoot, __dirname));
-  process.stdout.write(buildContext(prompt, skillPath(pluginRoot, __dirname)));
+  const note = configNote(findConfig(process.env.CLAUDE_PROJECT_DIR || process.cwd()));
+  process.stdout.write(buildContext(prompt, skillPath(pluginRoot, __dirname), note));
 }
 
 if (require.main === module) {
@@ -97,6 +144,8 @@ module.exports = {
   FALLBACK_CONTEXT,
   MAX_CHARS,
   buildContext,
+  configNote,
+  findConfig,
   promptCandidates,
   readFirstFile,
   ruleBlock,

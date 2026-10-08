@@ -9,6 +9,8 @@ const {
   FALLBACK_CONTEXT,
   MAX_CHARS,
   buildContext,
+  configNote,
+  findConfig,
   promptCandidates,
   readFirstFile,
   skillPath,
@@ -115,6 +117,39 @@ test('긴 설치 경로에서도 상한 안에 든다', () => {
   const out = buildContext(fs.readFileSync(REPO_PROMPT, 'utf8'), long);
   assert.ok(out.length <= MAX_CHARS, `${out.length} > ${MAX_CHARS}`);
   assert.ok(out.includes(long));
+});
+
+function withConfig(root, content) {
+  fs.writeFileSync(path.join(root, '.simple-korean.json'), content);
+  return root;
+}
+
+test('위 디렉터리로 올라가며 프로젝트 설정을 찾는다', () => {
+  const root = withConfig(fs.mkdtempSync(path.join(os.tmpdir(), 'sk-cfg-')), '{}');
+  const deep = path.join(root, 'a', 'b');
+  fs.mkdirSync(deep, { recursive: true });
+  assert.equal(findConfig(deep), path.join(root, '.simple-korean.json'));
+});
+
+test('프로젝트 설정이 바꾼 지정형을 알린다', () => {
+  const root = withConfig(fs.mkdtempSync(path.join(os.tmpdir(), 'sk-cfg-')),
+    '{"terms": {"column": "컬럼", "release": {"write": "릴리즈", "reason": "팀 표기"}}, "spacing": "spaced"}');
+  const note = configNote(path.join(root, '.simple-korean.json'));
+  assert.ok(note.includes('column → 컬럼') && note.includes('release → 릴리즈'), note);
+  assert.ok(note.includes('띄어 쓰세요'), note);
+  assert.equal(configNote(''), '');
+});
+
+test('읽지 못한 프로젝트 설정은 기본 지정형을 쓰라고 알린다', () => {
+  const root = withConfig(fs.mkdtempSync(path.join(os.tmpdir(), 'sk-cfg-')), '{broken');
+  assert.ok(configNote(path.join(root, '.simple-korean.json')).includes('읽지 못했습니다'));
+});
+
+test('main()은 CLAUDE_PROJECT_DIR의 프로젝트 설정을 문맥에 넣는다', () => {
+  const project = withConfig(fs.mkdtempSync(path.join(os.tmpdir(), 'sk-proj-')), '{"terms": {"column": "컬럼"}}');
+  const r = runHook({ CLAUDE_PLUGIN_ROOT: tmpRoot('BODY'), CLAUDE_PROJECT_DIR: project });
+  assert.equal(r.status, 0);
+  assert.ok(r.stdout.includes('BODY') && r.stdout.includes('column → 컬럼'), r.stdout);
 });
 
 test('상한을 넘는 프롬프트는 중간에 자르지 않고 대체 규칙으로 바꾼다', () => {

@@ -44,7 +44,7 @@ metadata:
 - 붙여 쓰는 말: 기본값, 매개변수, 반환값, 오픈소스
 <!-- simple-korean: on -->
 
-목록 전체와 근거는 플러그인의 `data/terms.json`에 있습니다. 프로젝트의 `.simple-korean.json`이 지정형을 바꿀 수 있습니다.
+목록 전체와 근거는 플러그인의 `data/terms.json`에 있습니다. 프로젝트마다 지정형을 바꿀 수 있습니다. 작업 중인 레포지토리 최상위에 `.simple-korean.json`이 있으면 먼저 읽고, 그 파일의 지정형을 쓰세요.
 
 고치기 전(AI 출력):
 
