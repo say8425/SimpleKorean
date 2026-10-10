@@ -40,7 +40,8 @@ VALUE_FLAGS = ("--type", "--config")
 GATES = {"--gate": "error", "--gate=error": "error", "--gate=warning": "warning"}
 BOLD = re.compile(r"\*\*[^*\n]+\*\*")
 HEADER = re.compile(r"^#{1,6}\s", re.M)
-BULLET = re.compile(r"^\s*([-*+]|\d+[.)])\s", re.M)
+# 줄 앞 공백은 [^\S\n]*로 센다. re.M에서 \s*는 빈 줄을 넘어가서, 빈 줄이 많으면 시간이 제곱으로 는다.
+BULLET = re.compile(r"^[^\S\n]*([-*+]|\d+[.)])\s", re.M)
 OPENER = re.compile(  # 공백도 \W이므로 앞부분은 \W* 하나로 쓴다. \s*\W*는 같은 공백을 나눠 갖느라 느리다.
     r"^\W*(?:좋은\s?질문|훌륭한\s?질문|물론(?:입니다|이죠|이에요|요)"
     r"|네[,.!]?\s*(?:알겠습니다|좋습니다|맞습니다)"
@@ -128,7 +129,7 @@ def reader_check(text):
     text = ko_text.nfc(text)
     prose = re.sub(r"```.*?```", " ", text, flags=re.S)
     prose = re.sub(r"`[^`\n]+`", "CODE", prose)
-    no_md = re.sub(r"^\s*(#{1,6}\s|[-*+]\s|\d+[.)]\s|\|)", "", prose, flags=re.M)
+    no_md = re.sub(r"^[^\S\n]*(#{1,6}\s|[-*+]\s|\d+[.)]\s|\|)", "", prose, flags=re.M)
     no_md = re.sub(r"^[\s:|-]+$", "", no_md, flags=re.M)
     sents = [p for p in re.split(r"(?<=[.!?])[\"')\]”’]*\s+|\n+", no_md) if len(p.strip().split()) >= 2]
     opener, closer = reply_fillers(text)

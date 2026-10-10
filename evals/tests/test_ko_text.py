@@ -98,6 +98,26 @@ def test_digit_runs_and_unclosed_comments_take_linear_time():
     assert elapsed < 0.5, elapsed
 
 
+def test_a_long_unterminated_backtick_line_takes_linear_time():
+    start = time.time()
+    assert ko_text.mask("본문입니다.\n" + "`" * 100_000).startswith("본문입니다.")
+    elapsed = time.time() - start
+    assert elapsed < 0.5, elapsed
+
+
+def test_fence_masking_is_unchanged():
+    masked = {"```\n코드\n```\n본문": "   \n  \n   \n본문",
+              "````\n```\n안\n````\n밖": "    \n   \n \n    \n밖",
+              "~~~\n코드\n": "   \n  \n",
+              "```js\n코드\n```\n뒤": "     \n  \n   \n뒤",
+              "본문\n```": "본문\n```",
+              "  ```\n코드\n  ```\n뒤": "     \n  \n     \n뒤",
+              "````` \n 안\n": "      \n  \n",
+              "``\n본문": "``\n본문",
+              "```\n코드\n~~~\n뒤\n```\n끝": "   \n  \n   \n \n   \n끝"}
+    assert {t: ko_text.mask(t) for t in masked} == masked
+
+
 def test_number_unit_merging_and_comment_masking_are_unchanged():
     counts = {"버전 1,234 개를 받았습니다.": 3, "간격은 .5 초입니다.": 2, "값 1 2 개를 봅니다.": 4,
               "v1.2.3 초 뒤": 2, "1,2,3 개": 1, "가격 ,5 원": 2, "... 개": 2}

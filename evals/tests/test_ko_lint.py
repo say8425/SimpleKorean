@@ -166,11 +166,22 @@ def test_reply_checks_take_linear_time_on_long_blank_runs():
     assert elapsed < 0.5, elapsed
 
 
+def test_reply_checks_take_linear_time_on_many_blank_lines():
+    start = time.time()
+    counts = ko_lint.reader_check("답입니다." + "\n" * 20_000 + "끝입니다.")["counts"]
+    elapsed = time.time() - start
+    assert counts["bullets"] == 0, counts
+    assert elapsed < 0.5, elapsed
+
+
 def test_reply_checks_are_unchanged():
     assert ko_lint.reply_fillers("  \n  좋은 질문입니다! 답입니다.") == (True, False)
     assert ko_lint.reply_fillers("— 물론입니다.") == (True, False)
     counts = ko_lint.reader_check("답입니다.\n|---|:-:|\n  \n| a | b |\n")["counts"]
     assert (counts["sentences"], counts["bullets"], counts["headers"]) == (1, 0, 0), counts
+    report = ko_lint.reader_check("답입니다.\n\n\n# 헤더\n\n- 하나\n  - 둘\n1. 셋\n-\n- 넷\n| a | b |\n")
+    counts = report["counts"]
+    assert (counts["sentences"], counts["headers"], counts["bullets"], report["eojeol"]) == (1, 1, 5, 10), report
 
 
 def test_cli_rejects_type_invalid_config_without_traceback():

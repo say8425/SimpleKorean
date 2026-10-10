@@ -14,7 +14,9 @@ JONG_RIEUL = 8  # 받침 28종 가운데 ㄹ의 번호. 0은 받침 없음이다
 
 OFF_REGION = re.compile(
     r"<!--\s*simple-korean:\s*off\s*-->.*?(?:<!--\s*simple-korean:\s*on\s*-->|\Z)", re.S)
-FENCE = re.compile(r"^[ \t]*(`{3,}|~{3,})[^\n]*\n.*?(?:^[ \t]*\1[ \t]*$|\Z)", re.S | re.M)
+# 여는 줄의 백틱이나 물결은 끝까지 한 번에 잡는다((?!`)). 짧게 다시 잡아 보면 결과는 같고,
+# 줄바꿈 없이 끝나는 긴 백틱 줄에서 시간만 제곱으로 는다.
+FENCE = re.compile(r"^[ \t]*(`{3,}(?!`)|~{3,}(?!~))[^\n]*\n.*?(?:^[ \t]*\1[ \t]*$|\Z)", re.S | re.M)
 INLINE_CODE = re.compile(r"`[^`\n]+`")
 URL = re.compile(r"https?://[^\s)>\]]+")
 ENTITY = re.compile(r"&(?:[A-Za-z][A-Za-z0-9]{1,31}|#[0-9]{1,7}|#[xX][0-9A-Fa-f]{1,6});")
