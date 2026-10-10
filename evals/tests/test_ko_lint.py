@@ -45,9 +45,30 @@ def test_large_document_is_fast():
     assert time.time() - start < 5.0, time.time() - start
 
 
+def test_dense_term_document_is_fast():
+    line = "캐시백 캐시를 레포트 레포에 디플로이먼트 디렉토리와 메세지를 남깁니다.\n"
+    big = line * (360 * 1024 // len(line.encode("utf-8")))
+    start = time.time()
+    report = ko_lint.lint(big, config={})
+    elapsed = time.time() - start
+    assert report["violations"].get("spelling", 0) > 10_000, report["violations"]
+    assert elapsed < 2.0, elapsed
+
+
 def test_frontmatter_is_not_linted():
     text = "---\nname: x\ndescription: 강력한 도구 — 정말\n---\n로그를 읽으세요.\n"
     assert ko_lint.lint(text, config={})["violations_total"] == 0
+
+
+def test_frontmatter_after_a_bom_is_not_linted():
+    text = "﻿---\nname: x\ndescription: 강력한 도구 — 정말\n---\n로그를 읽으세요.\n"
+    assert ko_lint.lint(text, config={})["violations_total"] == 0
+
+
+def test_html_entities_are_not_semicolons():
+    text = "표 칸에 A&nbsp;B와 &#124; 기호를 씁니다.\n"
+    assert ko_lint.lint(text, config={})["violations_total"] == 0
+    assert ko_lint.lint("첫째; 둘째입니다.\n", config={})["violations"] == {"semicolon": 1}
 
 
 def test_bad_text_type_fails_fast():
@@ -69,6 +90,40 @@ def test_cli_gate_fails_on_errors_only():
         assert run_cli("--gate=warning", str(warn)).returncode == 1
         r = run_cli("--gate", str(warn), str(err))
         assert r.returncode == 1 and "메세지" in r.stdout, r.stdout
+
+
+def test_cli_accepts_flags_written_with_an_equals_sign():
+    with tempfile.TemporaryDirectory() as d:
+        warn = Path(d, "warn.md")
+        warn.write_text("서버에 대해 설명합니다.\n", encoding="utf-8")
+        err = Path(d, "err.md")
+        err.write_text("메세지를 보냅니다.\n", encoding="utf-8")
+        config = Path(d, "team.json")
+        config.write_text('{"terms": {"message": {"write": "메세지", "reason": "팀 표기"}}}', encoding="utf-8")
+        r = run_cli("--type=procedural", str(warn))
+        assert r.returncode == 0 and '"type": "procedural"' in r.stdout, (r.returncode, r.stderr)
+        assert run_cli("--gate=error", str(warn)).returncode == 0
+        assert run_cli("--gate=error", str(err)).returncode == 1
+        r = run_cli(f"--config={config}", "--gate", str(err))
+        assert r.returncode == 0 and '"violations_total": 0' in r.stdout, (r.returncode, r.stdout, r.stderr)
+
+
+def test_cli_rejects_an_unknown_flag():
+    with tempfile.TemporaryDirectory() as d:
+        doc = Path(d, "a.md")
+        doc.write_text("로그를 읽으세요.\n", encoding="utf-8")
+        for flag in ("--strcit", "--gate=everything", "--type"):
+            r = run_cli(flag, str(doc))
+            assert r.returncode != 0 and "사용법" in r.stderr and "No such file" not in r.stderr, (flag, r.stderr)
+
+
+def test_cli_names_a_file_that_is_not_utf8():
+    with tempfile.TemporaryDirectory() as d:
+        doc = Path(d, "legacy.md")
+        doc.write_bytes("로그를 읽으세요.\n".encode("cp949"))
+        r = run_cli(str(doc))
+        assert r.returncode != 0 and "legacy.md" in r.stderr and "UTF-8" in r.stderr, r.stderr
+        assert "설정 파일" not in r.stderr and "Traceback" not in r.stderr, r.stderr
 
 
 def test_cli_uses_project_config():

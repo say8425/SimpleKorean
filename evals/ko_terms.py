@@ -2,6 +2,7 @@
 import copy
 import json
 import re
+from bisect import bisect_left
 from collections import namedtuple
 from pathlib import Path
 
@@ -115,6 +116,23 @@ def _spans(strings, masked):
     return [(m.start(), m.end()) for s in strings for m in re.finditer(_form_regex(s), masked)]
 
 
+def _merge(spans):
+    """겹치거나 맞닿은 구간을 하나로 합친 목록. 시작 위치 순이다."""
+    merged = []
+    for a, b in sorted(spans):
+        if merged and a <= merged[-1][1]:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], b))
+        else:
+            merged.append((a, b))
+    return merged
+
+
+def _covered(merged, starts, start, end):
+    """[start, end)가 합친 구간 가운데 하나와 겹치면 참이다. starts는 merged의 시작 위치 목록이다."""
+    i = bisect_left(starts, end) - 1
+    return i >= 0 and merged[i][1] > start
+
+
 def _roles(concept):
     pairs = ([(concept["write"], "write")] + [(f, "alias") for f in concept.get("alias", [])]
              + [(f, "flag") for f in concept["flag"]["forms"]]
@@ -125,6 +143,7 @@ def _roles(concept):
 def scan(masked, concepts, extra_skip=()):
     """개념마다 형태가 나온 자리를 찾는다. 긴 형태부터 맞추고, 건너뛸 문자열과 겹치는 자리는 뺀다."""
     shared = _spans((*GLOBAL_SKIP, *extra_skip), masked)
+    shared_merged = _merge(shared)
     found = []
     for c in concepts:
         roles = _roles(c)
@@ -132,9 +151,11 @@ def scan(masked, concepts, extra_skip=()):
         for form, role in roles:
             role_of.setdefault(" ".join(nfc(form).split()), role)
         rx = re.compile(r"(?<![가-힣])(?:" + "|".join(_form_regex(f) for f, _ in roles) + ")")
-        skip = shared + _spans(c.get("skip", []), masked)
+        own = _spans(c.get("skip", []), masked)
+        skip = _merge(shared + own) if own else shared_merged
+        starts = [a for a, _ in skip]
         for m in rx.finditer(masked):
-            if any(a < m.end() and m.start() < b for a, b in skip):
+            if _covered(skip, starts, m.start(), m.end()):
                 continue
             form = " ".join(m.group(0).split())
             found.append(Occurrence(c["id"], form, role_of[form], m.start()))

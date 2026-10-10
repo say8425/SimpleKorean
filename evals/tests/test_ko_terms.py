@@ -104,6 +104,16 @@ def test_config_skip_strings():
     assert term_cats("디렉토리 서비스 이름입니다.", config={"skip": ["디렉토리 서비스"]}) == []
 
 
+def test_overlapping_and_touching_skip_strings():
+    text = "디렉토리 서비스, 디렉토리서비스, 디렉토리입니다."
+    flagged = [t for _, _, t in term_cats(text, config={"skip": ["디렉토리 서", "토리 서비스"]})]
+    assert flagged == ["디렉토리 → 디렉터리"] * 2, flagged
+    flagged = [t for _, _, t in term_cats(text, config={"skip": ["디렉", "토리"]})]
+    assert flagged == [], flagged
+    flagged = [t for _, _, t in term_cats(text, config={"skip": ["서비스"]})]
+    assert flagged == ["디렉토리 → 디렉터리"] * 3, flagged
+
+
 def test_find_config_walks_up():
     with tempfile.TemporaryDirectory() as d:
         root = Path(d).resolve()

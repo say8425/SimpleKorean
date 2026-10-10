@@ -34,7 +34,10 @@ LABELS = {
     "strict_condition": "엄격: 조건 표현", "strict_connective": "엄격: 접속어",
 }
 USAGE = ("사용법: ko_lint.py [--type procedural|descriptive|reply] [--strict] [--config 파일] "
-         "[--gate|--gate=warning] (파일... | -) | --self-test")
+         "[--gate|--gate=error|--gate=warning] (파일... | -) | --self-test\n"
+         "값을 받는 옵션은 '--type=reply'처럼 써도 됩니다. '-'로 시작하는 파일 이름은 '--' 뒤에 쓰세요.")
+VALUE_FLAGS = ("--type", "--config")
+GATES = {"--gate": "error", "--gate=error": "error", "--gate=warning": "warning"}
 BOLD = re.compile(r"\*\*[^*\n]+\*\*")
 HEADER = re.compile(r"^#{1,6}\s", re.M)
 BULLET = re.compile(r"^\s*([-*+]|\d+[.)])\s", re.M)
@@ -64,29 +67,36 @@ def _prepare(text):
     return ko_text.mask(body), ko_text.units(body)
 
 
-def lint_detail(text, text_type="descriptive", strict=False, config=None, path=None):
-    """lint()가 세는 위반을 하나씩 돌려준다. 항목: category, severity, line, text."""
+def _analyze(text, text_type, strict, config, path):
+    """검사를 한 번 돌려 (위반 목록, 문장 단위, 설정 경고)를 돌려준다."""
     if text_type not in TEXT_TYPES:
         raise ValueError(f"text_type은 {TEXT_TYPES} 가운데 하나여야 합니다: {text_type!r}")
     masked, units = _prepare(text)
     cfg = _config(config, path)
-    concepts, _ = ko_terms.apply_config(ko_terms.load_terms(), cfg)
+    concepts, config_warnings = ko_terms.apply_config(ko_terms.load_terms(), cfg)
     hits = (ko_rules.lexical_hits(masked, strict=strict)
             + ko_rules.sentence_hits(units, text_type)
             + ko_rules.register_hits(units)
             + ko_terms.term_hits(masked, concepts, strict=strict, extra_skip=cfg.get("skip", ())))
     rows = [{"category": h.category, "severity": h.severity, "line": h.line, "text": h.text} for h in hits]
-    return sorted(rows, key=lambda r: (r["line"], r["category"], r["text"]))
+    return sorted(rows, key=lambda r: (r["line"], r["category"], r["text"])), units, config_warnings
+
+
+def lint_detail(text, text_type="descriptive", strict=False, config=None, path=None):
+    """lint()가 세는 위반을 하나씩 돌려준다. 항목: category, severity, line, text."""
+    return _analyze(text, text_type, strict, config, path)[0]
 
 
 def lint(text, text_type="descriptive", strict=False, config=None, path=None):
     """위반 수를 범주별로 센 보고서를 돌려준다."""
-    detail = lint_detail(text, text_type, strict, config, path)
-    _, units = _prepare(text)
+    return _summary(*_analyze(text, text_type, strict, config, path), text_type, strict)
+
+
+def _summary(detail, units, config_warnings, text_type, strict):
+    """위반 목록과 문장 단위로 lint() 보고서를 만든다."""
     lengths = [ko_text.eojeol_count(u.text) for u in units]
     eojeol = max(1, sum(lengths))
     errors = sum(1 for h in detail if h["severity"] == "error")
-    _, config_warnings = ko_terms.apply_config(ko_terms.load_terms(), _config(config, path))
     return {
         "type": text_type,
         "strict": strict,
@@ -225,24 +235,42 @@ def self_test():
     print("self-test OK:", slop["violations_total"], "violations in slop fixture, 0 in clean")
 
 
-def _pop(args, name, default):
-    if name not in args:
-        return default
-    i = args.index(name)
-    if i + 1 >= len(args):
-        sys.exit(f"{name} 뒤에 값이 없습니다\n{USAGE}")
-    value = args[i + 1]
-    del args[i:i + 2]
-    return value
+def _parse(args):
+    """명령줄을 (옵션, 파일 목록)으로 나눈다. '--이름 값'과 '--이름=값'을 모두 받고 모르는 옵션은 거부한다."""
+    opts = {"type": "descriptive", "config": None, "gate": None, "strict": False}
+    files, rest = [], list(args)
+    while rest:
+        arg = rest.pop(0)
+        name, eq, value = arg.partition("=")
+        if arg == "--":
+            files.extend(rest)
+            break
+        if arg in GATES:
+            opts["gate"] = GATES[arg]
+        elif arg == "--strict":
+            opts["strict"] = True
+        elif name in VALUE_FLAGS:
+            if not eq and not rest:
+                sys.exit(f"{name} 뒤에 값이 없습니다\n{USAGE}")
+            opts[name[2:]] = value if eq else rest.pop(0)
+        elif arg.startswith("-") and arg != "-":
+            sys.exit(f"알 수 없는 옵션 {arg!r}\n{USAGE}")
+        else:
+            files.append(arg)
+    return opts, files
 
 
 def _read(src):
-    if src == "-":
-        return sys.stdin.read()
+    """파일이나 표준 입력('-')을 UTF-8로 읽는다. 읽지 못하면 이름을 밝히고 끝낸다."""
+    name = "표준 입력" if src == "-" else src
     try:
+        if src == "-":
+            return sys.stdin.buffer.read().decode("utf-8")
         return Path(src).read_text(encoding="utf-8")
     except OSError as err:
         sys.exit(str(err))
+    except UnicodeDecodeError as err:
+        sys.exit(f"{name}: UTF-8로 읽지 못했습니다({err.start + 1}번째 바이트). UTF-8로 저장한 뒤 다시 실행하세요.")
 
 
 def _check_one(src, text_type, strict, config, gate):
@@ -252,10 +280,10 @@ def _check_one(src, text_type, strict, config, gate):
         report = reader_check(text)
         return {**report, "file": src}, report["visible_total"] > 0
     path = None if src == "-" else src
-    report = lint(text, text_type, strict=strict, config=config, path=path)
+    detail, units, config_warnings = _analyze(text, text_type, strict, config, path)
+    report = _summary(detail, units, config_warnings, text_type, strict)
     failed = report["errors_total"] > 0 or (gate == "warning" and report["warnings_total"] > 0)
     if gate:
-        detail = lint_detail(text, text_type, strict=strict, config=config, path=path)
         report = {**report, "hits": [h for h in detail if gate == "warning" or h["severity"] == "error"]}
     return {**report, "file": src}, failed
 
@@ -265,26 +293,21 @@ def main(argv=None):
     if "--self-test" in args:
         self_test()
         return 0
-    gate = "warning" if "--gate=warning" in args else ("error" if "--gate" in args else None)
-    args = [a for a in args if a not in ("--gate", "--gate=warning")]
-    strict = "--strict" in args
-    args = [a for a in args if a != "--strict"]
-    text_type = _pop(args, "--type", "descriptive")
-    config = _pop(args, "--config", None)
-    if text_type not in TEXT_TYPES + ("reply",):
-        sys.exit(f"알 수 없는 --type {text_type!r}\n{USAGE}")
-    if not args:
+    opts, files = _parse(args)
+    if opts["type"] not in TEXT_TYPES + ("reply",):
+        sys.exit(f"알 수 없는 --type {opts['type']!r}\n{USAGE}")
+    if not files:
         sys.exit(USAGE)
     reports, failed = [], False
-    for src in args:
+    for src in files:
         try:
-            report, bad = _check_one(src, text_type, strict, config, gate)
+            report, bad = _check_one(src, opts["type"], opts["strict"], opts["config"], opts["gate"])
         except ValueError as err:
             sys.exit(f"설정 파일 오류: {err}")
         reports.append(report)
         failed = failed or bad
     print(json.dumps(reports[0] if len(reports) == 1 else reports, ensure_ascii=False, indent=2))
-    return 1 if gate and failed else 0
+    return 1 if opts["gate"] and failed else 0
 
 
 if __name__ == "__main__":

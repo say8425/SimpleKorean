@@ -1,4 +1,5 @@
 import sys
+import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -8,6 +9,12 @@ import ko_text  # noqa: E402
 def test_nfc_joins_decomposed_hangul_and_normalizes_newlines():
     assert ko_text.nfc("가") == "가"
     assert ko_text.nfc("가\r\n나\r다") == "가\n나\n다"
+
+
+def test_nfc_strips_a_leading_bom():
+    assert ko_text.nfc("﻿가\r\n") == "가\n"
+    text = ko_text.nfc("﻿---\nname: x\n---\n본문입니다.\n")
+    assert "name" not in ko_text.strip_frontmatter(text)
 
 
 def test_jongseong_reads_final_consonant():
@@ -40,6 +47,13 @@ def test_mask_unclosed_off_region_runs_to_end():
     assert "끝까지" not in masked and "앞" in masked
 
 
+def test_mask_blanks_html_entities_but_not_a_real_semicolon():
+    text = "칸에 A&nbsp;B, &#124;, &#x2014;, &amp;를 씁니다. R&D; 다음"
+    masked = ko_text.mask(text)
+    assert len(masked) == len(text)
+    assert masked.count(";") == 1 and "nbsp" not in masked and "#124" not in masked
+
+
 def test_mask_quotes_optional():
     text = '그는 "멈춰"라고 했습니다.'
     assert "멈춰" not in ko_text.mask(text)
@@ -62,6 +76,18 @@ def test_line_of_counts_from_one():
     text = "첫째\n둘째\n셋째"
     assert ko_text.line_of(text, 0) == 1
     assert ko_text.line_of(text, text.index("셋째")) == 3
+
+
+def test_line_of_is_fast_on_a_long_text():
+    text = "첫째 줄입니다\n" * 150_000
+    step = len(text) // 10_000
+    positions = range(0, len(text), step)
+    start = time.time()
+    lines = [ko_text.line_of(text, p) for p in positions]
+    elapsed = time.time() - start
+    assert lines[:3] == [1, text.count("\n", 0, step) + 1, text.count("\n", 0, 2 * step) + 1]
+    assert ko_text.line_of(text, text.index("\n")) == 1 and ko_text.line_of(text, text.index("\n") + 1) == 2
+    assert elapsed < 0.5, elapsed
 
 
 def test_hangul_ratio_ignores_code():

@@ -43,6 +43,15 @@ def test_translationese_patterns():
     assert cats("두 서비스를 통합합니다.") == []
 
 
+def test_translationese_with_a_particle_attached():
+    for s in ("만약에 실패하면 멈춥니다.", "만일에 키가 없으면 멈춥니다.", "성능에 있어서는 차이가 없습니다.",
+              "보안에 있어서도 같습니다.", "운영에 있어선 로그를 봅니다."):
+        assert cats(s) == ["translationese"], (s, cats(s))
+    for s in ("만약에 대비해 백업합니다.", "만일에 대비한 계획입니다.", "만약의 경우를 적습니다.",
+              "비밀 키가 코드에 있어서는 안 됩니다.", "파일이 서버에 있어도 됩니다."):
+        assert cats(s) == [], (s, cats(s))
+
+
 def test_light_verb_colloquial_latin():
     assert cats("배포를 진행합니다.") == ["light_verb"]
     assert cats("진행 상황을 봅니다.") == []
