@@ -1,0 +1,9 @@
+```
+Skip empty header rows in CSV parser
+
+The parser threw a NullPointerException when the header row was
+empty. Check for an empty header row and skip it before reading
+the column names.
+```
+
+I wrote this in English because you asked in English. If your repo uses Korean commit messages, I can rewrite it.

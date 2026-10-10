@@ -1,0 +1,51 @@
+# sqlpipe
+
+sqlpipe는 Postgres 테이블을 Parquet 파일로 바꿔 S3에 동기화하는 CLI 도구입니다. Parquet은 데이터를 칼럼 단위로 저장하는 파일 형식입니다. 분석 쿼리는 필요한 칼럼만 읽기 때문에 행 단위 형식보다 빠릅니다. sqlpipe는 지정한 테이블을 읽어 Parquet 파일로 쓰고 S3 버킷(bucket)에 올립니다.
+
+## 시작하기
+
+Postgres 읽기 권한과 S3 쓰기 권한이 있는 계정을 준비하세요. AWS 자격 증명은 환경 변수나 `~/.aws/credentials`에서 읽습니다.
+
+설정 `sqlpipe.yaml`을 만드세요.
+
+```yaml
+source: postgres://user:pass@db.example.com:5432/shop
+target: s3://my-bucket/shop/
+tables:
+  - orders
+  - customers
+```
+
+다음 명령으로 동기화하세요.
+
+```
+sqlpipe sync --config sqlpipe.yaml
+```
+
+테이블마다 `target` 경로 아래에 `테이블이름.parquet` 파일이 생깁니다.
+
+## 문제 해결
+
+### 연결 타임아웃
+
+`connection timed out` 오류가 나면 sqlpipe를 실행하는 호스트에서 데이터베이스 포트에 닿는지 확인하세요.
+
+```
+pg_isready -h db.example.com -p 5432
+```
+
+실패하면 데이터베이스의 보안 그룹이나 방화벽에서 이 호스트의 IP를 허용하세요. 데이터베이스가 사설 네트워크(VPC) 안에 있으면 VPN이나 배스천(bastion) 호스트에서 sqlpipe를 실행하세요.
+
+### 권한 오류
+
+`permission denied for table orders` 오류가 나면 Postgres 사용자에게 읽기 권한을 주세요.
+
+```sql
+GRANT SELECT ON orders TO sqlpipe_user;
+```
+
+`AccessDenied` 오류는 S3 쪽 문제입니다. 이 오류가 나면 AWS 계정의 정책에 `s3:PutObject` 권한을 추가하세요. 대상 버킷과 경로가 `target`과 같은지도 확인하세요.
+
+---
+
+명령 이름, 플래그, 설정 키, 오류 문구는 실제 sqlpipe를 보지 않고 일반적인 형태로 가정해 썼습니다. 실제 값과 다르면 알려 주세요. 맞춰서 고치겠습니다.
