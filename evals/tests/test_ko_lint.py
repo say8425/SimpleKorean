@@ -157,6 +157,22 @@ def test_reply_fillers():
     assert ko_lint.reply_fillers("빌드가 실패한 이유는 디스크입니다.") == (False, False)
 
 
+def test_reply_checks_take_linear_time_on_long_blank_runs():
+    start = time.time()
+    assert ko_lint.reply_fillers(" " * 10_000 + "답입니다.") == (False, False)
+    assert ko_lint.reply_fillers(" " * 10_000 + "좋은 질문입니다.") == (True, False)
+    ko_lint.reader_check("답입니다.\n" + " " * 30_000 + "x")
+    elapsed = time.time() - start
+    assert elapsed < 0.5, elapsed
+
+
+def test_reply_checks_are_unchanged():
+    assert ko_lint.reply_fillers("  \n  좋은 질문입니다! 답입니다.") == (True, False)
+    assert ko_lint.reply_fillers("— 물론입니다.") == (True, False)
+    counts = ko_lint.reader_check("답입니다.\n|---|:-:|\n  \n| a | b |\n")["counts"]
+    assert (counts["sentences"], counts["bullets"], counts["headers"]) == (1, 0, 0), counts
+
+
 def test_cli_rejects_type_invalid_config_without_traceback():
     with tempfile.TemporaryDirectory() as d:
         Path(d, ".simple-korean.json").write_text('{"terms": {"release": 5}}', encoding="utf-8")

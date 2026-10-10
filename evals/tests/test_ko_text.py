@@ -90,6 +90,25 @@ def test_line_of_is_fast_on_a_long_text():
     assert elapsed < 0.5, elapsed
 
 
+def test_digit_runs_and_unclosed_comments_take_linear_time():
+    start = time.time()
+    assert ko_text.eojeol_count("1" * 40_000 + "번 시도합니다.") == 2
+    assert ko_text.mask("<!--" * 20_000 + "끝").endswith("끝")
+    elapsed = time.time() - start
+    assert elapsed < 0.5, elapsed
+
+
+def test_number_unit_merging_and_comment_masking_are_unchanged():
+    counts = {"버전 1,234 개를 받았습니다.": 3, "간격은 .5 초입니다.": 2, "값 1 2 개를 봅니다.": 4,
+              "v1.2.3 초 뒤": 2, "1,2,3 개": 1, "가격 ,5 원": 2, "... 개": 2}
+    assert {s: ko_text.eojeol_count(s) for s in counts} == counts
+    masked = {"앞 <!-- 숨김 --> 가운데 <!-- 안 닫힘 끝": "앞             가운데 <!-- 안 닫힘 끝",
+              "<!-- a <!-- b --> c -->": "                  c -->",
+              "<!---->x<!-->y": "       x<!-->y",
+              "x <!--\n줄\n--> y": "x     \n \n    y"}
+    assert {t: ko_text.mask(t) for t in masked} == masked
+
+
 def test_hangul_ratio_ignores_code():
     assert ko_text.hangul_ratio("이 문서는 한국어로 씁니다.") > 0.9
     assert ko_text.hangul_ratio("This document is written in English.") == 0.0

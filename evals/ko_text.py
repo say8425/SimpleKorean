@@ -15,7 +15,6 @@ JONG_RIEUL = 8  # 받침 28종 가운데 ㄹ의 번호. 0은 받침 없음이다
 OFF_REGION = re.compile(
     r"<!--\s*simple-korean:\s*off\s*-->.*?(?:<!--\s*simple-korean:\s*on\s*-->|\Z)", re.S)
 FENCE = re.compile(r"^[ \t]*(`{3,}|~{3,})[^\n]*\n.*?(?:^[ \t]*\1[ \t]*$|\Z)", re.S | re.M)
-COMMENT = re.compile(r"<!--.*?-->", re.S)
 INLINE_CODE = re.compile(r"`[^`\n]+`")
 URL = re.compile(r"https?://[^\s)>\]]+")
 ENTITY = re.compile(r"&(?:[A-Za-z][A-Za-z0-9]{1,31}|#[0-9]{1,7}|#[xX][0-9A-Fa-f]{1,6});")
@@ -54,6 +53,25 @@ def _blank(match):
     return re.sub(r"[^\n]", " ", match.group(0))
 
 
+def _blank_comments(text):
+    """닫힌 HTML 주석을 같은 길이의 공백으로 지운다. 닫히지 않은 '<!--'는 그대로 둔다.
+
+    정규식 '<!--.*?-->'와 결과가 같다. 정규식은 닫히지 않은 '<!--'마다 글 끝까지 다시 훑어서
+    '<!--'가 많으면 시간이 제곱으로 늘어난다. 여기서는 '-->'가 더 없으면 바로 멈춘다.
+    """
+    parts, pos = [], 0
+    while True:
+        start = text.find("<!--", pos)
+        end = text.find("-->", start + 4) if start >= 0 else -1
+        if end < 0:
+            break
+        parts.append(text[pos:start])
+        parts.append(re.sub(r"[^\n]", " ", text[start:end + 3]))
+        pos = end + 3
+    parts.append(text[pos:])
+    return "".join(parts)
+
+
 def strip_frontmatter(text):
     """맨 앞의 YAML frontmatter를 공백으로 지운다. 줄 수는 그대로다."""
     return FRONTMATTER.sub(_blank, text, count=1)
@@ -68,7 +86,7 @@ def mask(text, quotes=True):
     """
     t = OFF_REGION.sub(_blank, text)
     t = FENCE.sub(_blank, t)
-    t = COMMENT.sub(_blank, t)
+    t = _blank_comments(t)
     t = INLINE_CODE.sub(_blank, t)
     t = URL.sub(_blank, t)
     t = ENTITY.sub(_blank, t)
@@ -107,8 +125,10 @@ TABLE_SEP = re.compile(r"^\s*\|[\s:|-]+\|\s*$")
 BLOCKQUOTE = re.compile(r"^\s*(?:>\s?)+")
 SPLIT = re.compile(r"(?<=[.!?])([\"'”’)\]]*)\s+")
 PAREN = re.compile(r"\([^()\n]*\)")
+# 숫자 덩어리([\d,.]의 연속)의 맨 앞에서만 맞추기 시작한다. 덩어리 가운데에서 다시 시작하면
+# 결과는 같고 시간만 제곱으로 는다. 앞에 붙은 쉼표와 마침표(".5")는 첫째 묶음에 담아 그대로 둔다.
 NUM_UNIT = re.compile(
-    r"(\d[\d,.]*)\s+(%|[A-Za-z]{1,5}|초|분|시간|일|주|개월|년|개|건|회|번|명|배|원|자|줄|행|쪽|장|단계)"
+    r"(?<![\d,.])([,.]*)(\d[\d,.]*)\s+(%|[A-Za-z]{1,5}|초|분|시간|일|주|개월|년|개|건|회|번|명|배|원|자|줄|행|쪽|장|단계)"
     r"(?=[\s.,!?)]|$|[가-힣])")
 PROC_ENDINGS = ("세요", "십시오", "시오", "하라", "하자")
 NOUN_YO = ("필요", "중요", "주요", "개요", "소요", "수요", "강요", "동요")
@@ -181,7 +201,7 @@ def units(text):
     나누고, 본문은 문단으로 이은 뒤 문장으로 나눈다. 어절이 둘 미만인 조각은 뺀다.
     지역 목록만 고치고 입력은 바꾸지 않는다.
     """
-    base = COMMENT.sub(_blank, FENCE.sub(_blank, OFF_REGION.sub(_blank, nfc(text))))
+    base = _blank_comments(FENCE.sub(_blank, OFF_REGION.sub(_blank, nfc(text))))
     found, para = [], []
     for number, raw in enumerate(base.split("\n"), 1):
         line = _counting_line(BLOCKQUOTE.sub("", raw))
@@ -206,7 +226,7 @@ def units(text):
 def eojeol_count(sentence):
     """어절 수를 센다. 괄호 안의 글은 앞 어절에 붙이고, 숫자와 단위는 한 어절로 친다."""
     s = PAREN.sub("", PAREN.sub("", sentence))
-    s = NUM_UNIT.sub(r"\1\2", s)
+    s = NUM_UNIT.sub(r"\1\2\3", s)
     return len(s.split())
 
 

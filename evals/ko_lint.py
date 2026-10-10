@@ -41,8 +41,8 @@ GATES = {"--gate": "error", "--gate=error": "error", "--gate=warning": "warning"
 BOLD = re.compile(r"\*\*[^*\n]+\*\*")
 HEADER = re.compile(r"^#{1,6}\s", re.M)
 BULLET = re.compile(r"^\s*([-*+]|\d+[.)])\s", re.M)
-OPENER = re.compile(
-    r"^\s*\W*(?:좋은\s?질문|훌륭한\s?질문|물론(?:입니다|이죠|이에요|요)"
+OPENER = re.compile(  # 공백도 \W이므로 앞부분은 \W* 하나로 쓴다. \s*\W*는 같은 공백을 나눠 갖느라 느리다.
+    r"^\W*(?:좋은\s?질문|훌륭한\s?질문|물론(?:입니다|이죠|이에요|요)"
     r"|네[,.!]?\s*(?:알겠습니다|좋습니다|맞습니다)"
     r"|[^.!?\n]{0,40}에\s?대해\s?(?:설명|알아보|살펴보)[^.!?\n]{0,12}겠습니다)")
 CLOSER = re.compile(
@@ -129,7 +129,7 @@ def reader_check(text):
     prose = re.sub(r"```.*?```", " ", text, flags=re.S)
     prose = re.sub(r"`[^`\n]+`", "CODE", prose)
     no_md = re.sub(r"^\s*(#{1,6}\s|[-*+]\s|\d+[.)]\s|\|)", "", prose, flags=re.M)
-    no_md = re.sub(r"^\s*[\s:|-]+$", "", no_md, flags=re.M)
+    no_md = re.sub(r"^[\s:|-]+$", "", no_md, flags=re.M)
     sents = [p for p in re.split(r"(?<=[.!?])[\"')\]”’]*\s+|\n+", no_md) if len(p.strip().split()) >= 2]
     opener, closer = reply_fillers(text)
     counts = {
