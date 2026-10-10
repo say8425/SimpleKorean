@@ -30,6 +30,9 @@ RULE_LINE = re.compile(r"^\s*(?:\||[-*+]\s|\d+[.)]\s)|→|->|⇒")
 QUOTED = re.compile(r"[\"'“”‘’`「」『』]([^\"'“”‘’`「」『』\n]{2,30})[\"'“”‘’`「」『』]")
 HANGUL_TERM = re.compile(r"^[가-힣][가-힣 ]{1,11}$")
 NEVER = re.compile(r"(?!x)x")
+REPO_NAME = re.compile(r"[A-Za-z0-9-]+/[A-Za-z0-9_.-]+")
+COMMIT_HASH = re.compile(r"[0-9a-f]{6,40}")
+FILE_PATH = re.compile(r"[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*")
 
 
 def nfc(text):
@@ -99,20 +102,46 @@ def write_tsv(rows, n_sources, out=OUT):
     Path(out).write_text("\n".join(header + [f"{t}\t{n}\t{s}" for t, n, s in rows]) + "\n", encoding="utf-8")
 
 
+def check_source(source):
+    """출처 항목의 repo, commit, files가 허용한 형태인지 본다. 아니면 ValueError를 낸다.
+
+    files에 '..', '#', '?', 절대 경로가 들어가면 받는 주소와 저장하는 경로가 달라져 캐시 밖에 쓸 수 있다.
+    """
+    repo, commit, files = source.get("repo"), source.get("commit"), source.get("files")
+    if not (isinstance(repo, str) and REPO_NAME.fullmatch(repo) and repo.split("/")[1] not in (".", "..")):
+        raise ValueError(f"repo는 '소유자/저장소' 형태여야 합니다: {repo!r}")
+    if not (isinstance(commit, str) and COMMIT_HASH.fullmatch(commit)):
+        raise ValueError(f"{repo}: commit은 16진수 해시여야 합니다: {commit!r}")
+    if not isinstance(files, list) or not files:
+        raise ValueError(f"{repo}: files는 비어 있지 않은 목록이어야 합니다")
+    for rel in files:
+        if not (isinstance(rel, str) and FILE_PATH.fullmatch(rel) and not {".", ".."} & set(rel.split("/"))):
+            raise ValueError(f"{repo}: 파일 경로는 저장소 안의 상대 경로여야 합니다: {rel!r}")
+    return source
+
+
 def load_sources(path=SOURCES):
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+    """sources.json을 읽고 항목마다 check_source로 검사한다."""
+    return [check_source(s) for s in json.loads(Path(path).read_text(encoding="utf-8"))]
 
 
-def _cache_dir(source, cache=CACHE):
-    return Path(cache) / source["repo"].replace("/", "__")
+def _cache_file(source, rel, cache=CACHE):
+    """출처 파일을 둘 캐시 안의 경로. 캐시 밖을 가리키면 ValueError를 낸다."""
+    root = Path(cache).resolve()
+    path = (root / source["repo"].replace("/", "__") / rel).resolve()
+    if not path.is_relative_to(root):
+        raise ValueError(f"캐시 밖을 가리킵니다: {path}")
+    return path
 
 
 def fetch(sources, cache=CACHE, opener=urllib.request.urlopen):
-    """출처 파일을 고정 커밋으로 내려받는다. 출처마다 디렉터리를 따로 쓴다."""
+    """출처 파일을 고정 커밋으로 내려받는다. 출처마다 디렉터리를 따로 쓴다. 먼저 모든 항목을 검사한다."""
+    for s in sources:
+        check_source(s)
     for s in sources:
         for rel in s["files"]:
+            dest = _cache_file(s, rel, cache)
             url = f"https://raw.githubusercontent.com/{s['repo']}/{s['commit']}/{rel}"
-            dest = _cache_dir(s, cache) / rel
             dest.parent.mkdir(parents=True, exist_ok=True)
             with opener(url, timeout=30) as resp:
                 dest.write_bytes(resp.read())
@@ -124,8 +153,8 @@ def source_texts(sources, cache=CACHE):
     texts = {}
     for s in sources:
         parts = []
-        for rel in s["files"]:
-            p = _cache_dir(s, cache) / rel
+        for rel in check_source(s)["files"]:
+            p = _cache_file(s, rel, cache)
             if not p.exists():
                 raise SystemExit(f"{p}가 없습니다. 먼저 fetch를 실행하세요.")
             parts.append(p.read_text(encoding="utf-8", errors="replace"))
@@ -136,7 +165,10 @@ def source_texts(sources, cache=CACHE):
 def main(argv=None):
     args = sys.argv[1:] if argv is None else argv
     command = args[0] if args else "build"
-    sources = load_sources()
+    try:
+        sources = load_sources()
+    except ValueError as err:
+        raise SystemExit(f"{SOURCES.name}: {err}") from err
     if command == "fetch":
         fetch(sources)
         return 0

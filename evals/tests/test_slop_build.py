@@ -46,6 +46,27 @@ def test_write_tsv_round_trips_through_linter_loader():
         assert "원활" in ko_rules.load_slop_terms(out)
 
 
+def test_fetch_refuses_entries_that_could_leave_the_cache():
+    def opener(url, timeout):
+        raise AssertionError(f"받으면 안 됩니다: {url}")
+
+    bad = ({"repo": "o/r", "commit": "abc123", "files": ["SKILL.md#/../../../../escaped"]},
+           {"repo": "o/r", "commit": "abc123", "files": ["../escaped"]},
+           {"repo": "o/r", "commit": "abc123", "files": ["/tmp/escaped"]},
+           {"repo": "o/..", "commit": "abc123", "files": ["escaped"]},
+           {"repo": "o/r", "commit": "main/../x", "files": ["a.md"]})
+    with tempfile.TemporaryDirectory() as d:
+        for source in bad:
+            try:
+                build_slop.fetch([source], cache=Path(d, "cache"), opener=opener)
+            except ValueError:
+                continue
+            raise AssertionError(f"막아야 합니다: {source}")
+        assert list(Path(d).iterdir()) == []
+    for source in build_slop.load_sources():
+        build_slop.check_source(source)
+
+
 def test_fetch_uses_pinned_commit_and_separate_dirs():
     calls = []
 
