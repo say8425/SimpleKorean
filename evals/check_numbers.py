@@ -10,6 +10,7 @@
 - README와 examples/before-after.md의 인용 블록을 원본 출력과 비교한다(make_examples.py).
 - 보정 기록 RECORD.md를 hits.tsv와 보정 출력에서 다시 만들어 비교하고, CHANGELOG에 보정 줄이 있는지 본다.
 - 규칙 블록 두 벌이 같은지, 핵심 문구가 SKILL.md와 규칙 블록에 모두 있는지 본다.
+- SKILL.md description에 스펙 10절의 호출 문구가 모두 있는지 본다.
 - 버전 문자열이 SKILL.md, 매니페스트 세 개, README 배지, CHANGELOG 첫 항목에서 같은지 본다.
 """
 import difflib
@@ -30,6 +31,8 @@ import metrics  # noqa: E402
 import report  # noqa: E402
 
 KEY_PHRASES = ("서술형으로 답하세요", "em-dash를 쓰지 마세요", "첫 문장에 답", "바꾸지 마세요", "확인하다", "레포지토리")
+SKILL_TRIGGERS = ("쉬운 한국어", "번역투 빼 줘", "AI 티 안 나게", "문서 다듬어 줘", "통제 언어", "엄격 모드", "KS A 0001",
+                  "plain Korean", "Simple Korean", "controlled language")
 VERSION_PATTERNS = {
     "skills/simple-korean/SKILL.md": r'version:\s*"([^"]+)"',
     ".claude-plugin/plugin.json": r'"version":\s*"([^"]+)"',
@@ -105,6 +108,14 @@ def check_rule_block(prompt_md, style_md, skill_md):
     return problems
 
 
+def check_triggers(skill_md):
+    """SKILL.md frontmatter의 description에 스펙 10절의 호출 문구가 모두 있는지 본다. 줄바꿈은 공백으로 읽는다."""
+    front = re.search(r"\A---\n(.*?)\n---\n", skill_md, re.S)
+    desc = re.search(r"(?ms)^description:(.*?)(?=^\S|\Z)", front.group(1)) if front else None
+    text = " ".join(desc.group(1).split()) if desc else ""
+    return [f"SKILL.md description에 호출 문구가 없습니다: {t}" for t in SKILL_TRIGGERS if t not in text]
+
+
 def check_block_size(readme, prompt_md):
     """README가 밝힌 규칙 블록 글자 수가 훅이 넣는 블록의 실제 길이와 같은지 본다."""
     size = f"규칙 블록 {len(bench_common.rule_block(prompt_md)):,}자"
@@ -141,6 +152,7 @@ def main():
                 + check_calibration(changelog)
                 + check_rule_block(_read("prompts/system-prompt.md"), _read("output-styles/simple-korean.md"),
                                    _read("skills/simple-korean/SKILL.md"))
+                + check_triggers(_read("skills/simple-korean/SKILL.md"))
                 + check_block_size(readme, _read("prompts/system-prompt.md"))
                 + check_versions({name: _read(name) for name in VERSION_PATTERNS}))
     if problems:

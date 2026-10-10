@@ -31,6 +31,15 @@ def test_check_rule_block_flags_drift_and_missing_phrases():
     assert missing == ["SKILL.md에 핵심 문구가 없습니다: 레포지토리"]
 
 
+def test_check_triggers_reads_every_phrase_from_the_description():
+    phrases = ", ".join(f'"{t}"' for t in cn.SKILL_TRIGGERS).replace("Simple Korean", "Simple\n  Korean")
+    full = f"---\nname: x\ndescription: |\n  설명입니다.\n  {phrases}\nlicense: MIT\n---\n본문\n"
+    assert cn.check_triggers(full) == []
+    body_only = "---\nname: x\ndescription: 짧습니다.\n---\n" + " ".join(cn.SKILL_TRIGGERS) + "\n"
+    assert len(cn.check_triggers(body_only)) == len(cn.SKILL_TRIGGERS)
+    assert {"문서 다듬어 줘", "Simple Korean", "controlled language"} <= set(cn.SKILL_TRIGGERS)
+
+
 def test_check_versions_requires_one_value_everywhere():
     texts = {
         "skills/simple-korean/SKILL.md": SKILL,

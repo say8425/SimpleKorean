@@ -4,8 +4,8 @@ description: |
   기술 문서와 채팅 답변을 쉬운 한국어로 쓰거나 고칩니다. 항공 정비용 통제 영어 ASD-STE100의 규칙을
   한국어에 맞게 다시 세웠습니다. 짧은 문장, 명령 앞의 조건, 한 단어 한 뜻, 번역투와 AI 슬롭 제거,
   정해진 외래어 표기를 지킵니다. README, 런북, 오류 메시지, 릴리스 노트, 장애 보고서, 분야 밖 독자를
-  위한 설명에 쓰세요. "쉬운 한국어", "번역투 빼 줘", "AI 티 안 나게", "plain Korean", "통제 언어",
-  "엄격 모드", "KS A 0001"이라고 할 때도 쓰세요.
+  위한 설명에 쓰세요. "쉬운 한국어", "번역투 빼 줘", "AI 티 안 나게", "문서 다듬어 줘", "plain Korean",
+  "Simple Korean", "통제 언어", "controlled language", "엄격 모드", "KS A 0001"이라고 할 때도 쓰세요.
 license: MIT
 compatibility: claude-code cursor codex gemini-cli opencode
 metadata:
