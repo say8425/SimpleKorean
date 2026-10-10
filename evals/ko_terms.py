@@ -2,6 +2,7 @@
 import copy
 import json
 import re
+import unicodedata
 from bisect import bisect_left
 from collections import namedtuple
 from pathlib import Path
@@ -18,6 +19,8 @@ SPACING_SWITCHABLE = frozenset({"parameter_spacing", "return_value_spacing", "op
 RANK = {None: 0, "mix": 0, WARNING: 1, ERROR: 2}
 # 설정 값은 세션 시작 훅을 거쳐 모델의 문맥에 들어간다(src/hooks/simple-korean-activate.js와 같은 기준).
 MAX_FORM_CHARS = 20
+MAX_SKIP_ENTRIES = 100
+FORM_CHARS = re.compile(r"[가-힣A-Za-z0-9 ]+")
 SHOWN_KEY = re.compile(r"[A-Za-z0-9_.-]{1,40}")
 
 Occurrence = namedtuple("Occurrence", "concept form role start")
@@ -45,9 +48,16 @@ def _shown(key):
 
 
 def form_ok(form):
-    """지정형으로 받을 문자열인지 본다. 공백(' ') 말고는 출력할 수 있는 글자만 쓰고, 앞뒤 공백을 뺀 길이가
-    1~MAX_FORM_CHARS자다. 줄바꿈, 탭, 제어 문자는 받지 않는다."""
-    return form.isprintable() and 0 < len(form.strip(" ")) <= MAX_FORM_CHARS
+    """지정형으로 받을 문자열인지 본다. NFC로 맞춘 뒤 한글, 영문, 숫자, 공백만 쓰고, 앞뒤 공백을 뺀 길이가
+    1~MAX_FORM_CHARS자다. 단어 목록의 형태는 모두 한글과 공백이다."""
+    f = unicodedata.normalize("NFC", form)
+    return bool(FORM_CHARS.fullmatch(f)) and 0 < len(f.strip(" ")) <= MAX_FORM_CHARS
+
+
+def skip_ok(skip):
+    """건너뛸 문자열 목록인지 본다. MAX_SKIP_ENTRIES개 이하이고, 항목마다 출력할 수 있는 글자로 된 빈칸 아닌 한 줄이다."""
+    return (isinstance(skip, list) and len(skip) <= MAX_SKIP_ENTRIES
+            and all(isinstance(s, str) and s.isprintable() and s.strip(" ") for s in skip))
 
 
 def load_config(path):
@@ -81,10 +91,9 @@ def _check_types(path, data):
               and isinstance(entry.get("reason", ""), str))
         if not ok:
             raise ValueError(f'{path}: terms.{_shown(cid)}는 "형태" 문자열이나 {{"write": "형태", "reason": "이유"}} '
-                             f"객체여야 합니다. 형태는 한 줄, {MAX_FORM_CHARS}자 이하입니다")
-    skip = data.get("skip", [])
-    if not isinstance(skip, list) or not all(isinstance(s, str) and s.strip() for s in skip):
-        raise ValueError(f"{path}: skip은 문자열 목록이어야 합니다")
+                             f"객체여야 합니다. 형태는 한글, 영문, 숫자, 공백으로 {MAX_FORM_CHARS}자 이하입니다")
+    if not skip_ok(data.get("skip", [])):
+        raise ValueError(f"{path}: skip은 한 줄짜리 문자열 {MAX_SKIP_ENTRIES}개 이하의 목록이어야 합니다")
 
 
 def _override(concept, new, reason):
@@ -157,7 +166,7 @@ def _roles(concept):
 
 def scan(masked, concepts, extra_skip=()):
     """개념마다 형태가 나온 자리를 찾는다. 긴 형태부터 맞추고, 건너뛸 문자열과 겹치는 자리는 뺀다."""
-    shared = _spans((*GLOBAL_SKIP, *extra_skip), masked)
+    shared = _spans(tuple(dict.fromkeys(nfc(s) for s in (*GLOBAL_SKIP, *extra_skip))), masked)
     shared_merged = _merge(shared)
     found = []
     for c in concepts:

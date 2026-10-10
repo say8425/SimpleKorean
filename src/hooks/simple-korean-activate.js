@@ -48,6 +48,8 @@ const CONFIG_NAME = '.simple-korean.json';
 // load_config, form_ok와 같은 기준으로 검사하고, 단어 목록에 있는 개념 id와 한 줄짜리 짧은 지정형만 적는다.
 const CONFIG_KEYS = new Set(['terms', 'skip', 'spacing']);
 const MAX_FORM_CHARS = 20;
+const MAX_SKIP_ENTRIES = 100;
+const FORM_CHARS = /^[가-힣A-Za-z0-9 ]+$/u;
 const ID_PATTERN = /^[a-z0-9_]{1,40}$/;
 const NOT_PRINTABLE = /(?! )[\p{C}\p{Z}]/u;
 
@@ -58,9 +60,16 @@ function oneLine(text, limit = 200) {
   return flat.length <= limit ? flat : `${flat.slice(0, limit)}…`;
 }
 
+// 지정형은 NFC로 맞춘 뒤 한글, 영문, 숫자, 공백만 받는다. 단어 목록의 형태는 모두 한글과 공백이다.
 function formOk(form) {
-  const length = [...form.replace(/^ +| +$/g, '')].length;
-  return !NOT_PRINTABLE.test(form) && length > 0 && length <= MAX_FORM_CHARS;
+  const normalized = form.normalize('NFC');
+  const length = [...normalized.replace(/^ +| +$/g, '')].length;
+  return FORM_CHARS.test(normalized) && length > 0 && length <= MAX_FORM_CHARS;
+}
+
+function skipOk(skip) {
+  return Array.isArray(skip) && skip.length <= MAX_SKIP_ENTRIES
+    && skip.every((item) => typeof item === 'string' && !NOT_PRINTABLE.test(item) && item.replace(/^ +| +$/g, '') !== '');
 }
 
 function isObject(value) {
@@ -81,8 +90,7 @@ function validConfig(config) {
   }
   const { terms = {}, skip = [], spacing = 'attached' } = config;
   return (spacing === 'attached' || spacing === 'spaced')
-    && isObject(terms) && Object.values(terms).every(entryOk)
-    && Array.isArray(skip) && skip.every((item) => typeof item === 'string' && item.trim() !== '');
+    && isObject(terms) && Object.values(terms).every(entryOk) && skipOk(skip);
 }
 
 // 단어 목록(data/terms.json)의 개념 id. 목록을 읽지 못하면 null이고, 그때는 ID_PATTERN에 맞는 id만 받는다.
@@ -133,7 +141,7 @@ function configNote(configPath, knownIds = conceptIds(process.env.PLUGIN_ROOT ||
   const known = (id) => (knownIds ? knownIds.has(id) : ID_PATTERN.test(id));
   const pairs = Object.entries(config.terms || {})
     .filter(([id]) => known(id))
-    .map(([id, value]) => [id, typeof value === 'string' ? value : value.write]);
+    .map(([id, value]) => [id, (typeof value === 'string' ? value : value.write).normalize('NFC')]);
   const parts = [];
   if (pairs.length) {
     parts.push(`이 레포지토리의 ${CONFIG_NAME}이 지정형을 바꿨습니다. 위 목록보다 이 형태를 먼저 쓰세요: ${pairs.map(([id, write]) => `${id} → ${write}`).join(', ')}.`);
