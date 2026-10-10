@@ -44,6 +44,56 @@ function skillPath(pluginRoot, hookDirectory) {
 }
 
 const CONFIG_NAME = '.simple-korean.json';
+// 설정 값은 저장소가 정하고, 이 훅을 거쳐 모델의 문맥에 들어간다. 그래서 evals/ko_terms.py의
+// load_config, form_ok와 같은 기준으로 검사하고, 단어 목록에 있는 개념 id와 한 줄짜리 짧은 지정형만 적는다.
+const CONFIG_KEYS = new Set(['terms', 'skip', 'spacing']);
+const MAX_FORM_CHARS = 20;
+const ID_PATTERN = /^[a-z0-9_]{1,40}$/;
+const NOT_PRINTABLE = /(?! )[\p{C}\p{Z}]/u;
+
+// 경로처럼 밖에서 온 글을 한 줄로 만든다. 줄바꿈과 제어 문자는 \u 꼴로 바꾸고 limit자에서 자른다.
+function oneLine(text, limit = 200) {
+  const flat = String(text).replace(/[\p{C}\p{Zl}\p{Zp}]/gu,
+    (ch) => `\\u${ch.codePointAt(0).toString(16).padStart(4, '0')}`);
+  return flat.length <= limit ? flat : `${flat.slice(0, limit)}…`;
+}
+
+function formOk(form) {
+  const length = [...form.replace(/^ +| +$/g, '')].length;
+  return !NOT_PRINTABLE.test(form) && length > 0 && length <= MAX_FORM_CHARS;
+}
+
+function isObject(value) {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function entryOk(value) {
+  const entry = typeof value === 'string' ? { write: value } : value;
+  return isObject(entry)
+    && Object.keys(entry).every((key) => key === 'write' || key === 'reason')
+    && typeof entry.write === 'string' && formOk(entry.write)
+    && (entry.reason === undefined || typeof entry.reason === 'string');
+}
+
+function validConfig(config) {
+  if (!isObject(config) || Object.keys(config).some((key) => !CONFIG_KEYS.has(key))) {
+    return false;
+  }
+  const { terms = {}, skip = [], spacing = 'attached' } = config;
+  return (spacing === 'attached' || spacing === 'spaced')
+    && isObject(terms) && Object.values(terms).every(entryOk)
+    && Array.isArray(skip) && skip.every((item) => typeof item === 'string' && item.trim() !== '');
+}
+
+// 단어 목록(data/terms.json)의 개념 id. 목록을 읽지 못하면 null이고, 그때는 ID_PATTERN에 맞는 id만 받는다.
+function conceptIds(pluginRoot, hookDirectory) {
+  try {
+    const terms = JSON.parse(readFirstFile(candidates(pluginRoot, hookDirectory, ['data', 'terms.json'])));
+    return new Set(terms.concepts.map((concept) => concept.id));
+  } catch (error) {
+    return null;
+  }
+}
 
 // 작업 디렉터리에서 위로 올라가며 프로젝트 설정을 찾는다(evals/ko_terms.py의 find_config와 같다).
 function findConfig(start) {
@@ -65,20 +115,25 @@ function findConfig(start) {
   }
 }
 
-// 모델은 설정 파일을 스스로 읽지 않는다. 바뀐 지정형을 문맥에 직접 적어 준다.
-function configNote(configPath) {
+// 모델은 설정 파일을 스스로 읽지 않는다. 바뀐 지정형을 문맥에 직접 적어 준다. 형식이 틀린 설정은
+// 린터처럼 통째로 무시하고, 단어 목록에 없는 개념은 적지 않는다.
+function configNote(configPath, knownIds = conceptIds(process.env.PLUGIN_ROOT || process.env.CLAUDE_PLUGIN_ROOT, __dirname)) {
   if (!configPath) {
     return '';
   }
   let config;
   try {
-    config = JSON.parse(fs.readFileSync(configPath, 'utf8')) || {};
+    config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
   } catch (error) {
-    return `${configPath}을 읽지 못했습니다. 위 지정형을 쓰세요.`;
+    return `${oneLine(configPath)}을 읽지 못했습니다. 위 지정형을 쓰세요.`;
   }
+  if (!validConfig(config)) {
+    return `${oneLine(configPath)}의 형식이 틀려 무시했습니다. 위 지정형을 쓰세요.`;
+  }
+  const known = (id) => (knownIds ? knownIds.has(id) : ID_PATTERN.test(id));
   const pairs = Object.entries(config.terms || {})
-    .map(([id, value]) => [id, typeof value === 'string' ? value : value && value.write])
-    .filter(([, write]) => typeof write === 'string' && write.trim());
+    .filter(([id]) => known(id))
+    .map(([id, value]) => [id, typeof value === 'string' ? value : value.write]);
   const parts = [];
   if (pairs.length) {
     parts.push(`이 레포지토리의 ${CONFIG_NAME}이 지정형을 바꿨습니다. 위 목록보다 이 형태를 먼저 쓰세요: ${pairs.map(([id, write]) => `${id} → ${write}`).join(', ')}.`);

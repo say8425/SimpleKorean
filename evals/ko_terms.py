@@ -16,6 +16,9 @@ CONFIG_KEYS = frozenset({"terms", "skip", "spacing"})
 GLOBAL_SKIP = ("캐시백", "캐쉬백", "레포트", "쉘프", "디플로이먼트", "디렉토리 유틸리티", "컬럼비아")
 SPACING_SWITCHABLE = frozenset({"parameter_spacing", "return_value_spacing", "open_source_spacing"})
 RANK = {None: 0, "mix": 0, WARNING: 1, ERROR: 2}
+# 설정 값은 세션 시작 훅을 거쳐 모델의 문맥에 들어간다(src/hooks/simple-korean-activate.js와 같은 기준).
+MAX_FORM_CHARS = 20
+SHOWN_KEY = re.compile(r"[A-Za-z0-9_.-]{1,40}")
 
 Occurrence = namedtuple("Occurrence", "concept form role start")
 
@@ -36,6 +39,17 @@ def find_config(start):
     return None
 
 
+def _shown(key):
+    """설정에서 온 키를 메시지에 넣을 형태로 바꾼다. 평범한 id는 그대로, 아니면 40자까지 repr로 보인다."""
+    return key if SHOWN_KEY.fullmatch(key) else repr(key[:40])
+
+
+def form_ok(form):
+    """지정형으로 받을 문자열인지 본다. 공백(' ') 말고는 출력할 수 있는 글자만 쓰고, 앞뒤 공백을 뺀 길이가
+    1~MAX_FORM_CHARS자다. 줄바꿈, 탭, 제어 문자는 받지 않는다."""
+    return form.isprintable() and 0 < len(form.strip(" ")) <= MAX_FORM_CHARS
+
+
 def load_config(path):
     """설정 파일을 읽는다. path가 없으면 빈 설정이다. 형식이 틀리면 경로를 담은 ValueError를 낸다."""
     if not path:
@@ -48,7 +62,7 @@ def load_config(path):
         raise ValueError(f"{path}: 설정은 JSON 객체여야 합니다")
     unknown = sorted(set(data) - CONFIG_KEYS)
     if unknown:
-        raise ValueError(f"{path}: 알 수 없는 키 {unknown}")
+        raise ValueError(f"{path}: 알 수 없는 키 [{', '.join(_shown(k) for k in unknown)}]")
     if data.get("spacing", "attached") not in ("attached", "spaced"):
         raise ValueError(f"{path}: spacing은 attached 또는 spaced여야 합니다")
     _check_types(path, data)
@@ -63,10 +77,11 @@ def _check_types(path, data):
     for cid, value in terms.items():
         entry = {"write": value} if isinstance(value, str) else value
         ok = (isinstance(entry, dict) and set(entry) <= {"write", "reason"}
-              and isinstance(entry.get("write"), str) and entry["write"].strip()
+              and isinstance(entry.get("write"), str) and form_ok(entry["write"])
               and isinstance(entry.get("reason", ""), str))
         if not ok:
-            raise ValueError(f'{path}: terms.{cid}는 "형태" 문자열이나 {{"write": "형태", "reason": "이유"}} 객체여야 합니다')
+            raise ValueError(f'{path}: terms.{_shown(cid)}는 "형태" 문자열이나 {{"write": "형태", "reason": "이유"}} '
+                             f"객체여야 합니다. 형태는 한 줄, {MAX_FORM_CHARS}자 이하입니다")
     skip = data.get("skip", [])
     if not isinstance(skip, list) or not all(isinstance(s, str) and s.strip() for s in skip):
         raise ValueError(f"{path}: skip은 문자열 목록이어야 합니다")
@@ -91,7 +106,7 @@ def apply_config(concepts, config):
     overrides = config.get("terms", {})
     spaced = config.get("spacing") == "spaced"
     known = {c["id"] for c in concepts}
-    warnings = [f"{cid}: 단어 목록에 없는 개념입니다" for cid in overrides if cid not in known]
+    warnings = [f"{_shown(cid)}: 단어 목록에 없는 개념입니다" for cid in overrides if cid not in known]
     result = []
     for concept in concepts:
         override = overrides.get(concept["id"])

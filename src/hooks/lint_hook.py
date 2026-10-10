@@ -22,6 +22,7 @@ ROOT = HERE.parent.parent
 sys.path.insert(0, str(ROOT / "evals"))
 
 MAX_HOOK_HITS = 12
+MAX_LINE_CHARS = 300
 MIN_HANGUL_RATIO = 0.3
 CLAUDE_DIR = ".claude"
 REPLY_COUNTS = (("em_dash", "em-dash"), ("bold_spans", "굵은 글씨"), ("headers", "헤더"), ("bullets", "목록 항목"))
@@ -58,6 +59,15 @@ def excluded(target):
     return False
 
 
+def one_line(text, limit=MAX_LINE_CHARS):
+    """알림에 넣을 글을 한 줄로 만든다. 줄바꿈과 제어 문자는 이스케이프하고 limit자에서 자른다.
+
+    파일 이름, 설정 경고, 문서 조각이 모델에 가는 알림의 줄 구조를 바꾸지 못하게 한다.
+    """
+    flat = "".join(ch if ch.isprintable() else repr(ch)[1:-1] for ch in str(text))
+    return flat if len(flat) <= limit else flat[:limit] + "…"
+
+
 def _detail(lint, text, target):
     """검사 결과와 설정 알림(없으면 None)을 돌려준다. 깨진 설정은 기본 설정으로 대신한다."""
     terms = lint.ko_terms
@@ -90,11 +100,11 @@ def post_tool_use(event):
         return 0
     detail = sorted(detail, key=lambda h: (h["severity"] != "error", h["line"]))
     errors = sum(1 for h in detail if h["severity"] == "error")
-    lines = [f"simple-korean: {target.name}에 오류 {errors}건, 경고 {len(detail) - errors}건이 있습니다."]
-    lines += [f"  {note}"] if note else []
+    lines = [f"simple-korean: {one_line(target.name)}에 오류 {errors}건, 경고 {len(detail) - errors}건이 있습니다."]
+    lines += [f"  {one_line(note)}"] if note else []
     for h in detail[:MAX_HOOK_HITS]:
         label = lint.LABELS.get(h["category"], h["category"])
-        lines.append(f"  {h['line']}번 줄, {label}({lint.SEVERITY_LABELS[h['severity']]}): {h['text']}")
+        lines.append(f"  {h['line']}번 줄, {label}({lint.SEVERITY_LABELS[h['severity']]}): {one_line(h['text'])}")
     if len(detail) > MAX_HOOK_HITS:
         lines.append(f"  그 밖에 {len(detail) - MAX_HOOK_HITS}건이 더 있습니다.")
     lines.append("방금 쓴 파일에서 이 항목을 고친 뒤 계속하세요.")
