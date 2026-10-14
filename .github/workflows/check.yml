@@ -17,7 +17,8 @@ jobs:
       - run: python3 evals/check_numbers.py
       - run: python3 evals/ko_lint.py --gate=warning skills/simple-korean/SKILL.md skills/simple-korean/references/*.md prompts/system-prompt.md output-styles/simple-korean.md README.md CHANGELOG.md tools/slop-lexicon/README.md src/hooks/README.md data/basic-vocabulary/README.md
   python39:
-    runs-on: ubuntu-latest
+    # setup-python에 Ubuntu 26.04용 Python 3.9 빌드가 없다.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
