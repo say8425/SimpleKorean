@@ -6,7 +6,7 @@
 
 **Architecture:** PR 2는 release-please(`simple` + extra-files) 설정과 워크플로를 더하고, `check_numbers.py`의 버전 대조와 CHANGELOG 검사를 릴리스 흐름에 맞춘다. PR 제목은 새 스크립트가 커밋 규칙대로 검사한다. PR 3은 언어 표 `evals/readme_i18n.py`를 두고, 두 생성기가 그 문장 틀로 다섯 README의 블록을 쓴다. `check_numbers.py`는 같은 틀로 블록을 대조하고, 번역판의 구조를 한국어판과 대조한다.
 
-**Tech Stack:** Python 3.9 이상(표준 라이브러리만, 수치 검증만 `.venv`의 kiwipiepy 0.24.0), GitHub Actions, `googleapis/release-please-action@v5`, release-please CLI 17.11.2(로컬 dry-run), shields.io 동적 배지, actionlint.
+**Tech Stack:** Python 3.9 이상(표준 라이브러리만, 수치 검증만 `.venv`의 kiwipiepy 0.24.0), GitHub Actions, `googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0`, release-please CLI 17.11.2(로컬 dry-run), shields.io 동적 배지, actionlint.
 
 **Spec:** `docs/superpowers/specs/2026-10-14-readme-languages-design.md`
 
@@ -226,7 +226,7 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: googleapis/release-please-action@v5
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
@@ -621,6 +621,7 @@ permissions:
   contents: read
 jobs:
   title:
+    if: ${{ !startsWith(github.head_ref, 'release-please--') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

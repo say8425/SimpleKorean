@@ -184,7 +184,7 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: googleapis/release-please-action@v5
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
@@ -192,7 +192,8 @@ jobs:
 
 - `main`에 push될 때마다 돈다. 릴리스할 커밋이 쌓이면 릴리스 PR을 열거나 고친다. 그 PR을 병합하면 태그(`v1.0.1` 형식)와 GitHub Release를 만든다.
 - 권한 세 가지는 release-please-action README가 요구하는 그대로다. `workflow_dispatch`는 실패한 실행을 다시 돌릴 때 쓴다.
-- 릴리스 PR은 `GITHUB_TOKEN`이 만들므로 그 PR에서는 다른 워크플로가 돌지 않는다. 별도 토큰은 두지 않는다. 릴리스 PR은 버전 문자열과 CHANGELOG만 바꾸고, 병합 뒤 `main`에서 CI가 다시 돈다.
+- 이 액션은 쓰기 권한을 쥐고 있다. 그래서 v5.0.0 커밋 SHA로 고정한다. 읽기 전용 워크플로는 태그를 그대로 쓴다.
+- `GITHUB_TOKEN`이 만든 릴리스 PR에서는 워크플로가 돌지 않는다. 별도 토큰은 두지 않는다. 메인테이너가 릴리스 PR에 직접 push하면(5.6절) `pr-title`이 `release-please--`로 시작하는 브랜치를 건너뛴다. 릴리스 PR은 버전 문자열과 CHANGELOG만 바꾸고, 병합 뒤 `main`에서 CI가 다시 돈다.
 
 ### 5.2 설정 파일
 
@@ -229,7 +230,7 @@ jobs:
 `.release-please-manifest.json`은 `{".": "1.0.0"}`으로 시작한다.
 
 - 태그에 컴포넌트 이름을 넣지 않는다. 그래서 태그 형식이 지금 태그 `v1.0.0`과 같다.
-- 릴리스 PR 제목은 release-please 기본값(`chore(main): release 1.0.1`)을 쓴다. 이 PR에서는 PR 제목 검사가 돌지 않는다(5.1절).
+- 릴리스 PR 제목은 release-please 기본값(`chore(main): release 1.0.1`)을 쓴다. 이 PR에서는 PR 제목 검사가 돌지 않는다(5.1절, 5.7절).
 - `feat`는 부 버전을, `fix`와 `perf`는 수 버전을 올린다. 숨긴 유형만 쌓이면 release-please는 사용자에게 보이는 커밋이 없다고 보고 릴리스 PR을 만들지 않는다.
 
 ### 5.3 버전 문자열
@@ -292,6 +293,7 @@ release-please를 쓰면 이 검사가 길을 막는다. 다시 잰 PR에는 그
 - 이 줄을 잊으면 병합 뒤 `main`의 CI가 실패하고, 메시지가 더할 줄을 알려 준다. 그때 `docs:` 커밋으로 그 항목에 줄을 더한다.
 - 지금은 결과와 보정이 모두 2026-10-08이고 1.0.0은 2026-10-10이다. 그래서 지금처럼 검사하고, 두 검사 모두 통과한다.
 - `hits.py`의 설명 "CHANGELOG 1.0.0 항목의 보정 절에 그대로 옮길 줄"을 "그 보정을 싣는 릴리스 항목에 옮길 줄"로 고친다.
+- release-please는 CHANGELOG 날짜를 UTC로 쓰고 측정 날짜는 현지 시각이다. 그래서 새벽(KST)에 잰 측정을 같은 날 아침에 릴리스하면 아직 릴리스하지 않은 측정으로 볼 수 있다. 이 누락은 다음 릴리스에서 드러난다.
 
 ### 5.7 커밋 규칙과 PR 제목 검사
 
@@ -318,6 +320,7 @@ permissions:
   contents: read
 jobs:
   title:
+    if: ${{ !startsWith(github.head_ref, 'release-please--') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -329,7 +332,7 @@ jobs:
 ```
 
 - `edited`가 있으므로 제목을 고치면 검사가 다시 돈다.
-- 릴리스 PR에서는 돌지 않는다(5.1절).
+- 릴리스 PR은 `GITHUB_TOKEN`이 만들므로 워크플로가 돌지 않는다. 메인테이너가 릴리스 PR에 push하면(5.6절) `release-please--`로 시작하는 브랜치는 건너뛴다(`if:` 줄).
 - 한국어 README의 기여 절에 이 규칙을 적는다. 예시 제목, 유형 목록, feat·fix·perf만 릴리스를 만든다는 점을 쓴다. 번역판의 기여 절에는 이 규칙에 더해, 한국어 제목을 쓰지 못하면 메인테이너가 병합 전에 고친다고 적는다.
 
 ### 5.8 레포 설정

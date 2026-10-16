@@ -6,6 +6,7 @@ permissions:
   contents: read
 jobs:
   title:
+    if: ${{ !startsWith(github.head_ref, 'release-please--') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
