@@ -299,6 +299,12 @@ def test_check_translation_passes_a_generated_translation():
         assert any("결과 경로" in p for p in cn.check_translation("en", stale, ko, scenarios, prompt, stats))
 
 
+def test_check_translation_reports_missing_korean_block_without_crashing():
+    scenarios = [{"id": "readme-intro", "type": "descriptive"}]
+    en = "<!-- benchmark:start evals/results/x -->\n\n<!-- benchmark:end -->\n"
+    assert cn.check_translation("en", en, "한국어판에 블록 없음", scenarios, "") == ["README.md에 벤치마크 블록이 없습니다"]
+
+
 def test_translation_problems_names_missing_files():
     old = cn.ROOT
     with tempfile.TemporaryDirectory() as d:

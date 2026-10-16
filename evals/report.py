@@ -205,7 +205,7 @@ def replace_readme_block(readme_text, results_dir, block, name="README.md"):
     rel = Path(results_dir).resolve().relative_to(ROOT).as_posix()
     new = f"<!-- benchmark:start {rel} -->\n{block}\n<!-- benchmark:end -->"
     if not README_BLOCK.search(readme_text):
-        raise SystemExit(f"{name}에 <!-- benchmark:start ... --> 블록이 없습니다")
+        raise SystemExit(f"{name}에 <!-- benchmark:start ... --> ... <!-- benchmark:end --> 블록이 없습니다")
     return README_BLOCK.sub(lambda m: new, readme_text, count=1)
 
 

@@ -247,6 +247,8 @@ def check_translation(lang, text, ko_readme, scenarios, prompt_md, stats=None, r
         return [f"{name}에 벤치마크 블록이 없습니다"] + check_readme_structure(ko_readme, lang, text, root)
     if stats is None:
         ko = report.README_BLOCK.search(ko_readme)
+        if not ko:
+            return ["README.md에 벤치마크 블록이 없습니다"]
         stats = report.benchmark_stats(ROOT / ko.group(1), scenarios)
     results_dir = ROOT / stats["rel"]
     problems = [] if m.group(1) == stats["rel"] else [f"{name}의 결과 경로 {m.group(1)}가 한국어판({stats['rel']})과 다릅니다"]

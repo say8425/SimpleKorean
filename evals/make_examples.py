@@ -86,7 +86,7 @@ def readme_example(results_dir, lang="ko"):
 def replace_example_block(readme_text, body, name="README.md"):
     """README의 보기 블록을 새 본문으로 바꾼 새 문자열."""
     if not EXAMPLE_BLOCK.search(readme_text):
-        raise SystemExit(f"{name}에 <!-- example:start --> 블록이 없습니다")
+        raise SystemExit(f"{name}에 <!-- example:start --> ... <!-- example:end --> 블록이 없습니다")
     return EXAMPLE_BLOCK.sub(lambda m: f"<!-- example:start -->\n{body}\n<!-- example:end -->", readme_text, count=1)
 
 

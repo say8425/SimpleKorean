@@ -196,7 +196,7 @@ Chat replies use these rules in all modes.
 | Put the answer in the first sentence | An opening that repeats the question |
 | Do not use em-dashes | Thoughts that are only half joined |
 | Explain a concept term briefly when you first use it | Terms that the reader must look up |
-| Use one style in one reply. Do not use greetings and sign-offs | "좋은 질문입니다" (Good question), "도움이 되셨기를 바랍니다" (I hope this helped) |
+| Use one writing style in one reply. Do not use greetings and sign-offs | "좋은 질문입니다" (Good question), "도움이 되셨기를 바랍니다" (I hope this helped) |
 
 Documents use these rules. Documents include READMEs, runbooks, error messages, release notes, and incident reports.
 
@@ -238,7 +238,7 @@ Product names, quoted screen text, API object names, and code keep their origina
 
 Is this a Korean edition of STE? No. ASD-STE100 has no Korean edition, and Korea has no national standard for a controlled language. SimpleKorean is an unofficial standard. It rebuilds the purpose of the STE rules for Korean grammar. The sentence-ending and connective rules of strict mode are based on KS A 0001:2023.
 
-Why do 레포지토리 and 바디 differ from the standard? The usage examples of the National Institute of Korean Language are "리포지터리" (repository) and "보디" (body). But real documents almost never use these two forms. In a sample of vendor documents, "리포지터리" appeared 0 times in 1,104 cases. So we made the common forms that readers know the designated spelling.
+Why do 레포지토리 and 바디 differ from the standard? The usage examples of the National Institute of Korean Language are "리포지터리" (repository) and "보디" (body). But real documents almost never use these two forms. In a sample of vendor documents, "리포지터리" appeared 0 times in 1,104 cases. So we chose the common forms that readers recognize as the designated spelling.
 
 What if my company uses different spellings? Put `.simple-korean.json` at the top of your repository. The session-start hook finds this file and tells the model the changed designated spellings. The linter and the writing-check hook also follow this file. They warn when you use the designated spelling from before the change. A designated spelling can use only Hangul, Latin letters, digits, and spaces, up to 20 characters. You can list up to 100 strings to skip (`skip`). The skill ignores settings with a wrong format and concepts that are not in the word list.
 
@@ -246,7 +246,7 @@ What if my company uses different spellings? Put `.simple-korean.json` at the to
 {"terms": {"release": {"write": "릴리즈"}, "column": "컬럼"}, "spacing": "attached"}
 ```
 
-In this example, "릴리즈" and "컬럼" are common alternative spellings of release and column.
+In this example, "릴리즈" means release and "컬럼" means column.
 
 How is this different from a text-polishing skill? Polishing skills such as im-not-ai remove AI style and translationese from text that already exists. SimpleKorean makes the model follow the rules from the start. It also sets the document structure and the reply format. For example, it puts conditions before the command, and it puts only one action in a sentence. It also comes with a linter and measurement results.
 
