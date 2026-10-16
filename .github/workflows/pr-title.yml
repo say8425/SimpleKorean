@@ -1,0 +1,16 @@
+name: pr-title
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+permissions:
+  contents: read
+jobs:
+  title:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with: { python-version: "3.12" }
+      - run: python3 evals/check_pr_title.py
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
