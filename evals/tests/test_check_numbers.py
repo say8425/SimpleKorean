@@ -119,6 +119,27 @@ def test_readme_example_is_verbatim_and_edits_are_caught():
     assert cn.check_examples("빈 README", "") == ["README.md에 원본 인용 블록이 없습니다"]
 
 
+def test_reply_sources_are_checked_verbatim_too():
+    with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
+        rel = (_results(d) / "reply" / "baseline__oom__r1.txt").resolve().relative_to(cn.ROOT).as_posix()
+        block = mx.source_block(rel)
+        assert "> **네** — 메모리가 부족합니다.\n>\n> - 한도" in block
+        assert mx.check_sources(block) == []
+        assert mx.check_sources(block.replace("**네**", "네")) == [f"{rel}: 인용한 글이 원본과 다릅니다"]
+
+
+def test_readme_pick_is_pre_registered_and_has_no_code_block():
+    assert mx.README_PICK in {pick[:2] for pick in mx.DOC_PICKS}
+    with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
+        root = _results(d)
+        assert mx.pick_problems(root) == []
+        path = root / "docs" / "plain__troubleshooting__r1.json"
+        record = json.loads(path.read_text(encoding="utf-8"))
+        path.write_text(json.dumps({**record, "text": record["text"] + "\n\n```bash\nls\n```"}, ensure_ascii=False),
+                        encoding="utf-8")
+        assert [p for p in mx.pick_problems(root) if "코드 블록이 있어" in p] != []
+
+
 def test_check_benchmark_catches_stale_numbers_and_missing_changelog_path():
     scenarios = [{"id": "readme-intro", "type": "descriptive"}, {"id": "troubleshooting", "type": "procedural"}]
     with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:

@@ -59,7 +59,7 @@ npm を使う場合は `npx skills add say8425/SimpleKorean` を実行してく�
 
 ## 例
 
-同じモデルが同じ課題（CLI ツールのトラブルシューティングの節）を2回書いた生の出力です。左はスキルなし、右は SimpleKorean を有効にして書きました。どちらの文章も手を加えずに載せました。このスキルはモデルに韓国語を書かせるものなので、出力は韓国語のままです。
+同じモデルが同じ課題（CLI ツールのトラブルシューティングの節）で書いた2つの文書です。左はスキルなしで、右は SimpleKorean の基本モードを有効にして書きました。どちらの文書も手を加えずに載せました。このスキルはモデルに韓国語を書かせるものなので、文書は韓国語のままです。
 
 <!-- example:start -->
 <table>
@@ -107,7 +107,7 @@ npm を使う場合は `npx skills add say8425/SimpleKorean` を実行してく�
 </tr>
 </table>
 
-元のファイルは `evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json` と `evals/results/2026-10-08/docs/plain__troubleshooting__r1.json` です。
+元のファイルは、左が `evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json`、右が `evals/results/2026-10-08/docs/plain__troubleshooting__r1.json` です。
 
 回答の例とほかの文書の例は [`examples/before-after.md`](../examples/before-after.md) にあります。
 <!-- example:end -->

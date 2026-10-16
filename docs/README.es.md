@@ -59,7 +59,7 @@ Después de instalarla, pida un documento técnico. Para corregir un texto que y
 
 ## Ejemplo
 
-Estas son dos salidas originales del mismo modelo para la misma tarea: una sección de solución de problemas de una herramienta CLI. La de la izquierda es sin la skill y la de la derecha es con SimpleKorean activado. Copiamos las dos salidas sin cambios. Las salidas están en coreano, porque esta skill hace que el modelo escriba en coreano.
+Estos son dos documentos que el mismo modelo escribió para la misma tarea: una sección de solución de problemas de una herramienta CLI. El de la izquierda se escribió sin la skill y el de la derecha, con el modo básico de SimpleKorean activado. Copiamos los dos documentos sin cambios. Están en coreano, porque esta skill hace que el modelo escriba en coreano.
 
 <!-- example:start -->
 <table>
@@ -107,7 +107,7 @@ Estas son dos salidas originales del mismo modelo para la misma tarea: una secci
 </tr>
 </table>
 
-Los archivos originales son `evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json` y `evals/results/2026-10-08/docs/plain__troubleshooting__r1.json`.
+Los archivos originales son `evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json` (izquierda) y `evals/results/2026-10-08/docs/plain__troubleshooting__r1.json` (derecha).
 
 Los ejemplos de respuestas y más ejemplos de documentos están en [`examples/before-after.md`](../examples/before-after.md).
 <!-- example:end -->

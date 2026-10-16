@@ -99,6 +99,21 @@ def readme_example(results_dir, lang="ko"):
                         text["example_docs"].format(href=i18n.link(lang, "examples/before-after.md"))])
 
 
+def pick_problems(results_dir):
+    """README 보기 예시가 측정 전에 정한 문서 예시인지, 표 칸을 넘칠 코드 블록이 없는지 본다."""
+    if README_PICK not in {pick[:2] for pick in DOC_PICKS}:
+        return [f"README_PICK {README_PICK}가 DOC_PICKS에 없습니다"]
+    scenario, cond = README_PICK
+    problems = []
+    for rel in _pair(results_dir, "docs", scenario, cond, "json"):
+        try:
+            if "```" in raw_text(rel):
+                problems.append(f"{rel}: 코드 블록이 있어 README 보기 표의 칸을 넘칩니다")
+        except (OSError, ValueError, KeyError) as err:
+            problems.append(f"{rel}: 원본을 읽지 못했습니다({err})")
+    return problems
+
+
 def replace_example_block(readme_text, body, name="README.md"):
     """README의 보기 블록을 새 본문으로 바꾼 새 문자열."""
     if not EXAMPLE_BLOCK.search(readme_text):

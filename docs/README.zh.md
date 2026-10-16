@@ -59,7 +59,7 @@ pnpm dlx skills add say8425/SimpleKorean
 
 ## 示例
 
-以下是同一模型对同一任务（CLI 工具的故障排查一节）写的两份原始输出。左边未启用技能，右边启用了 SimpleKorean。两份输出都未作修改。本技能让模型写韩语，所以输出保持韩语原文。
+以下是同一模型为同一任务（CLI 工具的故障排查一节）写的两份文档。左边未启用技能，右边启用了 SimpleKorean 的基本模式。两份文档都未作修改。本技能让模型写韩语，所以文档保持韩语原文。
 
 <!-- example:start -->
 <table>
@@ -107,7 +107,7 @@ pnpm dlx skills add say8425/SimpleKorean
 </tr>
 </table>
 
-原始文件是 `evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json` 和 `evals/results/2026-10-08/docs/plain__troubleshooting__r1.json`。
+左边的原始文件是 `evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json`，右边的是 `evals/results/2026-10-08/docs/plain__troubleshooting__r1.json`。
 
 回答示例和更多文档示例见 [`examples/before-after.md`](../examples/before-after.md)。
 <!-- example:end -->

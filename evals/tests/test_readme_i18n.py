@@ -24,7 +24,7 @@ def test_korean_templates_keep_the_current_sentences():
     assert ko["block_size"].format(n=i18n.grouped(2271, "ko")) == "규칙 블록 2,271자"
     assert ko["longest"].format(n=18) == "18어절"
     assert ko["example_docs"].format(href="examples/before-after.md") == \
-        "답변 예시와 다른 문서 예시는 [`examples/before-after.md`](examples/before-after.md)에 있습니다."
+        "답변 예시와 나머지 문서 예시는 [`examples/before-after.md`](examples/before-after.md)에 있습니다."
 
 
 def test_numbers_follow_each_language():
@@ -55,7 +55,7 @@ EMPTY = "<!-- example:start -->\n\n<!-- example:end -->\n\n<!-- benchmark:start 
 
 
 def _results(d):
-    """ROOT 아래 임시 결과 디렉터리에 답변 두 개, 판정 하나, 문서 세 개를 쓴다."""
+    """ROOT 아래 임시 결과 디렉터리에 답변 두 개, 판정 하나, 문서 여섯 개를 쓴다."""
     root = Path(d)
     (root / "reply").mkdir()
     (root / "reply" / "baseline__oom__r1.txt").write_text("**네** — 메모리가 부족합니다.\n\n- 한도\n", encoding="utf-8")
@@ -128,6 +128,8 @@ def test_example_block_is_a_two_column_table():
         for lang in i18n.LANGS:
             body = mx.readme_example(root, lang)
             assert body.startswith("<table>\n<tr>\n<th width=\"50%\">"), lang
+            labels = i18n.TEXT[lang]
+            assert body.index(labels["example_before"]) < body.index(labels["example_after"]) < body.index("<td"), lang
             assert body.count('<td valign="top">\n\n<!-- source: ') == 2, lang
             assert body.count("<!-- simple-korean: on -->\n\n</td>") == 2, lang
             sources = [m[0] for m in mx.SOURCE_BLOCK.findall(body)]

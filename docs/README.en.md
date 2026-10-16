@@ -59,7 +59,7 @@ After you install, ask for a technical document. To fix existing text, say "simp
 
 ## Example
 
-Below are two raw outputs from the same model for the same task: a troubleshooting section for a CLI tool. The left one is without the skill, and the right one is with SimpleKorean on. We copied both outputs without changes. The outputs are in Korean, because this skill makes the model write Korean.
+Below are two documents that the same model wrote for the same task: a troubleshooting section for a CLI tool. The left one was written without the skill, and the right one with the default mode of SimpleKorean on. We copied both documents without changes. They are in Korean, because this skill makes the model write Korean.
 
 <!-- example:start -->
 <table>
@@ -107,7 +107,7 @@ Below are two raw outputs from the same model for the same task: a troubleshooti
 </tr>
 </table>
 
-The raw files are `evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json` and `evals/results/2026-10-08/docs/plain__troubleshooting__r1.json`.
+The raw files are `evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json` (left) and `evals/results/2026-10-08/docs/plain__troubleshooting__r1.json` (right).
 
 Reply examples and more document examples are in [`examples/before-after.md`](../examples/before-after.md).
 <!-- example:end -->

@@ -59,7 +59,7 @@ npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명�
 
 ## 보기
 
-같은 모델이 같은 과제(CLI 도구의 문제 해결 절)를 두 번 쓴 원본 출력입니다. 왼쪽은 스킬 없이, 오른쪽은 SimpleKorean을 켜고 썼습니다. 두 글 모두 고치지 않고 옮겼습니다.
+같은 모델이 같은 과제(CLI 도구의 문제 해결 절)로 쓴 문서 두 개입니다. 왼쪽은 스킬 없이, 오른쪽은 SimpleKorean의 기본 모드를 켜고 썼습니다. 두 문서 모두 고치지 않고 옮겼습니다.
 
 <!-- example:start -->
 <table>
@@ -107,9 +107,9 @@ npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명�
 </tr>
 </table>
 
-원본 파일은 `evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json`와 `evals/results/2026-10-08/docs/plain__troubleshooting__r1.json`입니다.
+원본 파일은 왼쪽이 `evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json`, 오른쪽이 `evals/results/2026-10-08/docs/plain__troubleshooting__r1.json`입니다.
 
-답변 예시와 다른 문서 예시는 [`examples/before-after.md`](examples/before-after.md)에 있습니다.
+답변 예시와 나머지 문서 예시는 [`examples/before-after.md`](examples/before-after.md)에 있습니다.
 <!-- example:end -->
 
 ## 벤치마크
