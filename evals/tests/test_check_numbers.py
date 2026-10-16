@@ -1,4 +1,5 @@
 import json
+import re
 import sys
 import tempfile
 from pathlib import Path
@@ -46,12 +47,42 @@ def test_check_versions_requires_one_value_everywhere():
         ".claude-plugin/plugin.json": '{"version": "1.0.0"}',
         ".claude-plugin/marketplace.json": '{"plugins": [{"version": "1.0.0"}]}',
         ".codex-plugin/plugin.json": '{"version": "1.0.0"}',
-        "README.md": "badge/version-1.0.0-blue",
+        ".release-please-manifest.json": '{\n  ".": "1.0.0"\n}\n',
         "CHANGELOG.md": "# 변경 기록\n\n## 1.0.0, 2026-10-09\n",
     }
+    assert "README.md" not in cn.VERSION_PATTERNS
     assert cn.check_versions(texts) == []
     assert cn.check_versions({**texts, "CHANGELOG.md": "## 1.0.1, 2026-10-10\n"}) != []
-    assert cn.check_versions({**texts, "README.md": "배지 없음"}) != []
+    assert cn.check_versions({**texts, ".release-please-manifest.json": '{".": "1.0.1"}'}) != []
+    bumped = {name: text.replace("1.0.0", "1.0.1") for name, text in texts.items()}
+    released = ("# 변경 기록\n\n## [1.0.1](https://github.com/say8425/SimpleKorean/compare/v1.0.0...v1.0.1) (2026-10-20)\n\n"
+                "### 고친 것\n\n* 고친다\n\n## 1.0.0, 2026-10-09\n")
+    assert cn.check_versions({**bumped, "CHANGELOG.md": released}) == []
+
+
+def _jsonpath(data, path):
+    """'$.plugins[0].version' 같은 단순한 JSONPath를 따라간다."""
+    for key, index in re.findall(r"\.(\w+)|\[(\d+)\]", path[1:]):
+        data = data[key] if key else data[int(index)]
+    return data
+
+
+def test_release_config_bumps_every_versioned_file():
+    config = json.loads((cn.ROOT / "release-please-config.json").read_text(encoding="utf-8"))
+    package = config["packages"]["."]
+    assert package["release-type"] == "simple" and config["include-component-in-tag"] is False
+    version = json.loads((cn.ROOT / ".release-please-manifest.json").read_text(encoding="utf-8"))["."]
+    bumped = set()
+    for item in package["extra-files"]:
+        if isinstance(item, str):
+            bumped.add(item)
+            continue
+        bumped.add(item["path"])
+        data = json.loads((cn.ROOT / item["path"]).read_text(encoding="utf-8"))
+        assert _jsonpath(data, item["jsonpath"]) == version, item
+    assert bumped == set(cn.VERSION_PATTERNS) - {"CHANGELOG.md", ".release-please-manifest.json"}
+    skill = (cn.ROOT / "skills/simple-korean/SKILL.md").read_text(encoding="utf-8")
+    assert f'  version: "{version}" # x-release-please-version\n' in skill
 
 
 def _results(d):
@@ -100,24 +131,71 @@ def test_check_benchmark_catches_stale_numbers_and_missing_changelog_path():
     assert cn.check_benchmark("블록 없음", "", scenarios) == ["README.md에 벤치마크 블록이 없습니다"]
 
 
+def test_latest_release_date_reads_the_first_entry_in_either_form():
+    old = "# 변경 기록\n\n항목마다 적습니다.\n\n## 1.0.0, 2026-10-10\n\n- 처음\n\n### 보정\n\n- 줄\n"
+    assert cn.latest_release_date(old) == "2026-10-10"
+    new = old.replace("## 1.0.0, 2026-10-10", "## [1.1.0](https://github.com/say8425/SimpleKorean/compare/v1.0.0...v1.1.0)"
+                      " (2026-11-20)\n\n### 기능\n\n* 더한다 ([#4](https://github.com/say8425/SimpleKorean/issues/4))\n\n"
+                      "## 1.0.0, 2026-10-10")
+    assert cn.latest_release_date(new) == "2026-11-20"
+    assert cn.latest_release_date("# 변경 기록\n") is None
+
+
+def test_unreleased_means_strictly_after_the_latest_release():
+    changelog = "# 변경 기록\n\n## 1.0.0, 2026-10-10\n"
+    assert cn.unreleased("2026-10-11", changelog)
+    assert not cn.unreleased("2026-10-10", changelog)
+    assert not cn.unreleased("2026-10-08", changelog)
+    assert not cn.unreleased("2026-10-11", "# 변경 기록\n")
+
+
+def test_check_benchmark_skips_the_changelog_path_for_unreleased_results():
+    scenarios = [{"id": "readme-intro", "type": "descriptive"}]
+    with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
+        root = _results(d)
+        readme = report.replace_readme_block("문서와 답변은 `m`이 쓰고 판정은 `j`가 했습니다.\n"
+                                             "<!-- benchmark:start x -->\n\n<!-- benchmark:end -->\n", root,
+                                             report.readme_block(root, scenarios))
+        (root / "RESULTS.md").write_text(report.results_md(root, scenarios), encoding="utf-8")
+        same_day = "# 변경 기록\n\n## 1.0.0, 2099-01-01\n"
+        earlier = "# 변경 기록\n\n## 1.0.0, 2098-12-31\n"
+        found = cn.check_benchmark(readme, same_day, scenarios, require_easy=False)
+        assert any("CHANGELOG.md가 측정 결과" in p and "릴리스 항목" in p for p in found)
+        assert cn.check_benchmark(readme, earlier, scenarios, require_easy=False) == []
+
+
+def _calibration(d, date="2026-10-09"):
+    """임시 보정 디렉터리에 기준선 문서 하나, hits.tsv, RECORD.md를 쓰고 (디렉터리, RECORD.md 본문)을 돌려준다."""
+    cal, base = Path(d), Path(d) / "baseline"
+    (base / "docs").mkdir(parents=True)
+    (base / "reply").mkdir()
+    record = {"text": "이 문서는 sqlpipe에 대해 설명합니다.\n", "condition": "baseline", "scenario": "x",
+              "type": "descriptive", "run": 1}
+    (base / "docs" / "baseline__x__r1.json").write_text(json.dumps(record, ensure_ascii=False), encoding="utf-8")
+    (base / "meta.json").write_text(json.dumps({"date": date, "model": "m", "effort": "low"}), encoding="utf-8")
+    rows = [{**r, "label": "TP"} for r in hits.doc_rows(base) + hits.reply_rows(base)]
+    (cal / "hits.tsv").write_text(hits.to_tsv(rows), encoding="utf-8")
+    text = hits.record_md(base, rows)
+    (cal / "RECORD.md").write_text(text, encoding="utf-8")
+    return cal, text
+
+
 def test_check_calibration_rebuilds_record_and_needs_changelog_lines():
     with tempfile.TemporaryDirectory() as d:
-        cal, base = Path(d), Path(d) / "baseline"
-        (base / "docs").mkdir(parents=True)
-        (base / "reply").mkdir()
-        record = {"text": "이 문서는 sqlpipe에 대해 설명합니다.\n", "condition": "baseline", "scenario": "x",
-                  "type": "descriptive", "run": 1}
-        (base / "docs" / "baseline__x__r1.json").write_text(json.dumps(record, ensure_ascii=False), encoding="utf-8")
-        (base / "meta.json").write_text(json.dumps({"date": "2026-10-09", "model": "m", "effort": "low"}), encoding="utf-8")
-        rows = [{**r, "label": "TP"} for r in hits.doc_rows(base) + hits.reply_rows(base)]
-        (cal / "hits.tsv").write_text(hits.to_tsv(rows), encoding="utf-8")
-        text = hits.record_md(base, rows)
-        (cal / "RECORD.md").write_text(text, encoding="utf-8")
+        cal, text = _calibration(d)
         lines = text.split("## CHANGELOG에 옮길 줄", 1)[1].strip()
         assert cn.check_calibration(lines, cal) == []
         assert any("CHANGELOG.md에 보정 줄이 없습니다" in p for p in cn.check_calibration("", cal))
         (cal / "RECORD.md").write_text(text.replace("그대로입니다", "바뀌었습니다"), encoding="utf-8")
         assert any(p.startswith("evals/calibration/RECORD.md:") for p in cn.check_calibration(lines, cal))
+
+
+def test_check_calibration_skips_changelog_lines_for_an_unreleased_record():
+    with tempfile.TemporaryDirectory() as d:
+        cal, _ = _calibration(d, date="2026-10-09")
+        found = cn.check_calibration("# 변경 기록\n\n## 1.0.0, 2026-10-09\n", cal)
+        assert any("CHANGELOG.md에 보정 줄이 없습니다" in p for p in found)
+        assert cn.check_calibration("# 변경 기록\n\n## 1.0.0, 2026-10-08\n", cal) == []
 
 
 def test_main_reports_missing_files():
