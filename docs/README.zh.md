@@ -1,0 +1,280 @@
+<p align="center">
+  <strong>让 AI 写的韩语技术文档读起来像维修手册。</strong>
+</p>
+
+<p align="center">
+  <a href="../README.md">한국어</a> | <a href="README.en.md">English</a> | <a href="README.ja.md">日本語</a> | 中文 | <a href="README.es.md">Español</a>
+</p>
+
+<p align="center">
+  <a href="https://agentskills.io"><img src="https://img.shields.io/badge/SKILL.md-open_standard-blue?style=flat" alt="Agent Skills"></a>
+  <a href="https://github.com/say8425/SimpleKorean/releases/latest"><img src="https://img.shields.io/github/v/release/say8425/SimpleKorean?label=version&style=flat" alt="version"></a>
+  <a href="../LICENSE"><img src="https://img.shields.io/badge/license-MIT-lightgrey?style=flat" alt="MIT"></a>
+</p>
+
+SimpleKorean 是一个智能体技能，让 LLM 用简单的韩语写技术文档和聊天回答。航空维修手册使用受控英语 ASD-STE100。我们从 [SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) 取来它的规则，按韩语语法重新制定。我们还加入了一份外来语写法列表，这份列表是在真实的韩语开发文档中统计得出的。
+
+它可以在读取 [Agent Skills 标准](https://agentskills.io) 的智能体中运行，例如 Claude Code、Cursor、Codex、Gemini CLI、OpenCode。
+
+## 安装
+
+所有智能体都可以用 [skills CLI](https://github.com/vercel-labs/skills) 安装。
+
+```bash
+pnpm dlx skills add say8425/SimpleKorean
+```
+
+如果使用 npm，请运行 `npx skills add say8425/SimpleKorean`。这个命令只安装技能，不安装下面介绍的钩子和输出样式。
+
+在 Claude Code 中，请以插件方式安装。插件包含会话启动钩子、写作检查钩子和输出样式。
+
+```bash
+claude plugin marketplace add say8425/SimpleKorean && claude plugin install simple-korean@simple-korean
+```
+
+输出样式的名称是 `simple-korean:simple-korean`。用短名称找不到它。请在 `/config` 的 Output style 中选择，或者在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。会话启动钩子会在每个会话中加入 2,271 个字符的规则块。`claude plugin details simple-korean` 显示的 token 数不包含这个规则块。
+
+在 Codex 中，请以插件方式安装。会话启动钩子会一起安装。
+
+```bash
+codex plugin marketplace add say8425/SimpleKorean
+codex plugin add simple-korean@simple-korean
+```
+
+Codex 第一次运行钩子之前，会询问是否信任它。会话启动钩子需要 Node.js。Claude Code 的写作检查钩子需要 Python 3.9 或更高版本。详情见 [`src/hooks/README.md`](../src/hooks/README.md)。
+
+对于不支持技能的工具，请粘贴 [`prompts/system-prompt.md`](../prompts/system-prompt.md) 中的规则块。可以放进系统提示词、`AGENTS.md` 或 `.cursorrules`。这个文件末尾还有一个约 120 token 的简短版本。
+
+安装后，请让模型写技术文档。如果要修改已有的文字，请说“simple-korean으로 고쳐 줘”（用 simple-korean 修改）。
+
+## 示例
+
+以下是同一模型对同一问题的原始输出。两个回答都未作修改。本技能让模型写韩语，所以回答保持韩语原文。
+
+<!-- example:start -->
+未启用技能时写的回答（`evals/results/2026-10-08/reply/baseline__oom__r1.txt`）：
+
+<!-- source: evals/results/2026-10-08/reply/baseline__oom__r1.txt -->
+<!-- simple-korean: off -->
+> ## 무슨 일이 일어나는 건가
+>
+> `OOMKilled`는 컨테이너가 **메모리 limit(`resources.limits.memory`)을 초과**해서 리눅스 커널의 OOM killer가 프로세스를 강제 종료(exit code 137, SIGKILL)했다는 뜻입니다. kubelet이 컨테이너를 재시작하고, 같은 일이 반복되면 `CrashLoopBackOff`로 보입니다.
+>
+> 원인은 크게 네 가지입니다.
+>
+> 1. **limit이 너무 낮음**: 앱의 정상적인 메모리 사용량이 limit보다 큽니다.
+> 2. **메모리 누수 또는 사용량 급증**: 시간이 지나며 늘어나거나, 큰 요청, 배치, 캐시 때문에 순간적으로 치솟습니다.
+> 3. **런타임 설정이 컨테이너 limit과 안 맞음**
+>    - JVM: 힙(`-Xmx`)에 메타스페이스, 스레드 스택, 네이티브 메모리가 더해져 limit을 넘습니다.
+>    - Node.js: `--max-old-space-size`가 limit보다 큽니다.
+>    - Go, Python: GC 특성이나 `GOMEMLIMIT` 미설정이 원인일 수 있습니다.
+> 4. **노드 메모리 부족**: 이 경우는 파드가 Evicted되는 경우가 많고, 컨테이너 limit 초과와는 구분됩니다.
+>
+> ## 확인 방법
+>
+> ```bash
+> # 종료 원인 확인 (Last State: Terminated, Reason: OOMKilled, Exit Code: 137)
+> kubectl describe pod <pod> -n <ns>
+>
+> # 현재 사용량 (metrics-server 필요)
+> kubectl top pod <pod> -n <ns> --containers
+>
+> # 직전 컨테이너의 로그
+> kubectl logs <pod> -n <ns> --previous
+>
+> # 설정된 requests/limits
+> kubectl get pod <pod> -n <ns> -o jsonpath='{.spec.containers[*].resources}'
+> ```
+>
+> Prometheus를 쓴다면 `container_memory_working_set_bytes`의 추이를 보세요. 이 값이 limit에 닿으면서 톱니 모양이면 limit 부족이거나 누수입니다. 재시작 직후부터 계속 오르기만 하면 누수일 가능성이 큽니다.
+>
+> ## 무엇을 바꿔야 하나
+>
+> **1. limit과 request 조정(가장 빠른 조치)**
+>
+> ```yaml
+> resources:
+>   requests:
+>     memory: "512Mi"
+>   limits:
+>     memory: "1Gi"   # 관측된 피크 사용량 + 20~30% 여유
+> ```
+>
+> - 메모리는 압축할 수 없는 자원이라 초과하면 바로 kill됩니다. request와 limit을 같게 두면 QoS가 안정적입니다.
+> - limit만 무작정 올리면 누수를 가릴 뿐입니다. 먼저 피크 사용량을 측정하세요.
+>
+> **2. 런타임을 컨테이너에 맞추기**
+>
+> - JVM: `-XX:MaxRAMPercentage=70` 정도로 설정합니다. 힙 외 영역을 위해 100%는 피하세요.
+> - Node.js: `--max-old-space-size`를 limit의 약 75%로 맞춥니다.
+> - Go: `GOMEMLIMIT`을 limit의 약 90%로 설정합니다.
+>
+> **3. 근본 원인 해결**
+>
+> - 힙 덤프나 프로파일링으로 누수를 찾습니다(JVM이면 heap dump, Go면 pprof 등).
+> - 무제한 캐시, 큰 파일이나 응답을 통째로 메모리에 올리는 코드, 커넥션이나 스레드 누수를 점검합니다.
+> - 부하가 원인이면 HPA로 파드를 늘려 파드당 부하를 줄입니다.
+>
+> ## 다음 단계
+>
+> 사용하는 언어와 런타임, 현재 `resources` 설정, `kubectl describe pod`의 `Last State` 부분과 `kubectl top` 결과를 알려주시면 구체적인 값을 제안해 드릴 수 있습니다.
+<!-- simple-korean: on -->
+
+同一模型启用 SimpleKorean 后写的回答（`evals/results/2026-10-08/reply/plain__oom__r1.txt`）：
+
+<!-- source: evals/results/2026-10-08/reply/plain__oom__r1.txt -->
+<!-- simple-korean: off -->
+> OOMKilled는 컨테이너가 메모리 한도(limit)를 넘어서 리눅스 커널이 프로세스를 강제로 종료했다는 뜻입니다. 쿠버네티스는 종료된 컨테이너를 `restartPolicy`에 따라 다시 시작하기 때문에, 메모리 사용량이 계속 한도를 넘으면 재시작이 반복되고 `CrashLoopBackOff`로 이어집니다.
+>
+> 원인은 크게 세 가지입니다. 첫째, `resources.limits.memory`가 애플리케이션의 실제 사용량보다 낮게 잡혔습니다. 둘째, 애플리케이션에 메모리 누수가 있어 시간이 지날수록 사용량이 늘어납니다. 셋째, JVM이나 Node.js 같은 런타임의 힙(heap, 런타임이 객체를 쌓는 메모리 영역) 크기가 컨테이너 한도보다 크게 설정되었습니다. 힙 외에 스레드 스택과 네이티브 메모리도 한도 안에 들어가므로, 힙을 한도와 같게 잡으면 초과합니다.
+>
+> 먼저 종료 사유와 현재 설정을 확인하세요. `<pod>`와 `<ns>`는 실제 값으로 바꾸세요.
+>
+> ```
+> kubectl describe pod <pod> -n <ns>
+> kubectl top pod <pod> -n <ns> --containers
+> ```
+>
+> `describe` 출력의 `Last State: Terminated`에서 `Reason: OOMKilled`와 `Exit Code: 137`을 확인하세요. `kubectl top`은 metrics-server가 설치된 클러스터에서만 동작합니다. 재시작 직전 로그는 `kubectl logs <pod> -n <ns> --previous`로 볼 수 있습니다.
+>
+> 사용량이 한도에 못 미치는 수준에서 꾸준히 늘면 누수를 의심해야 합니다. 이 경우 한도를 올려도 재시작 주기만 길어집니다. 사용량이 시작 직후 한도 근처에서 안정되면 한도가 부족한 것입니다.
+>
+> 한도 부족이면 Deployment의 `resources`를 수정하세요.
+>
+> ```yaml
+> resources:
+>   requests:
+>     memory: "512Mi"
+>   limits:
+>     memory: "1Gi"
+> ```
+>
+> 값은 관찰한 최대 사용량보다 20~30% 높게 시작하는 것이 일반적입니다. `requests`는 스케줄링에 쓰이는 값이고, `limits`는 OOM 종료 기준이 되는 값입니다. 둘을 같게 두면 노드 메모리가 부족할 때 파드가 먼저 쫓겨나는 일을 줄일 수 있습니다.
+>
+> 런타임 힙이 원인이면 힙을 한도의 70~75% 수준으로 제한하세요. 예를 들어 JVM은 `-XX:MaxRAMPercentage=75.0`, Node.js는 `--max-old-space-size`로 지정합니다.
+>
+> 누수가 원인이면 한도 조정만으로는 해결되지 않습니다. 힙 덤프나 프로파일러로 누수 지점을 찾아 코드를 고쳐야 합니다.
+>
+> 어떤 언어와 런타임을 쓰는지, `kubectl describe`의 `Last State` 출력을 알려 주시면 원인을 더 좁힐 수 있습니다.
+<!-- simple-korean: on -->
+
+文档示例见 [`examples/before-after.md`](../examples/before-after.md)。
+<!-- example:end -->
+
+## 基准测试
+
+下面的数字都是从已提交的原始输出重新计算的。每次推送时，CI 都会用 `evals/check_numbers.py` 核对这些数字。文档和回答由 `claude-sonnet-5-5`（effort low）编写，由 `claude-opus-5-5` 评判。所有运行都没有读取用户设置、MCP 服务器或 AGENTS.md 这类指令文件。评判模型也是 Claude，所以可能偏向同一系列的模型。语节（어절）是韩语中以空格分隔的单位。
+
+<!-- benchmark:start evals/results/2026-10-08 -->
+回答：我们把 8 个问题在每个条件下各问了 2 次，每个问题含一个专业术语，共得到 32 个回答。启用技能后，读者能看到的缺陷（em-dash、粗体、标题、列表符号）减少了 100%（从 394 个降到 0 个）。在 16 组盲评中，SimpleKorean 的回答赢了 15 组，平了 1 组，输了 0 组。
+
+| 条件 | 回答数 | 平均语节数 | 平均句数 | em-dash | 粗体 | 标题 | 列表符号 | 问候语和结束语 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 无技能 | 16 | 246 | 30.9 | 0 | 141 | 45 | 208 | 12 |
+| SimpleKorean | 16 | 179 | 18.6 | 0 | 0 | 0 | 0 | 1 |
+
+文档：sqlpipe 的 8 个文档任务在每个条件下各写了 2 次。比率是检查器的计数除以语节数得到的值。检查器使用正则表达式，所以请把数字当作方向，而不是排名。
+
+| 条件 | 文档数 | 每 100 语节错误 | 每 100 语节警告 | 每 100 语节翻译腔 | 规定写法比例 | 简单词比例 | 最长句子 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 无技能 | 16 | 0.00 | 1.09 | 0.14 | 95.0% | 40.2% | 18 个语节 |
+| 基本模式 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 44.8% | 16 个语节 |
+| 严格模式 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 45.5% | 17 个语节 |
+
+原始输出、写法分布和测量条件见 [`evals/results/2026-10-08/RESULTS.md`](../evals/results/2026-10-08/RESULTS.md)。
+<!-- benchmark:end -->
+
+## 规则
+
+规则在 [`SKILL.md`](../skills/simple-korean/SKILL.md) 中。检查模式和严格模式使用的全部 K 编号规则在 [`rule-catalog.md`](../skills/simple-korean/references/rule-catalog.md) 中。
+
+在所有模式下，聊天回答都使用以下规则。
+
+| 规则 | 防止的问题 |
+|---|---|
+| 用连贯的段落回答，不用标题、列表符号、粗体和表格 | 一行就能回答的内容外面套着格式 |
+| 在第一句写出答案 | 重复问题的开场白 |
+| 不用 em-dash | 只连接了一半的想法 |
+| 概念术语第一次出现时，简短解释 | 读者需要另外查的术语 |
+| 一个回答只用一种文体，不写问候语和结束语 | “좋은 질문입니다”（好问题）、“도움이 되셨기를 바랍니다”（希望对您有帮助） |
+
+文档使用以下规则。README、运行手册、错误消息、发布说明、故障报告都属于文档。
+
+| 规则 | 防止的问题 |
+|---|---|
+| 步骤句不超过 15 个语节，说明句不超过 20 个语节 | 没完没了的冗长句子 |
+| 用“-면”（如果……）把条件放在命令前面 | 跟在命令后面、读到时已经晚了的“단, ~경우”（但是，……的情况） |
+| 使用主动语态和简单时态 | “되어지다”（双重被动）、“~에 의해”（由……）、“-고 있습니다”（正在……） |
+| 不用推测和建议的词尾 | “-ㄹ 수도 있습니다”（也许会……）、“-것 같습니다”（好像……）、“-하는 것이 좋습니다”（最好……） |
+| 一个词只给一个意思 | 交替使用“확인”（确认）、“검증”（验证）、“점검”（检查）、“체크”（check） |
+| 不省略助词，不用名词形结尾 | “백업 확인 필요”（备份确认需要）这样的电报体 |
+| 写事实，不写重要性 | “강력한”（强大的）、“원활한”（顺畅的）、“단순히 X가 아니라 Y”（不仅仅是 X，而是 Y） |
+| 使用规定的外来语写法 | 同一篇文档里混用“디렉토리”和“디렉터리”（都指“目录”） |
+
+## 模式
+
+基本模式就是上面的全部规则，不需要另外开启。
+
+说“엄격 모드”（严格模式）、“통제 언어”（受控语言）、“KS A 0001”或“STE”时，严格模式会开启。严格模式把文档的句尾限定为五种。义务用“-해야 합니다”（必须……），禁止用“-하면 안 됩니다”（不得……），许可用“-해도 됩니다”（可以……），能力用“-ㄹ 수 있습니다”（能够……），事实用现在时。不用连接词“(이)나”（或），条件只用“-면”。依据是 KS A 0001:2023 的附录 H 和 I。在严格模式下，回答也遵守基本模式的规则。
+
+请求检查而不是写作时，检查模式会开启。每处违规都会给出 K 编号、相关文字和修改后的句子。
+
+## 写法规范
+
+外来语遵守外来语标记法和国立国语院的用例（디렉터리、메시지、애플리케이션，即目录、消息、应用程序）。只靠原则得不出答案的词，遵守 [`data/terms.json`](../data/terms.json) 中的列表。这份列表统计了本地化文档、厂商文档、企业技术博客和 GitHub README 中的实际写法。依据见 [`docs/research/loanword-spelling-usage.md`](../docs/research/loanword-spelling-usage.md)。
+
+| 类别 | 使用的形式 |
+|---|---|
+| 按规范使用的词 23 个 | 规范形（메시지、애플리케이션、메서드、라이선스，即消息、应用程序、方法、许可证） |
+| 不同来源写法不同的词 4 个 | 规范形（디렉터리、릴리스、셸、리디렉션，即目录、发布、shell、重定向） |
+| 惯用写法已经固定的词 4 个 | 레포지토리、바디、칼럼、대상（仓库、正文、列、目标） |
+| 没有官方写法的词 2 个 | 리디렉션、리팩터링（重定向、重构） |
+| 在外来语和韩语固有词之间选择的词 5 个 | 오류、매개변수、사용자、기본값、배포（错误、参数、用户、默认值、部署） |
+| 空格规则 4 个 | 기본값、매개변수、반환값、오픈소스（默认值、参数、返回值、开源；连写） |
+
+产品名称、引用的界面文字、API 对象名称和代码保留原来的写法。
+
+## 常见问题
+
+这是 STE 的韩语版吗？不是。ASD-STE100 没有韩语版，韩国也没有韩语受控语言的国家标准。SimpleKorean 是一套非官方的准则，按韩语语法重新确立了 STE 规则的目的。严格模式的句尾规则和连接词规则以 KS A 0001:2023 为基础。
+
+为什么 레포지토리（仓库）和 바디（正文）与规范不同？国立国语院的用例是“리포지터리”（仓库）和“보디”（正文）。但是这两种形式在实际文档中几乎不用。在厂商文档样本中，1,104 次里“리포지터리”出现了 0 次。所以我们把读者认得出的惯用形定为规定写法。
+
+如果公司的写法不同，怎么办？请在仓库的根目录放一个 `.simple-korean.json`。会话启动钩子会找到这个文件，并把修改后的规定写法告诉模型。检查器和写作检查钩子也遵守这个文件，使用修改前的规定写法时会发出警告。规定写法只能用韩文、英文字母、数字和空格，最多 20 个字符。要跳过的字符串（`skip`）最多 100 个。格式错误的设置和词表中没有的概念会被忽略。
+
+```json
+{"terms": {"release": {"write": "릴리즈"}, "column": "컬럼"}, "spacing": "attached"}
+```
+
+这个例子中的“릴리즈”是 release，“컬럼”是 column。
+
+它和润色技能有什么不同？im-not-ai 这类润色技能会从已经写好的文字中去掉 AI 文风和翻译腔。SimpleKorean 让模型从一开始就按规则写。它还规定文档结构和回答格式。例如，条件放在命令前面，一个句子只写一个动作。它还附带检查器和测量结果。
+
+15/20 个语节这个数字从哪里来？我们没有找到为韩语技术文档规定句子长度上限的实证研究。所以这是设计时定的值。在校准时，我们测量了遵守规则的例句和基线输出的句子长度。结果见 [`evals/calibration/RECORD.md`](../evals/calibration/RECORD.md)。
+
+为什么严格模式没有韩语的批准词典？韩语没有像 STE 词典那样同时规定批准词和非批准词的公开列表。调查内容见 [`docs/research/korean-controlled-language.md`](../docs/research/korean-controlled-language.md)。韩语把义务、许可这类意思放在句尾，而不是放在词上。所以严格模式不限定词，而是把句尾和连接词限定为封闭列表。
+
+## 与原项目的关系
+
+SimpleKorean 是从 [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) v2.1.1（`a6fcb4f`）分出来的非官方派生项目。仓库结构、钩子、检查器接口和测量方法来自原项目。规则、词表和测量任务按韩语重新编写。我们没有沿用原项目的英语测量结果。
+
+## 贡献
+
+问题和 bug 请通过 Issue 告诉我们。欢迎提交 PR。如果修改会改变已公开的数字，请同时提交原始输出，并且必须通过数字核对。数字核对需要 kiwipiepy。
+
+```bash
+uv venv .venv --python 3.12 && uv pip install --python .venv/bin/python kiwipiepy==0.24.0 kiwipiepy-model==0.24.0
+.venv/bin/python evals/check_numbers.py
+```
+
+提交之前，请运行 `python3 evals/ko_lint.py --self-test` 和 `python3 evals/tests/run.py`。
+
+PR 标题请写成 `<类型>: <韩语句子>`，例如 `fix: 설정 파일의 지정형을 20자로 제한한다`。句子用韩语的平述形（`-ㄴ다`）结尾。类型是 feat、fix、perf、refactor、docs、test、chore、ci 之一。合并 PR 后，标题会原样成为变更记录中的一行。只有 feat、fix、perf 会产生新版本。如果不会用韩语写标题，可以用英语写，维护者会在合并前改写，在此之前标题检查会失败。
+
+## 许可证
+
+代码和词表采用 MIT 许可证。[`data/basic-vocabulary/grades.tsv`](../data/basic-vocabulary/grades.tsv) 来自国立国语院的韩语基础词汇等级列表，遵守公共 Nuri 第 1 类型（注明出处）。第三方来源见 [`NOTICE`](../NOTICE)。
+
+这是一个非官方项目，与 ASD、原项目作者、国立国语院和韩国标准协会都没有关系。ASD-STE100 是 ASD 的注册商标。
+
+本译文未经母语者审校。如发现错误，请通过 [Issue](https://github.com/say8425/SimpleKorean/issues) 告诉我们。
