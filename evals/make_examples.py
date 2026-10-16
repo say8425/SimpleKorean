@@ -62,7 +62,7 @@ def _section(title, before, after, after_label):
 def examples_md(results_dir):
     """examples/before-after.md 전체."""
     parts = ["# 전후 예시",
-             "'전'은 스킬 없이 만든 원본 출력이고, '후'는 같은 과제를 스킬을 켜고 만든 원본 출력입니다. "
+             "'전'은 스킬 없이 만든 원본 출력입니다. '후'는 같은 과제를 스킬을 켜고 만든 원본 출력입니다. "
              "두 글 모두 고치지 않고 옮겼습니다. 과제와 질문은 측정 전에 정했습니다(`evals/make_examples.py`의 PICKS). "
              "`python3 evals/check_numbers.py`가 이 파일의 글을 원본 파일과 글자 하나까지 대조합니다."]
     for scenario, cond, title in DOC_PICKS:

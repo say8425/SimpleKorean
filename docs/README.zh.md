@@ -20,24 +20,26 @@ SimpleKorean 是一个智能体技能，让 LLM 用简单的韩语写技术文�
 
 ### Claude Code
 
-在 Claude Code 中，请以插件方式安装。插件包含会话启动钩子、写作检查钩子和输出样式。
+在 Claude Code 中，请以插件方式安装。插件包含会话启动钩子、写作检查钩子和输出样式。会话启动钩子需要 Node.js。写作检查钩子需要 Python 3.9 或更高版本。
 
 ```bash
 claude plugin marketplace add say8425/SimpleKorean && claude plugin install simple-korean@simple-korean
 ```
 
-输出样式的名称是 `simple-korean:simple-korean`。用短名称找不到它。请在 `/config` 的 Output style 中选择，或者在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。会话启动钩子会在每个会话中加入 2,271 个字符的规则块。`claude plugin details simple-korean` 显示的 token 数不包含这个规则块。
+输出样式的名称是 `simple-korean:simple-korean`。用短名称找不到它。请在 `/config` 的 Output style 中选择，或者在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。
+
+会话启动钩子会在每个会话中加入 2,271 个字符的规则块。`claude plugin details simple-korean` 显示的 token 数不包含这个规则块。
 
 ### Codex
 
-在 Codex 中，请以插件方式安装。会话启动钩子会一起安装。
+在 Codex 中，请以插件方式安装。会话启动钩子会一起安装。这个钩子需要 Node.js。
 
 ```bash
 codex plugin marketplace add say8425/SimpleKorean
 codex plugin add simple-korean@simple-korean
 ```
 
-Codex 第一次运行钩子之前，会询问是否信任它。会话启动钩子需要 Node.js。Claude Code 的写作检查钩子需要 Python 3.9 或更高版本。详情见 [`src/hooks/README.md`](../src/hooks/README.md)。
+Codex 第一次运行钩子之前，会询问是否信任它。详情见 [`src/hooks/README.md`](../src/hooks/README.md)。
 
 ### 其他智能体
 
@@ -297,6 +299,8 @@ SimpleKorean 是从 [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEng
 ## 贡献
 
 问题和 bug 请通过 Issue 告诉我们。欢迎提交 PR。如果修改会改变已公开的数字，请同时提交原始输出，并且必须通过数字核对。数字核对需要 kiwipiepy。
+
+请在仓库根目录运行以下命令：
 
 ```bash
 uv venv .venv --python 3.12 && uv pip install --python .venv/bin/python kiwipiepy==0.24.0 kiwipiepy-model==0.24.0

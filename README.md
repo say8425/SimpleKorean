@@ -12,32 +12,34 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-lightgrey?style=flat" alt="MIT"></a>
 </p>
 
-SimpleKorean은 LLM이 기술 문서와 채팅 답변을 쉬운 한국어로 쓰게 하는 에이전트 스킬입니다. 항공 정비 매뉴얼에 쓰는 통제 영어 ASD-STE100의 규칙을 [SimpleEnglish](https://github.com/AminBlg/SimpleEnglish)에서 가져와 한국어 문법에 맞게 다시 세웠습니다. 여기에 실제 한국어 개발 문서에서 잰 외래어 표기 목록을 더했습니다.
+SimpleKorean은 LLM이 기술 문서와 채팅 답변을 쉬운 한국어로 쓰게 하는 에이전트 스킬입니다. 항공 정비 매뉴얼에 쓰는 통제 영어(쓸 단어와 문법을 정해 둔 영어) ASD-STE100의 규칙을 [SimpleEnglish](https://github.com/AminBlg/SimpleEnglish)에서 가져와 한국어 문법에 맞게 다시 세웠습니다. 여기에 실제 한국어 개발 문서에서 잰 외래어 표기 목록을 더했습니다.
 
-[Agent Skills 표준](https://agentskills.io)을 읽는 에이전트에서 돌아갑니다. Claude Code, Cursor, Codex, Gemini CLI, OpenCode가 그 예입니다.
+[Agent Skills 표준](https://agentskills.io)을 읽는 에이전트에서 동작합니다. Claude Code, Cursor, Codex, Gemini CLI, OpenCode가 그 예입니다.
 
 ## 설치
 
 ### Claude Code
 
-Claude Code에는 플러그인으로 설치하세요. 플러그인에는 세션 시작 훅, 글쓰기 점검 훅, 출력 스타일이 들어 있습니다.
+Claude Code에는 플러그인으로 설치하세요. 플러그인에는 세션 시작 훅, 글쓰기 점검 훅, 출력 스타일이 들어 있습니다. 세션 시작 훅에는 Node.js가 필요합니다. 글쓰기 점검 훅에는 Python 3.9 이상이 필요합니다.
 
 ```bash
 claude plugin marketplace add say8425/SimpleKorean && claude plugin install simple-korean@simple-korean
 ```
 
-출력 스타일 이름은 `simple-korean:simple-korean`입니다. 짧은 이름으로는 찾지 못합니다. `/config`의 Output style에서 고르거나, `~/.claude/settings.json`에 `{"outputStyle": "simple-korean:simple-korean"}`을 넣으세요. 세션 시작 훅은 세션마다 규칙 블록 2,271자를 넣습니다. `claude plugin details simple-korean`이 보여 주는 토큰 수에는 이 블록이 들어가지 않습니다.
+출력 스타일 이름은 `simple-korean:simple-korean`입니다. Claude Code는 짧은 이름으로는 이 스타일을 찾지 못합니다. `/config`의 Output style에서 고르거나, `~/.claude/settings.json`에 `{"outputStyle": "simple-korean:simple-korean"}`을 넣으세요.
+
+세션 시작 훅은 세션마다 규칙 블록 2,271자를 넣습니다. `claude plugin details simple-korean`이 보여 주는 토큰 수에는 이 블록이 들어가지 않습니다.
 
 ### Codex
 
-Codex에는 플러그인으로 설치하세요. 세션 시작 훅이 함께 설치됩니다.
+Codex에는 플러그인으로 설치하세요. 세션 시작 훅이 함께 설치됩니다. 이 훅에는 Node.js가 필요합니다.
 
 ```bash
 codex plugin marketplace add say8425/SimpleKorean
 codex plugin add simple-korean@simple-korean
 ```
 
-Codex는 훅을 처음 돌리기 전에 믿을지 묻습니다. 세션 시작 훅에는 Node.js가 필요하고, Claude Code의 글쓰기 점검 훅에는 Python 3.9 이상이 필요합니다. 자세한 내용은 [`src/hooks/README.md`](src/hooks/README.md)에 있습니다.
+Codex는 훅을 처음 실행하기 전에 그 훅을 믿을지 묻습니다. 자세한 내용은 [`src/hooks/README.md`](src/hooks/README.md)에 있습니다.
 
 ### 그 밖의 에이전트
 
@@ -173,7 +175,11 @@ npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명�
 
 ## 벤치마크
 
-아래 수치는 모두 커밋한 원본 출력에서 다시 계산한 값입니다. CI가 푸시마다 `evals/check_numbers.py`로 대조합니다. 문서와 답변은 `claude-sonnet-5-5`(effort low)가 썼고, 판정은 `claude-opus-5-5`가 했습니다. 모든 실행은 사용자 설정, MCP 서버, AGENTS.md 같은 지침 파일을 읽지 않았습니다. 판정 모델도 Claude라서 같은 계열에 유리한 편향이 있을 수 있습니다.
+아래 수치는 모두 커밋한 원본 출력에서 다시 계산한 값입니다. CI가 푸시마다 `evals/check_numbers.py`로 대조합니다. 문서와 답변은 `claude-sonnet-5-5`(effort low)가 썼습니다. 판정은 `claude-opus-5-5`가 했습니다.
+
+모든 실행은 사용자 설정, MCP 서버, AGENTS.md 같은 지침 파일을 읽지 않았습니다. 판정 모델도 Claude라서 같은 계열에 유리한 편향이 있을 수 있습니다.
+
+어절은 띄어쓰기로 나눈 단위입니다. 지정형은 이 프로젝트의 단어 목록이 정한 표기입니다.
 
 <!-- benchmark:start evals/results/2026-10-08 -->
 ### 답변
@@ -189,7 +195,7 @@ npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명�
 
 sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린터가 센 수를 어절 수로 나눈 값입니다. 린터는 정규식 검사이므로 순위로 읽지 말고 방향으로 읽으세요.
 
-| 조건 | 문서 수 | 100어절당 오류 | 100어절당 경고 | 100어절당 번역투 | 지정 표기 비율 | 쉬운 단어 비율 | 가장 긴 문장 |
+| 조건 | 문서 수 | 100어절당 오류 | 100어절당 경고 | 100어절당 번역투 | 지정형 비율 | 쉬운 단어 비율 | 가장 긴 문장 |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | 스킬 없음 | 16 | 0.00 | 1.09 | 0.14 | 95.0% | 40.2% | 18어절 |
 | 기본 모드 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 44.8% | 16어절 |
@@ -212,11 +218,11 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 | 첫 문장에 답을 씁니다 | 질문을 되풀이하는 머리말 |
 | em-dash를 쓰지 않습니다 | 반쯤 이어 붙인 생각 |
 | 개념 용어는 처음 쓸 때 짧게 풀이합니다 | 따로 찾아봐야 하는 용어 |
-| 한 답변은 한 문체로 쓰고, 인사말과 맺음말을 쓰지 않습니다 | "좋은 질문입니다", "도움이 되셨기를 바랍니다" |
+| 인사말과 맺음말 없이 한 문체로 씁니다 | "좋은 질문입니다", "도움이 되셨기를 바랍니다" |
 
 ### 문서 규칙
 
-문서에는 이 규칙을 씁니다. README, 런북, 오류 메시지, 릴리스 노트, 장애 보고서가 여기에 들어갑니다.
+문서에는 이 규칙을 씁니다. README, 런북, 오류 메시지, 릴리스 노트, 장애 보고서가 여기에 들어갑니다. 절차문은 할 일을 시키는 문장입니다. 설명문은 사실을 알리는 문장입니다.
 
 | 규칙 | 막는 것 |
 |---|---|
@@ -225,7 +231,7 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 | 능동태와 단순 시제로 씁니다 | "되어지다", "~에 의해", "-고 있습니다" |
 | 짐작과 권고 어미를 쓰지 않습니다 | "-ㄹ 수도 있습니다", "-것 같습니다", "-하는 것이 좋습니다" |
 | 한 단어에는 한 뜻만 줍니다 | "확인", "검증", "점검", "체크"를 번갈아 쓰기 |
-| 조사를 빼지 않고 명사형으로 끝내지 않습니다 | "백업 확인 필요" 같은 전보문 |
+| 조사와 문장 끝 어미를 빼지 않습니다 | "백업 확인 필요" 같은 전보문 |
 | 중요성 말고 사실을 씁니다 | "강력한", "원활한", "단순히 X가 아니라 Y" |
 | 정해진 외래어 표기를 씁니다 | 한 문서 안에 섞인 "디렉토리"와 "디렉터리" |
 
@@ -237,7 +243,9 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 
 ### 엄격 모드
 
-엄격 모드는 "엄격 모드", "통제 언어", "KS A 0001", "STE"라고 말하면 켜집니다. 엄격 모드는 문서의 문장 끝을 다섯 가지로 닫습니다. 의무는 "-해야 합니다", 금지는 "-하면 안 됩니다", 허용은 "-해도 됩니다", 능력은 "-ㄹ 수 있습니다", 사실은 현재형입니다. 접속어 "(이)나"를 쓰지 않고, 조건은 "-면"으로만 씁니다. 근거는 KS A 0001:2023 부속서 H와 I입니다. 답변은 엄격 모드에서도 기본 모드 규칙을 따릅니다.
+엄격 모드는 "엄격 모드", "통제 언어", "KS A 0001", "STE"라고 말하면 켜집니다. 엄격 모드는 문서의 문장 끝을 다섯 가지로 닫습니다. 의무는 "-해야 합니다", 금지는 "-하면 안 됩니다", 허용은 "-해도 됩니다", 능력은 "-ㄹ 수 있습니다", 사실은 현재형입니다.
+
+엄격 모드에서는 접속어 "(이)나"를 쓰지 않습니다. 조건은 "-면"으로만 씁니다. 근거는 KS A 0001:2023 부속서 H와 I입니다. 답변은 엄격 모드에서도 기본 모드 규칙을 따릅니다.
 
 ### 점검 모드
 
@@ -262,7 +270,7 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 
 ### STE 한국어판입니까?
 
-아니요. ASD-STE100에는 한국어판이 없고, 한국어 통제 언어 국가 표준도 없습니다. SimpleKorean은 STE 규칙의 목적을 한국어 문법으로 다시 세운 비공식 기준입니다. 엄격 모드의 문장 끝과 접속어 규칙은 KS A 0001:2023을 바탕으로 합니다.
+아니요. ASD-STE100에는 한국어판이 없습니다. 한국어 통제 언어의 국가 표준도 없습니다. SimpleKorean은 STE 규칙의 목적을 한국어 문법으로 다시 세운 비공식 기준입니다. 엄격 모드의 문장 끝과 접속어 규칙은 KS A 0001:2023을 바탕으로 합니다.
 
 ### 레포지토리와 바디는 왜 규범과 다릅니까?
 
@@ -270,7 +278,9 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 
 ### 회사 표기가 다르면 어떻게 합니까?
 
-레포지토리 맨 위에 `.simple-korean.json`을 두세요. 세션 시작 훅이 이 파일을 찾아 바뀐 지정형을 모델에게 알립니다. 린터와 글쓰기 점검 훅도 이 파일을 따르고, 바꾸기 전의 지정형을 쓰면 경고합니다. 지정형에는 한글, 영문, 숫자, 공백만 20자까지 쓰세요. 건너뛸 문자열(`skip`)은 100개까지입니다. 형식이 틀린 설정과 단어 목록에 없는 개념은 무시합니다.
+레포지토리 맨 위에 `.simple-korean.json`을 두세요. 세션 시작 훅이 이 파일을 찾아 바뀐 지정형을 모델에게 알립니다. 린터와 글쓰기 점검 훅도 이 파일을 따릅니다. 바꾸기 전의 지정형을 쓰면 두 도구가 경고합니다.
+
+지정형에는 한글, 영문, 숫자, 공백만 20자까지 쓰세요. 건너뛸 문자열(`skip`)은 100개까지입니다. 훅과 린터는 형식이 틀린 설정과 단어 목록에 없는 개념을 무시합니다.
 
 ```json
 {"terms": {"release": {"write": "릴리즈"}, "column": "컬럼"}, "spacing": "attached"}
@@ -278,11 +288,11 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 
 ### 윤문 스킬과는 무엇이 다릅니까?
 
-im-not-ai 같은 윤문 스킬은 이미 쓴 글에서 AI 문체와 번역투를 지웁니다. SimpleKorean은 처음부터 규칙대로 쓰게 합니다. 문서 구조와 답변 형식도 정합니다. 예를 들어 조건을 명령 앞에 두고, 한 문장에는 동작 하나만 씁니다. 린터와 측정 결과도 함께 있습니다.
+im-not-ai 같은 윤문 스킬은 이미 쓴 글에서 AI 문체와 번역투를 지웁니다. SimpleKorean은 처음부터 규칙대로 쓰게 합니다. 문서 구조와 답변 형식도 정합니다. 예를 들어 조건은 명령 앞에 둡니다. 한 문장에는 동작을 하나만 씁니다. 린터와 측정 결과도 함께 있습니다.
 
 ### 15/20어절은 어디서 나온 숫자입니까?
 
-한국어 기술 문서의 문장 길이 상한을 정한 실증 연구는 찾지 못했습니다. 그래서 설계로 정한 값입니다. 보정에서 규칙을 지킨 예문과 기준선 출력의 문장 길이를 쟀습니다. 결과는 [`evals/calibration/RECORD.md`](evals/calibration/RECORD.md)에 있습니다.
+한국어 기술 문서의 문장 길이 상한을 정한 실증 연구는 찾지 못했습니다. 그래서 설계로 정한 값입니다. 상한을 정할 때 규칙을 지킨 예문과 스킬 없이 만든 출력의 문장 길이를 쟀습니다. 결과는 [`evals/calibration/RECORD.md`](evals/calibration/RECORD.md)에 있습니다.
 
 ### 엄격 모드에는 왜 한국어 승인 사전이 없습니까?
 
@@ -294,19 +304,21 @@ SimpleKorean은 [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish
 
 ## 기여
 
-질문과 버그는 이슈로 알려 주세요. PR을 환영합니다. 공개한 수치를 바꾸는 변경은 원본 출력을 함께 올리고 수치 검증을 통과해야 합니다. 수치 검증에는 kiwipiepy가 필요합니다.
+질문과 버그는 이슈로 알려 주세요. PR을 환영합니다. 공개한 수치를 바꾸면 원본 출력을 함께 올리세요. 그 변경은 수치 확인을 통과해야 합니다. 수치 확인에는 kiwipiepy가 필요합니다.
+
+레포지토리 최상위에서 다음을 실행하세요:
 
 ```bash
 uv venv .venv --python 3.12 && uv pip install --python .venv/bin/python kiwipiepy==0.24.0 kiwipiepy-model==0.24.0
 .venv/bin/python evals/check_numbers.py
 ```
 
-올리기 전에 `python3 evals/ko_lint.py --self-test`와 `python3 evals/tests/run.py`를 돌리세요.
+올리기 전에 `python3 evals/ko_lint.py --self-test`와 `python3 evals/tests/run.py`를 실행하세요.
 
 PR 제목은 `fix: 설정 파일의 지정형을 20자로 제한한다`처럼 `<유형>: <해라체 문장>`으로 쓰세요. 유형은 feat, fix, perf, refactor, docs, test, chore, ci 가운데 하나입니다. 병합하면 PR 제목이 그대로 변경 기록의 한 줄이 됩니다. feat, fix, perf만 새 릴리스를 만듭니다.
 
 ## 라이선스
 
-코드와 단어 목록은 MIT입니다. [`data/basic-vocabulary/grades.tsv`](data/basic-vocabulary/grades.tsv)는 국립국어원의 국어 기초 어휘 등급 목록에서 가져왔고, 공공누리 제1유형(출처 표시)을 따릅니다. 제3자 출처는 [`NOTICE`](NOTICE)에 있습니다.
+코드와 단어 목록은 MIT입니다. [`data/basic-vocabulary/grades.tsv`](data/basic-vocabulary/grades.tsv)는 국립국어원의 국어 기초 어휘 등급 목록에서 가져왔습니다. 이 파일은 공공누리 제1유형(출처 표시)을 따릅니다. 제3자 출처는 [`NOTICE`](NOTICE)에 있습니다.
 
 비공식 프로젝트입니다. ASD, 원본 저자, 국립국어원, 한국표준협회와 관계가 없습니다. ASD-STE100은 ASD의 등록 상표입니다.
