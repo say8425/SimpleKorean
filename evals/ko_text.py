@@ -248,8 +248,11 @@ def register(sentence):
     t = tail(sentence)
     if t.endswith(("십시오", "시오")):
         return "hapsyo_imp"
+    # t[-3]은 '니다', '니까' 바로 앞 음절이다. '아니다'처럼 받침 ㅂ이 없으면 합쇼체가 아니다.
     if t.endswith(("니다", "니까")) and len(t) >= 3 and jongseong(t[-3]) == JONG_BIEUP:
         return "hapsyo"
+    if t.endswith("니까"):
+        return None  # '죽었으니까'의 '-니까'는 연결 어미라 문체를 알려 주지 않는다.
     if t.endswith("세요"):
         return "haeyo_imp"
     if t.endswith("죠") or _haeyo(t):
