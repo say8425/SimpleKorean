@@ -18,14 +18,6 @@ The skill runs in agents that read the [Agent Skills standard](https://agentskil
 
 ## Install
 
-For all agents, install with the [skills CLI](https://github.com/vercel-labs/skills).
-
-```bash
-pnpm dlx skills add say8425/SimpleKorean
-```
-
-If you use npm, run `npx skills add say8425/SimpleKorean`. This command installs only the skill. It does not install the hooks and the output style below.
-
 For Claude Code, install the plugin. The plugin contains the session-start hook, the writing-check hook, and the output style.
 
 ```bash
@@ -42,6 +34,14 @@ codex plugin add simple-korean@simple-korean
 ```
 
 Before Codex runs a hook for the first time, it asks if you trust the hook. The session-start hook needs Node.js. The writing-check hook for Claude Code needs Python 3.9 or later. For details, see [`src/hooks/README.md`](../src/hooks/README.md).
+
+For other agents, install with the [skills CLI](https://github.com/vercel-labs/skills).
+
+```bash
+pnpm dlx skills add say8425/SimpleKorean
+```
+
+If you use npm, run `npx skills add say8425/SimpleKorean`. This command installs only the skill. It does not install the hooks and the output style above.
 
 For tools that do not support skills, paste the rule block from [`prompts/system-prompt.md`](../prompts/system-prompt.md). You can put it in a system prompt, `AGENTS.md`, or `.cursorrules`. The end of this file also has a short version of about 120 tokens.
 

@@ -18,14 +18,6 @@ SimpleKorean は、LLM が技術文書とチャットの回答をやさしい韓
 
 ## インストール
 
-すべてのエージェントには、[skills CLI](https://github.com/vercel-labs/skills) でインストールしてください。
-
-```bash
-pnpm dlx skills add say8425/SimpleKorean
-```
-
-npm を使う場合は `npx skills add say8425/SimpleKorean` を実行してください。このコマンドはスキルだけをインストールします。下で説明するフックと出力スタイルはインストールしません。
-
 Claude Code には、プラグインとしてインストールしてください。プラグインには、セッション開始フック、執筆チェックフック、出力スタイルが入っています。
 
 ```bash
@@ -42,6 +34,14 @@ codex plugin add simple-korean@simple-korean
 ```
 
 Codex は、フックを初めて実行する前に、信頼するかどうかを尋ねます。セッション開始フックには Node.js が必要です。Claude Code の執筆チェックフックには Python 3.9 以上が必要です。詳しくは [`src/hooks/README.md`](../src/hooks/README.md) を参照してください。
+
+その他のエージェントには、[skills CLI](https://github.com/vercel-labs/skills) でインストールしてください。
+
+```bash
+pnpm dlx skills add say8425/SimpleKorean
+```
+
+npm を使う場合は `npx skills add say8425/SimpleKorean` を実行してください。このコマンドはスキルだけをインストールします。上で説明したフックと出力スタイルはインストールしません。
 
 スキルに対応していないツールには、[`prompts/system-prompt.md`](../prompts/system-prompt.md) のルールブロックを貼り付けてください。システムプロンプト、`AGENTS.md`、`.cursorrules` に入れてください。このファイルの最後には、約120トークンの短い版もあります。
 

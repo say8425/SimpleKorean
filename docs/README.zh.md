@@ -18,14 +18,6 @@ SimpleKorean 是一个智能体技能，让 LLM 用简单的韩语写技术文�
 
 ## 安装
 
-所有智能体都可以用 [skills CLI](https://github.com/vercel-labs/skills) 安装。
-
-```bash
-pnpm dlx skills add say8425/SimpleKorean
-```
-
-如果使用 npm，请运行 `npx skills add say8425/SimpleKorean`。这个命令只安装技能，不安装下面介绍的钩子和输出样式。
-
 在 Claude Code 中，请以插件方式安装。插件包含会话启动钩子、写作检查钩子和输出样式。
 
 ```bash
@@ -42,6 +34,14 @@ codex plugin add simple-korean@simple-korean
 ```
 
 Codex 第一次运行钩子之前，会询问是否信任它。会话启动钩子需要 Node.js。Claude Code 的写作检查钩子需要 Python 3.9 或更高版本。详情见 [`src/hooks/README.md`](../src/hooks/README.md)。
+
+其他智能体可以用 [skills CLI](https://github.com/vercel-labs/skills) 安装。
+
+```bash
+pnpm dlx skills add say8425/SimpleKorean
+```
+
+如果使用 npm，请运行 `npx skills add say8425/SimpleKorean`。这个命令只安装技能，不安装上面介绍的钩子和输出样式。
 
 对于不支持技能的工具，请粘贴 [`prompts/system-prompt.md`](../prompts/system-prompt.md) 中的规则块。可以放进系统提示词、`AGENTS.md` 或 `.cursorrules`。这个文件末尾还有一个约 120 token 的简短版本。
 

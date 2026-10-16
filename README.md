@@ -18,14 +18,6 @@ SimpleKorean은 LLM이 기술 문서와 채팅 답변을 쉬운 한국어로 쓰
 
 ## 설치
 
-모든 에이전트에는 [skills CLI](https://github.com/vercel-labs/skills)로 설치하세요.
-
-```bash
-pnpm dlx skills add say8425/SimpleKorean
-```
-
-npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명령은 스킬만 설치합니다. 아래의 훅과 출력 스타일은 설치하지 않습니다.
-
 Claude Code에는 플러그인으로 설치하세요. 플러그인에는 세션 시작 훅, 글쓰기 점검 훅, 출력 스타일이 들어 있습니다.
 
 ```bash
@@ -42,6 +34,14 @@ codex plugin add simple-korean@simple-korean
 ```
 
 Codex는 훅을 처음 돌리기 전에 믿을지 묻습니다. 세션 시작 훅에는 Node.js가 필요하고, Claude Code의 글쓰기 점검 훅에는 Python 3.9 이상이 필요합니다. 자세한 내용은 [`src/hooks/README.md`](src/hooks/README.md)에 있습니다.
+
+그 밖의 에이전트에는 [skills CLI](https://github.com/vercel-labs/skills)로 설치하세요.
+
+```bash
+pnpm dlx skills add say8425/SimpleKorean
+```
+
+npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명령은 스킬만 설치합니다. 위의 훅과 출력 스타일은 설치하지 않습니다.
 
 스킬을 지원하지 않는 도구에는 [`prompts/system-prompt.md`](prompts/system-prompt.md)의 규칙 블록을 붙여 넣으세요. 시스템 프롬프트, `AGENTS.md`, `.cursorrules`에 넣으면 됩니다. 이 파일 끝에는 약 120토큰짜리 짧은 판본도 있습니다.
 
