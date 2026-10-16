@@ -22,7 +22,9 @@ DOC_PICKS = (
     ("release-notes", "strict", "릴리스 노트(엄격 모드)"),
 )
 REPLY_PICKS = (("oom", "OOMKilled 질문"), ("cache", "캐시 무효화 질문"))
-README_PICK = "oom"
+# README 보기 블록은 문서 예시 하나를 좌우 표로 보인다. 답변 예시는 코드 블록이 표 칸보다 넓어서
+# 오른쪽 칸을 밀어내므로 examples/before-after.md에만 둔다.
+README_PICK = ("troubleshooting", "plain")
 COND_LABELS = {"plain": "기본 모드", "strict": "엄격 모드"}
 EXAMPLE_BLOCK = re.compile(r"<!-- example:start -->\n(.*?)\n<!-- example:end -->", re.S)
 SOURCE_BLOCK = re.compile(
@@ -80,11 +82,12 @@ def _cell(rel):
 
 
 def readme_example(results_dir, lang="ko"):
-    """README 보기 블록의 본문. 왼쪽 칸은 스킬 없이, 오른쪽 칸은 SimpleKorean을 켜고 쓴 답변이다.
+    """README 보기 블록의 본문. 왼쪽 칸은 스킬 없이, 오른쪽 칸은 SimpleKorean을 켜고 쓴 문서다.
 
     인용한 출력은 어느 언어에서나 한국어 원문이다.
     """
-    before, after = _pair(results_dir, "reply", README_PICK, "plain", "txt")
+    scenario, cond = README_PICK
+    before, after = _pair(results_dir, "docs", scenario, cond, "json")
     text = i18n.TEXT[lang]
     table = "\n".join([
         "<table>", "<tr>",
