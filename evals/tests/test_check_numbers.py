@@ -9,6 +9,7 @@ sys.path.insert(0, str(HERE.parent))
 import check_numbers as cn  # noqa: E402
 import hits  # noqa: E402  check_numbers가 evals/calibration을 경로에 넣는다
 import make_examples as mx  # noqa: E402
+import readme_i18n as i18n  # noqa: E402
 import report  # noqa: E402
 
 BLOCK = '서술형으로 답하세요. em-dash를 쓰지 마세요. 첫 문장에 답을 쓰세요. 코드는 바꾸지 마세요. "확인하다" 하나로 쓰세요. 레포지토리.'
@@ -124,7 +125,7 @@ def test_check_benchmark_catches_stale_numbers_and_missing_changelog_path():
         changelog = f"결과는 {rel}/RESULTS.md에 있습니다."
         assert cn.check_benchmark(readme, changelog, scenarios, require_easy=False) == []
         stale = readme.replace("| 스킬 없음 | 1 |", "| 스킬 없음 | 2 |", 1)
-        assert any("README 벤치마크 블록" in p for p in cn.check_benchmark(stale, changelog, scenarios, require_easy=False))
+        assert any("README.md 벤치마크 블록" in p for p in cn.check_benchmark(stale, changelog, scenarios, require_easy=False))
         assert any("CHANGELOG.md가 측정 결과" in p for p in cn.check_benchmark(readme, "", scenarios, require_easy=False))
         no_judge = readme.replace("`j`", "Claude")
         assert any("판정 모델 `j`" in p for p in cn.check_benchmark(no_judge, changelog, scenarios, require_easy=False))
@@ -213,3 +214,96 @@ def test_check_block_size_matches_the_rule_block():
     n = len(BLOCK)
     assert cn.check_block_size(f"훅은 세션마다 규칙 블록 {n:,}자를 넣습니다.", prompt) == []
     assert cn.check_block_size(f"훅은 세션마다 규칙 블록 {n + 1:,}자를 넣습니다.", prompt) != []
+
+
+def _readme(lang, body):
+    """언어 선택 줄, 본문, 빈 블록 표시로 된 작은 README."""
+    return (f"{i18n.language_line(lang)}\n\n{body}\n\n"
+            "<!-- example:start -->\n\n<!-- example:end -->\n\n"
+            "<!-- benchmark:start x -->\n\n<!-- benchmark:end -->\n")
+
+
+def test_structure_matches_headings_and_links():
+    ko = _readme("ko", '## 설치\n\n[`SKILL.md`](skills/simple-korean/SKILL.md)와 <a href="LICENSE">MIT</a>\n\n## 기여\n')
+    en = _readme("en", '## Install\n\n[`SKILL.md`](../skills/simple-korean/SKILL.md) and <a href="../LICENSE">MIT</a>\n\n'
+                       '## Contributing\n')
+    assert cn.check_readme_structure(ko, "ko", ko) == []
+    assert cn.check_readme_structure(ko, "en", en) == []
+    assert any("제목 수준" in p for p in cn.check_readme_structure(ko, "en", en.replace("## Contributing\n", "")))
+    no_prefix = en.replace("](../skills", "](skills")
+    assert any("../가 없습니다" in p and "skills/simple-korean/SKILL.md" in p
+               for p in cn.check_readme_structure(ko, "en", no_prefix))
+    found = cn.check_readme_structure(ko, "en", en.replace("simple-korean/SKILL.md", "simple-korean/NOPE.md"))
+    assert any("레포 링크가 한국어판과 다릅니다" in p for p in found)
+    assert any("링크한 파일이 없습니다" in p for p in found)
+
+
+def test_structure_ignores_code_quotes_external_links_and_anchors():
+    body = ("## 설치\n\n```bash\n# 주석은 제목이 아니다\n[가짜](nope.md)\n```\n\n> ## 인용 안의 제목\n> [인용](nope.md)\n\n"
+            "`[코드](nope.md)`와 [웹](https://example.com)과 [앵커](#설치)\n\n[규칙](skills/simple-korean/SKILL.md#규칙)\n")
+    ko = _readme("ko", body)
+    assert cn.readme_outline(ko, "ko")[:2] == ([2], ["skills/simple-korean/SKILL.md#규칙"])
+    assert cn.check_readme_structure(ko, "ko", ko) == []
+
+
+def test_structure_needs_the_exact_language_line_and_single_markers():
+    ko = _readme("ko", "## 설치\n")
+    spaced = ko.replace(" | ", "|", 1)
+    assert any("언어 선택 줄" in p and i18n.language_line("ko") in p for p in cn.check_readme_structure(ko, "ko", spaced))
+    doubled = ko + "<!-- example:start -->\n"
+    assert any("example:start" in p for p in cn.check_readme_structure(ko, "ko", doubled))
+
+
+def test_check_block_size_uses_each_language_phrase():
+    big = "\n".join([BLOCK] * 40)
+    prompt = f"# 시스템 프롬프트\n\n---\n{big}\n---\n"
+    n = len(big)
+    assert n >= 1000
+    assert cn.check_block_size(f"It adds a rule block of {n:,} characters.", prompt, "en") == []
+    assert cn.check_block_size(f"Añade un bloque de reglas de {n} caracteres.", prompt, "es") == []
+    assert cn.check_block_size(f"Añade un bloque de reglas de {n:,} caracteres.", prompt, "es") != []
+
+
+def test_check_example_block_compares_the_sentences_too():
+    with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
+        root = _results(d)
+        empty = "<!-- example:start -->\n\n<!-- example:end -->\n"
+        for lang in i18n.LANGS:
+            assert cn.check_example_block(mx.replace_example_block(empty, mx.readme_example(root, lang)), lang, root) == []
+        ko = mx.replace_example_block(empty, mx.readme_example(root, "ko"))
+        edited = ko.replace("스킬 없이 쓴 답변", "스킬 없이 만든 답변")
+        assert any("README.md 보기 블록" in p for p in cn.check_example_block(edited, "ko", root))
+        assert cn.check_example_block("블록 없음", "en", root) == ["docs/README.en.md에 보기 블록이 없습니다"]
+
+
+def test_check_translation_passes_a_generated_translation():
+    scenarios = [{"id": "readme-intro", "type": "descriptive"}]
+    prompt = f"---\n{BLOCK}\n---\n"
+    with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
+        root = _results(d)
+        (root / "RESULTS.md").write_text("결과\n", encoding="utf-8")
+        rel = root.resolve().relative_to(cn.ROOT).as_posix()
+        stats = report.benchmark_stats(root, scenarios)
+
+        def page(lang):
+            size = i18n.TEXT[lang]["block_size"].format(n=i18n.grouped(len(BLOCK), lang))
+            text = (f"{i18n.language_line(lang)}\n\n`m`, `j`, {size}\n\n## A\n\n"
+                    "<!-- example:start -->\n\n<!-- example:end -->\n\n"
+                    f"<!-- benchmark:start {rel} -->\n\n<!-- benchmark:end -->\n")
+            text = mx.replace_example_block(text, mx.readme_example(root, lang))
+            return report.replace_readme_block(text, root, report.render_readme_block(stats, lang))
+
+        ko, en = page("ko"), page("en")
+        assert cn.check_translation("en", en, ko, scenarios, prompt, stats) == []
+        stale = en.replace(f"benchmark:start {rel}", "benchmark:start evals/results/2026-10-08")
+        assert any("결과 경로" in p for p in cn.check_translation("en", stale, ko, scenarios, prompt, stats))
+
+
+def test_translation_problems_names_missing_files():
+    old = cn.ROOT
+    with tempfile.TemporaryDirectory() as d:
+        cn.ROOT = Path(d)
+        try:
+            assert cn.translation_problems("en") == ["파일이 없습니다: README.md", "파일이 없습니다: docs/README.en.md"]
+        finally:
+            cn.ROOT = old
