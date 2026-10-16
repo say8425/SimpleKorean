@@ -6,8 +6,9 @@
     .venv/bin/python evals/check_numbers.py
 
 검사하는 것:
-- README의 벤치마크 블록과 RESULTS.md를 원본 출력에서 다시 만든 글과 비교한다(report.py).
-- README와 examples/before-after.md의 인용 블록을 원본 출력과 비교한다(make_examples.py).
+- README 다섯 개의 벤치마크 블록과 RESULTS.md를 원본 출력에서 다시 만든 글과 비교한다(report.py, readme_i18n.py).
+- README 다섯 개의 보기 블록과 examples/before-after.md의 인용 블록을 원본 출력과 비교한다(make_examples.py).
+- 번역판의 제목, 레포 링크, 언어 선택 줄, 블록 표시가 한국어판과 맞는지 본다.
 - 보정 기록 RECORD.md를 hits.tsv와 보정 출력에서 다시 만들어 비교한다.
 - 측정 결과 경로와 보정 줄이 CHANGELOG에 있는지 본다. 마지막 릴리스보다 늦은 측정과 보정은 건너뛴다.
 - 규칙 블록 두 벌이 같은지, 핵심 문구가 SKILL.md와 규칙 블록에 모두 있는지 본다.
@@ -257,7 +258,7 @@ def check_translation(lang, text, ko_readme, scenarios, prompt_md, stats=None, r
 
 REQUIRED = ("README.md", "CHANGELOG.md", "examples/before-after.md", "evals/scenarios.json",
             "evals/calibration/RECORD.md", "evals/calibration/hits.tsv", "prompts/system-prompt.md",
-            "output-styles/simple-korean.md") + tuple(VERSION_PATTERNS)
+            "output-styles/simple-korean.md") + tuple(VERSION_PATTERNS) + tuple(i18n.README[lang] for lang in i18n.LANGS[1:])
 
 
 def _read(rel):
@@ -282,14 +283,22 @@ def main():
         print("\n".join(f" - 파일이 없습니다: {rel}" for rel in missing))
         return 1
     readme, changelog = _read("README.md"), _read("CHANGELOG.md")
-    problems = (check_benchmark(readme, changelog, json.loads(_read("evals/scenarios.json")))
+    scenarios, prompt = json.loads(_read("evals/scenarios.json")), _read("prompts/system-prompt.md")
+    bench = report.README_BLOCK.search(readme)
+    stats = None
+    if bench and metrics.easy_word_counts("확인합니다.") is not None:
+        stats = report.benchmark_stats(ROOT / bench.group(1), scenarios)
+    problems = (check_benchmark(readme, changelog, scenarios, stats=stats)
                 + check_examples(readme, _read("examples/before-after.md"))
                 + check_calibration(changelog)
-                + check_rule_block(_read("prompts/system-prompt.md"), _read("output-styles/simple-korean.md"),
-                                   _read("skills/simple-korean/SKILL.md"))
+                + check_rule_block(prompt, _read("output-styles/simple-korean.md"), _read("skills/simple-korean/SKILL.md"))
                 + check_triggers(_read("skills/simple-korean/SKILL.md"))
-                + check_block_size(readme, _read("prompts/system-prompt.md"))
+                + check_block_size(readme, prompt)
+                + check_readme_structure(readme, "ko", readme)
                 + check_versions({name: _read(name) for name in VERSION_PATTERNS}))
+    if stats:
+        for lang in i18n.LANGS[1:]:
+            problems += check_translation(lang, _read(i18n.README[lang]), readme, scenarios, prompt, stats)
     if problems:
         print("MISMATCH")
         for problem in problems:

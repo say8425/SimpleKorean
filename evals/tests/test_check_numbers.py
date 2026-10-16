@@ -307,3 +307,7 @@ def test_translation_problems_names_missing_files():
             assert cn.translation_problems("en") == ["파일이 없습니다: README.md", "파일이 없습니다: docs/README.en.md"]
         finally:
             cn.ROOT = old
+
+
+def test_main_requires_every_readme():
+    assert {i18n.README[lang] for lang in i18n.LANGS} <= set(cn.REQUIRED)
