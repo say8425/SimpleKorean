@@ -272,7 +272,7 @@ Los ejemplos de uso del Instituto Nacional de la Lengua Coreana son "리포지�
 
 ### ¿Qué hago si mi empresa usa otras grafías?
 
-Ponga `.simple-korean.json` en la raíz del repositorio. El hook de inicio de sesión busca este archivo e informa al modelo de las grafías designadas que cambiaron. El linter y el hook de revisión de escritura también siguen este archivo. Avisan cuando se usa la grafía designada de antes del cambio. En una grafía designada use solo hangul, letras latinas, dígitos y espacios, hasta 20 caracteres. Puede indicar hasta 100 cadenas que se omiten (`skip`). Se ignoran las configuraciones con un formato incorrecto y los conceptos que no están en la lista de palabras.
+Ponga `.simple-korean.json` en la raíz del repositorio. El hook de inicio de sesión busca este archivo e informa al modelo de las grafías designadas que cambiaron. El linter y el hook de revisión de escritura también siguen este archivo. Avisan cuando se usa la grafía designada de antes del cambio. En una grafía designada use solo hangul, letras latinas, dígitos y espacios, hasta 20 caracteres. Puede indicar hasta 100 cadenas que se omiten (`skip`). Los dos hooks usan la configuración predeterminada en lugar de una configuración con un formato incorrecto. El linter se detiene con un error ante esa configuración. Los hooks y el linter ignoran los conceptos que no están en la lista de palabras.
 
 ```json
 {"terms": {"release": {"write": "릴리즈"}, "column": "컬럼"}, "spacing": "attached"}

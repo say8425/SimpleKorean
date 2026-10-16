@@ -272,7 +272,7 @@ The usage examples of the National Institute of Korean Language are "리포지�
 
 ### What if my company uses different spellings?
 
-Put `.simple-korean.json` at the top of your repository. The session-start hook finds this file and tells the model the changed designated spellings. The linter and the writing-check hook also follow this file. They warn when you use the designated spelling from before the change. A designated spelling can use only Hangul, Latin letters, digits, and spaces, up to 20 characters. You can list up to 100 strings to skip (`skip`). The skill ignores settings with a wrong format and concepts that are not in the word list.
+Put `.simple-korean.json` at the top of your repository. The session-start hook finds this file and tells the model the changed designated spellings. The linter and the writing-check hook also follow this file. They warn when you use the designated spelling from before the change. A designated spelling can use only Hangul, Latin letters, digits, and spaces, up to 20 characters. You can list up to 100 strings to skip (`skip`). The two hooks use the default settings instead of settings with a wrong format. The linter stops with an error on such settings. The hooks and the linter both ignore concepts that are not in the word list.
 
 ```json
 {"terms": {"release": {"write": "릴리즈"}, "column": "컬럼"}, "spacing": "attached"}

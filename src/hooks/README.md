@@ -26,7 +26,7 @@ Codex는 훅을 처음 실행하기 전에 그 훅을 믿을지 묻습니다. �
 
 세션 시작 훅은 `prompts/system-prompt.md`의 규칙 블록을 표준 출력으로 씁니다. 규칙 블록은 두 `---` 줄 사이에 있습니다. 블록의 길이는 약 2,300자입니다. 페이지 제목, 붙여 넣는 곳 안내, 짧은 판본은 보내지 않습니다. Claude Code는 훅 출력을 10,000자까지만 받으므로, 훅은 9,500자를 넘는 출력 대신 짧은 대체 규칙을 보냅니다.
 
-전체 스킬은 `skills/simple-korean/SKILL.md`에 있습니다. 훅은 규칙 블록 앞에 이 파일의 경로를 적습니다. 이 안내는 엄격 모드나 점검을 요청받으면 이 파일을 먼저 읽으라고 모델에게 알립니다.
+전체 스킬은 `skills/simple-korean/SKILL.md`에 있습니다. 훅은 이 파일의 경로를 담은 안내 문단을 규칙 블록 앞에 넣습니다. 이 문단은 엄격 모드나 점검을 요청받은 모델에게 SKILL.md를 먼저 읽으라고 지시합니다.
 
 Codex도 훅 문맥에 상한을 둡니다. `.codex-plugin/hooks.json`의 `additionalContextLimit: 0`은 파일로 빼는 문턱을 끕니다. 상한 자체를 없애지는 않습니다. 규칙 블록은 그 상한 안에 듭니다.
 
@@ -34,8 +34,9 @@ Codex도 훅 문맥에 상한을 둡니다. `.codex-plugin/hooks.json`의 `addit
 
 ## 하네스마다 훅을 읽는 곳
 
-- Claude Code는 `.claude-plugin/plugin.json`의 `hooks` 항목을 읽습니다.
-- Codex는 `.codex-plugin/hooks.json`을 읽습니다. `.codex-plugin/plugin.json`의 `hooks` 항목이 이 파일을 가리킵니다. 마켓플레이스 목록은 `.agents/plugins/marketplace.json`입니다.
+Claude Code는 `.claude-plugin/plugin.json`의 `hooks` 항목을 읽습니다.
+
+Codex는 `.codex-plugin/hooks.json`을 읽습니다. `.codex-plugin/plugin.json`의 `hooks` 항목이 이 파일을 가리킵니다. 마켓플레이스 목록은 `.agents/plugins/marketplace.json`입니다.
 
 ## 테스트
 
@@ -48,12 +49,13 @@ python3 src/hooks/test_lint_hook.py
 
 ## 글쓰기 점검 훅 (Claude Code)
 
-Claude Code에서는 다음 알림용 훅 두 개가 더 동작합니다:
+Claude Code에서는 알림용 훅 두 개가 더 동작합니다. 두 훅 모두 작업을 막지 않습니다.
 
-- `PostToolUse`(`Write`, `Edit`): 마크다운 파일이면 `src/hooks/lint_hook.py`가 `evals/ko_lint.py`로 검사합니다. 그다음 위반의 줄 번호와 문구를 오류부터 12개까지 모델에 보여 줍니다.
-- `Stop`: 같은 스크립트가 마지막 답변을 읽습니다. 답변에 em-dash, 굵은 글씨, 헤더, 목록 항목, 슬롭 어휘, 인사말, 맺음말이 있으면 시스템 메시지를 더합니다.
+`PostToolUse` 훅은 `Write`와 `Edit` 뒤에 동작합니다. 쓴 파일이 마크다운이면 `src/hooks/lint_hook.py`가 `evals/ko_lint.py`로 검사합니다. 그다음 위반의 줄 번호와 문구를 오류부터 12개까지 모델에 보여 줍니다.
 
-두 훅 모두 작업을 막지 않습니다. Codex에서는 세션 시작 훅만 동작합니다.
+`Stop` 훅에서는 같은 스크립트가 마지막 답변을 읽습니다. 답변에 em-dash, 굵은 글씨, 헤더, 목록 항목, 슬롭 어휘, 인사말, 맺음말이 있으면 시스템 메시지를 더합니다.
+
+Codex에서는 세션 시작 훅만 동작합니다.
 
 ## 점검 훅이 건너뛰는 것
 
@@ -76,7 +78,7 @@ export SIMPLE_KOREAN_LINT_EXCLUDE="$HOME/notes/*:*/CHANGELOG.md"
 
 ## 프로젝트 설정
 
-점검 훅은 검사하는 파일의 디렉터리부터 위로 올라가며 `.simple-korean.json`을 찾습니다. 이 파일로 단어 목록의 지정형(쓰라고 정한 표기)을 바꿀 수 있습니다. 건너뛸 문자열도 더할 수 있습니다. 파일이 깨져 있거나 값의 형식이 틀리면 점검 훅은 기본 설정으로 검사합니다. 그리고 그 사실을 한 줄로 알립니다. 지정형을 바꾸면 바꾸기 전의 지정형도 경고합니다.
+점검 훅은 검사하는 파일의 디렉터리부터 위로 올라가며 `.simple-korean.json`을 찾습니다. 이 파일로 지정형(단어 목록이 쓰라고 정한 표기)을 바꿀 수 있습니다. 건너뛸 문자열도 더할 수 있습니다. 파일이 깨져 있거나 값의 형식이 틀리면 점검 훅은 기본 설정으로 검사합니다. 그리고 그 사실을 한 줄로 알립니다. 지정형을 바꾸면 바꾸기 전의 지정형도 경고합니다.
 
 세션 시작 훅도 작업 디렉터리(`CLAUDE_PROJECT_DIR`)에서 위로 올라가며 이 파일을 찾습니다. 찾으면 바뀐 지정형을 규칙 블록 뒤에 한 줄로 덧붙입니다. 모델은 설정 파일을 스스로 읽지 않기 때문입니다.
 
