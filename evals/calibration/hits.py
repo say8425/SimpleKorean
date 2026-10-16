@@ -169,7 +169,7 @@ def _fp_section(labeled):
 
 
 def changelog_lines(table, labeled, decided, limits=None):
-    """CHANGELOG 1.0.0 항목의 보정 절에 그대로 옮길 줄."""
+    """그 보정을 싣는 릴리스 항목의 보정 절에 그대로 옮길 줄."""
     limits = limits or ko_rules.LIMITS
     changed = [f"{KIND_LABELS[k]} {limits[k]}어절에서 {decided[k]}어절로" for k in limits if decided[k] != limits[k]]
     kept = ", ".join(f"{KIND_LABELS[k]} {limits[k]}어절" for k in limits)

@@ -8,7 +8,8 @@
 검사하는 것:
 - README의 벤치마크 블록과 RESULTS.md를 원본 출력에서 다시 만든 글과 비교한다(report.py).
 - README와 examples/before-after.md의 인용 블록을 원본 출력과 비교한다(make_examples.py).
-- 보정 기록 RECORD.md를 hits.tsv와 보정 출력에서 다시 만들어 비교하고, CHANGELOG에 보정 줄이 있는지 본다.
+- 보정 기록 RECORD.md를 hits.tsv와 보정 출력에서 다시 만들어 비교한다.
+- 측정 결과 경로와 보정 줄이 CHANGELOG에 있는지 본다. 마지막 릴리스보다 늦은 측정과 보정은 건너뛴다.
 - 규칙 블록 두 벌이 같은지, 핵심 문구가 SKILL.md와 규칙 블록에 모두 있는지 본다.
 - SKILL.md description에 스펙 10절의 호출 문구가 모두 있는지 본다.
 - 버전 문자열이 SKILL.md, 플러그인 매니페스트 세 개, .release-please-manifest.json, CHANGELOG 첫 항목에서 같은지 본다.
@@ -41,11 +42,25 @@ VERSION_PATTERNS = {
     ".release-please-manifest.json": r'"\."\s*:\s*"([^"]+)"',
     "CHANGELOG.md": r"(?m)^## \[?([0-9]+\.[0-9]+\.[0-9]+)",
 }
+CHANGELOG_ENTRY = re.compile(r"(?m)^## \[?[0-9]+\.[0-9]+\.[0-9]+\]?.*?([0-9]{4}-[0-9]{2}-[0-9]{2})")
+RECORD_DATE = re.compile(r"\A# 보정 기록 \(([0-9]{4}-[0-9]{2}-[0-9]{2})\)")
 
 
 def _diff(label, expected, found):
     lines = difflib.unified_diff(found.splitlines(), expected.splitlines(), "지금 글", "다시 만든 글", lineterm="", n=1)
     return f"{label}: 원본에서 다시 만든 글과 다릅니다\n" + "\n".join(list(lines)[:40])
+
+
+def latest_release_date(changelog):
+    """CHANGELOG 첫 항목의 날짜(YYYY-MM-DD). 옛 형식과 release-please 형식을 모두 읽고, 항목이 없으면 None이다."""
+    m = CHANGELOG_ENTRY.search(changelog)
+    return m.group(1) if m else None
+
+
+def unreleased(date, changelog):
+    """측정 날짜가 마지막 릴리스 날짜보다 늦으면 참이다. 같은 날이면 릴리스한 측정으로 본다."""
+    latest = latest_release_date(changelog)
+    return latest is not None and date > latest
 
 
 def check_benchmark(readme, changelog, scenarios, require_easy=True):
@@ -70,8 +85,8 @@ def check_benchmark(readme, changelog, scenarios, require_easy=True):
     current = (results_dir / "RESULTS.md").read_text(encoding="utf-8")
     if current != rebuilt:
         problems.append(_diff(f"{rel}/RESULTS.md", rebuilt, current))
-    if rel not in changelog:
-        problems.append(f"CHANGELOG.md가 측정 결과 {rel}을 가리키지 않습니다")
+    if rel not in changelog and not unreleased(meta["date"], changelog):
+        problems.append(f"CHANGELOG.md가 측정 결과 {rel}을 가리키지 않습니다. 이 결과를 싣는 릴리스 항목에 경로를 적으세요")
     return problems
 
 
@@ -83,13 +98,19 @@ def check_examples(readme, examples):
 
 
 def check_calibration(changelog, calibration=CALIBRATION):
-    """RECORD.md를 다시 만들어 비교하고, 'CHANGELOG에 옮길 줄'이 CHANGELOG에 있는지 본다."""
+    """RECORD.md를 다시 만들어 비교하고, 'CHANGELOG에 옮길 줄'이 CHANGELOG에 있는지 본다.
+
+    마지막 릴리스보다 늦은 보정은 아직 실을 릴리스 항목이 없으므로 CHANGELOG를 보지 않는다.
+    """
     try:
         rebuilt = hits.record_md(Path(calibration) / "baseline", hits.read_tsv(Path(calibration) / "hits.tsv"))
     except SystemExit as err:
         return [f"보정 기록을 다시 만들지 못했습니다: {err}"]
     current = (Path(calibration) / "RECORD.md").read_text(encoding="utf-8")
     problems = [] if current == rebuilt else [_diff("evals/calibration/RECORD.md", rebuilt, current)]
+    date = RECORD_DATE.search(rebuilt)
+    if date and unreleased(date.group(1), changelog):
+        return problems
     for line in rebuilt.split("## CHANGELOG에 옮길 줄", 1)[1].strip().splitlines():
         text = line.lstrip("- ").strip()
         if text and text not in changelog:
