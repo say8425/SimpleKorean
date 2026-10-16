@@ -200,6 +200,13 @@ def test_register_classes():
     assert ko_text.register("대상: 사용자.") is None
 
 
+def test_plain_verbs_ending_in_nida_are_haera():
+    for sentence in ("변화의 방향은 한쪽이 아니다.", "그는 칼을 지니다.", "매일 학교에 다니다."):
+        assert ko_text.register(sentence) == "haera", sentence
+    for sentence in ("이것은 버그가 아닙니다.", "확인했습니까?", "서버로 갑니다.", "답을 압니다."):
+        assert ko_text.register(sentence) == "hapsyo", sentence
+
+
 def test_trailing_parenthetical_is_not_the_sentence_ending():
     assert ko_text.sentence_kind('"-되어지다"를 쓰지 마세요(예: 변경되어지다).') == "procedural"
     assert ko_text.register('"-되어지다"를 쓰지 마세요(예: 변경되어지다).') == "haeyo_imp"
