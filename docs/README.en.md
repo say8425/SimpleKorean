@@ -18,13 +18,7 @@ The skill runs in agents that read the [Agent Skills standard](https://agentskil
 
 ## Install
 
-For all agents, install with the [skills CLI](https://github.com/vercel-labs/skills).
-
-```bash
-pnpm dlx skills add say8425/SimpleKorean
-```
-
-If you use npm, run `npx skills add say8425/SimpleKorean`. This command installs only the skill. It does not install the hooks and the output style below.
+### Claude Code
 
 For Claude Code, install the plugin. The plugin contains the session-start hook, the writing-check hook, and the output style.
 
@@ -33,6 +27,8 @@ claude plugin marketplace add say8425/SimpleKorean && claude plugin install simp
 ```
 
 The output style name is `simple-korean:simple-korean`. The short name does not work. Select it under Output style in `/config`, or put `{"outputStyle": "simple-korean:simple-korean"}` in `~/.claude/settings.json`. The session-start hook adds a rule block of 2,271 characters to each session. The token count that `claude plugin details simple-korean` shows does not include this block.
+
+### Codex
 
 For Codex, install the plugin. The session-start hook installs with it.
 
@@ -43,7 +39,21 @@ codex plugin add simple-korean@simple-korean
 
 Before Codex runs a hook for the first time, it asks if you trust the hook. The session-start hook needs Node.js. The writing-check hook for Claude Code needs Python 3.9 or later. For details, see [`src/hooks/README.md`](../src/hooks/README.md).
 
+### Other agents
+
+For other agents, install with the [skills CLI](https://github.com/vercel-labs/skills).
+
+```bash
+pnpm dlx skills add say8425/SimpleKorean
+```
+
+If you use npm, run `npx skills add say8425/SimpleKorean`. This command installs only the skill. It does not install the hooks and the output style above.
+
+### Tools without skill support
+
 For tools that do not support skills, paste the rule block from [`prompts/system-prompt.md`](../prompts/system-prompt.md). You can put it in a system prompt, `AGENTS.md`, or `.cursorrules`. The end of this file also has a short version of about 120 tokens.
+
+### After installing
 
 After you install, ask for a technical document. To fix existing text, say "simple-korean으로 고쳐 줘" (fix this with simple-korean).
 
@@ -166,14 +176,18 @@ Document examples are in [`examples/before-after.md`](../examples/before-after.m
 We calculated all numbers below again from the committed raw outputs. On each push, CI compares them with `evals/check_numbers.py`. `claude-sonnet-5-5` (effort low) wrote the documents and the replies, and `claude-opus-5-5` judged them. No run read user settings, MCP servers, or instruction files such as AGENTS.md. The judge model is also Claude, so it can favor replies from the same model family. An eojeol is a Korean word unit separated by spaces.
 
 <!-- benchmark:start evals/results/2026-10-08 -->
-Replies: we asked 8 questions 2 times in each condition. Each question contains one technical term. There are 32 replies in total. With the skill on, reader-visible defects (em-dashes, bold text, headers, bullets) fell by 100% (from 394 to 0). In a blind judgment of 16 pairs, the SimpleKorean reply won 15, tied 1, and lost 0.
+### Replies
+
+We asked 8 questions 2 times in each condition. Each question contains one technical term. There are 32 replies in total. With the skill on, reader-visible defects (em-dashes, bold text, headers, bullets) fell by 100% (from 394 to 0). In a blind judgment of 16 pairs, the SimpleKorean reply won 15, tied 1, and lost 0.
 
 | Condition | Replies | Mean eojeol | Mean sentences | em-dash | Bold | Headers | Bullets | Greetings and sign-offs |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | No skill | 16 | 246 | 30.9 | 0 | 141 | 45 | 208 | 12 |
 | SimpleKorean | 16 | 179 | 18.6 | 0 | 0 | 0 | 0 | 1 |
 
-Documents: the model wrote each of 8 sqlpipe documentation tasks 2 times in each condition. Each rate is the linter's count divided by the eojeol count. The linter is a regex check, so read the numbers as a direction, not as a ranking.
+### Documents
+
+The model wrote each of 8 sqlpipe documentation tasks 2 times in each condition. Each rate is the linter's count divided by the eojeol count. The linter is a regex check, so read the numbers as a direction, not as a ranking.
 
 | Condition | Documents | Errors per 100 eojeol | Warnings per 100 eojeol | Translationese per 100 eojeol | Designated spelling rate | Easy word rate | Longest sentence |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -188,6 +202,8 @@ The raw outputs, the spelling distribution, and the test conditions are in [`eva
 
 The rules are in [`SKILL.md`](../skills/simple-korean/SKILL.md). Review mode and strict mode use the full list of K-numbered rules in [`rule-catalog.md`](../skills/simple-korean/references/rule-catalog.md).
 
+### Reply rules
+
 Chat replies use these rules in all modes.
 
 | Rule | What it stops |
@@ -197,6 +213,8 @@ Chat replies use these rules in all modes.
 | Do not use em-dashes | Thoughts that are only half joined |
 | Explain a concept term briefly when you first use it | Terms that the reader must look up |
 | Use one writing style in one reply. Do not use greetings and sign-offs | "좋은 질문입니다" (Good question), "도움이 되셨기를 바랍니다" (I hope this helped) |
+
+### Document rules
 
 Documents use these rules. Documents include READMEs, runbooks, error messages, release notes, and incident reports.
 
@@ -213,9 +231,15 @@ Documents use these rules. Documents include READMEs, runbooks, error messages, 
 
 ## Modes
 
+### Default mode
+
 The default mode is all the rules above. You do not need to turn it on.
 
+### Strict mode
+
 Strict mode turns on when you say "엄격 모드" (strict mode), "통제 언어" (controlled language), "KS A 0001", or "STE". Strict mode limits the sentence endings in documents to five forms. Obligation is "-해야 합니다" (must). Prohibition is "-하면 안 됩니다" (must not). Permission is "-해도 됩니다" (may). Ability is "-ㄹ 수 있습니다" (can). Facts use the present tense. Strict mode does not use the connective "(이)나" (or), and it writes conditions only with "-면" (if). The source is Annexes H and I of KS A 0001:2023. In strict mode, replies still follow the default mode rules.
+
+### Review mode
 
 Review mode turns on when you ask for a review instead of new text. For each violation, it gives the K number, the text, and a corrected sentence.
 
@@ -236,11 +260,17 @@ Product names, quoted screen text, API object names, and code keep their origina
 
 ## FAQ
 
-Is this a Korean edition of STE? No. ASD-STE100 has no Korean edition, and Korea has no national standard for a controlled language. SimpleKorean is an unofficial standard. It rebuilds the purpose of the STE rules for Korean grammar. The sentence-ending and connective rules of strict mode are based on KS A 0001:2023.
+### Is this a Korean edition of STE?
 
-Why do 레포지토리 and 바디 differ from the standard? The usage examples of the National Institute of Korean Language are "리포지터리" (repository) and "보디" (body). But real documents almost never use these two forms. In a sample of vendor documents, "리포지터리" appeared 0 times in 1,104 cases. So we chose the common forms that readers recognize as the designated spelling.
+No. ASD-STE100 has no Korean edition, and Korea has no national standard for a controlled language. SimpleKorean is an unofficial standard. It rebuilds the purpose of the STE rules for Korean grammar. The sentence-ending and connective rules of strict mode are based on KS A 0001:2023.
 
-What if my company uses different spellings? Put `.simple-korean.json` at the top of your repository. The session-start hook finds this file and tells the model the changed designated spellings. The linter and the writing-check hook also follow this file. They warn when you use the designated spelling from before the change. A designated spelling can use only Hangul, Latin letters, digits, and spaces, up to 20 characters. You can list up to 100 strings to skip (`skip`). The skill ignores settings with a wrong format and concepts that are not in the word list.
+### Why do 레포지토리 and 바디 differ from the standard?
+
+The usage examples of the National Institute of Korean Language are "리포지터리" (repository) and "보디" (body). But real documents almost never use these two forms. In a sample of vendor documents, "리포지터리" appeared 0 times in 1,104 cases. So we chose the common forms that readers recognize as the designated spelling.
+
+### What if my company uses different spellings?
+
+Put `.simple-korean.json` at the top of your repository. The session-start hook finds this file and tells the model the changed designated spellings. The linter and the writing-check hook also follow this file. They warn when you use the designated spelling from before the change. A designated spelling can use only Hangul, Latin letters, digits, and spaces, up to 20 characters. You can list up to 100 strings to skip (`skip`). The skill ignores settings with a wrong format and concepts that are not in the word list.
 
 ```json
 {"terms": {"release": {"write": "릴리즈"}, "column": "컬럼"}, "spacing": "attached"}
@@ -248,11 +278,17 @@ What if my company uses different spellings? Put `.simple-korean.json` at the to
 
 In this example, "릴리즈" means release and "컬럼" means column.
 
-How is this different from a text-polishing skill? Polishing skills such as im-not-ai remove AI style and translationese from text that already exists. SimpleKorean makes the model follow the rules from the start. It also sets the document structure and the reply format. For example, it puts conditions before the command, and it puts only one action in a sentence. It also comes with a linter and measurement results.
+### How is this different from a text-polishing skill?
 
-Where do the 15 and 20 eojeol limits come from? We did not find an empirical study that sets a sentence length limit for Korean technical documents. So these values are a design choice. During calibration, we measured sentence lengths in example sentences that follow the rules and in baseline outputs. The results are in [`evals/calibration/RECORD.md`](../evals/calibration/RECORD.md).
+Polishing skills such as im-not-ai remove AI style and translationese from text that already exists. SimpleKorean makes the model follow the rules from the start. It also sets the document structure and the reply format. For example, it puts conditions before the command, and it puts only one action in a sentence. It also comes with a linter and measurement results.
 
-Why does strict mode have no Korean approved dictionary? Korean has no public list that sets both approved and unapproved words, like the STE dictionary. Our research is in [`docs/research/korean-controlled-language.md`](../docs/research/korean-controlled-language.md). Korean puts meanings such as obligation and permission in the sentence ending more than in words. So strict mode puts sentence endings and connectives in closed lists, instead of words.
+### Where do the 15 and 20 eojeol limits come from?
+
+We did not find an empirical study that sets a sentence length limit for Korean technical documents. So these values are a design choice. During calibration, we measured sentence lengths in example sentences that follow the rules and in baseline outputs. The results are in [`evals/calibration/RECORD.md`](../evals/calibration/RECORD.md).
+
+### Why does strict mode have no Korean approved dictionary?
+
+Korean has no public list that sets both approved and unapproved words, like the STE dictionary. Our research is in [`docs/research/korean-controlled-language.md`](../docs/research/korean-controlled-language.md). Korean puts meanings such as obligation and permission in the sentence ending more than in words. So strict mode puts sentence endings and connectives in closed lists, instead of words.
 
 ## Relation to the original
 

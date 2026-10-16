@@ -18,13 +18,7 @@ La skill funciona en los agentes que leen el [estándar Agent Skills](https://ag
 
 ## Instalación
 
-En todos los agentes, instale la skill con [skills CLI](https://github.com/vercel-labs/skills).
-
-```bash
-pnpm dlx skills add say8425/SimpleKorean
-```
-
-Si usa npm, ejecute `npx skills add say8425/SimpleKorean`. Este comando solo instala la skill. No instala los hooks ni el estilo de salida que se describen más abajo.
+### Claude Code
 
 En Claude Code, instálela como plugin. El plugin incluye el hook de inicio de sesión, el hook de revisión de escritura y el estilo de salida.
 
@@ -33,6 +27,8 @@ claude plugin marketplace add say8425/SimpleKorean && claude plugin install simp
 ```
 
 El nombre del estilo de salida es `simple-korean:simple-korean`. Con el nombre corto no se encuentra. Elíjalo en Output style de `/config` o añada `{"outputStyle": "simple-korean:simple-korean"}` a `~/.claude/settings.json`. El hook de inicio de sesión añade un bloque de reglas de 2271 caracteres en cada sesión. El número de tokens que muestra `claude plugin details simple-korean` no incluye este bloque.
+
+### Codex
 
 En Codex, instálela como plugin. El hook de inicio de sesión se instala con ella.
 
@@ -43,7 +39,21 @@ codex plugin add simple-korean@simple-korean
 
 Antes de ejecutar un hook por primera vez, Codex pregunta si usted confía en él. El hook de inicio de sesión necesita Node.js, y el hook de revisión de escritura de Claude Code necesita Python 3.9 o posterior. Los detalles están en [`src/hooks/README.md`](../src/hooks/README.md).
 
+### Otros agentes
+
+En otros agentes, instale la skill con [skills CLI](https://github.com/vercel-labs/skills).
+
+```bash
+pnpm dlx skills add say8425/SimpleKorean
+```
+
+Si usa npm, ejecute `npx skills add say8425/SimpleKorean`. Este comando solo instala la skill. No instala los hooks ni el estilo de salida que se describen más arriba.
+
+### Herramientas sin soporte de skills
+
 En las herramientas que no admiten skills, pegue el bloque de reglas de [`prompts/system-prompt.md`](../prompts/system-prompt.md). Puede ponerlo en el prompt del sistema, en `AGENTS.md` o en `.cursorrules`. Al final de este archivo también hay una versión corta de unos 120 tokens.
+
+### Después de instalar
 
 Después de instalarla, pida un documento técnico. Para corregir un texto que ya existe, diga "simple-korean으로 고쳐 줘" (corríjalo con simple-korean).
 
@@ -166,14 +176,18 @@ Los ejemplos de documentos están en [`examples/before-after.md`](../examples/be
 Volvimos a calcular todas las cifras de abajo a partir de las salidas originales guardadas en los commits. En cada push, la CI las compara con `evals/check_numbers.py`. `claude-sonnet-5-5` (effort low) escribió los documentos y las respuestas, y `claude-opus-5-5` hizo la evaluación. Ninguna ejecución leyó la configuración del usuario, servidores MCP ni archivos de instrucciones como AGENTS.md. El modelo evaluador también es Claude, así que puede tener un sesgo a favor de su misma familia de modelos. Un eojeol es una unidad del coreano separada por espacios.
 
 <!-- benchmark:start evals/results/2026-10-08 -->
-Respuestas: hicimos 8 preguntas 2 veces en cada condición. Cada pregunta contiene un término técnico. En total hay 32 respuestas. Con la skill activada, los defectos visibles para el lector (em-dash, negritas, encabezados, viñetas) bajaron un 100 % (de 394 a 0). En una evaluación a ciegas de 16 pares, la respuesta de SimpleKorean ganó 15, empató 1 y perdió 0.
+### Respuestas
+
+Hicimos 8 preguntas 2 veces en cada condición. Cada pregunta contiene un término técnico. En total hay 32 respuestas. Con la skill activada, los defectos visibles para el lector (em-dash, negritas, encabezados, viñetas) bajaron un 100 % (de 394 a 0). En una evaluación a ciegas de 16 pares, la respuesta de SimpleKorean ganó 15, empató 1 y perdió 0.
 
 | Condición | Respuestas | Media de eojeol | Media de oraciones | em-dash | Negritas | Encabezados | Viñetas | Saludos y despedidas |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | Sin skill | 16 | 246 | 30.9 | 0 | 141 | 45 | 208 | 12 |
 | SimpleKorean | 16 | 179 | 18.6 | 0 | 0 | 0 | 0 | 1 |
 
-Documentos: el modelo escribió cada una de las 8 tareas de documentación de sqlpipe 2 veces en cada condición. Cada tasa es el recuento del linter dividido entre el número de eojeol. El linter es una comprobación con expresiones regulares, así que lea las cifras como una dirección, no como una clasificación.
+### Documentos
+
+El modelo escribió cada una de las 8 tareas de documentación de sqlpipe 2 veces en cada condición. Cada tasa es el recuento del linter dividido entre el número de eojeol. El linter es una comprobación con expresiones regulares, así que lea las cifras como una dirección, no como una clasificación.
 
 | Condición | Documentos | Errores por 100 eojeol | Avisos por 100 eojeol | Calcos por 100 eojeol | Tasa de grafía designada | Tasa de palabras fáciles | Oración más larga |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -188,6 +202,8 @@ Las salidas originales, la distribución de grafías y las condiciones de medici
 
 Las reglas están en [`SKILL.md`](../skills/simple-korean/SKILL.md). La lista completa de reglas con número K que usan el modo de revisión y el modo estricto está en [`rule-catalog.md`](../skills/simple-korean/references/rule-catalog.md).
 
+### Reglas para respuestas
+
 Las respuestas de chat usan estas reglas en todos los modos.
 
 | Regla | Lo que evita |
@@ -197,6 +213,8 @@ Las respuestas de chat usan estas reglas en todos los modos.
 | No use em-dash | Ideas unidas solo a medias |
 | Explique brevemente un término conceptual la primera vez que lo use | Términos que el lector tiene que buscar |
 | Use un solo estilo en cada respuesta. No use saludos ni despedidas | "좋은 질문입니다" (Buena pregunta), "도움이 되셨기를 바랍니다" (Espero que le haya servido) |
+
+### Reglas para documentos
 
 Los documentos usan estas reglas. Aquí entran los README, los runbooks, los mensajes de error, las notas de versión y los informes de incidentes.
 
@@ -213,9 +231,15 @@ Los documentos usan estas reglas. Aquí entran los README, los runbooks, los men
 
 ## Modos
 
+### Modo básico
+
 El modo básico son todas las reglas de arriba. No hace falta activarlo.
 
+### Modo estricto
+
 El modo estricto se activa cuando usted dice "엄격 모드" (modo estricto), "통제 언어" (lenguaje controlado), "KS A 0001" o "STE". El modo estricto limita los finales de oración de los documentos a cinco formas. La obligación es "-해야 합니다" (debe). La prohibición es "-하면 안 됩니다" (no debe). El permiso es "-해도 됩니다" (puede). La capacidad es "-ㄹ 수 있습니다" (es capaz de). Los hechos van en presente. El modo estricto no usa el conectivo "(이)나" (o) y escribe las condiciones solo con "-면" (si). La base son los anexos H e I de KS A 0001:2023. En modo estricto, las respuestas siguen igualmente las reglas del modo básico.
+
+### Modo de revisión
 
 El modo de revisión se activa cuando usted pide una revisión en lugar de un texto. Para cada infracción, indica el número K, el fragmento afectado y la oración corregida.
 
@@ -236,11 +260,17 @@ Los nombres de productos, las citas de textos de pantalla, los nombres de objeto
 
 ## Preguntas frecuentes
 
-¿Es una edición coreana de STE? No. ASD-STE100 no tiene edición coreana, y tampoco existe una norma nacional de lenguaje controlado para el coreano. SimpleKorean es una guía no oficial. Reconstruye el propósito de las reglas de STE con la gramática coreana. Las reglas de finales de oración y de conectivos del modo estricto se basan en KS A 0001:2023.
+### ¿Es una edición coreana de STE?
 
-¿Por qué 레포지토리 y 바디 no siguen la norma? Los ejemplos de uso del Instituto Nacional de la Lengua Coreana son "리포지터리" (repositorio) y "보디" (cuerpo). Pero estas dos formas casi no se usan en documentos reales. En una muestra de documentación de proveedores, "리포지터리" apareció en 0 de 1104 casos. Por eso elegimos como grafía designada las formas habituales que el lector reconoce.
+No. ASD-STE100 no tiene edición coreana, y tampoco existe una norma nacional de lenguaje controlado para el coreano. SimpleKorean es una guía no oficial. Reconstruye el propósito de las reglas de STE con la gramática coreana. Las reglas de finales de oración y de conectivos del modo estricto se basan en KS A 0001:2023.
 
-¿Qué hago si mi empresa usa otras grafías? Ponga `.simple-korean.json` en la raíz del repositorio. El hook de inicio de sesión busca este archivo e informa al modelo de las grafías designadas que cambiaron. El linter y el hook de revisión de escritura también siguen este archivo. Avisan cuando se usa la grafía designada de antes del cambio. En una grafía designada use solo hangul, letras latinas, dígitos y espacios, hasta 20 caracteres. Puede indicar hasta 100 cadenas que se omiten (`skip`). Se ignoran las configuraciones con un formato incorrecto y los conceptos que no están en la lista de palabras.
+### ¿Por qué 레포지토리 y 바디 no siguen la norma?
+
+Los ejemplos de uso del Instituto Nacional de la Lengua Coreana son "리포지터리" (repositorio) y "보디" (cuerpo). Pero estas dos formas casi no se usan en documentos reales. En una muestra de documentación de proveedores, "리포지터리" apareció en 0 de 1104 casos. Por eso elegimos como grafía designada las formas habituales que el lector reconoce.
+
+### ¿Qué hago si mi empresa usa otras grafías?
+
+Ponga `.simple-korean.json` en la raíz del repositorio. El hook de inicio de sesión busca este archivo e informa al modelo de las grafías designadas que cambiaron. El linter y el hook de revisión de escritura también siguen este archivo. Avisan cuando se usa la grafía designada de antes del cambio. En una grafía designada use solo hangul, letras latinas, dígitos y espacios, hasta 20 caracteres. Puede indicar hasta 100 cadenas que se omiten (`skip`). Se ignoran las configuraciones con un formato incorrecto y los conceptos que no están en la lista de palabras.
 
 ```json
 {"terms": {"release": {"write": "릴리즈"}, "column": "컬럼"}, "spacing": "attached"}
@@ -248,11 +278,17 @@ Los nombres de productos, las citas de textos de pantalla, los nombres de objeto
 
 En este ejemplo, "릴리즈" significa release y "컬럼" significa column.
 
-¿En qué se diferencia de una skill de pulido de textos? Las skills de pulido de textos, como im-not-ai, eliminan el estilo de IA y los calcos de un texto ya escrito. SimpleKorean hace que el modelo escriba según las reglas desde el principio. También fija la estructura del documento y el formato de las respuestas. Por ejemplo, pone las condiciones antes de la orden y escribe una sola acción en cada oración. Además, incluye un linter y resultados de medición.
+### ¿En qué se diferencia de una skill de pulido de textos?
 
-¿De dónde salen los límites de 15 y 20 eojeol? No encontramos ningún estudio empírico que fije un límite de longitud de oración para documentos técnicos en coreano. Por eso son valores elegidos por diseño. En la calibración medimos la longitud de las oraciones en oraciones de ejemplo que siguen las reglas y en la salida de referencia (línea base). Los resultados están en [`evals/calibration/RECORD.md`](../evals/calibration/RECORD.md).
+Las skills de pulido de textos, como im-not-ai, eliminan el estilo de IA y los calcos de un texto ya escrito. SimpleKorean hace que el modelo escriba según las reglas desde el principio. También fija la estructura del documento y el formato de las respuestas. Por ejemplo, pone las condiciones antes de la orden y escribe una sola acción en cada oración. Además, incluye un linter y resultados de medición.
 
-¿Por qué el modo estricto no tiene un diccionario coreano de palabras aprobadas? El coreano no tiene una lista pública que fije a la vez las palabras aprobadas y las no aprobadas, como el diccionario de STE. La investigación está en [`docs/research/korean-controlled-language.md`](../docs/research/korean-controlled-language.md). El coreano expresa significados como la obligación y el permiso más en el final de la oración que en las palabras. Por eso el modo estricto agrupa en listas cerradas los finales de oración y los conectivos, en lugar de las palabras.
+### ¿De dónde salen los límites de 15 y 20 eojeol?
+
+No encontramos ningún estudio empírico que fije un límite de longitud de oración para documentos técnicos en coreano. Por eso son valores elegidos por diseño. En la calibración medimos la longitud de las oraciones en oraciones de ejemplo que siguen las reglas y en la salida de referencia (línea base). Los resultados están en [`evals/calibration/RECORD.md`](../evals/calibration/RECORD.md).
+
+### ¿Por qué el modo estricto no tiene un diccionario coreano de palabras aprobadas?
+
+El coreano no tiene una lista pública que fije a la vez las palabras aprobadas y las no aprobadas, como el diccionario de STE. La investigación está en [`docs/research/korean-controlled-language.md`](../docs/research/korean-controlled-language.md). El coreano expresa significados como la obligación y el permiso más en el final de la oración que en las palabras. Por eso el modo estricto agrupa en listas cerradas los finales de oración y los conectivos, en lugar de las palabras.
 
 ## Relación con el proyecto original
 
