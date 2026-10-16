@@ -115,6 +115,21 @@ def test_example_blocks_keep_the_korean_outputs():
             assert "](../examples/before-after.md)" in body, lang
 
 
+def test_example_block_is_a_two_column_table():
+    with tempfile.TemporaryDirectory(dir=str(ROOT / "evals")) as d:
+        root = _results(d)
+        rel = root.resolve().relative_to(ROOT).as_posix()
+        for lang in i18n.LANGS:
+            body = mx.readme_example(root, lang)
+            assert body.startswith("<table>\n<tr>\n<th width=\"50%\">"), lang
+            assert body.count('<td valign="top">\n\n<!-- source: ') == 2, lang
+            assert body.count("<!-- simple-korean: on -->\n\n</td>") == 2, lang
+            sources = [m[0] for m in mx.SOURCE_BLOCK.findall(body)]
+            assert sources == [f"{rel}/reply/baseline__oom__r1.txt", f"{rel}/reply/plain__oom__r1.txt"], lang
+            after_table = body.split("</table>", 1)[1]
+            assert f"`{sources[0]}`" in after_table and f"`{sources[1]}`" in after_table, lang
+
+
 def test_update_readmes_fills_every_language():
     with tempfile.TemporaryDirectory(dir=str(ROOT / "evals")) as d:
         root, site = _results(d), _site(d)

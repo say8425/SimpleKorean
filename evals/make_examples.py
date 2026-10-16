@@ -74,12 +74,25 @@ def examples_md(results_dir):
     return "\n\n".join(parts) + "\n"
 
 
+def _cell(rel):
+    """표 칸 하나. GitHub는 HTML 칸 안의 마크다운을 앞뒤 빈 줄이 있어야 그린다."""
+    return f'<td valign="top">\n\n{source_block(rel)}\n\n</td>'
+
+
 def readme_example(results_dir, lang="ko"):
-    """README 보기 블록의 본문. 인용한 출력은 어느 언어에서나 한국어 원문이다."""
+    """README 보기 블록의 본문. 왼쪽 칸은 스킬 없이, 오른쪽 칸은 SimpleKorean을 켜고 쓴 답변이다.
+
+    인용한 출력은 어느 언어에서나 한국어 원문이다.
+    """
     before, after = _pair(results_dir, "reply", README_PICK, "plain", "txt")
     text = i18n.TEXT[lang]
-    return "\n\n".join([text["example_before"].format(path=before), source_block(before),
-                        text["example_after"].format(path=after), source_block(after),
+    table = "\n".join([
+        "<table>", "<tr>",
+        f'<th width="50%">{text["example_before"]}</th>',
+        f'<th width="50%">{text["example_after"]}</th>',
+        "</tr>", "<tr>", _cell(before), _cell(after), "</tr>", "</table>",
+    ])
+    return "\n\n".join([table, text["example_files"].format(before=before, after=after),
                         text["example_docs"].format(href=i18n.link(lang, "examples/before-after.md"))])
 
 

@@ -62,7 +62,13 @@ Después de instalarla, pida un documento técnico. Para corregir un texto que y
 Estas son salidas originales del mismo modelo para la misma pregunta. Copiamos las dos respuestas sin cambios. Las respuestas están en coreano, porque esta skill hace que el modelo escriba en coreano.
 
 <!-- example:start -->
-Respuesta escrita sin la skill (`evals/results/2026-10-08/reply/baseline__oom__r1.txt`):
+<table>
+<tr>
+<th width="50%">Respuesta escrita sin la skill</th>
+<th width="50%">Respuesta del mismo modelo con SimpleKorean activado</th>
+</tr>
+<tr>
+<td valign="top">
 
 <!-- source: evals/results/2026-10-08/reply/baseline__oom__r1.txt -->
 <!-- simple-korean: off -->
@@ -130,7 +136,8 @@ Respuesta escrita sin la skill (`evals/results/2026-10-08/reply/baseline__oom__r
 > 사용하는 언어와 런타임, 현재 `resources` 설정, `kubectl describe pod`의 `Last State` 부분과 `kubectl top` 결과를 알려주시면 구체적인 값을 제안해 드릴 수 있습니다.
 <!-- simple-korean: on -->
 
-Respuesta del mismo modelo con SimpleKorean activado (`evals/results/2026-10-08/reply/plain__oom__r1.txt`):
+</td>
+<td valign="top">
 
 <!-- source: evals/results/2026-10-08/reply/plain__oom__r1.txt -->
 <!-- simple-korean: off -->
@@ -167,6 +174,12 @@ Respuesta del mismo modelo con SimpleKorean activado (`evals/results/2026-10-08/
 >
 > 어떤 언어와 런타임을 쓰는지, `kubectl describe`의 `Last State` 출력을 알려 주시면 원인을 더 좁힐 수 있습니다.
 <!-- simple-korean: on -->
+
+</td>
+</tr>
+</table>
+
+Los archivos originales son `evals/results/2026-10-08/reply/baseline__oom__r1.txt` y `evals/results/2026-10-08/reply/plain__oom__r1.txt`.
 
 Los ejemplos de documentos están en [`examples/before-after.md`](../examples/before-after.md).
 <!-- example:end -->

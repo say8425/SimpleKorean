@@ -62,7 +62,13 @@ npm を使う場合は `npx skills add say8425/SimpleKorean` を実行してく�
 同じ質問に同じモデルが答えた生の出力です。どちらの回答も手を加えずに載せました。このスキルはモデルに韓国語を書かせるものなので、回答は韓国語のままです。
 
 <!-- example:start -->
-スキルなしで書いた回答（`evals/results/2026-10-08/reply/baseline__oom__r1.txt`）：
+<table>
+<tr>
+<th width="50%">スキルなしで書いた回答</th>
+<th width="50%">同じモデルが SimpleKorean を有効にして書いた回答</th>
+</tr>
+<tr>
+<td valign="top">
 
 <!-- source: evals/results/2026-10-08/reply/baseline__oom__r1.txt -->
 <!-- simple-korean: off -->
@@ -130,7 +136,8 @@ npm を使う場合は `npx skills add say8425/SimpleKorean` を実行してく�
 > 사용하는 언어와 런타임, 현재 `resources` 설정, `kubectl describe pod`의 `Last State` 부분과 `kubectl top` 결과를 알려주시면 구체적인 값을 제안해 드릴 수 있습니다.
 <!-- simple-korean: on -->
 
-同じモデルが SimpleKorean を有効にして書いた回答（`evals/results/2026-10-08/reply/plain__oom__r1.txt`）：
+</td>
+<td valign="top">
 
 <!-- source: evals/results/2026-10-08/reply/plain__oom__r1.txt -->
 <!-- simple-korean: off -->
@@ -167,6 +174,12 @@ npm を使う場合は `npx skills add say8425/SimpleKorean` を実行してく�
 >
 > 어떤 언어와 런타임을 쓰는지, `kubectl describe`의 `Last State` 출력을 알려 주시면 원인을 더 좁힐 수 있습니다.
 <!-- simple-korean: on -->
+
+</td>
+</tr>
+</table>
+
+元のファイルは `evals/results/2026-10-08/reply/baseline__oom__r1.txt` と `evals/results/2026-10-08/reply/plain__oom__r1.txt` です。
 
 文書の例は [`examples/before-after.md`](../examples/before-after.md) にあります。
 <!-- example:end -->

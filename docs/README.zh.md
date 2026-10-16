@@ -62,7 +62,13 @@ pnpm dlx skills add say8425/SimpleKorean
 以下是同一模型对同一问题的原始输出。两个回答都未作修改。本技能让模型写韩语，所以回答保持韩语原文。
 
 <!-- example:start -->
-未启用技能时写的回答（`evals/results/2026-10-08/reply/baseline__oom__r1.txt`）：
+<table>
+<tr>
+<th width="50%">未启用技能时写的回答</th>
+<th width="50%">同一模型启用 SimpleKorean 后写的回答</th>
+</tr>
+<tr>
+<td valign="top">
 
 <!-- source: evals/results/2026-10-08/reply/baseline__oom__r1.txt -->
 <!-- simple-korean: off -->
@@ -130,7 +136,8 @@ pnpm dlx skills add say8425/SimpleKorean
 > 사용하는 언어와 런타임, 현재 `resources` 설정, `kubectl describe pod`의 `Last State` 부분과 `kubectl top` 결과를 알려주시면 구체적인 값을 제안해 드릴 수 있습니다.
 <!-- simple-korean: on -->
 
-同一模型启用 SimpleKorean 后写的回答（`evals/results/2026-10-08/reply/plain__oom__r1.txt`）：
+</td>
+<td valign="top">
 
 <!-- source: evals/results/2026-10-08/reply/plain__oom__r1.txt -->
 <!-- simple-korean: off -->
@@ -167,6 +174,12 @@ pnpm dlx skills add say8425/SimpleKorean
 >
 > 어떤 언어와 런타임을 쓰는지, `kubectl describe`의 `Last State` 출력을 알려 주시면 원인을 더 좁힐 수 있습니다.
 <!-- simple-korean: on -->
+
+</td>
+</tr>
+</table>
+
+原始文件是 `evals/results/2026-10-08/reply/baseline__oom__r1.txt` 和 `evals/results/2026-10-08/reply/plain__oom__r1.txt`。
 
 文档示例见 [`examples/before-after.md`](../examples/before-after.md)。
 <!-- example:end -->
