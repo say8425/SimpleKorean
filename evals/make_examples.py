@@ -2,12 +2,14 @@
 """전후 예시를 원본 출력에서 만든다. 고를 과제와 질문은 측정 전에 정했다(PICKS). 글은 고치지 않는다.
 
     python3 evals/make_examples.py evals/results/<날짜>            # examples/before-after.md를 쓴다
-    python3 evals/make_examples.py evals/results/<날짜> --readme   # README.md의 보기 블록도 바꾼다
+    python3 evals/make_examples.py evals/results/<날짜> --readme   # README 다섯 개의 보기 블록도 바꾼다
 """
 import json
 import re
 import sys
 from pathlib import Path
+
+import readme_i18n as i18n
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
@@ -72,19 +74,35 @@ def examples_md(results_dir):
     return "\n\n".join(parts) + "\n"
 
 
-def readme_example(results_dir):
-    """README 보기 블록의 본문."""
+def readme_example(results_dir, lang="ko"):
+    """README 보기 블록의 본문. 인용한 출력은 어느 언어에서나 한국어 원문이다."""
     before, after = _pair(results_dir, "reply", README_PICK, "plain", "txt")
-    return "\n\n".join([f"스킬 없이 쓴 답변(`{before}`):", source_block(before),
-                        f"같은 모델이 SimpleKorean을 켜고 쓴 답변(`{after}`):", source_block(after),
-                        "문서 예시는 [`examples/before-after.md`](examples/before-after.md)에 있습니다."])
+    text = i18n.TEXT[lang]
+    return "\n\n".join([text["example_before"].format(path=before), source_block(before),
+                        text["example_after"].format(path=after), source_block(after),
+                        text["example_docs"].format(href=i18n.link(lang, "examples/before-after.md"))])
 
 
-def replace_example_block(readme_text, body):
+def replace_example_block(readme_text, body, name="README.md"):
     """README의 보기 블록을 새 본문으로 바꾼 새 문자열."""
     if not EXAMPLE_BLOCK.search(readme_text):
-        raise SystemExit("README.md에 <!-- example:start --> 블록이 없습니다")
+        raise SystemExit(f"{name}에 <!-- example:start --> 블록이 없습니다")
     return EXAMPLE_BLOCK.sub(lambda m: f"<!-- example:start -->\n{body}\n<!-- example:end -->", readme_text, count=1)
+
+
+def update_readmes(results_dir, langs=i18n.LANGS, root=ROOT):
+    """README들의 보기 블록을 바꾼다. 하나라도 읽지 못하거나 블록이 없으면 아무 파일도 바꾸지 않고 멈춘다."""
+    texts = {}
+    for lang in langs:
+        name = i18n.README[lang]
+        path = Path(root) / name
+        try:
+            current = path.read_text(encoding="utf-8")
+        except OSError as err:
+            raise SystemExit(f"{name}: 읽지 못했습니다({err})")
+        texts[path] = replace_example_block(current, readme_example(results_dir, lang), name)
+    for path, text in texts.items():
+        path.write_text(text, encoding="utf-8")
 
 
 def check_sources(markdown):
@@ -109,9 +127,7 @@ def main(argv=None):
     EXAMPLES.parent.mkdir(parents=True, exist_ok=True)
     EXAMPLES.write_text(examples_md(args[0]), encoding="utf-8")
     if "--readme" in args:
-        readme = ROOT / "README.md"
-        readme.write_text(replace_example_block(readme.read_text(encoding="utf-8"), readme_example(args[0])),
-                          encoding="utf-8")
+        update_readmes(args[0])
     return 0
 
 
