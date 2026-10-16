@@ -1,4 +1,5 @@
 import json
+import re
 import sys
 import tempfile
 from pathlib import Path
@@ -46,12 +47,42 @@ def test_check_versions_requires_one_value_everywhere():
         ".claude-plugin/plugin.json": '{"version": "1.0.0"}',
         ".claude-plugin/marketplace.json": '{"plugins": [{"version": "1.0.0"}]}',
         ".codex-plugin/plugin.json": '{"version": "1.0.0"}',
-        "README.md": "badge/version-1.0.0-blue",
+        ".release-please-manifest.json": '{\n  ".": "1.0.0"\n}\n',
         "CHANGELOG.md": "# 변경 기록\n\n## 1.0.0, 2026-10-09\n",
     }
+    assert "README.md" not in cn.VERSION_PATTERNS
     assert cn.check_versions(texts) == []
     assert cn.check_versions({**texts, "CHANGELOG.md": "## 1.0.1, 2026-10-10\n"}) != []
-    assert cn.check_versions({**texts, "README.md": "배지 없음"}) != []
+    assert cn.check_versions({**texts, ".release-please-manifest.json": '{".": "1.0.1"}'}) != []
+    bumped = {name: text.replace("1.0.0", "1.0.1") for name, text in texts.items()}
+    released = ("# 변경 기록\n\n## [1.0.1](https://github.com/say8425/SimpleKorean/compare/v1.0.0...v1.0.1) (2026-10-20)\n\n"
+                "### 고친 것\n\n* 고친다\n\n## 1.0.0, 2026-10-09\n")
+    assert cn.check_versions({**bumped, "CHANGELOG.md": released}) == []
+
+
+def _jsonpath(data, path):
+    """'$.plugins[0].version' 같은 단순한 JSONPath를 따라간다."""
+    for key, index in re.findall(r"\.(\w+)|\[(\d+)\]", path[1:]):
+        data = data[key] if key else data[int(index)]
+    return data
+
+
+def test_release_config_bumps_every_versioned_file():
+    config = json.loads((cn.ROOT / "release-please-config.json").read_text(encoding="utf-8"))
+    package = config["packages"]["."]
+    assert package["release-type"] == "simple" and config["include-component-in-tag"] is False
+    version = json.loads((cn.ROOT / ".release-please-manifest.json").read_text(encoding="utf-8"))["."]
+    bumped = set()
+    for item in package["extra-files"]:
+        if isinstance(item, str):
+            bumped.add(item)
+            continue
+        bumped.add(item["path"])
+        data = json.loads((cn.ROOT / item["path"]).read_text(encoding="utf-8"))
+        assert _jsonpath(data, item["jsonpath"]) == version, item
+    assert bumped == set(cn.VERSION_PATTERNS) - {"CHANGELOG.md", ".release-please-manifest.json"}
+    skill = (cn.ROOT / "skills/simple-korean/SKILL.md").read_text(encoding="utf-8")
+    assert f'  version: "{version}" # x-release-please-version\n' in skill
 
 
 def _results(d):

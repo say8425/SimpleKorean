@@ -11,7 +11,7 @@
 - 보정 기록 RECORD.md를 hits.tsv와 보정 출력에서 다시 만들어 비교하고, CHANGELOG에 보정 줄이 있는지 본다.
 - 규칙 블록 두 벌이 같은지, 핵심 문구가 SKILL.md와 규칙 블록에 모두 있는지 본다.
 - SKILL.md description에 스펙 10절의 호출 문구가 모두 있는지 본다.
-- 버전 문자열이 SKILL.md, 매니페스트 세 개, README 배지, CHANGELOG 첫 항목에서 같은지 본다.
+- 버전 문자열이 SKILL.md, 플러그인 매니페스트 세 개, .release-please-manifest.json, CHANGELOG 첫 항목에서 같은지 본다.
 """
 import difflib
 import json
@@ -38,8 +38,8 @@ VERSION_PATTERNS = {
     ".claude-plugin/plugin.json": r'"version":\s*"([^"]+)"',
     ".claude-plugin/marketplace.json": r'"version":\s*"([^"]+)"',
     ".codex-plugin/plugin.json": r'"version":\s*"([^"]+)"',
-    "README.md": r"badge/version-([0-9.]+)-",
-    "CHANGELOG.md": r"(?m)^## ([0-9]+\.[0-9]+\.[0-9]+)",
+    ".release-please-manifest.json": r'"\."\s*:\s*"([^"]+)"',
+    "CHANGELOG.md": r"(?m)^## \[?([0-9]+\.[0-9]+\.[0-9]+)",
 }
 
 

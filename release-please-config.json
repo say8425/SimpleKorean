@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "include-component-in-tag": false,
+  "changelog-sections": [
+    {"type": "feat", "section": "기능"},
+    {"type": "fix", "section": "고친 것"},
+    {"type": "perf", "section": "성능"},
+    {"type": "refactor", "section": "리팩터링", "hidden": true},
+    {"type": "docs", "section": "문서", "hidden": true},
+    {"type": "test", "section": "시험", "hidden": true},
+    {"type": "chore", "section": "기타", "hidden": true},
+    {"type": "ci", "section": "CI", "hidden": true}
+  ],
+  "packages": {
+    ".": {
+      "release-type": "simple",
+      "extra-files": [
+        {"type": "json", "path": ".claude-plugin/plugin.json", "jsonpath": "$.version"},
+        {"type": "json", "path": ".claude-plugin/marketplace.json", "jsonpath": "$.plugins[0].version"},
+        {"type": "json", "path": ".codex-plugin/plugin.json", "jsonpath": "$.version"},
+        "skills/simple-korean/SKILL.md"
+      ]
+    }
+  }
+}
