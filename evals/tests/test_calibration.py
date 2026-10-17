@@ -107,5 +107,5 @@ def test_record_stops_on_unlabeled_rows_and_renders_when_complete():
             raise AssertionError("판정 없는 행을 받아들였습니다")
         text = hits.record_md(d, _labeled(rows, "slop_word"))
     assert "## 범주별 정밀도" in text and "## CHANGELOG에 옮길 줄" in text
-    assert "슬롭 어휘: 판정한 1건 가운데 거짓 일치 1건을 찾아 0건을 고쳤습니다. 원인: 원인." in text
+    assert "'슬롭 어휘' 범주에서 판정한 1건 가운데 거짓 일치(린터가 잘못 잡은 곳) 1건을 찾아 0건을 고쳤습니다. 원인은 원인입니다." in text
     assert "문장 길이 상한은 절차문 15어절, 설명문 20어절 그대로입니다." in text

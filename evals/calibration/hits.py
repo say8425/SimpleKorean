@@ -133,7 +133,7 @@ def decide_limits(limits, compliant, baseline):
         elif over == 0:
             reasons[kind] = "기준선 문장 가운데 상한을 넘은 문장이 없습니다. 줄일 근거가 없어 그대로 둡니다."
         else:
-            reasons[kind] = f"규칙을 지킨 예문은 모두 상한 안이고(최대 {top}어절), 기준선 문장 {over}개가 상한을 넘었습니다."
+            reasons[kind] = f"규칙을 지킨 예문은 모두 상한 안입니다(최대 {top}어절). 기준선 문장 {over}개가 상한을 넘었습니다."
     return decided, reasons
 
 
@@ -178,9 +178,9 @@ def changelog_lines(table, labeled, decided, limits=None):
     for cat in sorted(table):
         t = table[cat]
         if t["FP"]:
-            notes = "; ".join(sorted({r["note"] for r in labeled if r["category"] == cat and r["label"] == "FP"}))
-            lines.append(f"- {LABELS.get(cat, cat)}: 판정한 {t['hits']}건 가운데 거짓 일치 {t['FP']}건을 찾아 "
-                         f"{t['FP'] - t['fp_left']}건을 고쳤습니다. 원인: {notes}.")
+            notes = ", ".join(sorted({r["note"] for r in labeled if r["category"] == cat and r["label"] == "FP"}))
+            lines.append(f"- '{LABELS.get(cat, cat)}' 범주에서 판정한 {t['hits']}건 가운데 거짓 일치(린터가 잘못 잡은 곳) {t['FP']}건을 찾아 "
+                         f"{t['FP'] - t['fp_left']}건을 고쳤습니다. 원인은 {notes}입니다.")
     if len(lines) == 1:
         lines.append("- 기준선 출력에서 거짓 일치를 찾지 못했습니다.")
     return lines
@@ -201,7 +201,7 @@ def record_md(results_dir, labeled):
     decided, reasons = decide_limits(ko_rules.LIMITS, compliant, baseline)
     return "\n\n".join([
         f"# 보정 기록 ({meta['date']})",
-        f"기준선 문서 {len(docs)}개와 답변 {n_replies}개를 `{meta['model']}`(effort `{meta['effort']}`)로 만들었습니다. "
+        f"스킬 없이 기준선 문서 {len(docs)}개와 답변 {n_replies}개를 `{meta['model']}`(effort `{meta['effort']}`)로 만들었습니다. "
         "린터가 잡은 일치를 하나씩 맞음과 거짓으로 판정했습니다. 판정과 거짓 일치의 원인은 `hits.tsv`에 있습니다.",
         "## 범주별 정밀도", _precision_section(table),
         "## 문장 길이", _length_section(compliant, baseline, decided, reasons),

@@ -20,24 +20,26 @@ SimpleKorean 是一个智能体技能，让 LLM 用简单的韩语写技术文�
 
 ### Claude Code
 
-在 Claude Code 中，请以插件方式安装。插件包含会话启动钩子、写作检查钩子和输出样式。
+在 Claude Code 中，请以插件方式安装。插件包含会话启动钩子、写作检查钩子和输出样式。会话启动钩子需要 Node.js。写作检查钩子需要 Python 3.9 或更高版本。
 
 ```bash
 claude plugin marketplace add say8425/SimpleKorean && claude plugin install simple-korean@simple-korean
 ```
 
-输出样式的名称是 `simple-korean:simple-korean`。用短名称找不到它。请在 `/config` 的 Output style 中选择，或者在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。会话启动钩子会在每个会话中加入 2,271 个字符的规则块。`claude plugin details simple-korean` 显示的 token 数不包含这个规则块。
+输出样式的名称是 `simple-korean:simple-korean`。用短名称找不到它。请在 `/config` 的 Output style 中选择，或者在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。
+
+会话启动钩子会在每个会话中加入 2,271 个字符的规则块。`claude plugin details simple-korean` 显示的 token 数不包含这个规则块。
 
 ### Codex
 
-在 Codex 中，请以插件方式安装。会话启动钩子会一起安装。
+在 Codex 中，请以插件方式安装。会话启动钩子会一起安装。这个钩子需要 Node.js。
 
 ```bash
 codex plugin marketplace add say8425/SimpleKorean
 codex plugin add simple-korean@simple-korean
 ```
 
-Codex 第一次运行钩子之前，会询问是否信任它。会话启动钩子需要 Node.js。Claude Code 的写作检查钩子需要 Python 3.9 或更高版本。详情见 [`src/hooks/README.md`](../src/hooks/README.md)。
+Codex 第一次运行钩子之前，会询问是否信任它。详情见 [`src/hooks/README.md`](../src/hooks/README.md)。
 
 ### 其他智能体
 
@@ -270,7 +272,7 @@ sqlpipe 的 8 个文档任务在每个条件下各写了 2 次。比率是检查
 
 ### 如果公司的写法不同，怎么办？
 
-请在仓库的根目录放一个 `.simple-korean.json`。会话启动钩子会找到这个文件，并把修改后的规定写法告诉模型。检查器和写作检查钩子也遵守这个文件，使用修改前的规定写法时会发出警告。规定写法只能用韩文、英文字母、数字和空格，最多 20 个字符。要跳过的字符串（`skip`）最多 100 个。格式错误的设置和词表中没有的概念会被忽略。
+请在仓库的根目录放一个 `.simple-korean.json`。会话启动钩子会找到这个文件，并把修改后的规定写法告诉模型。检查器和写作检查钩子也遵守这个文件，使用修改前的规定写法时会发出警告。规定写法只能用韩文、英文字母、数字和空格，最多 20 个字符。要跳过的字符串（`skip`）最多 100 个。两个钩子遇到格式错误的设置时改用默认设置。检查器遇到这种设置会报错并停止。词表中没有的概念，钩子和检查器都会忽略。
 
 ```json
 {"terms": {"release": {"write": "릴리즈"}, "column": "컬럼"}, "spacing": "attached"}
@@ -297,6 +299,8 @@ SimpleKorean 是从 [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEng
 ## 贡献
 
 问题和 bug 请通过 Issue 告诉我们。欢迎提交 PR。如果修改会改变已公开的数字，请同时提交原始输出，并且必须通过数字核对。数字核对需要 kiwipiepy。
+
+请在仓库根目录运行以下命令：
 
 ```bash
 uv venv .venv --python 3.12 && uv pip install --python .venv/bin/python kiwipiepy==0.24.0 kiwipiepy-model==0.24.0

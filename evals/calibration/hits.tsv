@@ -6,7 +6,7 @@ docs/baseline__readme-intro__r1.json	1	엄격	strict_connective	warning	파이�
 docs/baseline__readme-intro__r1.json	3	엄격	strict_connective	warning	크론이나	대용량 테이블도 청크 단위로 스트리밍 처리하므로 메모리 사용량이 일정하게 유지되며, 변경된 데이터만 반영하는 증분 동기화를 지원해 반복 실행 시 시간과 비용을 줄여 줍니다. 크론이나 CI 작업에 쉽게 끼워 넣을 수 있도록 설계되었습니다.	TP	
 docs/baseline__runbook-terse__r1.json	1	엄격	strict_ending	warning	반드시	마이그레이션 실행 전 백업 존재 여부를 반드시 확인하세요.	TP	
 docs/baseline__troubleshooting__r1.json	4	기본	synonym_rotation	warning	점검 (확인)	`connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근할 수 있는지 확인하세요. 방화벽, 보안 그룹, VPN 설정이 흔한 원인입니다. 연결 문자열의 호스트명과 `sslmode` 값도 점검하세요. 서버는 정상인데 응답만 느리다면 `--c…	TP	
-docs/baseline__troubleshooting__r1.json	7	엄격	strict_connective	warning	어긋나	`AccessDenied` 또는 `403`이 나오면 자격 증명과 IAM 권한을 확인하세요. `aws sts get-caller-identity`로 현재 사용 중인 계정과 역할이 의도한 것인지 봅니다. 대상 버킷에는 최소한 `s3:GetObject`, `s3:PutObject`, `s3:…	FP	'-나다' 동사 어간 뒤 보조 용언(어긋나 있다)
+docs/baseline__troubleshooting__r1.json	7	엄격	strict_connective	warning	어긋나	`AccessDenied` 또는 `403`이 나오면 자격 증명과 IAM 권한을 확인하세요. `aws sts get-caller-identity`로 현재 사용 중인 계정과 역할이 의도한 것인지 봅니다. 대상 버킷에는 최소한 `s3:GetObject`, `s3:PutObject`, `s3:…	FP	'-나다' 동사 어간 뒤의 보조 용언(어긋나 있다)
 docs/baseline__troubleshooting__r1.json	7	엄격	strict_connective	warning	정책이나	`AccessDenied` 또는 `403`이 나오면 자격 증명과 IAM 권한을 확인하세요. `aws sts get-caller-identity`로 현재 사용 중인 계정과 역할이 의도한 것인지 봅니다. 대상 버킷에는 최소한 `s3:GetObject`, `s3:PutObject`, `s3:…	TP	
 reply/baseline__cert-error__r1.txt	51	답변	closer	warning	알려주시면 어느 경우인지 더 정확히 짚어 드릴 수 있습니다	사용하는 도메인과 `openssl s_client` 출력의 `issuer` 부분을 알려주시면 어느 경우인지 더 정확히 짚어 드릴 수 있습니다.	TP	
 reply/baseline__migration__r1.txt	45	답변	closer	warning	알려주시면 구체적인 SQL과 배치 스크립트를 작성해 드리겠습니다	DB 종류와 기본값을 알려주시면 구체적인 SQL과 배치 스크립트를 작성해 드리겠습니다.	TP	

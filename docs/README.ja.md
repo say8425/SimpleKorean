@@ -20,24 +20,26 @@ SimpleKorean は、LLM が技術文書とチャットの回答をやさしい韓
 
 ### Claude Code
 
-Claude Code には、プラグインとしてインストールしてください。プラグインには、セッション開始フック、執筆チェックフック、出力スタイルが入っています。
+Claude Code には、プラグインとしてインストールしてください。プラグインには、セッション開始フック、執筆チェックフック、出力スタイルが入っています。セッション開始フックには Node.js が必要です。執筆チェックフックには Python 3.9 以上が必要です。
 
 ```bash
 claude plugin marketplace add say8425/SimpleKorean && claude plugin install simple-korean@simple-korean
 ```
 
-出力スタイルの名前は `simple-korean:simple-korean` です。短い名前では見つかりません。`/config` の Output style で選ぶか、`~/.claude/settings.json` に `{"outputStyle": "simple-korean:simple-korean"}` を書いてください。セッション開始フックは、セッションごとに2,271文字のルールブロックを追加します。`claude plugin details simple-korean` が表示するトークン数には、このブロックは含まれません。
+出力スタイルの名前は `simple-korean:simple-korean` です。短い名前では見つかりません。`/config` の Output style で選ぶか、`~/.claude/settings.json` に `{"outputStyle": "simple-korean:simple-korean"}` を書いてください。
+
+セッション開始フックは、セッションごとに2,271文字のルールブロックを追加します。`claude plugin details simple-korean` が表示するトークン数には、このブロックは含まれません。
 
 ### Codex
 
-Codex には、プラグインとしてインストールしてください。セッション開始フックも一緒にインストールされます。
+Codex には、プラグインとしてインストールしてください。セッション開始フックも一緒にインストールされます。このフックには Node.js が必要です。
 
 ```bash
 codex plugin marketplace add say8425/SimpleKorean
 codex plugin add simple-korean@simple-korean
 ```
 
-Codex は、フックを初めて実行する前に、信頼するかどうかを尋ねます。セッション開始フックには Node.js が必要です。Claude Code の執筆チェックフックには Python 3.9 以上が必要です。詳しくは [`src/hooks/README.md`](../src/hooks/README.md) を参照してください。
+Codex は、フックを初めて実行する前に、信頼するかどうかを尋ねます。詳しくは [`src/hooks/README.md`](../src/hooks/README.md) を参照してください。
 
 ### その他のエージェント
 
@@ -270,7 +272,7 @@ sqlpipe の文書課題8個を、条件ごとに2回ずつ書きました。比�
 
 ### 会社の表記が違う場合はどうしますか？
 
-リポジトリの最上位に `.simple-korean.json` を置いてください。セッション開始フックがこのファイルを見つけ、変更された指定表記をモデルに伝えます。リンターと執筆チェックフックもこのファイルに従い、変更前の指定表記を使うと警告します。指定表記には、ハングル、英字、数字、空白だけを20文字まで使えます。スキップする文字列（`skip`）は100個までです。形式の誤った設定と、語のリストにない概念は無視します。
+リポジトリの最上位に `.simple-korean.json` を置いてください。セッション開始フックがこのファイルを見つけ、変更された指定表記をモデルに伝えます。リンターと執筆チェックフックもこのファイルに従い、変更前の指定表記を使うと警告します。指定表記には、ハングル、英字、数字、空白だけを20文字まで使えます。スキップする文字列（`skip`）は100個までです。2つのフックは、形式の誤った設定の代わりに既定の設定を使います。リンターはそのような設定を受け取るとエラーを出して止まります。語のリストにない概念は、フックとリンターのどちらも無視します。
 
 ```json
 {"terms": {"release": {"write": "릴리즈"}, "column": "컬럼"}, "spacing": "attached"}
@@ -297,6 +299,8 @@ SimpleKorean は、[AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEngl
 ## 貢献
 
 質問とバグは Issue で知らせてください。PR を歓迎します。公開した数値を変える変更では、生の出力も一緒にコミットし、数値の検証に通る必要があります。数値の検証には kiwipiepy が必要です。
+
+リポジトリの最上位で次を実行してください：
 
 ```bash
 uv venv .venv --python 3.12 && uv pip install --python .venv/bin/python kiwipiepy==0.24.0 kiwipiepy-model==0.24.0

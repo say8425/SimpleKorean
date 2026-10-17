@@ -20,24 +20,26 @@ La skill funciona en los agentes que leen el [estándar Agent Skills](https://ag
 
 ### Claude Code
 
-En Claude Code, instálela como plugin. El plugin incluye el hook de inicio de sesión, el hook de revisión de escritura y el estilo de salida.
+En Claude Code, instálela como plugin. El plugin incluye el hook de inicio de sesión, el hook de revisión de escritura y el estilo de salida. El hook de inicio de sesión necesita Node.js. El hook de revisión de escritura necesita Python 3.9 o posterior.
 
 ```bash
 claude plugin marketplace add say8425/SimpleKorean && claude plugin install simple-korean@simple-korean
 ```
 
-El nombre del estilo de salida es `simple-korean:simple-korean`. Con el nombre corto no se encuentra. Elíjalo en Output style de `/config` o añada `{"outputStyle": "simple-korean:simple-korean"}` a `~/.claude/settings.json`. El hook de inicio de sesión añade un bloque de reglas de 2271 caracteres en cada sesión. El número de tokens que muestra `claude plugin details simple-korean` no incluye este bloque.
+El nombre del estilo de salida es `simple-korean:simple-korean`. Con el nombre corto no se encuentra. Elíjalo en Output style de `/config` o añada `{"outputStyle": "simple-korean:simple-korean"}` a `~/.claude/settings.json`.
+
+El hook de inicio de sesión añade un bloque de reglas de 2271 caracteres en cada sesión. El número de tokens que muestra `claude plugin details simple-korean` no incluye este bloque.
 
 ### Codex
 
-En Codex, instálela como plugin. El hook de inicio de sesión se instala con ella.
+En Codex, instálela como plugin. El hook de inicio de sesión se instala con ella. Este hook necesita Node.js.
 
 ```bash
 codex plugin marketplace add say8425/SimpleKorean
 codex plugin add simple-korean@simple-korean
 ```
 
-Antes de ejecutar un hook por primera vez, Codex pregunta si usted confía en él. El hook de inicio de sesión necesita Node.js, y el hook de revisión de escritura de Claude Code necesita Python 3.9 o posterior. Los detalles están en [`src/hooks/README.md`](../src/hooks/README.md).
+Antes de ejecutar un hook por primera vez, Codex pregunta si usted confía en él. Los detalles están en [`src/hooks/README.md`](../src/hooks/README.md).
 
 ### Otros agentes
 
@@ -270,7 +272,7 @@ Los ejemplos de uso del Instituto Nacional de la Lengua Coreana son "리포지�
 
 ### ¿Qué hago si mi empresa usa otras grafías?
 
-Ponga `.simple-korean.json` en la raíz del repositorio. El hook de inicio de sesión busca este archivo e informa al modelo de las grafías designadas que cambiaron. El linter y el hook de revisión de escritura también siguen este archivo. Avisan cuando se usa la grafía designada de antes del cambio. En una grafía designada use solo hangul, letras latinas, dígitos y espacios, hasta 20 caracteres. Puede indicar hasta 100 cadenas que se omiten (`skip`). Se ignoran las configuraciones con un formato incorrecto y los conceptos que no están en la lista de palabras.
+Ponga `.simple-korean.json` en la raíz del repositorio. El hook de inicio de sesión busca este archivo e informa al modelo de las grafías designadas que cambiaron. El linter y el hook de revisión de escritura también siguen este archivo. Avisan cuando se usa la grafía designada de antes del cambio. En una grafía designada use solo hangul, letras latinas, dígitos y espacios, hasta 20 caracteres. Puede indicar hasta 100 cadenas que se omiten (`skip`). Los dos hooks usan la configuración predeterminada en lugar de una configuración con un formato incorrecto. El linter se detiene con un error ante esa configuración. Los hooks y el linter ignoran los conceptos que no están en la lista de palabras.
 
 ```json
 {"terms": {"release": {"write": "릴리즈"}, "column": "컬럼"}, "spacing": "attached"}
@@ -297,6 +299,8 @@ SimpleKorean es un proyecto derivado no oficial. Se separó de [AminBlg/SimpleEn
 ## Contribuir
 
 Comunique sus preguntas y los errores en un issue. Los PR son bienvenidos. Un cambio que modifique las cifras publicadas debe incluir las salidas originales y pasar la verificación de cifras. La verificación de cifras necesita kiwipiepy.
+
+Ejecute estos comandos desde la raíz del repositorio:
 
 ```bash
 uv venv .venv --python 3.12 && uv pip install --python .venv/bin/python kiwipiepy==0.24.0 kiwipiepy-model==0.24.0

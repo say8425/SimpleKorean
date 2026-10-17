@@ -183,7 +183,7 @@ def results_md(results_dir, scenarios):
     return "\n\n".join([
         f"# 측정 결과 ({meta['date']})",
         f"모델은 `{meta['model']}`, effort는 `{meta['effort']}`, 판정 모델은 `{meta['judge_model']}`입니다. "
-        f"Claude Code {iso['claude_code_version']}에서 `--setting-sources \"\" --strict-mcp-config`로 돌렸습니다.",
+        f"Claude Code {iso['claude_code_version']}에서 `--setting-sources \"\" --strict-mcp-config`로 실행했습니다.",
         f"격리 확인: MCP 서버 {len(iso['mcp_servers'])}개, 플러그인 {', '.join(iso['plugins']) or '없음'}, "
         f"출력 스타일 `{iso['output_style']}`, 문제 {len(meta['isolation_problems'])}건.",
         "## README 블록",
@@ -195,7 +195,7 @@ def results_md(results_dir, scenarios):
         "- 린터는 정규식 검사입니다. 형태소 분석을 하지 않아 거짓 일치와 놓침이 있습니다. 모든 조건을 같은 린터로 쟀습니다.\n"
         "- 쉬운 단어 비율은 kiwipiepy 0.24.0으로 뽑은 내용어 가운데 국어 기초 어휘 1등급 표제어의 비율입니다.\n"
         "- 판정 모델도 Claude라서 같은 계열에 유리한 편향이 있을 수 있습니다.\n"
-        "- 조건마다 두 번씩만 돌렸습니다. 한 번 실행의 편차를 감안하세요.",
+        "- 조건마다 두 번씩만 실행했습니다. 한 번 실행의 편차를 감안하세요.",
         "다시 계산하려면 `python3 evals/report.py " + Path(results_dir).resolve().relative_to(ROOT).as_posix() + "`를 실행하세요.",
     ]) + "\n"
 

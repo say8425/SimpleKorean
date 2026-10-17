@@ -20,24 +20,26 @@ The skill runs in agents that read the [Agent Skills standard](https://agentskil
 
 ### Claude Code
 
-For Claude Code, install the plugin. The plugin contains the session-start hook, the writing-check hook, and the output style.
+For Claude Code, install the plugin. The plugin contains the session-start hook, the writing-check hook, and the output style. The session-start hook needs Node.js. The writing-check hook needs Python 3.9 or later.
 
 ```bash
 claude plugin marketplace add say8425/SimpleKorean && claude plugin install simple-korean@simple-korean
 ```
 
-The output style name is `simple-korean:simple-korean`. The short name does not work. Select it under Output style in `/config`, or put `{"outputStyle": "simple-korean:simple-korean"}` in `~/.claude/settings.json`. The session-start hook adds a rule block of 2,271 characters to each session. The token count that `claude plugin details simple-korean` shows does not include this block.
+The output style name is `simple-korean:simple-korean`. The short name does not work. Select it under Output style in `/config`, or put `{"outputStyle": "simple-korean:simple-korean"}` in `~/.claude/settings.json`.
+
+The session-start hook adds a rule block of 2,271 characters to each session. The token count that `claude plugin details simple-korean` shows does not include this block.
 
 ### Codex
 
-For Codex, install the plugin. The session-start hook installs with it.
+For Codex, install the plugin. The session-start hook installs with it. This hook needs Node.js.
 
 ```bash
 codex plugin marketplace add say8425/SimpleKorean
 codex plugin add simple-korean@simple-korean
 ```
 
-Before Codex runs a hook for the first time, it asks if you trust the hook. The session-start hook needs Node.js. The writing-check hook for Claude Code needs Python 3.9 or later. For details, see [`src/hooks/README.md`](../src/hooks/README.md).
+Before Codex runs a hook for the first time, it asks if you trust the hook. For details, see [`src/hooks/README.md`](../src/hooks/README.md).
 
 ### Other agents
 
@@ -270,7 +272,7 @@ The usage examples of the National Institute of Korean Language are "리포지�
 
 ### What if my company uses different spellings?
 
-Put `.simple-korean.json` at the top of your repository. The session-start hook finds this file and tells the model the changed designated spellings. The linter and the writing-check hook also follow this file. They warn when you use the designated spelling from before the change. A designated spelling can use only Hangul, Latin letters, digits, and spaces, up to 20 characters. You can list up to 100 strings to skip (`skip`). The skill ignores settings with a wrong format and concepts that are not in the word list.
+Put `.simple-korean.json` at the top of your repository. The session-start hook finds this file and tells the model the changed designated spellings. The linter and the writing-check hook also follow this file. They warn when you use the designated spelling from before the change. A designated spelling can use only Hangul, Latin letters, digits, and spaces, up to 20 characters. You can list up to 100 strings to skip (`skip`). The two hooks use the default settings instead of settings with a wrong format. The linter stops with an error on such settings. The hooks and the linter both ignore concepts that are not in the word list.
 
 ```json
 {"terms": {"release": {"write": "릴리즈"}, "column": "컬럼"}, "spacing": "attached"}
@@ -297,6 +299,8 @@ SimpleKorean is an unofficial derived project. It forked from [AminBlg/SimpleEng
 ## Contributing
 
 Report questions and bugs in an issue. PRs are welcome. A change to published numbers must include the raw outputs and pass the number check. The number check needs kiwipiepy.
+
+Run these commands from the repository root:
 
 ```bash
 uv venv .venv --python 3.12 && uv pip install --python .venv/bin/python kiwipiepy==0.24.0 kiwipiepy-model==0.24.0
