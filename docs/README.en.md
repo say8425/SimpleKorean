@@ -77,18 +77,10 @@ Below are two documents that the same model wrote for the same task: a troublesh
 > ## 문제 해결
 >
 > ### Postgres 연결 타임아웃
->
-> `connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근할 수 있는지 확인하세요. VPN, 방화벽, 보안 그룹의 인바운드 규칙이 흔한 원인입니다. 접근에 문제가 없다면 연결 대기 시간을 늘려 보세요.
->
-> ```
-> sqlpipe run --timeout 30s ...
-> ```
->
-> 접속 문자열의 호스트, 포트, `sslmode` 값도 다시 확인하세요. 서버가 SSL을 요구하는데 `sslmode=disable`로 되어 있으면 연결이 멈춘 것처럼 보일 수 있습니다.
+> `connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근되는지 확인하세요. `nc -zv <호스트> 5432`로 점검할 수 있습니다. 방화벽이나 보안 그룹, VPN 연결 상태도 살펴보세요. 네트워크에 문제가 없는데도 지연된다면 `--connect-timeout 30`처럼 제한 시간을 늘려 보세요. 접속 문자열의 `sslmode` 설정이 서버와 맞는지도 확인해야 합니다.
 >
 > ### S3 권한 오류
->
-> `AccessDenied` 또는 `403`이 나오면 자격 증명이 올바른지 먼저 확인하세요. `aws sts get-caller-identity`로 현재 사용 중인 계정을 볼 수 있습니다. 그다음 IAM 정책에 대상 버킷의 `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` 권한이 있는지 확인하세요. 버킷 정책과 리전 설정도 함께 점검해야 합니다.
+> `AccessDenied` 또는 `403`이 나오면 현재 자격 증명이 올바른지 `aws sts get-caller-identity`로 확인하세요. 그다음 IAM 정책에 대상 버킷의 `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` 권한이 있는지 보세요. 버킷 이름과 리전이 맞는지, 버킷 정책이 접근을 막고 있지 않은지도 확인하세요.
 <!-- simple-korean: on -->
 
 </td>
@@ -100,19 +92,18 @@ Below are two documents that the same model wrote for the same task: a troublesh
 >
 > ### Postgres 연결 타임아웃
 >
-> sqlpipe는 Postgres 포트(기본값 5432)에 연결하지 못하면 `dial tcp: i/o timeout` 오류를 내고 멈춥니다.
+> sqlpipe는 Postgres 포트에 연결하지 못하면 `dial tcp: i/o timeout` 오류를 내고 멈춥니다.
 >
-> 1. sqlpipe를 실행하는 호스트가 Postgres 포트에 연결할 수 있는지 확인하세요.
-> 2. 방화벽과 보안 그룹 규칙을 확인하세요. 보통 이 규칙이 연결을 막습니다.
-> 3. 데이터베이스가 관리형(RDS, Cloud SQL)이면, 인스턴스가 sqlpipe의 IP에서 오는 연결을 허용하는지 확인하세요.
+> 1. sqlpipe를 실행하는 호스트가 Postgres 포트(기본값 5432)에 연결할 수 있는지 확인하세요. 보통 방화벽이나 보안 그룹이 연결을 막습니다.
+> 2. 데이터베이스가 관리형(RDS, Cloud SQL)이면, 인스턴스가 sqlpipe의 IP에서 오는 연결을 허용하는지 확인하세요.
 >
 > ### S3 권한 오류
 >
-> S3 요청이 `AccessDenied` 오류로 실패하면 sqlpipe가 사용하는 자격 증명에 권한이 없다는 뜻입니다.
+> sqlpipe가 S3에 쓸 때 `AccessDenied` 오류가 나면 자격 증명에 권한이 없는 것입니다.
 >
-> 1. sqlpipe를 실행하는 호스트에서 `aws sts get-caller-identity`를 실행하세요. 이 명령은 현재 자격 증명의 계정과 역할을 보여 줍니다.
-> 2. 그 역할의 IAM 정책이 대상 버킷에 `s3:GetObject`와 `s3:PutObject`를 허용하는지 확인하세요.
-> 3. 버킷 정책이 해당 역할을 거부하는지 확인하세요.
+> 1. sqlpipe를 실행하는 호스트에서 어떤 자격 증명을 쓰는지 확인하세요.
+> 2. 그 자격 증명의 IAM 정책이 대상 버킷의 `s3:PutObject`를 허용하는지 확인하세요.
+> 3. 버킷 정책이 해당 자격 증명을 거부하면 버킷 정책을 고치세요.
 <!-- simple-korean: on -->
 
 </td>
@@ -131,12 +122,12 @@ We calculated all numbers below again from the committed raw outputs. On each pu
 <!-- benchmark:start evals/results/2026-10-17 -->
 ### Replies
 
-We asked 8 questions 2 times in each condition. Each question contains one technical term. There are 32 replies in total. With the skill on, reader-visible defects (em-dashes, bold text, tables, a header or list on the first line) fell by 100% (from 130 to 0). In a blind judgment of 16 pairs, the SimpleKorean reply won 16, tied 0, and lost 0.
+We asked 8 questions 2 times in each condition. Each question contains one technical term. There are 32 replies in total. With the skill on, reader-visible defects (em-dashes, bold text, tables, a header or list on the first line) fell by 100% (from 139 to 0). In a blind judgment of 16 pairs, the SimpleKorean reply won 14, tied 2, and lost 0.
 
 | Condition | Replies | Mean eojeol | Mean sentences | em-dash | Bold | Tables | First-line header or list | Headers | Bullets | Greetings and sign-offs |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| No skill | 16 | 238 | 29.6 | 0 | 122 | 2 | 6 | 41 | 186 | 12 |
-| SimpleKorean | 16 | 167 | 20.8 | 0 | 0 | 0 | 0 | 12 | 73 | 2 |
+| No skill | 16 | 235 | 28.6 | 0 | 130 | 3 | 6 | 44 | 189 | 14 |
+| SimpleKorean | 16 | 193 | 25.8 | 0 | 0 | 0 | 0 | 49 | 135 | 3 |
 
 ### Documents
 
@@ -144,9 +135,9 @@ The model wrote each of 8 sqlpipe documentation tasks 2 times in each condition.
 
 | Condition | Documents | Errors per 100 eojeol | Warnings per 100 eojeol | Translationese per 100 eojeol | Designated spelling rate | Easy word rate | Longest sentence |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| No skill | 16 | 0.00 | 0.96 | 0.28 | 95.1% | 42.2% | 21 eojeol |
-| Default mode | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 43.3% | 12 eojeol |
-| Strict mode | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 42.2% | 15 eojeol |
+| No skill | 16 | 0.14 | 0.97 | 0.28 | 95.1% | 39.7% | 19 eojeol |
+| Default mode | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 42.9% | 15 eojeol |
+| Strict mode | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 42.9% | 14 eojeol |
 
 The raw outputs, the spelling distribution, and the test conditions are in [`evals/results/2026-10-17/RESULTS.md`](../evals/results/2026-10-17/RESULTS.md).
 <!-- benchmark:end -->

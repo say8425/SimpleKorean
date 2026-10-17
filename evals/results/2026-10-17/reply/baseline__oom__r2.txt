@@ -1,60 +1,54 @@
-# OOMKilled 원인과 해결
-
 ## 무슨 일이 일어나는가
 
-컨테이너의 메모리 사용량이 `resources.limits.memory`를 넘으면 리눅스 커널의 cgroup OOM killer가 프로세스를 강제 종료합니다. 종료 코드는 **137**(SIGKILL)입니다. 그러면 kubelet이 `restartPolicy`에 따라 컨테이너를 재시작합니다. 같은 이유로 계속 죽으면 재시작 간격이 점점 길어지고, 상태가 `CrashLoopBackOff`로 보입니다.
+OOMKilled는 컨테이너가 **메모리 limit을 초과**해서 리눅스 커널의 OOM killer가 프로세스를 강제 종료(exit code 137, SIGKILL)했다는 뜻입니다. kubelet은 `restartPolicy`에 따라 컨테이너를 다시 띄우고, 같은 일이 반복되면 `CrashLoopBackOff`로 재시작 간격이 점점 늘어납니다.
 
-참고로 이 OOM은 파드가 속한 **노드**의 메모리가 부족할 때 일어나는 축출(Evicted)과는 다릅니다. OOMKilled는 해당 컨테이너가 자기 limit을 넘겼다는 뜻입니다.
+중요한 점은 다음과 같습니다.
+- 메모리는 압축 불가능한 자원이라 CPU처럼 throttling되지 않고 **바로 kill**됩니다.
+- 기준은 노드 전체 메모리가 아니라 **컨테이너의 `resources.limits.memory`**(cgroup 한도)입니다. 노드 자체의 메모리 부족이면 파드가 `Evicted`되는 경우도 있어 구분해야 합니다.
+- cgroup이 세는 메모리에는 힙뿐 아니라 page cache, 스레드 스택, 네이티브/off-heap 메모리도 포함됩니다.
 
 ## 먼저 확인할 것
 
 ```bash
-# 마지막 종료 사유 확인 (Reason: OOMKilled, Exit Code: 137)
-kubectl describe pod <pod> | grep -A5 "Last State"
-
-# 현재 사용량 vs limit
-kubectl top pod <pod> --containers
+kubectl describe pod <pod> | grep -A5 "Last State"   # Reason: OOMKilled, Exit Code: 137
 kubectl get pod <pod> -o jsonpath='{.spec.containers[*].resources}'
-
-# 죽기 직전 로그
-kubectl logs <pod> --previous
+kubectl top pod <pod> --containers                    # 실제 사용량
+kubectl logs <pod> --previous                         # 죽기 직전 로그
 ```
 
-Prometheus를 쓴다면 `container_memory_working_set_bytes`의 추이도 보세요. 우상향이면 누수이고, 시작 직후 급등이면 limit이 너무 낮은 것입니다.
+Grafana/Prometheus가 있다면 `container_memory_working_set_bytes`를 limit과 비교해 보세요. 시간에 따라 계속 오르면 **메모리 누수**, 시작/특정 요청 때 급등하면 **limit이 너무 낮거나 스파이크**입니다.
 
 ## 원인별 조치
 
-**1. limit이 실제 필요량보다 낮은 경우** (가장 흔함)
-```yaml
-resources:
-  requests:
-    memory: "512Mi"
-  limits:
-    memory: "1Gi"   # 정상 피크 사용량의 1.2~1.5배 정도
-```
-`requests`는 평균 사용량에, `limits`는 피크에 맞춥니다. 안정성이 중요하면 requests와 limits를 같게 두어 QoS를 Guaranteed로 만드는 것도 방법입니다.
+1. **limit이 실제 필요량보다 낮음** (가장 흔함)
+   ```yaml
+   resources:
+     requests:
+       memory: "512Mi"
+     limits:
+       memory: "1Gi"   # 평소 사용량의 약 1.5~2배 여유
+   ```
+   requests는 평소 사용량, limits는 피크 기준으로 잡습니다. 중요한 워크로드는 requests = limits로 두면 QoS가 Guaranteed가 되어 안정적입니다.
 
-**2. 애플리케이션 메모리 누수**
-limit만 올리면 죽는 시점이 늦춰질 뿐입니다. 힙 덤프나 프로파일링으로 원인을 찾아야 합니다.
+2. **런타임이 컨테이너 limit을 모름**
+   - **JVM**: 힙만 제한하면 metaspace·스레드·direct buffer가 추가로 쓰입니다. `-XX:MaxRAMPercentage=70` 정도로 설정하고 힙을 limit의 100%로 잡지 마세요.
+   - **Node.js**: `--max-old-space-size`를 limit보다 낮게(예: limit의 75%) 설정.
+   - **Go**: `GOMEMLIMIT`을 limit의 약 90%로 설정.
+   - **Python**: 큰 데이터를 한 번에 로드하거나 워커 수가 과다하지 않은지 확인.
 
-**3. 런타임이 컨테이너 limit을 모르는 경우**
-- **JVM**: 힙이 limit보다 커지면 죽습니다. 힙 외 메모리(메타스페이스, 스레드 스택, 다이렉트 버퍼)도 고려해야 합니다.
-  `-XX:MaxRAMPercentage=70.0` 정도로 설정하세요(JDK 10 이상은 컨테이너를 인식합니다).
-- **Node.js**: `--max-old-space-size`를 limit의 약 75% 이하로 설정합니다.
-- **Go**: `GOMEMLIMIT`을 limit의 90% 정도로 설정합니다.
+3. **메모리 누수 / 무제한 캐시 / 큰 요청 처리**
+   - 시간이 지날수록 사용량이 우상향하면 코드 문제입니다. 힙 덤프나 프로파일러(pprof, async-profiler 등)로 확인하세요.
+   - 인메모리 캐시에 크기 상한을 두고, 대용량 파일·쿼리 결과는 스트리밍/페이지네이션으로 처리하세요.
 
-**4. 일시적 스파이크**
-대용량 파일 처리, 대량 쿼리, 캐시 워밍 같은 작업은 스트리밍이나 배치 크기 조정으로 줄입니다. 부하에 따라 늘어나는 구조라면 HPA로 파드 수를 늘리는 것도 방법입니다.
+4. **트래픽 증가** → limit만 올리지 말고 HPA로 replica를 늘리는 것도 고려하세요.
 
-**5. 사이드카나 tmpfs**
-`emptyDir`에 `medium: Memory`를 쓰면 그 용량도 컨테이너 메모리로 계산됩니다. 사이드카(istio-proxy 등)가 따로 죽는 경우도 있으니 컨테이너별로 확인하세요.
+5. **사이드카 포함 여부**: 파드 안에 여러 컨테이너(istio-proxy 등)가 있으면 어느 컨테이너가 죽는지 `describe`로 확인하세요.
 
 ## 권장 순서
 
-1. `describe`로 어느 컨테이너가 OOMKilled인지 확인
-2. 메모리 추이를 보고 누수인지 limit 부족인지 판단
-3. limit 부족이면 limit을 올리고, 런타임 메모리 옵션을 limit에 맞춤
-4. 누수이면 프로파일링으로 수정
-5. 장기적으로는 VPA(추천 모드)로 적정값을 산출
+1. `describe`로 어떤 컨테이너가 OOMKilled인지 확인
+2. 모니터링으로 누수인지 스파이크인지 구분
+3. 임시 대응으로 limit을 올려 재시작을 멈춤
+4. 근본 원인(런타임 설정, 누수, 캐시)을 수정하고 limit을 적정값으로 재조정
 
-사용 중인 언어와 런타임, `kubectl describe pod` 출력, 메모리 추이를 알려주시면 더 구체적인 값을 제안해 드리겠습니다.
+`describe` 출력, 사용 언어/런타임, 현재 resources 설정을 알려 주시면 구체적인 수치까지 같이 잡아 드릴 수 있습니다.

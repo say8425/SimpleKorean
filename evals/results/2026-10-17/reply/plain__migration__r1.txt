@@ -1,22 +1,35 @@
-백필(backfill)은 이미 있는 행의 새 컬럼에 값을 채우는 작업입니다. NOT NULL 컬럼은 모든 행에 값이 있어야 하기 때문에 DBA가 이 작업을 요구한 것입니다.
+백필(backfill)은 테이블에 이미 있는 행에 새 컬럼의 값을 채우는 작업입니다. NOT NULL 컬럼은 모든 행에 값이 있어야 하기 때문에 이 작업이 필요합니다.
 
-마이그레이션이 멈춘 이유는 DB가 20GB 전체를 한 트랜잭션(한 번에 성공하거나 실패하는 작업 단위)으로 고치려 하기 때문입니다. 그동안 테이블 잠금이 유지되어 다른 쿼리도 대기합니다. DB 종류와 버전에 따라 상수 기본값만 주면 즉시 끝나기도 하지만, 이 경우에는 해당하지 않는 것으로 보입니다.
+## 멈춘 이유
 
-해야 할 일은 다음 순서입니다.
+기본값 없이 NOT NULL 컬럼을 추가하면 데이터베이스가 기존 행 전체를 처리해야 합니다. 20GB 테이블에서는 이 처리가 오래 걸립니다. 그동안 테이블 잠금(lock)이 다른 쿼리를 막을 수 있습니다.
 
-1. 멈춘 마이그레이션을 취소합니다. 롤백(되돌리기)에 시간이 걸릴 수 있으므로 DBA와 함께 세션을 종료합니다.
-2. NULL을 허용하는 컬럼으로 먼저 추가합니다. 이 변경은 보통 메타데이터만 바꾸므로 빠릅니다.
-3. 새로 쓰는 행에 값이 들어가도록 애플리케이션 코드를 배포합니다.
-4. 기존 행을 기본키 범위로 나눠 채웁니다. 한 번에 1만에서 10만 행씩 갱신하고, 배치 사이에 짧게 쉬어서 복제 지연과 잠금을 줄입니다.
-5. `WHERE new_col IS NULL`인 행이 0개인지 확인합니다.
-6. NOT NULL 제약을 추가합니다.
+## 해야 할 일
 
-PostgreSQL이면 6단계를 아래처럼 나누세요. 이렇게 하면 전체 테이블 잠금 시간이 짧아집니다. 테이블과 컬럼 이름은 예시입니다.
+아래 절차는 PostgreSQL 12 이상을 기준으로 합니다. `t`, `c`, `id`는 실제 테이블, 컬럼, 기본 키 이름으로 바꾸세요.
+
+1. DBA에게 확인한 뒤 멈춘 마이그레이션을 취소하세요. 롤백에도 시간이 걸릴 수 있습니다.
+2. 컬럼을 NULL 허용으로 추가하세요.
+3. 새 행에 값을 쓰는 애플리케이션 코드를 배포하세요.
+4. 기존 행을 배치(batch)로 나눠 백필하세요.
+5. 백필이 끝나면 NOT NULL 제약을 거세요.
 
 ```sql
-ALTER TABLE t ADD CONSTRAINT t_col_nn CHECK (col IS NOT NULL) NOT VALID;
-ALTER TABLE t VALIDATE CONSTRAINT t_col_nn;
-ALTER TABLE t ALTER COLUMN col SET NOT NULL;
+ALTER TABLE t ADD COLUMN c integer;
+
+-- 0행이 갱신될 때까지 반복하세요. 배치마다 커밋해야 합니다.
+UPDATE t SET c = 0
+WHERE id IN (SELECT id FROM t WHERE c IS NULL ORDER BY id LIMIT 10000);
+
+ALTER TABLE t ADD CONSTRAINT t_c_nn CHECK (c IS NOT NULL) NOT VALID;
+ALTER TABLE t VALIDATE CONSTRAINT t_c_nn;
+ALTER TABLE t ALTER COLUMN c SET NOT NULL;
+ALTER TABLE t DROP CONSTRAINT t_c_nn;
 ```
 
-MySQL이나 다른 DB를 쓰면 DB 종류와 버전을 알려 주세요. 그에 맞는 방법을 안내하겠습니다.
+배치로 나누면 한 번에 잡는 잠금이 짧아집니다. `NOT VALID`로 추가한 제약은 새 쓰기만 검사하고, `VALIDATE`는 쓰기를 막지 않고 기존 행을 검사합니다. PostgreSQL 12 이상에서는 검증된 제약이 있으면 `SET NOT NULL`이 전체 스캔을 건너뜁니다.
+
+## 예외
+
+- 채울 값이 상수이고 PostgreSQL 11 이상이면 `ADD COLUMN c integer NOT NULL DEFAULT 0`이 바로 끝납니다. 이 경우 백필이 필요 없습니다.
+- MySQL이면 이 방식이 맞지 않습니다. `gh-ost`나 `pt-online-schema-change` 같은 온라인 스키마 변경 도구를 DBA와 함께 선택하세요.
