@@ -191,3 +191,10 @@ def test_cli_rejects_type_invalid_config_without_traceback():
         doc.write_text("로그를 읽으세요.\n", encoding="utf-8")
         r = run_cli(str(doc))
         assert r.returncode != 0 and ".simple-korean.json" in r.stderr and "Traceback" not in r.stderr, r.stderr
+
+
+def test_haera_document_with_anida_is_not_a_register_mix():
+    text = "이 보고서는 해라체로 쓴다. 변화의 방향은 한쪽이 아니다. 결과는 표에 있다.\n"
+    assert ko_lint.lint(text, config={})["violations"].get("register_mix", 0) == 0
+    mixed = "이 보고서는 해라체로 쓴다. 결과는 표에 있습니다. 변화는 크다.\n"
+    assert ko_lint.lint(mixed, config={})["violations"].get("register_mix", 0) == 1

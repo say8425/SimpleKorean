@@ -11,6 +11,7 @@ from functools import lru_cache
 HANGUL_FIRST = 0xAC00
 HANGUL_LAST = 0xD7A3
 JONG_RIEUL = 8  # 받침 28종 가운데 ㄹ의 번호. 0은 받침 없음이다.
+JONG_BIEUP = 17  # 받침 ㅂ의 번호. 합쇼체 어미 "-ㅂ니다", "-ㅂ니까"는 '니' 앞 음절에 이 받침이 있다.
 
 OFF_REGION = re.compile(
     r"<!--\s*simple-korean:\s*off\s*-->.*?(?:<!--\s*simple-korean:\s*on\s*-->|\Z)", re.S)
@@ -247,8 +248,11 @@ def register(sentence):
     t = tail(sentence)
     if t.endswith(("십시오", "시오")):
         return "hapsyo_imp"
-    if t.endswith(("니다", "니까")):
+    # t[-3]은 '니다', '니까' 바로 앞 음절이다. '아니다'처럼 받침 ㅂ이 없으면 합쇼체가 아니다.
+    if t.endswith(("니다", "니까")) and len(t) >= 3 and jongseong(t[-3]) == JONG_BIEUP:
         return "hapsyo"
+    if t.endswith("니까"):
+        return None  # '죽었으니까'의 '-니까'는 연결 어미라 문체를 알려 주지 않는다.
     if t.endswith("세요"):
         return "haeyo_imp"
     if t.endswith("죠") or _haeyo(t):
