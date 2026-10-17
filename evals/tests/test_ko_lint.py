@@ -190,6 +190,10 @@ def test_reply_fillers():
     assert ko_lint.reply_fillers("로그를 보내 주시면 원인을 더 좁혀 드릴 수 있습니다.") == (False, True)
     assert ko_lint.reply_fillers("설정을 올려 주시면 맞는지 보겠습니다.") == (False, True)
     assert ko_lint.reply_fillers("요청을 보내 주시면 서버가 응답합니다.") == (False, False)
+    # 동사와 상관없이 "주시면 … 겠습니다"와, 두 문장에 나눈 "알려 주세요. … 겠습니다"도 센다
+    assert ko_lint.reply_fillers("다음 정보를 주시면 대괄호를 채워 다시 쓰겠습니다.") == (False, True)
+    assert ko_lint.reply_fillers("원인을 찾았다면 결과를 알려 주세요. 그에 맞춰 다음 단계를 안내하겠습니다.") == (False, True)
+    assert ko_lint.reply_fillers("배포가 끝나면 결과를 알려 주세요.") == (False, False)
     assert ko_lint.reply_fillers("필요하면 다시 실행하세요. 로그는 남습니다.") == (False, False)
     assert ko_lint.reply_fillers("빌드가 실패한 이유는 디스크입니다.") == (False, False)
 
