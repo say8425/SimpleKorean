@@ -25,6 +25,8 @@ CODE = re.compile(r"`[^`\n]*`")
 # 항목 끝의 "예:"나 쌍점은 뒤에 오던 코드의 머리말이므로 떼고 본다
 LEAD_IN = re.compile(r"(?:\s*예)?\s*:\s*\.?\s*$")
 TRAIL = re.compile(r"[\s.!?:;,)\]\"'”’…]+$")
+# 문장 끝 뒤에 붙은 괄호 덧붙임("…확인하세요(예: X).")은 떼고 본다
+PAREN = re.compile(r"\s*\([^()]*\)[\s.!?]*$")
 NOUN_YO = ("필요", "개요", "주요", "중요", "요망", "수요")
 NOUN_END = re.compile(r"(?:함|음|임|됨|필요|예정|가능|불가|완료|요망|바람|것)$")
 # "그러므로"를 "므로"보다 먼저 두어 한 번만 센다
@@ -37,7 +39,10 @@ def load(name):
 
 def is_sentence(text):
     """코드와 끝 부호를 뗀 항목이 문장 끝(다, 까, 죠, 요)으로 끝나면 참. 명사형 끝과 '필요' 같은 명사는 뺀다."""
-    t = TRAIL.sub("", LEAD_IN.sub("", CODE.sub("", text)))
+    t = LEAD_IN.sub("", CODE.sub("", text))
+    while PAREN.search(t):
+        t = PAREN.sub("", t)
+    t = TRAIL.sub("", t)
     if not t or NOUN_END.search(t) or t.endswith(NOUN_YO):
         return False
     return t.endswith(("다", "까", "죠", "요"))
@@ -73,8 +78,12 @@ def main():
               f"연결어 10문장당 {10 * sum(s['links'] for s in ss) / sent:.2f}, 답당 {sum(s['links'] for s in ss) / len(ss):.2f}  "
               f"항목 답당 {sum(s['items'] for s in ss) / len(ss):.2f}  결함 {sum(s['defects'] for s in ss)}")
     short = [(a, s) for a, s in shapes["permit"] if s["chars"] < 700]
-    print(f"허용의 700자 미만 답 {len(short)}개: 헤더 쓴 답 {sum(1 for _, s in short if s['headers'])}, "
-          f"목록 쓴 답 {sum(1 for _, s in short if s['items'])}")
+    print(f"허용의 700자 미만 답 {len(short)}개({min(s['chars'] for _, s in short)}~{max(s['chars'] for _, s in short)}자): "
+          f"헤더 쓴 답 {sum(1 for _, s in short if s['headers'])}, 목록 쓴 답 {sum(1 for _, s in short if s['items'])}")
+    types = {p["id"]: p["type"] for p in json.loads((HERE / "prompts.json").read_text(encoding="utf-8"))}
+    bare = [(a, s) for a, s in shapes["mandate"] if not s["headers"] and types[a["id"]] in ("조언", "개념과 영향", "비교와 판단")]
+    print(f"조건부 의무에서 조언, 개념과 영향, 비교와 판단 질문의 답 {len(bare)}개: 헤더 쓴 답 0, "
+          f"{min(s['chars'] for _, s in bare)}~{max(s['chars'] for _, s in bare)}자")
 
     length = {k: len(v) for k, v in by.items()}
     for name in ("judge-opus.jsonl", "judge-jev.jsonl"):
@@ -88,6 +97,12 @@ def main():
                 line.append(f"{k} {c[x]}-{c[y]}-{c['tie']}")
             print(f"{x} 대 {y} (n={len(rs)}): " + ", ".join(line))
         main_recs = [r for r in recs if tuple(r["pair"]) in PAIRS[:3]]
+        for x, y in PAIRS[:3]:
+            c = Counter(r["winner"]["overall"] for r in main_recs if tuple(r["pair"]) == (x, y) and types[r["id"]] == "문제 해결")
+            print(f"문제 해결 질문 8쌍의 overall, {x} 대 {y}: {c[x]}-{c[y]}-{c['tie']}")
+        wins = [f"{r['pair'][1] if r['pair'][0] == 'prohibit' else r['pair'][0]} 상대 {r['id']} r{r['run']}" for r in main_recs
+                if r["winner"]["overall"] == "prohibit"]
+        print(f"금지가 overall에서 이긴 쌍 {len(wins)}개: " + ", ".join(wins))
         for k in KEYS:
             decided = [r for r in main_recs if r["winner"][k] != "tie"]
             longer = sum(1 for r in decided if r["winner"][k] == max(r["pair"], key=lambda c: length[(c, r["id"], r["run"])]))
