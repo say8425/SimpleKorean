@@ -14,7 +14,7 @@ NBSP = " "
 TEXT = {
     "ko": {
         "reply_intro": "### 답변\n\n전문용어가 하나씩 든 질문 {questions}개를 조건마다 {runs}번씩 물었습니다. 답변은 모두 {total}개입니다. ",
-        "headline": ("스킬을 켜면 화면에 드러나는 결함(em-dash, 굵은 글씨, 헤더, 불릿)이 {cut} 줄었습니다({base}개에서 {plain}개). "
+        "headline": ("스킬을 켜면 화면에 드러나는 결함(em-dash, 굵은 글씨)이 {cut} 줄었습니다({base}개에서 {plain}개). "
                      "블라인드 판정에서 SimpleKorean 답변은 {n}쌍 가운데 {wins}쌍에서 이겼고, "
                      "{ties}쌍에서 비겼고, {losses}쌍에서 졌습니다."),
         "reply_header": "| 조건 | 답변 수 | 평균 어절 | 평균 문장 | em-dash | 굵은 글씨 | 헤더 | 불릿 | 인사말과 맺음말 |",
@@ -34,7 +34,7 @@ TEXT = {
     "en": {
         "reply_intro": ("### Replies\n\nWe asked {questions} questions {runs} times in each condition. "
                         "Each question contains one technical term. There are {total} replies in total. "),
-        "headline": ("With the skill on, reader-visible defects (em-dashes, bold text, headers, bullets) fell by {cut} "
+        "headline": ("With the skill on, reader-visible defects (em-dashes, bold text) fell by {cut} "
                      "(from {base} to {plain}). In a blind judgment of {n} pairs, the SimpleKorean reply won {wins}, "
                      "tied {ties}, and lost {losses}."),
         "reply_header": ("| Condition | Replies | Mean eojeol | Mean sentences | em-dash | Bold | Headers | Bullets | "
@@ -57,7 +57,7 @@ TEXT = {
     },
     "ja": {
         "reply_intro": "### 回答\n\n専門用語を1つずつ含む質問{questions}個を、条件ごとに{runs}回ずつ尋ねました。回答は全部で{total}個です。",
-        "headline": ("スキルを有効にすると、読者に見える欠陥（em-dash、太字、見出し、箇条書き）が{cut}減りました"
+        "headline": ("スキルを有効にすると、読者に見える欠陥（em-dash、太字）が{cut}減りました"
                      "（{base}個から{plain}個）。ブラインド判定では、SimpleKorean の回答が{n}組のうち{wins}組で勝ち、"
                      "{ties}組で引き分け、{losses}組で負けました。"),
         "reply_header": "| 条件 | 回答数 | 平均語節数 | 平均文数 | em-dash | 太字 | 見出し | 箇条書き | 挨拶と結び |",
@@ -78,7 +78,7 @@ TEXT = {
     },
     "zh": {
         "reply_intro": "### 回答\n\n我们把 {questions} 个问题在每个条件下各问了 {runs} 次，每个问题含一个专业术语，共得到 {total} 个回答。",
-        "headline": ("启用技能后，读者能看到的缺陷（em-dash、粗体、标题、列表符号）减少了 {cut}（从 {base} 个降到 {plain} 个）。"
+        "headline": ("启用技能后，读者能看到的缺陷（em-dash、粗体）减少了 {cut}（从 {base} 个降到 {plain} 个）。"
                      "在 {n} 组盲评中，SimpleKorean 的回答赢了 {wins} 组，平了 {ties} 组，输了 {losses} 组。"),
         "reply_header": "| 条件 | 回答数 | 平均语节数 | 平均句数 | em-dash | 粗体 | 标题 | 列表符号 | 问候语和结束语 |",
         "doc_intro": ("### 文档\n\nsqlpipe 的 {tasks} 个文档任务在每个条件下各写了 {runs} 次。比率是检查器的计数除以语节数得到的值。"
@@ -98,7 +98,7 @@ TEXT = {
     "es": {
         "reply_intro": ("### Respuestas\n\nHicimos {questions} preguntas {runs} veces en cada condición. "
                         "Cada pregunta contiene un término técnico. En total hay {total} respuestas. "),
-        "headline": ("Con la skill activada, los defectos visibles para el lector (em-dash, negritas, encabezados, viñetas) "
+        "headline": ("Con la skill activada, los defectos visibles para el lector (em-dash, negritas) "
                      "bajaron un {cut} (de {base} a {plain}). En una evaluación a ciegas de {n} pares, la respuesta de "
                      "SimpleKorean ganó {wins}, empató {ties} y perdió {losses}."),
         "reply_header": ("| Condición | Respuestas | Media de eojeol | Media de oraciones | em-dash | Negritas | "

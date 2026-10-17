@@ -28,7 +28,7 @@ claude plugin marketplace add say8425/SimpleKorean && claude plugin install simp
 
 出力スタイルの名前は `simple-korean:simple-korean` です。短い名前では見つかりません。`/config` の Output style で選ぶか、`~/.claude/settings.json` に `{"outputStyle": "simple-korean:simple-korean"}` を書いてください。
 
-セッション開始フックは、セッションごとに2,271文字のルールブロックを追加します。`claude plugin details simple-korean` が表示するトークン数には、このブロックは含まれません。
+セッション開始フックは、セッションごとに2,379文字のルールブロックを追加します。`claude plugin details simple-korean` が表示するトークン数には、このブロックは含まれません。
 
 ### Codex
 
@@ -151,7 +151,7 @@ sqlpipe の文書課題8個を、条件ごとに2回ずつ書きました。比�
 
 | ルール | 防ぐもの |
 |---|---|
-| 地の文で答えます。見出し、箇条書き、太字、表を使いません | 1行で済む答えを囲む書式 |
+| 見出しと箇条書きは構造を示すときだけ使います。太字と表は使いません | 1行で済む答えを囲む書式 |
 | 最初の文に答えを書きます | 質問を繰り返す前置き |
 | em-dash を使いません | 半分だけつなげた考え |
 | 概念を表す用語は、初めて使うときに短く説明します | 読者が調べなければならない用語 |

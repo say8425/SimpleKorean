@@ -28,7 +28,7 @@ claude plugin marketplace add say8425/SimpleKorean && claude plugin install simp
 
 El nombre del estilo de salida es `simple-korean:simple-korean`. Con el nombre corto no se encuentra. Elíjalo en Output style de `/config` o añada `{"outputStyle": "simple-korean:simple-korean"}` a `~/.claude/settings.json`.
 
-El hook de inicio de sesión añade un bloque de reglas de 2271 caracteres en cada sesión. El número de tokens que muestra `claude plugin details simple-korean` no incluye este bloque.
+El hook de inicio de sesión añade un bloque de reglas de 2379 caracteres en cada sesión. El número de tokens que muestra `claude plugin details simple-korean` no incluye este bloque.
 
 ### Codex
 
@@ -151,7 +151,7 @@ Las respuestas de chat usan estas reglas en todos los modos.
 
 | Regla | Lo que evita |
 |---|---|
-| Responda en prosa. No use encabezados, viñetas, negritas ni tablas | Formato alrededor de una respuesta de una sola línea |
+| Use encabezados y listas solo para mostrar estructura. No use negritas ni tablas | Formato alrededor de una respuesta de una sola línea |
 | Escriba la respuesta en la primera oración | Una introducción que repite la pregunta |
 | No use em-dash | Ideas unidas solo a medias |
 | Explique brevemente un término conceptual la primera vez que lo use | Términos que el lector tiene que buscar |

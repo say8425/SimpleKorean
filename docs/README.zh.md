@@ -28,7 +28,7 @@ claude plugin marketplace add say8425/SimpleKorean && claude plugin install simp
 
 输出样式的名称是 `simple-korean:simple-korean`。用短名称找不到它。请在 `/config` 的 Output style 中选择，或者在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。
 
-会话启动钩子会在每个会话中加入 2,271 个字符的规则块。`claude plugin details simple-korean` 显示的 token 数不包含这个规则块。
+会话启动钩子会在每个会话中加入 2,379 个字符的规则块。`claude plugin details simple-korean` 显示的 token 数不包含这个规则块。
 
 ### Codex
 
@@ -151,7 +151,7 @@ sqlpipe 的 8 个文档任务在每个条件下各写了 2 次。比率是检查
 
 | 规则 | 防止的问题 |
 |---|---|
-| 用连贯的段落回答，不用标题、列表符号、粗体和表格 | 一行就能回答的内容外面套着格式 |
+| 只在需要表现结构时使用标题和列表，不用粗体和表格 | 一行就能回答的内容外面套着格式 |
 | 在第一句写出答案 | 重复问题的开场白 |
 | 不用 em-dash | 只连接了一半的想法 |
 | 概念术语第一次出现时，简短解释 | 读者需要另外查的术语 |

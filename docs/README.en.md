@@ -28,7 +28,7 @@ claude plugin marketplace add say8425/SimpleKorean && claude plugin install simp
 
 The output style name is `simple-korean:simple-korean`. The short name does not work. Select it under Output style in `/config`, or put `{"outputStyle": "simple-korean:simple-korean"}` in `~/.claude/settings.json`.
 
-The session-start hook adds a rule block of 2,271 characters to each session. The token count that `claude plugin details simple-korean` shows does not include this block.
+The session-start hook adds a rule block of 2,379 characters to each session. The token count that `claude plugin details simple-korean` shows does not include this block.
 
 ### Codex
 
@@ -151,7 +151,7 @@ Chat replies use these rules in all modes.
 
 | Rule | What it stops |
 |---|---|
-| Answer in prose. Do not use headers, bullets, bold text, or tables | Formatting around a one-line answer |
+| Use headers and lists only to show structure. Do not use bold text or tables | Formatting around a one-line answer |
 | Put the answer in the first sentence | An opening that repeats the question |
 | Do not use em-dashes | Thoughts that are only half joined |
 | Explain a concept term briefly when you first use it | Terms that the reader must look up |

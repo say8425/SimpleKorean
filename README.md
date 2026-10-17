@@ -28,7 +28,7 @@ claude plugin marketplace add say8425/SimpleKorean && claude plugin install simp
 
 출력 스타일 이름은 `simple-korean:simple-korean`입니다. Claude Code는 짧은 이름으로는 이 스타일을 찾지 못합니다. `/config`의 Output style에서 고르거나, `~/.claude/settings.json`에 `{"outputStyle": "simple-korean:simple-korean"}`을 넣으세요.
 
-세션 시작 훅은 세션마다 규칙 블록 2,271자를 넣습니다. `claude plugin details simple-korean`이 보여 주는 토큰 수에는 이 블록이 들어가지 않습니다.
+세션 시작 훅은 세션마다 규칙 블록 2,379자를 넣습니다. `claude plugin details simple-korean`이 보여 주는 토큰 수에는 이 블록이 들어가지 않습니다.
 
 ### Codex
 
@@ -155,7 +155,7 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 
 | 규칙 | 막는 것 |
 |---|---|
-| 서술형으로 답합니다. 헤더, 불릿, 굵은 글씨, 표를 쓰지 않습니다 | 한 줄짜리 답을 둘러싼 서식 |
+| 헤더와 목록은 구조를 나타낼 때만 씁니다. 굵은 글씨와 표는 쓰지 않습니다 | 한 줄짜리 답을 둘러싼 서식 |
 | 첫 문장에 답을 씁니다 | 질문을 되풀이하는 머리말 |
 | em-dash를 쓰지 않습니다 | 반쯤 이어 붙인 생각 |
 | 개념 용어는 처음 쓸 때 짧게 풀이합니다 | 따로 찾아봐야 하는 용어 |

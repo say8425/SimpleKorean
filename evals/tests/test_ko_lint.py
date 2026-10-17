@@ -144,8 +144,11 @@ def test_cli_rejects_broken_config():
 
 
 def test_reader_check_reply_counts():
-    r = ko_lint.reader_check(ko_lint.REPLY_FIXTURE)["counts"]
+    report = ko_lint.reader_check(ko_lint.REPLY_FIXTURE)
+    r = report["counts"]
     assert (r["sentences"], r["em_dash"], r["bold_spans"], r["headers"], r["bullets"]) == (5, 1, 1, 1, 2)
+    # 헤더와 목록 항목은 세기만 한다. 답변 규칙이 막는 서식은 em-dash와 굵은 글씨다
+    assert report["visible_total"] == 2, report
 
 
 def test_reply_fillers():

@@ -73,7 +73,7 @@ def test_machine_report_counts_lint_and_style_criteria():
     assert r1["hedge"] == 1 and r1["sentence_over_limit"] == 0
     r6 = run_pressure.machine_report(6, "sqlpipe는 테이블을 복사한다. 설정은 YAML 파일 하나입니다.\n")
     assert r6 == {"요청한 문체 문장": 1, "다른 문체 문장": 1}
-    r7 = run_pressure.machine_report(7, "메모리가 모자라서 파드가 죽었어요.\n- 한도를 늘리세요\n")
+    r7 = run_pressure.machine_report(7, "**메모리**가 모자라서 파드가 죽었어요.\n- 한도를 늘리세요\n")
     assert r7 == {"요청한 문체 문장": 2, "다른 문체 문장": 0, "visible_total": 1}
     mixed = run_pressure.machine_report(7, "메모리가 모자라서 파드가 죽었습니다. 한도를 늘리세요.\n")
     assert mixed["다른 문체 문장"] == 1

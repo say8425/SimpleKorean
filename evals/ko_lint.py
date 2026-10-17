@@ -123,8 +123,9 @@ def reply_fillers(text):
 def reader_check(text):
     """채팅 답변에서 독자가 보는 것을 센다.
 
-    sentences는 목록 항목과 표 행도 문장으로 센다. 답변 규칙에는 문장 수 상한이 없으므로
-    visible_total에는 넣지 않는다.
+    visible_total은 답변 규칙이 막는 서식인 em-dash와 굵은 글씨의 합이다. 헤더와 목록 항목은
+    구조를 나타낼 때 쓸 수 있으므로 세기만 하고 넣지 않는다. sentences는 목록 항목과 표 행도
+    문장으로 센다. 답변 규칙에는 문장 수 상한이 없으므로 visible_total에는 넣지 않는다.
     """
     text = ko_text.nfc(text)
     prose = re.sub(r"```.*?```", " ", text, flags=re.S)
@@ -142,7 +143,7 @@ def reader_check(text):
         "opener": int(opener),
         "closer": int(closer),
     }
-    visible = counts["em_dash"] + counts["bold_spans"] + counts["headers"] + counts["bullets"]
+    visible = counts["em_dash"] + counts["bold_spans"]
     return {"type": "reply", "eojeol": max(1, len(no_md.split())), "counts": counts, "visible_total": visible}
 
 
