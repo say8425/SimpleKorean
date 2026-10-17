@@ -135,8 +135,8 @@ Hicimos 8 preguntas 2 veces en cada condición. Cada pregunta contiene un térmi
 
 | Condición | Respuestas | Media de eojeol | Media de oraciones | em-dash | Negritas | Tablas | Encabezado o lista en la primera línea | Encabezados | Viñetas | Saludos y despedidas |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Sin skill | 16 | 238 | 29.6 | 0 | 122 | 2 | 6 | 41 | 186 | 11 |
-| SimpleKorean | 16 | 167 | 20.8 | 0 | 0 | 0 | 0 | 12 | 73 | 0 |
+| Sin skill | 16 | 238 | 29.6 | 0 | 122 | 2 | 6 | 41 | 186 | 12 |
+| SimpleKorean | 16 | 167 | 20.8 | 0 | 0 | 0 | 0 | 12 | 73 | 2 |
 
 ### Documentos
 

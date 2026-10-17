@@ -184,6 +184,10 @@ def test_reply_fillers():
     assert ko_lint.reply_fillers("답입니다. 도움이 되셨기를 바랍니다.") == (False, True)
     assert ko_lint.reply_fillers("원인은 디스크입니다. 원하시면 스크립트를 고쳐 드리겠습니다.") == (False, True)
     assert ko_lint.reply_fillers("그래프를 알려주시면 원인을 더 좁혀 드리겠습니다.") == (False, True)
+    # "드리다" 없이 제안하는 맺음말도 센다
+    assert ko_lint.reply_fillers("클라이언트를 알려 주시면 해당 코드에 맞춰 수정안을 쓰겠습니다.") == (False, True)
+    assert ko_lint.reply_fillers("설정 파일을 보여 주시면 다시 정리할게요.") == (False, True)
+    assert ko_lint.reply_fillers("필요하면 다시 실행하세요. 로그는 남습니다.") == (False, False)
     assert ko_lint.reply_fillers("빌드가 실패한 이유는 디스크입니다.") == (False, False)
 
 

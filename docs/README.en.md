@@ -135,8 +135,8 @@ We asked 8 questions 2 times in each condition. Each question contains one techn
 
 | Condition | Replies | Mean eojeol | Mean sentences | em-dash | Bold | Tables | First-line header or list | Headers | Bullets | Greetings and sign-offs |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| No skill | 16 | 238 | 29.6 | 0 | 122 | 2 | 6 | 41 | 186 | 11 |
-| SimpleKorean | 16 | 167 | 20.8 | 0 | 0 | 0 | 0 | 12 | 73 | 0 |
+| No skill | 16 | 238 | 29.6 | 0 | 122 | 2 | 6 | 41 | 186 | 12 |
+| SimpleKorean | 16 | 167 | 20.8 | 0 | 0 | 0 | 0 | 12 | 73 | 2 |
 
 ### Documents
 

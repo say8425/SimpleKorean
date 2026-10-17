@@ -107,9 +107,13 @@ def wide_code_lines(text):
     """코드 블록 안에서 CELL_CODE_COLUMNS칸보다 넓은 줄의 목록."""
     wide, fence = [], None
     for line in text.splitlines():
-        mark = line.lstrip()[:3]
-        if mark in ("```", "~~~") and fence in (None, mark):
-            fence = None if fence else mark
+        run = re.match(r"[^\S\n]{0,3}(`{3,}|~{3,})", line)
+        if run and fence is None:
+            fence = run.group(1)
+            continue
+        # 닫는 울타리는 여는 것과 같은 글자로, 같거나 더 길게 쓰고 뒤에 다른 글이 없어야 한다
+        if run and run.group(1)[0] == fence[0] and len(run.group(1)) >= len(fence) and not line[run.end():].strip():
+            fence = None
             continue
         if fence and sum(2 if unicodedata.east_asian_width(c) in ("W", "F") else 1 for c in line) > CELL_CODE_COLUMNS:
             wide.append(line)

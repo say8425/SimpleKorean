@@ -146,6 +146,8 @@ def test_readme_pick_is_pre_registered_and_has_no_wide_code_line():
         # 한글은 두 칸으로 센다
         assert with_code("가" * (mx.CELL_CODE_COLUMNS // 2 + 1)) != []
         assert mx.wide_code_lines("~~~\n" + "x" * 60 + "\n```\n" + "y" * 60 + "\n~~~\n" + "z" * 60) == ["x" * 60, "y" * 60]
+        # 네 개짜리 울타리 안의 세 개짜리 울타리는 닫지 않는다
+        assert mx.wide_code_lines("````\n```\n" + "a" * 60 + "\n```\n````\n" + "b" * 60) == ["a" * 60]
 
 
 def test_check_benchmark_catches_stale_numbers_and_missing_changelog_path():
