@@ -1,0 +1,73 @@
+먼저 `df`로 어느 디렉터리가 큰지 보고, 그다음 Postgres 안에서 큰 테이블과 쌓인 WAL을 찾으세요. 흔한 원인은 WAL(변경 내용을 먼저 기록하는 로그 파일), 죽은 튜플(dead tuple, 지워졌지만 남은 행), 로그 파일, 큰 테이블입니다.
+
+## 1. 서버에서 큰 디렉터리 찾기
+
+데이터 디렉터리 경로는 환경마다 다릅니다. 아래는 예시입니다.
+
+```bash
+df -h
+sudo du -h --max-depth=1 /var/lib/postgresql/*/main | sort -h
+```
+
+결과에서 `pg_wal`이 크면 WAL이 쌓인 것입니다. `base`가 크면 테이블과 인덱스가 큰 것입니다. 로그 디렉터리가 크면 로그 로테이션을 확인해야 합니다.
+
+## 2. Postgres 안에서 원인 찾기
+
+데이터베이스별 크기입니다.
+
+```sql
+SELECT datname, pg_size_pretty(pg_database_size(datname))
+FROM pg_database
+ORDER BY pg_database_size(datname) DESC;
+```
+
+큰 테이블 상위 20개입니다. 인덱스와 TOAST(큰 값을 따로 저장하는 영역)를 포함한 크기입니다.
+
+```sql
+SELECT relid::regclass AS name,
+       pg_size_pretty(pg_total_relation_size(relid)) AS total
+FROM pg_statio_user_tables
+ORDER BY pg_total_relation_size(relid) DESC
+LIMIT 20;
+```
+
+죽은 튜플이 많은 테이블입니다.
+
+```sql
+SELECT relname, n_live_tup, n_dead_tup, last_autovacuum
+FROM pg_stat_user_tables
+ORDER BY n_dead_tup DESC
+LIMIT 20;
+```
+
+복제 슬롯(replication slot, 구독자가 읽을 때까지 WAL을 붙잡는 장치)이 붙잡은 WAL 크기입니다. primary에서 실행하세요.
+
+```sql
+SELECT slot_name, active,
+       pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(), restart_lsn)) AS retained
+FROM pg_replication_slots;
+```
+
+`active`가 `false`이고 `retained`가 크면, 죽은 슬롯이 WAL을 붙잡고 있는 것입니다. 이 경우가 가장 급하게 디스크를 채웁니다.
+
+## 3. 공간 비우기
+
+가장 빠르고 안전한 순서로 적었습니다.
+
+1. 오래된 로그를 압축하거나 삭제하세요. 로그 로테이션 설정도 확인하세요.
+2. 슬롯의 소비자가 더 이상 없음을 확인했으면 슬롯을 지우세요. 지우면 그 구독자나 replica는 처음부터 다시 동기화해야 합니다.
+   ```sql
+   SELECT pg_drop_replication_slot('슬롯_이름');
+   ```
+3. 필요 없는 데이터는 `DROP` 또는 `TRUNCATE`로 지우세요. 오래된 파티션을 `DROP`하면 공간이 바로 돌아옵니다.
+4. 안 쓰는 인덱스를 찾아 지우세요. `pg_stat_user_indexes`에서 `idx_scan = 0`인 인덱스가 후보입니다.
+5. 죽은 튜플이 많으면 `VACUUM`을 실행하세요. 장기 트랜잭션이 vacuum을 막고 있지 않은지 `pg_stat_activity`에서 먼저 확인하세요.
+
+## 주의할 점
+
+- `pg_wal` 안의 파일을 직접 지우면 안 됩니다. 서버가 복구할 수 없게 될 수 있습니다. 슬롯과 보관 설정을 고쳐서 Postgres가 스스로 지우게 하세요.
+- 일반 `VACUUM`은 공간을 OS에 거의 돌려주지 않습니다. 테이블 끝부분만 줄어듭니다.
+- 디스크 여유 공간이 테이블 크기보다 작으면 `VACUUM FULL`을 실행하면 안 됩니다. 이 명령은 테이블을 통째로 다시 쓰고 그동안 테이블을 잠급니다. 운영 중에는 `pg_repack` 확장이 대안입니다.
+- 위 방법으로 부족하면 디스크를 증설하세요. 지금 이미 100%에 가깝다면 증설을 먼저 하세요. 디스크가 가득 차면 Postgres가 멈춥니다.
+
+원인이 어느 쪽인지 알려 주시면 그 경우의 절차를 더 자세히 안내하겠습니다.

@@ -42,14 +42,23 @@ BOLD = re.compile(r"\*\*[^*\n]+\*\*")
 HEADER = re.compile(r"^#{1,6}\s", re.M)
 # 줄 앞 공백은 [^\S\n]*로 센다. re.M에서 \s*는 빈 줄을 넘어가서, 빈 줄이 많으면 시간이 제곱으로 는다.
 BULLET = re.compile(r"^[^\S\n]*([-*+]|\d+[.)])\s", re.M)
+# 표의 구분 줄(|---|:-:|)을 센다. 보통 표 하나에 한 줄이다. 인용 블록 안의 표와 한 열짜리 "---|" 표는
+# 세지 않는다. 모든 칸이 "-"인 데이터 행과 "--|--" 줄은 표로 센다.
+TABLE_RULE = re.compile(r"^[^\S\n]*(?:\|[^\S\n]*:?-+:?[^\S\n]*(?:\|[^\S\n]*:?-+:?[^\S\n]*)*\|?"
+                        r"|:?-+:?[^\S\n]*(?:\|[^\S\n]*:?-+:?[^\S\n]*)+\|?)[^\S\n]*$", re.M)
+# 빈 줄을 건너뛴 첫 줄이 헤더나 목록 항목인지 본다. 네 칸 이상 들여 쓴 줄은 코드로 보고 세지 않는다.
+# "요약\n---" 같은 밑줄 헤더는 놓치고, 첫 줄의 "* * *"는 목록으로 센다.
+LEAD_STRUCTURE = re.compile(r"\A(?:[^\S\n]*\n)*[^\S\n]{0,3}(?:#{1,6}\s|[-*+]\s|\d+[.)]\s)")
 OPENER = re.compile(  # 공백도 \W이므로 앞부분은 \W* 하나로 쓴다. \s*\W*는 같은 공백을 나눠 갖느라 느리다.
     r"^\W*(?:좋은\s?질문|훌륭한\s?질문|물론(?:입니다|이죠|이에요|요)"
     r"|네[,.!]?\s*(?:알겠습니다|좋습니다|맞습니다)"
     r"|[^.!?\n]{0,40}에\s?대해\s?(?:설명|알아보|살펴보)[^.!?\n]{0,12}겠습니다)")
+# 아직 놓치는 맺음말: "주시면 … ㄹ 수 있습니다", "받으면/필요하면 … 쓰겠습니다", 문장 안 인라인 코드에 마침표가 있는 제안.
 CLOSER = re.compile(
     r"도움이\s?(?:되셨|되었으면|되길|됐으면|되었기를)"
     r"|궁금한\s?(?:점|사항)이\s?(?:있으시면|있다면|있으면)|언제든(?:지)?\s?(?:물어|말씀|문의|질문)"
-    r"|(?:원하시면|필요하시면|알려\s?주시면|말씀해\s?주시면)[^.!?\n]{0,60}(?:드리겠습니다|드릴게요|드릴\s수\s있습니다)")
+    r"|(?:원하시면|필요하시면|(?:[^\s.!?]{1,20}\s?)?주시면|알려\s?주세요[.!]?\s+[^.!?\n]{0,40})[^.!?\n]{0,60}"
+    r"(?:겠습니다|드릴게요|할게요|드릴\s수\s있습니다)")
 
 
 def _config(config, path):
@@ -123,6 +132,9 @@ def reply_fillers(text):
 def reader_check(text):
     """채팅 답변에서 독자가 보는 것을 센다.
 
+    visible_total은 답변 규칙이 막는 서식의 합이다. em-dash, 굵은 글씨, 표, 첫 줄의 헤더나 목록(lead_structure)을
+    더한다. lead_structure는 코드 블록을 뺀 첫 줄이 헤더나 목록 항목이면 1이다. 답변 규칙은 답을 쓴 첫 문장
+    뒤에 헤더와 목록을 두게 한다. 그 밖의 헤더와 목록 항목은 답의 내용과 길이를 보고 쓸 수 있으므로 세기만 한다.
     sentences는 목록 항목과 표 행도 문장으로 센다. 답변 규칙에는 문장 수 상한이 없으므로
     visible_total에는 넣지 않는다.
     """
@@ -139,10 +151,12 @@ def reader_check(text):
         "bold_spans": len(BOLD.findall(prose)),
         "headers": len(HEADER.findall(prose)),
         "bullets": len(BULLET.findall(prose)),
+        "tables": len(TABLE_RULE.findall(prose)),
+        "lead_structure": int(bool(LEAD_STRUCTURE.match(prose))),
         "opener": int(opener),
         "closer": int(closer),
     }
-    visible = counts["em_dash"] + counts["bold_spans"] + counts["headers"] + counts["bullets"]
+    visible = counts["em_dash"] + counts["bold_spans"] + counts["tables"] + counts["lead_structure"]
     return {"type": "reply", "eojeol": max(1, len(no_md.split())), "counts": counts, "visible_total": visible}
 
 

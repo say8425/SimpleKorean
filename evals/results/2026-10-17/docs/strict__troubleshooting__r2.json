@@ -1,0 +1,13 @@
+{
+  "text": "한국어 통제 언어 국가 표준은 없습니다. 이 기준은 KS A 0001과 공개 연구를 바탕으로 한 비공식 기준입니다.\n\n## 문제 해결\n\n### Postgres 연결 타임아웃\n\nsqlpipe는 Postgres에 연결하지 못하면 `dial tcp: i/o timeout` 오류를 내고 멈춥니다. 보통 방화벽이나 보안 그룹이 연결을 막습니다.\n\n1. sqlpipe를 실행하는 호스트에서 Postgres 포트(기본값 5432)에 연결할 수 있는지 확인하세요.\n2. 데이터베이스가 관리형(RDS, Cloud SQL)이면 인스턴스가 sqlpipe의 IP에서 오는 연결을 허용하는지 확인하세요.\n\n### S3 권한 오류\n\nsqlpipe는 S3 버킷에 쓸 권한이 없으면 `AccessDenied` 오류를 내고 멈춥니다.\n\n1. sqlpipe를 실행하는 호스트의 자격 증명(credentials)이 올바른지 확인하세요.\n2. 해당 자격 증명의 IAM 정책에 대상 버킷의 `s3:PutObject` 권한이 있는지 확인하세요.\n3. 버킷 정책이 해당 자격 증명의 쓰기를 막지 않는지 확인하세요.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 494,
+  "cost_usd": 0.057521899999999994,
+  "duration_ms": 3966,
+  "condition": "strict",
+  "scenario": "troubleshooting",
+  "type": "procedural",
+  "run": 2
+}

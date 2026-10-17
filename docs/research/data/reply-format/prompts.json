@@ -1,0 +1,98 @@
+[
+ {
+  "id": "why-timeout",
+  "type": "짧은 설명",
+  "source": "bench",
+  "prompt": "배포 스크립트가 타임아웃이 나면 /v2/orders에 POST를 다시 보냅니다. 안전한가요? 엔드포인트가 멱등하다는데 정확히 무슨 뜻인지 모르겠어요. 짧게 설명해 주세요."
+ },
+ {
+  "id": "pick-db",
+  "type": "조언",
+  "source": "bench",
+  "prompt": "Postgres 테이블 하나에 행이 4천만 개 있고 읽기가 느립니다. 누가 샤딩 얘기를 하던데, 먼저 뭘 해야 하나요?"
+ },
+ {
+  "id": "cert-error",
+  "type": "문제 해결",
+  "source": "bench",
+  "prompt": "사내 API에 curl을 보내면 'SSL certificate problem: unable to get local issuer certificate'가 나옵니다. 무슨 일이고 어떻게 고치나요?"
+ },
+ {
+  "id": "queue-lag",
+  "type": "개념과 영향",
+  "source": "bench",
+  "prompt": "Kafka 대시보드에서 컨슈머 랙이 200만까지 올라갑니다. 나쁜 건가요? 사용자에게는 무슨 뜻인가요?"
+ },
+ {
+  "id": "oom",
+  "type": "문제 해결",
+  "source": "bench",
+  "prompt": "쿠버네티스 파드가 OOMKilled 상태로 계속 재시작됩니다. 무슨 일이 일어나는 건지, 뭘 바꿔야 하는지 설명해 주세요."
+ },
+ {
+  "id": "rate-limit",
+  "type": "개념과 판단",
+  "source": "bench",
+  "prompt": "API를 사용자당 분당 100회로 제한하려고 합니다. 동료가 토큰 버킷을 추천했는데, 쉽게 설명해 주고 맞는 방법인지 알려 주세요."
+ },
+ {
+  "id": "migration",
+  "type": "문제 해결",
+  "source": "bench",
+  "prompt": "20GB 테이블에 NOT NULL 컬럼을 추가했더니 마이그레이션이 멈췄어요. DBA가 백필이 필요하다는데, 그게 뭐고 뭘 해야 하나요?"
+ },
+ {
+  "id": "cache",
+  "type": "문제 해결",
+  "source": "bench",
+  "prompt": "가격을 바꾸면 사용자가 최대 10분 동안 예전 가격을 봅니다. DB 앞에 Redis를 두고 있어요. 왜 그렇고 어떻게 고치나요?"
+ },
+ {
+  "id": "commit-amend",
+  "type": "짧은 방법",
+  "source": "new",
+  "prompt": "방금 만든 커밋의 메시지에 오타가 있어요. 아직 푸시하지 않았는데, 메시지만 고치려면 어떻게 하나요?"
+ },
+ {
+  "id": "pg-setup",
+  "type": "긴 절차",
+  "source": "new",
+  "prompt": "macOS에 Postgres 16을 처음 설치하려고 합니다. Homebrew로 설치하고, 앱 전용 사용자와 데이터베이스를 만들고, psql로 접속해 확인하는 데까지 순서대로 알려 주세요."
+ },
+ {
+  "id": "grpc-rest",
+  "type": "비교와 판단",
+  "source": "new",
+  "prompt": "사내 서비스끼리 통신할 때 gRPC와 REST 가운데 무엇을 쓸지 정해야 합니다. 팀은 Go와 TypeScript를 쓰고, 브라우저에서 직접 부르는 API도 일부 있습니다. 어떻게 판단하면 될까요?"
+ },
+ {
+  "id": "status-report",
+  "type": "작업 보고",
+  "source": "new",
+  "prompt": "아래는 오늘 끝낸 작업 기록입니다. 이 기록으로 팀 채널에 올릴 작업 결과 보고를 써 주세요.\n\n- 변경: 결제 웹훅 처리기를 큐 기반으로 바꿈(webhook-handler, 파일 3개). 재시도는 지수 백오프, 최대 5회.\n- 테스트: 단위 테스트 142개 통과. 통합 테스트 1개 실패(test_refund_webhook). 스테이징 Stripe 키 만료가 원인으로 보임. 코드 문제 아님.\n- 측정: 스테이징에서 웹훅 처리 p95 지연 820ms에서 140ms로 줄어듦.\n- 남은 일: 운영 배포 전에 DBA가 webhook_events 테이블 인덱스 추가를 승인해야 함. 배포 창은 목요일 오후 2시.\n- 결정 필요: 실패한 웹훅을 7일 보관할지 30일 보관할지. 30일이면 저장 용량이 월 약 40GB 늘어남."
+ },
+ {
+  "id": "code-review",
+  "type": "코드 리뷰",
+  "source": "new",
+  "prompt": "이 함수를 코드 리뷰해 주세요.\n\n```python\ndef get_user(id):\n    conn = psycopg2.connect(DB_URL)\n    cur = conn.cursor()\n    cur.execute(f\"SELECT * FROM users WHERE id = {id}\")\n    row = cur.fetchone()\n    return {\"id\": row[0], \"name\": row[1], \"email\": row[2]}\n```"
+ },
+ {
+  "id": "probes",
+  "type": "개념 비교",
+  "source": "new",
+  "prompt": "쿠버네티스의 readiness probe와 liveness probe는 무엇이 다른가요? 둘 다 같은 /health 엔드포인트를 써도 되나요?"
+ },
+ {
+  "id": "exec-brief",
+  "type": "비개발자 설명",
+  "source": "new",
+  "prompt": "어제 결제가 40분 동안 실패했습니다. 원인은 결제 대행사 연동에 쓰는 인증서가 만료된 것이었습니다. 개발을 모르는 경영진에게 무슨 일이었는지와 재발 방지책을 설명해야 합니다. 어떻게 말하면 될까요?"
+ },
+ {
+  "id": "split-plan",
+  "type": "계획",
+  "source": "new",
+  "prompt": "모놀리스에서 결제 기능만 떼어 내 별도 서비스로 만들려고 합니다. 팀은 4명이고 다운타임은 허용되지 않습니다. 어떤 순서로 진행하면 될까요?"
+ }
+]

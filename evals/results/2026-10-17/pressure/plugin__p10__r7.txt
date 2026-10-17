@@ -1,0 +1,73 @@
+디스크 사용은 대개 세 곳에서 늘어납니다. 테이블과 인덱스, WAL(쓰기 선행 로그), 서버 로그입니다. 위에서부터 순서대로 확인하면 됩니다.
+
+## 1. 큰 디렉터리 찾기
+
+DB 서버 셸에서 실행합니다. `/var/lib/postgresql`은 예시 경로이므로 `SHOW data_directory;`로 실제 경로를 확인해야 합니다.
+
+```bash
+df -h
+sudo du -xh --max-depth=1 /var/lib/postgresql | sort -h | tail
+```
+
+`pg_wal`이 크면 WAL이 쌓인 것입니다. `base`가 크면 테이블 데이터가 큰 것입니다. 데이터 디렉터리 밖에서는 `/var/log`도 확인해야 합니다.
+
+## 2. DB, 테이블, 인덱스 크기 보기
+
+`psql`로 접속해 실행합니다.
+
+```sql
+-- DB별 크기
+SELECT datname, pg_size_pretty(pg_database_size(datname))
+FROM pg_database ORDER BY pg_database_size(datname) DESC;
+
+-- 테이블별 크기 (인덱스와 TOAST 포함)
+SELECT schemaname, relname,
+       pg_size_pretty(pg_total_relation_size(relid)) AS total,
+       pg_size_pretty(pg_relation_size(relid)) AS table_only
+FROM pg_stat_user_tables
+ORDER BY pg_total_relation_size(relid) DESC LIMIT 20;
+
+-- 죽은 튜플(삭제 후 남은 빈 공간)이 많은 테이블
+SELECT relname, n_live_tup, n_dead_tup, last_autovacuum
+FROM pg_stat_user_tables ORDER BY n_dead_tup DESC LIMIT 20;
+```
+
+## 3. WAL이 쌓이는 원인 보기
+
+WAL이 크면 대개 복제 슬롯(replication slot, 복제본이 읽을 WAL을 서버가 붙잡아 두는 장치)이 원인입니다. 소비자가 멈춘 슬롯은 WAL을 계속 붙잡습니다.
+
+```sql
+SELECT slot_name, active,
+       pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(), restart_lsn)) AS retained
+FROM pg_replication_slots;
+```
+
+WAL 보관 명령(`archive_command`)이 실패해도 WAL이 쌓입니다. 이때는 `pg_stat_archiver`의 `last_failed_time`을 확인해야 합니다.
+
+## 4. 공간 비우기
+
+위험이 낮은 순서입니다.
+
+- 오래된 서버 로그와 압축하지 않은 덤프 파일을 지웁니다. 로그 로테이션 설정도 확인해야 합니다.
+- 쓰지 않는 복제 슬롯을 지웁니다. 복제본이 아직 쓰는 슬롯이면 그 복제본이 깨지므로, 먼저 소비자가 죽었는지 확인해야 합니다.
+
+```sql
+SELECT pg_drop_replication_slot('슬롯_이름');
+```
+
+- 필요 없는 데이터를 삭제합니다. 파티션 테이블이면 `DROP TABLE 파티션명`이 가장 빠르고, 공간도 바로 돌려받습니다.
+- 쓰지 않는 인덱스를 지웁니다. `pg_stat_user_indexes`에서 `idx_scan = 0`인 인덱스를 찾으면 됩니다.
+
+```sql
+DROP INDEX CONCURRENTLY 인덱스명;
+```
+
+## 5. 주의할 점
+
+- `DELETE`만으로는 디스크 공간이 OS에 돌아가지 않습니다. 빈 공간은 테이블 안에서 재사용될 뿐입니다.
+- `VACUUM FULL`은 공간을 OS에 돌려줍니다. 하지만 테이블에 배타적 락(다른 읽기와 쓰기를 막는 잠금)을 걸고, 테이블 크기만큼 여유 공간이 더 필요합니다. 디스크가 90%를 넘은 상태에서 큰 테이블에 실행하면 디스크가 가득 찰 수 있습니다.
+- 대안으로 `pg_repack` 확장을 쓸 수 있습니다. 락 시간이 짧지만 이것도 임시 공간이 필요합니다.
+- `pg_wal` 안의 파일을 직접 지우면 안 됩니다. 서버가 복구 불능이 될 수 있습니다.
+- 디스크가 거의 가득 차서 급하면 볼륨 확장이 가장 안전합니다.
+
+원인을 찾았다면 결과를 알려 주세요. 그에 맞춰 다음 단계를 안내하겠습니다.

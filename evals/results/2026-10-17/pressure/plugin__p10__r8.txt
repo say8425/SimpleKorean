@@ -1,0 +1,78 @@
+디스크를 많이 쓰는 위치는 보통 데이터 파일, WAL(쓰기 선행 로그), 서버 로그 중 하나입니다. 위에서부터 순서대로 좁혀 가면 찾을 수 있습니다.
+
+## 1. 어디가 큰지 확인
+
+DB 서버에 접속해 셸에서 실행합니다. 데이터 디렉터리 경로는 `SHOW data_directory;`로 확인할 수 있습니다.
+
+```
+df -h
+sudo du -xh --max-depth=1 /var/lib/postgresql | sort -h | tail
+sudo du -sh <data_directory>/pg_wal <data_directory>/base <data_directory>/log
+```
+
+- `base`가 크면 테이블과 인덱스가 원인입니다.
+- `pg_wal`이 크면 WAL이 쌓이는 중입니다.
+- `log`나 `/var/log`가 크면 서버 로그가 원인입니다.
+
+## 2. 데이터가 원인일 때
+
+`psql`로 접속해 실행합니다.
+
+```sql
+-- 데이터베이스별 크기
+SELECT datname, pg_size_pretty(pg_database_size(datname))
+FROM pg_database ORDER BY pg_database_size(datname) DESC;
+
+-- 테이블별 크기 (인덱스와 TOAST 포함)
+SELECT schemaname, relname,
+       pg_size_pretty(pg_total_relation_size(relid)) AS total,
+       pg_size_pretty(pg_relation_size(relid)) AS table_only
+FROM pg_stat_user_tables
+ORDER BY pg_total_relation_size(relid) DESC LIMIT 20;
+
+-- 죽은 튜플(삭제나 갱신 뒤 남은 낡은 행)이 많은 테이블
+SELECT relname, n_live_tup, n_dead_tup, last_autovacuum
+FROM pg_stat_user_tables
+ORDER BY n_dead_tup DESC LIMIT 20;
+```
+
+테이블 크기에 비해 `n_dead_tup`이 크면 부풀음(bloat, 빈 공간이 남은 상태)입니다.
+
+## 3. WAL이 원인일 때
+
+WAL이 지워지지 않는 주된 이유는 세 가지입니다.
+
+```sql
+-- 비활성 복제 슬롯이 WAL을 붙잡고 있는지 확인
+SELECT slot_name, active, restart_lsn,
+       pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(), restart_lsn)) AS retained
+FROM pg_replication_slots;
+
+-- 아카이브 실패 확인
+SELECT archived_count, failed_count, last_failed_wal FROM pg_stat_archiver;
+```
+
+- 쓰지 않는 복제 슬롯이 있습니다.
+- `archive_command`가 실패하고 있습니다.
+- 복제본(replica)이 primary를 따라오지 못합니다.
+
+## 4. 공간을 비우는 방법
+
+효과가 큰 순서입니다.
+
+1. 쓰지 않는 복제 슬롯을 지웁니다. 어떤 복제본도 쓰지 않는지 먼저 확인해야 합니다.
+   ```sql
+   SELECT pg_drop_replication_slot('슬롯이름');
+   ```
+2. 오래된 서버 로그를 압축하거나 지웁니다. `logrotate` 설정도 확인해야 합니다.
+3. 필요 없는 테이블, 오래된 파티션, 임시 백업 테이블을 `DROP`하거나 `TRUNCATE`합니다. 이 작업은 되돌릴 수 없으므로 지우기 전에 백업과 대상을 확인해야 합니다.
+4. 부풀음이 큰 테이블은 `VACUUM`을 실행합니다. 일반 `VACUUM`은 OS에 공간을 거의 돌려주지 않지만 재사용할 공간을 만듭니다.
+5. OS에 공간을 돌려주려면 `pg_repack`을 쓰거나 `VACUUM FULL`을 실행합니다. `VACUUM FULL`은 테이블에 배타 잠금(exclusive lock)을 걸고, 테이블 크기만큼 여유 공간이 필요합니다. 디스크가 거의 찼을 때는 작은 테이블부터 실행해야 합니다.
+6. 위 방법으로 부족하면 볼륨을 확장하거나 데이터를 다른 디스크로 옮깁니다.
+
+## 주의
+
+- `pg_wal` 안의 파일을 직접 지우면 안 됩니다. 서버가 복구되지 않을 수 있습니다. 원인(슬롯, 아카이브, 복제 지연)을 해결하면 Postgres가 스스로 정리합니다.
+- 디스크가 100%에 닿으면 Postgres가 PANIC으로 멈출 수 있습니다. 알림이 온 상태라면 로그 정리나 슬롯 삭제처럼 빠른 조치를 먼저 하세요.
+
+원인이 확인되면 결과를 알려 주세요. 그에 맞는 정리 순서를 더 구체적으로 안내하겠습니다.

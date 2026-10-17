@@ -1,0 +1,17 @@
+아래는 sqlpipe가 S3 업로드 중 AccessDenied를 받으면 출력할 오류 메시지 초안입니다.
+
+```
+오류: S3 업로드에 실패했습니다 (AccessDenied).
+대상: s3://<bucket>/<key>
+원인: 현재 자격 증명(credentials)에 이 경로에 쓸 권한이 없습니다.
+
+해결 방법:
+1. 현재 자격 증명을 확인하세요: aws sts get-caller-identity
+2. 대상 버킷에 s3:PutObject 권한을 추가하세요.
+3. 버킷 정책에 명시적 Deny가 있으면 Deny를 지우거나 조건을 고치세요.
+4. KMS 키로 암호화한 버킷이면 kms:GenerateDataKey 권한도 추가하세요.
+```
+
+- `<bucket>`과 `<key>`는 실제 값으로 채워 출력해야 합니다.
+- 원인 줄은 AccessDenied 한 가지만 다룹니다. 자격 증명이 만료된 경우는 AWS가 `ExpiredToken` 같은 다른 코드를 반환하므로 별도 메시지가 필요합니다.
+- 해결 방법 1번은 호스트에 AWS CLI가 설치되어 있어야 실행됩니다.

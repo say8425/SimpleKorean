@@ -42,10 +42,11 @@ def test_parse_scenarios_rejects_missing_prompt():
         raise AssertionError("프롬프트 없는 시나리오를 받아들였습니다")
 
 
-def test_real_file_has_nine_numbered_scenarios():
+def test_real_file_has_ten_numbered_scenarios():
     got = run_pressure.parse_scenarios(run_pressure.TESTS_MD.read_text(encoding="utf-8"))
-    assert [s["n"] for s in got] == list(range(1, 10))
+    assert [s["n"] for s in got] == list(range(1, 11))
     assert got[8]["prompt"].startswith("Write a git commit message")
+    assert "디스크 사용량이 90%" in got[9]["prompt"]
     assert all(len(s["prompt"]) > 20 for s in got)
     assert "시도되어지며" in got[1]["prompt"] and "해요체로" in got[6]["prompt"]
 
@@ -73,12 +74,14 @@ def test_machine_report_counts_lint_and_style_criteria():
     assert r1["hedge"] == 1 and r1["sentence_over_limit"] == 0
     r6 = run_pressure.machine_report(6, "sqlpipe는 테이블을 복사한다. 설정은 YAML 파일 하나입니다.\n")
     assert r6 == {"요청한 문체 문장": 1, "다른 문체 문장": 1}
-    r7 = run_pressure.machine_report(7, "메모리가 모자라서 파드가 죽었어요.\n- 한도를 늘리세요\n")
+    r7 = run_pressure.machine_report(7, "**메모리**가 모자라서 파드가 죽었어요.\n- 한도를 늘리세요\n")
     assert r7 == {"요청한 문체 문장": 2, "다른 문체 문장": 0, "visible_total": 1}
     mixed = run_pressure.machine_report(7, "메모리가 모자라서 파드가 죽었습니다. 한도를 늘리세요.\n")
     assert mixed["다른 문체 문장"] == 1
     r8 = run_pressure.machine_report(8, "백업은 반드시 하루에 한 번 실행해야 합니다.\n")
     assert r8["strict_ending"] == 1
+    r10 = run_pressure.machine_report(10, "## 원인\n\n**로그**가 쌓였습니다.\n")
+    assert r10 == {"visible_total": 2, "lead_structure": 1}, r10
     assert run_pressure.machine_report(4, "아무 글입니다.") == {}
     assert run_pressure.machine_report(9, "fix: handle an empty CSV header row") == {"한글 비율": 0.0}
 

@@ -1,0 +1,48 @@
+**무슨 일인가요**
+
+curl이 서버가 보낸 인증서 체인을 검증하다가, 체인의 루트(또는 중간) CA를 신뢰 목록(CA 번들)에서 찾지 못했다는 뜻입니다. 사내 API에서는 보통 다음 중 하나가 원인입니다.
+
+1. 사내 API가 **사설(내부) CA**로 서명한 인증서를 쓰고, 그 CA가 curl이 쓰는 CA 번들에 없는 경우 (가장 흔함)
+2. 서버가 **중간 인증서를 빠뜨리고** 리프 인증서만 보내는 경우 (서버 설정 문제)
+3. VPN, 프록시, 보안 솔루션이 **TLS를 가로채서(SSL inspection)** 자체 CA로 재서명하는 경우
+
+**원인 확인**
+
+```sh
+# 서버가 보내는 체인과 검증 결과 확인
+openssl s_client -connect api.internal.example.com:443 -showcerts </dev/null
+
+# 발급자(issuer) 확인
+curl -vI https://api.internal.example.com 2>&1 | grep -i -E "issuer|subject|verify"
+```
+
+- 출력에 `Verify return code: 21 (unable to verify the first certificate)`가 나오면 서버가 중간 인증서를 안 보내는 경우(2번)입니다.
+- `19` 또는 `20`이 나오면 루트 CA를 모르는 경우(1번, 3번)입니다.
+
+**해결 방법**
+
+*A. 사내 루트 CA를 지정합니다. (권장, 일회성)*
+```sh
+curl --cacert /path/to/company-root-ca.pem https://api.internal.example.com
+```
+환경변수로 지정할 수도 있습니다.
+```sh
+export CURL_CA_BUNDLE=/path/to/company-root-ca.pem
+```
+사내 루트 CA 파일은 보통 IT/보안팀이나 사내 위키에서 받을 수 있습니다.
+
+*B. macOS 시스템 키체인에 신뢰 등록합니다. (영구)*
+```sh
+sudo security add-trusted-cert -d -r trustRoot \
+  -k /Library/Keychains/System.keychain company-root-ca.pem
+```
+Apple 제공 `/usr/bin/curl`은 키체인을 쓰지만, Homebrew로 설치한 curl이나 Python, Node 등은 자체 번들을 쓸 수 있습니다. 그런 경우에는 A처럼 번들을 지정해야 합니다. 예: Node는 `NODE_EXTRA_CA_CERTS`, Python requests는 `REQUESTS_CA_BUNDLE`.
+
+*C. 서버 쪽 수정 (2번 원인일 때)*
+서버나 로드밸런서가 리프 인증서와 중간 인증서를 합친 **fullchain**을 보내도록 설정해야 합니다. 서버 담당자에게 요청하세요.
+
+**피해야 할 방법**
+
+`curl -k` / `--insecure`는 검증을 완전히 끄므로 중간자 공격에 노출됩니다. 임시로 연결 여부만 확인할 때만 쓰고, 스크립트나 운영 코드에는 넣지 마세요.
+
+원인 확인 명령의 출력(민감한 정보 제외)을 알려주시면 어느 경우인지 더 정확히 짚어드리겠습니다.

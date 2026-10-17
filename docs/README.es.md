@@ -28,7 +28,7 @@ claude plugin marketplace add say8425/SimpleKorean && claude plugin install simp
 
 El nombre del estilo de salida es `simple-korean:simple-korean`. Con el nombre corto no se encuentra. Elíjalo en Output style de `/config` o añada `{"outputStyle": "simple-korean:simple-korean"}` a `~/.claude/settings.json`.
 
-El hook de inicio de sesión añade un bloque de reglas de 2271 caracteres en cada sesión. El número de tokens que muestra `claude plugin details simple-korean` no incluye este bloque.
+El hook de inicio de sesión añade un bloque de reglas de 2464 caracteres en cada sesión. El número de tokens que muestra `claude plugin details simple-korean` no incluye este bloque.
 
 ### Codex
 
@@ -72,44 +72,45 @@ Estos son dos documentos que el mismo modelo escribió para la misma tarea: una 
 <tr>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json -->
+<!-- source: evals/results/2026-10-17/docs/baseline__troubleshooting__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
-> **Postgres 연결 타임아웃**
-> `connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근할 수 있는지 확인하세요. 방화벽, 보안 그룹, VPN 설정이 흔한 원인입니다. 서버가 느리게 응답하는 환경이라면 `--connect-timeout 30`처럼 제한 시간을 늘려 보세요. 클라우드 DB를 쓴다면 접속하는 IP가 허용 목록에 있는지도 확인하세요. 연결 문자열의 `sslmode` 값이 서버 설정과 맞는지도 점검하세요.
+> ### Postgres 연결 타임아웃
+> `connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근되는지 확인하세요. `nc -zv <호스트> 5432`로 점검할 수 있습니다. 방화벽이나 보안 그룹, VPN 연결 상태도 살펴보세요. 네트워크에 문제가 없는데도 지연된다면 `--connect-timeout 30`처럼 제한 시간을 늘려 보세요. 접속 문자열의 `sslmode` 설정이 서버와 맞는지도 확인해야 합니다.
 >
-> **S3 권한 오류**
-> `AccessDenied`나 `403`이 나오면 사용 중인 자격 증명이 맞는지 `aws sts get-caller-identity`로 확인하세요. 해당 IAM 역할에 대상 버킷의 `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` 권한이 있어야 합니다. 버킷 정책이나 리전 설정이 다르지 않은지도 살펴보세요. 임시 자격 증명을 쓴다면 만료 여부도 확인하세요.
+> ### S3 권한 오류
+> `AccessDenied` 또는 `403`이 나오면 현재 자격 증명이 올바른지 `aws sts get-caller-identity`로 확인하세요. 그다음 IAM 정책에 대상 버킷의 `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` 권한이 있는지 보세요. 버킷 이름과 리전이 맞는지, 버킷 정책이 접근을 막고 있지 않은지도 확인하세요.
 <!-- simple-korean: on -->
 
 </td>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-08/docs/plain__troubleshooting__r1.json -->
+<!-- source: evals/results/2026-10-17/docs/plain__troubleshooting__r1.json -->
 <!-- simple-korean: off -->
-> ## 연결 타임아웃
+> ## 문제 해결
 >
-> sqlpipe가 `dial tcp: i/o timeout` 오류를 내면 Postgres 연결이 실패한 것입니다.
+> ### Postgres 연결 타임아웃
 >
-> 1. sqlpipe를 실행하는 호스트가 Postgres 포트(기본값 5432)에 연결할 수 있는지 확인하세요.
-> 2. 방화벽이나 보안 그룹이 연결을 막으면 규칙을 고치세요.
-> 3. 데이터베이스가 관리형(RDS, Cloud SQL)이면 인스턴스가 sqlpipe의 IP에서 오는 연결을 허용하는지 확인하세요.
+> sqlpipe는 Postgres 포트에 연결하지 못하면 `dial tcp: i/o timeout` 오류를 내고 멈춥니다.
 >
-> ## S3 권한 오류
+> 1. sqlpipe를 실행하는 호스트가 Postgres 포트(기본값 5432)에 연결할 수 있는지 확인하세요. 보통 방화벽이나 보안 그룹이 연결을 막습니다.
+> 2. 데이터베이스가 관리형(RDS, Cloud SQL)이면, 인스턴스가 sqlpipe의 IP에서 오는 연결을 허용하는지 확인하세요.
 >
-> sqlpipe가 S3에 쓰지 못하면 `AccessDenied` 오류를 냅니다. 이 오류는 sqlpipe가 쓰는 자격 증명에 권한이 없다는 뜻입니다.
+> ### S3 권한 오류
 >
-> 1. sqlpipe를 실행하는 호스트에서 자격 증명이 올바른 계정을 가리키는지 확인하세요.
-> 2. 대상 버킷에 `s3:PutObject` 권한이 있는지 확인하세요.
-> 3. 버킷 정책이 해당 자격 증명을 거부하면 정책을 고치세요.
+> sqlpipe가 S3에 쓸 때 `AccessDenied` 오류가 나면 자격 증명에 권한이 없는 것입니다.
+>
+> 1. sqlpipe를 실행하는 호스트에서 어떤 자격 증명을 쓰는지 확인하세요.
+> 2. 그 자격 증명의 IAM 정책이 대상 버킷의 `s3:PutObject`를 허용하는지 확인하세요.
+> 3. 버킷 정책이 해당 자격 증명을 거부하면 버킷 정책을 고치세요.
 <!-- simple-korean: on -->
 
 </td>
 </tr>
 </table>
 
-Los archivos originales son `evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json` (izquierda) y `evals/results/2026-10-08/docs/plain__troubleshooting__r1.json` (derecha).
+Los archivos originales son `evals/results/2026-10-17/docs/baseline__troubleshooting__r1.json` (izquierda) y `evals/results/2026-10-17/docs/plain__troubleshooting__r1.json` (derecha).
 
 Los ejemplos de respuestas y más ejemplos de documentos están en [`examples/before-after.md`](../examples/before-after.md).
 <!-- example:end -->
@@ -118,15 +119,15 @@ Los ejemplos de respuestas y más ejemplos de documentos están en [`examples/be
 
 Volvimos a calcular todas las cifras de abajo a partir de las salidas originales guardadas en los commits. En cada push, la CI las compara con `evals/check_numbers.py`. `claude-sonnet-5-5` (effort low) escribió los documentos y las respuestas, y `claude-opus-5-5` hizo la evaluación. Ninguna ejecución leyó la configuración del usuario, servidores MCP ni archivos de instrucciones como AGENTS.md. El modelo evaluador también es Claude, así que puede tener un sesgo a favor de su misma familia de modelos. Un eojeol es una unidad del coreano separada por espacios.
 
-<!-- benchmark:start evals/results/2026-10-08 -->
+<!-- benchmark:start evals/results/2026-10-17 -->
 ### Respuestas
 
-Hicimos 8 preguntas 2 veces en cada condición. Cada pregunta contiene un término técnico. En total hay 32 respuestas. Con la skill activada, los defectos visibles para el lector (em-dash, negritas, encabezados, viñetas) bajaron un 100 % (de 394 a 0). En una evaluación a ciegas de 16 pares, la respuesta de SimpleKorean ganó 15, empató 1 y perdió 0.
+Hicimos 8 preguntas 2 veces en cada condición. Cada pregunta contiene un término técnico. En total hay 32 respuestas. Con la skill activada, los defectos visibles para el lector (em-dash, negritas, tablas, encabezado o lista en la primera línea) bajaron un 100 % (de 139 a 0). En una evaluación a ciegas de 16 pares, la respuesta de SimpleKorean ganó 14, empató 2 y perdió 0.
 
-| Condición | Respuestas | Media de eojeol | Media de oraciones | em-dash | Negritas | Encabezados | Viñetas | Saludos y despedidas |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Sin skill | 16 | 246 | 30.9 | 0 | 141 | 45 | 208 | 12 |
-| SimpleKorean | 16 | 179 | 18.6 | 0 | 0 | 0 | 0 | 1 |
+| Condición | Respuestas | Media de eojeol | Media de oraciones | em-dash | Negritas | Tablas | Encabezado o lista en la primera línea | Encabezados | Viñetas | Saludos y despedidas |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Sin skill | 16 | 235 | 28.6 | 0 | 130 | 3 | 6 | 44 | 189 | 14 |
+| SimpleKorean | 16 | 193 | 25.8 | 0 | 0 | 0 | 0 | 49 | 135 | 3 |
 
 ### Documentos
 
@@ -134,11 +135,11 @@ El modelo escribió cada una de las 8 tareas de documentación de sqlpipe 2 vece
 
 | Condición | Documentos | Errores por 100 eojeol | Avisos por 100 eojeol | Calcos por 100 eojeol | Tasa de grafía designada | Tasa de palabras fáciles | Oración más larga |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Sin skill | 16 | 0.00 | 1.09 | 0.14 | 95.0 % | 40.2 % | 18 eojeol |
-| Modo básico | 16 | 0.00 | 0.00 | 0.00 | 100.0 % | 44.8 % | 16 eojeol |
-| Modo estricto | 16 | 0.00 | 0.00 | 0.00 | 100.0 % | 45.5 % | 17 eojeol |
+| Sin skill | 16 | 0.14 | 0.97 | 0.28 | 95.1 % | 39.7 % | 19 eojeol |
+| Modo básico | 16 | 0.00 | 0.00 | 0.00 | 100.0 % | 42.9 % | 15 eojeol |
+| Modo estricto | 16 | 0.00 | 0.00 | 0.00 | 100.0 % | 42.9 % | 14 eojeol |
 
-Las salidas originales, la distribución de grafías y las condiciones de medición están en [`evals/results/2026-10-08/RESULTS.md`](../evals/results/2026-10-08/RESULTS.md).
+Las salidas originales, la distribución de grafías y las condiciones de medición están en [`evals/results/2026-10-17/RESULTS.md`](../evals/results/2026-10-17/RESULTS.md).
 <!-- benchmark:end -->
 
 ## Reglas
@@ -151,7 +152,7 @@ Las respuestas de chat usan estas reglas en todos los modos.
 
 | Regla | Lo que evita |
 |---|---|
-| Responda en prosa. No use encabezados, viñetas, negritas ni tablas | Formato alrededor de una respuesta de una sola línea |
+| Use encabezados y listas cuando el contenido y la extensión de la respuesta lo pidan. No use negritas ni tablas | Formato alrededor de una respuesta de una sola línea |
 | Escriba la respuesta en la primera oración | Una introducción que repite la pregunta |
 | No use em-dash | Ideas unidas solo a medias |
 | Explique brevemente un término conceptual la primera vez que lo use | Términos que el lector tiene que buscar |
@@ -236,6 +237,10 @@ El coreano no tiene una lista pública que fije a la vez las palabras aprobadas 
 ## Relación con el proyecto original
 
 SimpleKorean es un proyecto derivado no oficial. Se separó de [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) v2.1.1 (`a6fcb4f`). Del original tomamos la estructura del repositorio, los hooks, la interfaz del linter y el método de medición. Las reglas, la lista de palabras y las tareas de medición las escribimos de nuevo para el coreano. No tomamos los resultados de medición en inglés del original.
+
+Las reglas de respuesta también difieren del original. El original prohíbe encabezados y viñetas en todas las respuestas. SimpleKorean deja que el modelo decida, según el contenido y la extensión de cada respuesta, si usa encabezados y listas. La evidencia de esta decisión está en el [estudio sobre el formato de las respuestas](../docs/research/reply-formatting.md) (en coreano).
+
+Como las reglas de respuesta difieren, el benchmark también cuenta defectos distintos en las respuestas. El original cuenta em-dash, negritas, encabezados y viñetas. SimpleKorean cuenta em-dash, negritas, tablas y un encabezado o una lista en la primera línea.
 
 ## Contribuir
 

@@ -28,7 +28,7 @@ claude plugin marketplace add say8425/SimpleKorean && claude plugin install simp
 
 출력 스타일 이름은 `simple-korean:simple-korean`입니다. Claude Code는 짧은 이름으로는 이 스타일을 찾지 못합니다. `/config`의 Output style에서 고르거나, `~/.claude/settings.json`에 `{"outputStyle": "simple-korean:simple-korean"}`을 넣으세요.
 
-세션 시작 훅은 세션마다 규칙 블록 2,271자를 넣습니다. `claude plugin details simple-korean`이 보여 주는 토큰 수에는 이 블록이 들어가지 않습니다.
+세션 시작 훅은 세션마다 규칙 블록 2,464자를 넣습니다. `claude plugin details simple-korean`이 보여 주는 토큰 수에는 이 블록이 들어가지 않습니다.
 
 ### Codex
 
@@ -72,44 +72,45 @@ npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명�
 <tr>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json -->
+<!-- source: evals/results/2026-10-17/docs/baseline__troubleshooting__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
-> **Postgres 연결 타임아웃**
-> `connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근할 수 있는지 확인하세요. 방화벽, 보안 그룹, VPN 설정이 흔한 원인입니다. 서버가 느리게 응답하는 환경이라면 `--connect-timeout 30`처럼 제한 시간을 늘려 보세요. 클라우드 DB를 쓴다면 접속하는 IP가 허용 목록에 있는지도 확인하세요. 연결 문자열의 `sslmode` 값이 서버 설정과 맞는지도 점검하세요.
+> ### Postgres 연결 타임아웃
+> `connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근되는지 확인하세요. `nc -zv <호스트> 5432`로 점검할 수 있습니다. 방화벽이나 보안 그룹, VPN 연결 상태도 살펴보세요. 네트워크에 문제가 없는데도 지연된다면 `--connect-timeout 30`처럼 제한 시간을 늘려 보세요. 접속 문자열의 `sslmode` 설정이 서버와 맞는지도 확인해야 합니다.
 >
-> **S3 권한 오류**
-> `AccessDenied`나 `403`이 나오면 사용 중인 자격 증명이 맞는지 `aws sts get-caller-identity`로 확인하세요. 해당 IAM 역할에 대상 버킷의 `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` 권한이 있어야 합니다. 버킷 정책이나 리전 설정이 다르지 않은지도 살펴보세요. 임시 자격 증명을 쓴다면 만료 여부도 확인하세요.
+> ### S3 권한 오류
+> `AccessDenied` 또는 `403`이 나오면 현재 자격 증명이 올바른지 `aws sts get-caller-identity`로 확인하세요. 그다음 IAM 정책에 대상 버킷의 `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` 권한이 있는지 보세요. 버킷 이름과 리전이 맞는지, 버킷 정책이 접근을 막고 있지 않은지도 확인하세요.
 <!-- simple-korean: on -->
 
 </td>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-08/docs/plain__troubleshooting__r1.json -->
+<!-- source: evals/results/2026-10-17/docs/plain__troubleshooting__r1.json -->
 <!-- simple-korean: off -->
-> ## 연결 타임아웃
+> ## 문제 해결
 >
-> sqlpipe가 `dial tcp: i/o timeout` 오류를 내면 Postgres 연결이 실패한 것입니다.
+> ### Postgres 연결 타임아웃
 >
-> 1. sqlpipe를 실행하는 호스트가 Postgres 포트(기본값 5432)에 연결할 수 있는지 확인하세요.
-> 2. 방화벽이나 보안 그룹이 연결을 막으면 규칙을 고치세요.
-> 3. 데이터베이스가 관리형(RDS, Cloud SQL)이면 인스턴스가 sqlpipe의 IP에서 오는 연결을 허용하는지 확인하세요.
+> sqlpipe는 Postgres 포트에 연결하지 못하면 `dial tcp: i/o timeout` 오류를 내고 멈춥니다.
 >
-> ## S3 권한 오류
+> 1. sqlpipe를 실행하는 호스트가 Postgres 포트(기본값 5432)에 연결할 수 있는지 확인하세요. 보통 방화벽이나 보안 그룹이 연결을 막습니다.
+> 2. 데이터베이스가 관리형(RDS, Cloud SQL)이면, 인스턴스가 sqlpipe의 IP에서 오는 연결을 허용하는지 확인하세요.
 >
-> sqlpipe가 S3에 쓰지 못하면 `AccessDenied` 오류를 냅니다. 이 오류는 sqlpipe가 쓰는 자격 증명에 권한이 없다는 뜻입니다.
+> ### S3 권한 오류
 >
-> 1. sqlpipe를 실행하는 호스트에서 자격 증명이 올바른 계정을 가리키는지 확인하세요.
-> 2. 대상 버킷에 `s3:PutObject` 권한이 있는지 확인하세요.
-> 3. 버킷 정책이 해당 자격 증명을 거부하면 정책을 고치세요.
+> sqlpipe가 S3에 쓸 때 `AccessDenied` 오류가 나면 자격 증명에 권한이 없는 것입니다.
+>
+> 1. sqlpipe를 실행하는 호스트에서 어떤 자격 증명을 쓰는지 확인하세요.
+> 2. 그 자격 증명의 IAM 정책이 대상 버킷의 `s3:PutObject`를 허용하는지 확인하세요.
+> 3. 버킷 정책이 해당 자격 증명을 거부하면 버킷 정책을 고치세요.
 <!-- simple-korean: on -->
 
 </td>
 </tr>
 </table>
 
-원본 파일은 왼쪽이 `evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json`, 오른쪽이 `evals/results/2026-10-08/docs/plain__troubleshooting__r1.json`입니다.
+원본 파일은 왼쪽이 `evals/results/2026-10-17/docs/baseline__troubleshooting__r1.json`, 오른쪽이 `evals/results/2026-10-17/docs/plain__troubleshooting__r1.json`입니다.
 
 답변 예시와 나머지 문서 예시는 [`examples/before-after.md`](examples/before-after.md)에 있습니다.
 <!-- example:end -->
@@ -122,15 +123,15 @@ npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명�
 
 어절은 띄어쓰기로 나눈 단위입니다. 지정형은 단어 목록이 쓰라고 정한 표기입니다.
 
-<!-- benchmark:start evals/results/2026-10-08 -->
+<!-- benchmark:start evals/results/2026-10-17 -->
 ### 답변
 
-전문용어가 하나씩 든 질문 8개를 조건마다 2번씩 물었습니다. 답변은 모두 32개입니다. 스킬을 켜면 화면에 드러나는 결함(em-dash, 굵은 글씨, 헤더, 불릿)이 100% 줄었습니다(394개에서 0개). 블라인드 판정에서 SimpleKorean 답변은 16쌍 가운데 15쌍에서 이겼고, 1쌍에서 비겼고, 0쌍에서 졌습니다.
+전문용어가 하나씩 든 질문 8개를 조건마다 2번씩 물었습니다. 답변은 모두 32개입니다. 스킬을 켜면 화면에 드러나는 결함(em-dash, 굵은 글씨, 표, 첫 줄의 헤더나 목록)이 100% 줄었습니다(139개에서 0개). 블라인드 판정에서 SimpleKorean 답변은 16쌍 가운데 14쌍에서 이겼고, 2쌍에서 비겼고, 0쌍에서 졌습니다.
 
-| 조건 | 답변 수 | 평균 어절 | 평균 문장 | em-dash | 굵은 글씨 | 헤더 | 불릿 | 인사말과 맺음말 |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 스킬 없음 | 16 | 246 | 30.9 | 0 | 141 | 45 | 208 | 12 |
-| SimpleKorean | 16 | 179 | 18.6 | 0 | 0 | 0 | 0 | 1 |
+| 조건 | 답변 수 | 평균 어절 | 평균 문장 | em-dash | 굵은 글씨 | 표 | 첫 줄 헤더·목록 | 헤더 | 불릿 | 인사말과 맺음말 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 스킬 없음 | 16 | 235 | 28.6 | 0 | 130 | 3 | 6 | 44 | 189 | 14 |
+| SimpleKorean | 16 | 193 | 25.8 | 0 | 0 | 0 | 0 | 49 | 135 | 3 |
 
 ### 문서
 
@@ -138,11 +139,11 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 
 | 조건 | 문서 수 | 100어절당 오류 | 100어절당 경고 | 100어절당 번역투 | 지정형 비율 | 쉬운 단어 비율 | 가장 긴 문장 |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| 스킬 없음 | 16 | 0.00 | 1.09 | 0.14 | 95.0% | 40.2% | 18어절 |
-| 기본 모드 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 44.8% | 16어절 |
-| 엄격 모드 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 45.5% | 17어절 |
+| 스킬 없음 | 16 | 0.14 | 0.97 | 0.28 | 95.1% | 39.7% | 19어절 |
+| 기본 모드 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 42.9% | 15어절 |
+| 엄격 모드 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 42.9% | 14어절 |
 
-원본 출력, 표기 분포, 측정 조건은 [`evals/results/2026-10-08/RESULTS.md`](evals/results/2026-10-08/RESULTS.md)에 있습니다.
+원본 출력, 표기 분포, 측정 조건은 [`evals/results/2026-10-17/RESULTS.md`](evals/results/2026-10-17/RESULTS.md)에 있습니다.
 <!-- benchmark:end -->
 
 ## 규칙
@@ -155,7 +156,7 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 
 | 규칙 | 막는 것 |
 |---|---|
-| 서술형으로 답합니다. 헤더, 불릿, 굵은 글씨, 표를 쓰지 않습니다 | 한 줄짜리 답을 둘러싼 서식 |
+| 헤더와 목록은 답의 내용과 길이를 보고 씁니다. 굵은 글씨와 표는 쓰지 않습니다 | 한 줄짜리 답을 둘러싼 서식 |
 | 첫 문장에 답을 씁니다 | 질문을 되풀이하는 머리말 |
 | em-dash를 쓰지 않습니다 | 반쯤 이어 붙인 생각 |
 | 개념 용어는 처음 쓸 때 짧게 풀이합니다 | 따로 찾아봐야 하는 용어 |
@@ -242,6 +243,10 @@ im-not-ai 같은 윤문 스킬은 이미 쓴 글에서 AI 문체와 번역투를
 ## 원본과의 관계
 
 SimpleKorean은 [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) v2.1.1(`a6fcb4f`)에서 갈라져 나온 비공식 파생 프로젝트입니다. 레포지토리 구조, 훅, 린터 인터페이스, 측정 방식은 원본에서 가져왔습니다. 규칙, 단어 목록, 측정 과제는 한국어에 맞게 새로 썼습니다. 원본의 영어 측정 결과는 가져오지 않았습니다.
+
+답변 규칙도 원본과 다릅니다. 원본은 답변에서 헤더와 불릿을 모두 막습니다. SimpleKorean은 헤더와 목록을 쓸지 답의 내용과 길이를 보고 정하게 합니다. 이렇게 정한 근거는 [답변 서식 연구](docs/research/reply-formatting.md)에 있습니다.
+
+답변 규칙이 다르므로 벤치마크가 세는 답변 결함도 다릅니다. 원본은 em-dash, 굵은 글씨, 헤더, 불릿을 셉니다. SimpleKorean은 em-dash, 굵은 글씨, 표, 첫 줄의 헤더나 목록을 셉니다.
 
 ## 기여
 

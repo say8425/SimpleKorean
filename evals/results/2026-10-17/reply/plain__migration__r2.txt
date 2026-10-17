@@ -1,0 +1,38 @@
+백필(backfill)은 이미 있는 행의 새 칼럼에 값을 채우는 작업입니다. 새 칼럼이 NOT NULL이면 기존 행도 모두 값이 있어야 하기 때문에 DBA가 백필을 요구했습니다.
+
+DB 종류와 버전을 알려 주지 않았으므로 아래는 PostgreSQL 12 이상을 기준으로 합니다.
+
+## 마이그레이션이 멈춘 이유
+
+- 기본값 없이 NOT NULL 칼럼을 추가하면 기존 행이 NULL이라 실패합니다.
+- 기본값을 주면 DB 버전에 따라 테이블 전체를 다시 씁니다. 20GB 테이블은 이 작업에 오래 걸립니다.
+- 다시 쓰는 동안 테이블 잠금(lock)이 걸려 다른 쿼리가 대기합니다.
+- PostgreSQL 11 이상에서 상수 기본값은 즉시 끝납니다. 이 경우 긴 트랜잭션 뒤에서 잠금을 기다리는 상태일 수 있습니다. `pg_stat_activity`에서 확인해야 합니다.
+
+## 해야 할 일
+
+1. 멈춘 마이그레이션을 취소하고 잠금이 풀렸는지 확인해야 합니다.
+2. NULL을 허용하는 칼럼을 먼저 추가해야 합니다. 이 작업은 메타데이터만 바꾸므로 빠릅니다.
+3. 애플리케이션이 새 행에 값을 쓰도록 먼저 배포해야 합니다.
+4. 기존 행을 작은 배치로 나누어 채워야 합니다. 한 번에 채우면 긴 잠금과 큰 WAL(쓰기 선행 로그)이 생깁니다.
+5. NULL이 남지 않은 것을 확인한 뒤 NOT NULL을 겁니다.
+
+```sql
+ALTER TABLE orders ADD COLUMN status text;
+
+-- 영향받은 행이 0이 될 때까지 반복합니다.
+UPDATE orders SET status = 'active'
+WHERE id IN (SELECT id FROM orders WHERE status IS NULL LIMIT 10000);
+
+-- 전체 스캔 중 쓰기를 막지 않고 NOT NULL을 겁니다.
+ALTER TABLE orders ADD CONSTRAINT status_nn CHECK (status IS NOT NULL) NOT VALID;
+ALTER TABLE orders VALIDATE CONSTRAINT status_nn;
+ALTER TABLE orders ALTER COLUMN status SET NOT NULL;
+ALTER TABLE orders DROP CONSTRAINT status_nn;
+```
+
+`orders`, `status`, `'active'`는 예시입니다. 실제 테이블, 칼럼, 값으로 바꿔야 합니다.
+
+배치 사이에 짧은 대기를 두면 복제 지연을 줄일 수 있습니다. 운영 DB에서는 DBA와 배치 크기와 실행 시간대를 정해야 합니다.
+
+MySQL이면 방법이 다릅니다. 온라인 DDL이나 gh-ost, pt-online-schema-change를 써야 합니다.

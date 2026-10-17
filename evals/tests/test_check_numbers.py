@@ -12,7 +12,7 @@ import make_examples as mx  # noqa: E402
 import readme_i18n as i18n  # noqa: E402
 import report  # noqa: E402
 
-BLOCK = '서술형으로 답하세요. em-dash를 쓰지 마세요. 첫 문장에 답을 쓰세요. 코드는 바꾸지 마세요. "확인하다" 하나로 쓰세요. 레포지토리.'
+BLOCK = '헤더와 목록을 써도 됩니다. em-dash를 쓰지 마세요. 첫 문장에 답을 쓰세요. 코드는 바꾸지 마세요. "확인하다" 하나로 쓰세요. 레포지토리. 굵은 글씨와 표는 쓰지 마세요. 헤더와 목록은 첫 문장 뒤에 두세요.'
 SKILL = f'---\nname: simple-korean\nmetadata:\n  version: "1.0.0"\n---\n{BLOCK}\n'
 ISO = {"found": True, "claude_code_version": "2.1.294", "model": "m", "mcp_servers": [], "plugins": [],
        "output_style": "default", "memory_paths": []}
@@ -128,16 +128,26 @@ def test_reply_sources_are_checked_verbatim_too():
         assert mx.check_sources(block.replace("**네**", "네")) == [f"{rel}: 인용한 글이 원본과 다릅니다"]
 
 
-def test_readme_pick_is_pre_registered_and_has_no_code_block():
+def test_readme_pick_is_pre_registered_and_has_no_wide_code_line():
     assert mx.README_PICK in {pick[:2] for pick in mx.DOC_PICKS}
     with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
         root = _results(d)
         assert mx.pick_problems(root) == []
         path = root / "docs" / "plain__troubleshooting__r1.json"
         record = json.loads(path.read_text(encoding="utf-8"))
-        path.write_text(json.dumps({**record, "text": record["text"] + "\n\n```bash\nls\n```"}, ensure_ascii=False),
-                        encoding="utf-8")
-        assert [p for p in mx.pick_problems(root) if "코드 블록이 있어" in p] != []
+        def with_code(line):
+            text = record["text"] + f"\n\n```bash\n{line}\n```"
+            path.write_text(json.dumps({**record, "text": text}, ensure_ascii=False), encoding="utf-8")
+            return [p for p in mx.pick_problems(root) if "넓은 줄" in p]
+        # 칸 안에 드는 짧은 코드 줄은 괜찮다
+        assert with_code("sqlpipe run --timeout 30s ...") == []
+        assert with_code("x" * mx.CELL_CODE_COLUMNS) == []
+        assert with_code("x" * (mx.CELL_CODE_COLUMNS + 1)) != []
+        # 한글은 두 칸으로 센다
+        assert with_code("가" * (mx.CELL_CODE_COLUMNS // 2 + 1)) != []
+        assert mx.wide_code_lines("~~~\n" + "x" * 60 + "\n```\n" + "y" * 60 + "\n~~~\n" + "z" * 60) == ["x" * 60, "y" * 60]
+        # 네 개짜리 울타리 안의 세 개짜리 울타리는 닫지 않는다
+        assert mx.wide_code_lines("````\n```\n" + "a" * 60 + "\n```\n````\n" + "b" * 60) == ["a" * 60]
 
 
 def test_check_benchmark_catches_stale_numbers_and_missing_changelog_path():

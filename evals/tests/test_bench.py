@@ -165,10 +165,11 @@ def test_report_tables_from_fake_results():
     with tempfile.TemporaryDirectory() as d:
         root = _fake_results(d)
         replies = report.reply_stats(root)
-        assert replies["baseline"]["visible"] == 4 and replies["plain"]["visible"] == 0
+        # 헤더와 목록 항목은 결함으로 세지 않는다. 기준선의 결함은 굵은 글씨 1개와 em-dash 1개다
+        assert replies["baseline"]["visible"] == 2 and replies["plain"]["visible"] == 0
         assert report.judge_stats(root) == {"plain": 1, "tie": 0, "baseline": 0, "n": 1}
         headline = report.render_headline(replies, report.judge_stats(root))
-        assert "100% 줄었습니다(4개에서 0개)" in headline and "1쌍 가운데 1쌍에서 이겼고" in headline
+        assert "100% 줄었습니다(2개에서 0개)" in headline and "1쌍 가운데 1쌍에서 이겼고" in headline
         docs = report.doc_stats(root, [{"id": "readme-intro", "type": "descriptive"}])
         assert docs["baseline"]["errors"] == 1 and docs["baseline"]["translationese"] == 1
         table = report.render_doc_table(docs)

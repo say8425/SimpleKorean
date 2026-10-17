@@ -1,0 +1,13 @@
+{
+  "text": "sqlpipe는 세 단계로 데이터를 옮깁니다. 리더 프로세스가 Postgres 행을 배치 단위로 스트리밍합니다. 컨버터가 각 배치를 Parquet 로우 그룹(row group)으로 바꿉니다. 업로더가 변환된 로우 그룹을 S3에 멀티파트(multipart) 객체로 씁니다. 업로드가 실패하면 업로더가 같은 파트를 다시 시도합니다. 세 단계는 배치 단위로 데이터를 넘기기 때문에, 리더는 전체 테이블을 메모리에 올리지 않아도 됩니다.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 233,
+  "cost_usd": 0.055139900000000006,
+  "duration_ms": 2861,
+  "condition": "strict",
+  "scenario": "architecture",
+  "type": "descriptive",
+  "run": 1
+}
