@@ -1,0 +1,31 @@
+**백필(backfill)**은 기존 행들의 새 컬럼에 값을 채워 넣는 작업입니다. NOT NULL 컬럼은 모든 행에 값이 있어야 하는데, 기존 20GB 분량의 행에는 값이 없습니다. 그래서 DB가 한 번에 모든 행을 채우거나 검증하느라 테이블을 오래 잠그고, 그 결과 마이그레이션이 멈춘 것입니다.
+
+## 왜 멈추나
+- `ALTER TABLE ... ADD COLUMN ... NOT NULL DEFAULT ...`는 DB와 버전에 따라 전체 테이블을 재작성합니다. 이 과정에서 락이 길게 잡힙니다.
+- 이 락 때문에 뒤따르는 읽기와 쓰기 쿼리가 줄줄이 대기합니다. 서비스 장애로 번질 수 있습니다.
+- PostgreSQL 11 이상에서는 상수 DEFAULT를 지정하면 재작성 없이 바로 끝납니다. MySQL 8.0 이상도 `ALGORITHM=INSTANT`를 지원합니다. 다만 계산식이 필요하거나 휘발성 DEFAULT일 때, 또는 구버전일 때는 해당하지 않습니다.
+
+## 해야 할 일: 3단계로 나누기
+
+1. **NULL 허용으로 컬럼 추가** (메타데이터만 바뀌어 즉시 끝납니다)
+   ```sql
+   ALTER TABLE t ADD COLUMN new_col INT NULL;
+   ```
+2. **배치로 백필** (예: 1만~10만 행씩 나눠서 처리합니다)
+   ```sql
+   UPDATE t SET new_col = <값>
+   WHERE id > :last_id AND id <= :last_id + 10000 AND new_col IS NULL;
+   ```
+   - 배치마다 커밋하고, 사이에 짧게 sleep을 둡니다.
+   - 복제 지연, 락 대기, 디스크(WAL/undo) 증가를 모니터링합니다.
+   - 중단 후 재개할 수 있도록 PK 범위 기준으로 진행합니다.
+3. **제약 추가**
+   - 앱이 신규 행에도 값을 쓰도록 먼저 배포합니다. 그렇지 않으면 백필 중에도 NULL이 계속 생깁니다.
+   - PostgreSQL은 먼저 `ADD CONSTRAINT ... CHECK (new_col IS NOT NULL) NOT VALID`를 추가하고, `VALIDATE CONSTRAINT`로 검증한 뒤 `SET NOT NULL`을 실행하면 락이 짧아집니다.
+   - MySQL은 pt-online-schema-change나 gh-ost 같은 온라인 스키마 변경 도구를 쓰는 방법이 있습니다.
+
+## 지금 당장
+- 멈춘 마이그레이션이 락을 잡고 있다면 먼저 취소(kill)하세요. DBA와 같이 확인하는 것이 안전합니다.
+- 마이그레이션 파일을 위의 3단계로 분리합니다. 백필은 스키마 마이그레이션이 아니라 별도 잡이나 스크립트로 실행하는 것을 권장합니다.
+
+DB 종류(PostgreSQL, MySQL 등)와 버전, 새 컬럼에 넣을 값(상수인지, 다른 컬럼에서 계산하는지)을 알려주시면 구체적인 SQL과 배치 스크립트를 작성해 드리겠습니다.

@@ -1,0 +1,52 @@
+디스크 사용량은 데이터 파일, WAL(쓰기 선행 로그), 서버 로그, 임시 파일 순서로 확인하세요. 대부분 이 넷 중 하나가 원인입니다.
+
+## 공간을 차지하는 대상 찾기
+
+먼저 서버 셸에서 큰 디렉터리를 찾으세요. 데이터 디렉터리 경로는 `SHOW data_directory;`로 확인하세요.
+
+```
+df -h
+sudo du -xh --max-depth=1 /var/lib/postgresql | sort -h | tail
+sudo du -sh <data_directory>/pg_wal <data_directory>/log
+```
+
+`pg_wal`이 크면 WAL이 지워지지 않는 것입니다. 원인은 보통 둘입니다. 하나는 소비자가 없는 복제 슬롯(replication slot)이고, 다른 하나는 실패하는 `archive_command`입니다. 아래 쿼리로 확인하세요.
+
+```sql
+SELECT slot_name, active, pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(), restart_lsn)) AS retained
+FROM pg_replication_slots;
+
+SELECT * FROM pg_stat_archiver;
+```
+
+데이터 파일이 크면 psql에서 데이터베이스와 테이블 크기를 보세요.
+
+```sql
+SELECT datname, pg_size_pretty(pg_database_size(datname)) FROM pg_database ORDER BY pg_database_size(datname) DESC;
+
+SELECT relname, pg_size_pretty(pg_total_relation_size(oid)) AS total
+FROM pg_class WHERE relkind = 'r' ORDER BY pg_total_relation_size(oid) DESC LIMIT 20;
+```
+
+테이블에 죽은 튜플(dead tuple, 삭제나 갱신 후 남은 쓸모없는 행)이 많은지도 확인하세요.
+
+```sql
+SELECT relname, n_live_tup, n_dead_tup, last_autovacuum
+FROM pg_stat_user_tables ORDER BY n_dead_tup DESC LIMIT 20;
+```
+
+## 공간 비우기
+
+원인별로 다르게 조치하세요.
+
+- 복제 슬롯이 원인이면 쓰지 않는 슬롯을 지우세요. `SELECT pg_drop_replication_slot('슬롯이름');` 슬롯을 지우면 그 슬롯을 쓰던 복제본은 다시 구축해야 합니다.
+- 아카이브 실패가 원인이면 `archive_command`의 대상 저장소와 권한을 고치세요. 고치면 WAL이 자동으로 정리됩니다.
+- 로그가 크면 오래된 로그 파일을 지우거나 압축하세요. `log_rotation_age`와 `log_rotation_size`를 설정해 반복을 막으세요.
+- 오래된 데이터가 있으면 `DELETE`나 파티션 `DROP`으로 지우세요. 파티션을 `DROP`하면 공간이 바로 돌아옵니다.
+- 테이블이 부풀었으면(bloat) `pg_repack`을 쓰세요. 이 확장은 잠금을 짧게만 잡고 테이블을 다시 씁니다.
+
+`VACUUM`은 운영체제에 공간을 거의 돌려주지 않습니다. 빈 공간을 같은 테이블이 다시 쓰게 할 뿐입니다. `VACUUM FULL`은 공간을 돌려주지만 테이블에 배타 잠금(exclusive lock)을 걸고 테이블 크기만큼 여유 공간이 필요합니다. 디스크가 거의 찼을 때는 쓰지 마세요.
+
+`pg_wal` 안의 파일을 `rm`으로 직접 지우면 안 됩니다. 서버가 복구에 실패하거나 데이터가 깨질 수 있습니다. WAL은 원인을 고쳐서 Postgres가 정리하게 하세요.
+
+위 조치로 부족하면 볼륨을 늘리거나 큰 테이블을 다른 테이블스페이스(tablespace)로 옮기세요. 디스크가 99%에 가까우면 쓰기가 멈추기 때문에 볼륨 확장을 먼저 하세요.

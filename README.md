@@ -72,44 +72,54 @@ npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명�
 <tr>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json -->
+<!-- source: evals/results/2026-10-17/docs/baseline__troubleshooting__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
-> **Postgres 연결 타임아웃**
-> `connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근할 수 있는지 확인하세요. 방화벽, 보안 그룹, VPN 설정이 흔한 원인입니다. 서버가 느리게 응답하는 환경이라면 `--connect-timeout 30`처럼 제한 시간을 늘려 보세요. 클라우드 DB를 쓴다면 접속하는 IP가 허용 목록에 있는지도 확인하세요. 연결 문자열의 `sslmode` 값이 서버 설정과 맞는지도 점검하세요.
+> ### Postgres 연결 타임아웃
 >
-> **S3 권한 오류**
-> `AccessDenied`나 `403`이 나오면 사용 중인 자격 증명이 맞는지 `aws sts get-caller-identity`로 확인하세요. 해당 IAM 역할에 대상 버킷의 `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` 권한이 있어야 합니다. 버킷 정책이나 리전 설정이 다르지 않은지도 살펴보세요. 임시 자격 증명을 쓴다면 만료 여부도 확인하세요.
+> `connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근할 수 있는지 확인하세요. VPN, 방화벽, 보안 그룹의 인바운드 규칙이 흔한 원인입니다. 접근에 문제가 없다면 연결 대기 시간을 늘려 보세요.
+>
+> ```
+> sqlpipe run --timeout 30s ...
+> ```
+>
+> 접속 문자열의 호스트, 포트, `sslmode` 값도 다시 확인하세요. 서버가 SSL을 요구하는데 `sslmode=disable`로 되어 있으면 연결이 멈춘 것처럼 보일 수 있습니다.
+>
+> ### S3 권한 오류
+>
+> `AccessDenied` 또는 `403`이 나오면 자격 증명이 올바른지 먼저 확인하세요. `aws sts get-caller-identity`로 현재 사용 중인 계정을 볼 수 있습니다. 그다음 IAM 정책에 대상 버킷의 `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` 권한이 있는지 확인하세요. 버킷 정책과 리전 설정도 함께 점검해야 합니다.
 <!-- simple-korean: on -->
 
 </td>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-08/docs/plain__troubleshooting__r1.json -->
+<!-- source: evals/results/2026-10-17/docs/plain__troubleshooting__r1.json -->
 <!-- simple-korean: off -->
-> ## 연결 타임아웃
+> ## 문제 해결
 >
-> sqlpipe가 `dial tcp: i/o timeout` 오류를 내면 Postgres 연결이 실패한 것입니다.
+> ### Postgres 연결 타임아웃
 >
-> 1. sqlpipe를 실행하는 호스트가 Postgres 포트(기본값 5432)에 연결할 수 있는지 확인하세요.
-> 2. 방화벽이나 보안 그룹이 연결을 막으면 규칙을 고치세요.
-> 3. 데이터베이스가 관리형(RDS, Cloud SQL)이면 인스턴스가 sqlpipe의 IP에서 오는 연결을 허용하는지 확인하세요.
+> sqlpipe는 Postgres 포트(기본값 5432)에 연결하지 못하면 `dial tcp: i/o timeout` 오류를 내고 멈춥니다.
 >
-> ## S3 권한 오류
+> 1. sqlpipe를 실행하는 호스트가 Postgres 포트에 연결할 수 있는지 확인하세요.
+> 2. 방화벽과 보안 그룹 규칙을 확인하세요. 보통 이 규칙이 연결을 막습니다.
+> 3. 데이터베이스가 관리형(RDS, Cloud SQL)이면, 인스턴스가 sqlpipe의 IP에서 오는 연결을 허용하는지 확인하세요.
 >
-> sqlpipe가 S3에 쓰지 못하면 `AccessDenied` 오류를 냅니다. 이 오류는 sqlpipe가 쓰는 자격 증명에 권한이 없다는 뜻입니다.
+> ### S3 권한 오류
 >
-> 1. sqlpipe를 실행하는 호스트에서 자격 증명이 올바른 계정을 가리키는지 확인하세요.
-> 2. 대상 버킷에 `s3:PutObject` 권한이 있는지 확인하세요.
-> 3. 버킷 정책이 해당 자격 증명을 거부하면 정책을 고치세요.
+> S3 요청이 `AccessDenied` 오류로 실패하면 sqlpipe가 사용하는 자격 증명에 권한이 없다는 뜻입니다.
+>
+> 1. sqlpipe를 실행하는 호스트에서 `aws sts get-caller-identity`를 실행하세요. 이 명령은 현재 자격 증명의 계정과 역할을 보여 줍니다.
+> 2. 그 역할의 IAM 정책이 대상 버킷에 `s3:GetObject`와 `s3:PutObject`를 허용하는지 확인하세요.
+> 3. 버킷 정책이 해당 역할을 거부하는지 확인하세요.
 <!-- simple-korean: on -->
 
 </td>
 </tr>
 </table>
 
-원본 파일은 왼쪽이 `evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json`, 오른쪽이 `evals/results/2026-10-08/docs/plain__troubleshooting__r1.json`입니다.
+원본 파일은 왼쪽이 `evals/results/2026-10-17/docs/baseline__troubleshooting__r1.json`, 오른쪽이 `evals/results/2026-10-17/docs/plain__troubleshooting__r1.json`입니다.
 
 답변 예시와 나머지 문서 예시는 [`examples/before-after.md`](examples/before-after.md)에 있습니다.
 <!-- example:end -->
@@ -122,15 +132,15 @@ npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명�
 
 어절은 띄어쓰기로 나눈 단위입니다. 지정형은 단어 목록이 쓰라고 정한 표기입니다.
 
-<!-- benchmark:start evals/results/2026-10-08 -->
+<!-- benchmark:start evals/results/2026-10-17 -->
 ### 답변
 
-전문용어가 하나씩 든 질문 8개를 조건마다 2번씩 물었습니다. 답변은 모두 32개입니다. 스킬을 켜면 화면에 드러나는 결함(em-dash, 굵은 글씨, 헤더, 불릿)이 100% 줄었습니다(394개에서 0개). 블라인드 판정에서 SimpleKorean 답변은 16쌍 가운데 15쌍에서 이겼고, 1쌍에서 비겼고, 0쌍에서 졌습니다.
+전문용어가 하나씩 든 질문 8개를 조건마다 2번씩 물었습니다. 답변은 모두 32개입니다. 스킬을 켜면 화면에 드러나는 결함(em-dash, 굵은 글씨, 표, 첫 줄의 헤더나 목록)이 100% 줄었습니다(130개에서 0개). 블라인드 판정에서 SimpleKorean 답변은 16쌍 가운데 16쌍에서 이겼고, 0쌍에서 비겼고, 0쌍에서 졌습니다.
 
-| 조건 | 답변 수 | 평균 어절 | 평균 문장 | em-dash | 굵은 글씨 | 헤더 | 불릿 | 인사말과 맺음말 |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 스킬 없음 | 16 | 246 | 30.9 | 0 | 141 | 45 | 208 | 12 |
-| SimpleKorean | 16 | 179 | 18.6 | 0 | 0 | 0 | 0 | 1 |
+| 조건 | 답변 수 | 평균 어절 | 평균 문장 | em-dash | 굵은 글씨 | 표 | 첫 줄 헤더·목록 | 헤더 | 불릿 | 인사말과 맺음말 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 스킬 없음 | 16 | 238 | 29.6 | 0 | 122 | 2 | 6 | 41 | 186 | 11 |
+| SimpleKorean | 16 | 167 | 20.8 | 0 | 0 | 0 | 0 | 12 | 73 | 0 |
 
 ### 문서
 
@@ -138,11 +148,11 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 
 | 조건 | 문서 수 | 100어절당 오류 | 100어절당 경고 | 100어절당 번역투 | 지정형 비율 | 쉬운 단어 비율 | 가장 긴 문장 |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| 스킬 없음 | 16 | 0.00 | 1.09 | 0.14 | 95.0% | 40.2% | 18어절 |
-| 기본 모드 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 44.8% | 16어절 |
-| 엄격 모드 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 45.5% | 17어절 |
+| 스킬 없음 | 16 | 0.00 | 0.96 | 0.28 | 95.1% | 42.2% | 21어절 |
+| 기본 모드 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 43.3% | 12어절 |
+| 엄격 모드 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 42.2% | 15어절 |
 
-원본 출력, 표기 분포, 측정 조건은 [`evals/results/2026-10-08/RESULTS.md`](evals/results/2026-10-08/RESULTS.md)에 있습니다.
+원본 출력, 표기 분포, 측정 조건은 [`evals/results/2026-10-17/RESULTS.md`](evals/results/2026-10-17/RESULTS.md)에 있습니다.
 <!-- benchmark:end -->
 
 ## 규칙

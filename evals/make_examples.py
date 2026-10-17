@@ -6,6 +6,7 @@
 """
 import json
 import re
+import unicodedata
 import sys
 from pathlib import Path
 
@@ -25,6 +26,9 @@ REPLY_PICKS = (("oom", "OOMKilled 질문"), ("cache", "캐시 무효화 질문")
 # README 보기 블록은 문서 예시 하나를 좌우 표로 보인다. 답변 예시는 코드 블록이 표 칸보다 넓어서
 # 오른쪽 칸을 밀어내므로 examples/before-after.md에만 둔다.
 README_PICK = ("troubleshooting", "plain")
+# 표 칸 하나에 들어가는 코드 줄의 너비다. 고정폭 글꼴의 칸으로 세고, 넓은 글자(한글 등)는 두 칸이다.
+# 이보다 넓은 코드 줄이 있으면 칸이 넓어져 옆 칸을 밀어낸다.
+CELL_CODE_COLUMNS = 50
 COND_LABELS = {"plain": "기본 모드", "strict": "엄격 모드"}
 EXAMPLE_BLOCK = re.compile(r"<!-- example:start -->\n(.*?)\n<!-- example:end -->", re.S)
 SOURCE_BLOCK = re.compile(
@@ -99,16 +103,29 @@ def readme_example(results_dir, lang="ko"):
                         text["example_docs"].format(href=i18n.link(lang, "examples/before-after.md"))])
 
 
+def wide_code_lines(text):
+    """코드 블록 안에서 CELL_CODE_COLUMNS칸보다 넓은 줄의 목록."""
+    wide, fence = [], None
+    for line in text.splitlines():
+        mark = line.lstrip()[:3]
+        if mark in ("```", "~~~") and fence in (None, mark):
+            fence = None if fence else mark
+            continue
+        if fence and sum(2 if unicodedata.east_asian_width(c) in ("W", "F") else 1 for c in line) > CELL_CODE_COLUMNS:
+            wide.append(line)
+    return wide
+
+
 def pick_problems(results_dir):
-    """README 보기 예시가 측정 전에 정한 문서 예시인지, 표 칸을 넘칠 코드 블록이 없는지 본다."""
+    """README 보기 예시가 측정 전에 정한 문서 예시인지, 표 칸을 넘칠 만큼 넓은 코드 줄이 없는지 본다."""
     if README_PICK not in {pick[:2] for pick in DOC_PICKS}:
         return [f"README_PICK {README_PICK}가 DOC_PICKS에 없습니다"]
     scenario, cond = README_PICK
     problems = []
     for rel in _pair(results_dir, "docs", scenario, cond, "json"):
         try:
-            if "```" in raw_text(rel):
-                problems.append(f"{rel}: 코드 블록이 있어 README 보기 표의 칸을 넘칩니다")
+            if wide_code_lines(raw_text(rel)):
+                problems.append(f"{rel}: 코드 블록에 {CELL_CODE_COLUMNS}칸보다 넓은 줄이 있어 README 보기 표의 칸을 넘칩니다")
         except (OSError, ValueError, KeyError) as err:
             problems.append(f"{rel}: 원본을 읽지 못했습니다({err})")
     return problems

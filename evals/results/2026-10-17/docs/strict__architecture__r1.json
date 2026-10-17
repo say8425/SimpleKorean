@@ -1,0 +1,13 @@
+{
+  "text": "한국어 통제 언어 국가 표준은 없습니다. 이 기준은 KS A 0001과 공개 연구를 바탕으로 한 비공식 기준입니다.\n\nsqlpipe는 세 단계로 데이터를 옮깁니다. 리더 프로세스가 Postgres 행을 배치 단위로 스트리밍합니다. 컨버터가 각 배치를 Parquet 로우 그룹(row group)으로 바꿉니다. 업로더가 로우 그룹을 S3에 멀티파트 객체로 씁니다. 업로드가 실패하면 업로더가 해당 파트를 다시 시도합니다. 각 단계는 앞 단계의 출력을 받아 처리합니다. 리더는 배치를 하나씩 넘깁니다.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 276,
+  "cost_usd": 0.056109900000000004,
+  "duration_ms": 3125,
+  "condition": "strict",
+  "scenario": "architecture",
+  "type": "descriptive",
+  "run": 1
+}

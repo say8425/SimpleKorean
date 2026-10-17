@@ -128,16 +128,24 @@ def test_reply_sources_are_checked_verbatim_too():
         assert mx.check_sources(block.replace("**네**", "네")) == [f"{rel}: 인용한 글이 원본과 다릅니다"]
 
 
-def test_readme_pick_is_pre_registered_and_has_no_code_block():
+def test_readme_pick_is_pre_registered_and_has_no_wide_code_line():
     assert mx.README_PICK in {pick[:2] for pick in mx.DOC_PICKS}
     with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
         root = _results(d)
         assert mx.pick_problems(root) == []
         path = root / "docs" / "plain__troubleshooting__r1.json"
         record = json.loads(path.read_text(encoding="utf-8"))
-        path.write_text(json.dumps({**record, "text": record["text"] + "\n\n```bash\nls\n```"}, ensure_ascii=False),
-                        encoding="utf-8")
-        assert [p for p in mx.pick_problems(root) if "코드 블록이 있어" in p] != []
+        def with_code(line):
+            text = record["text"] + f"\n\n```bash\n{line}\n```"
+            path.write_text(json.dumps({**record, "text": text}, ensure_ascii=False), encoding="utf-8")
+            return [p for p in mx.pick_problems(root) if "넓은 줄" in p]
+        # 칸 안에 드는 짧은 코드 줄은 괜찮다
+        assert with_code("sqlpipe run --timeout 30s ...") == []
+        assert with_code("x" * mx.CELL_CODE_COLUMNS) == []
+        assert with_code("x" * (mx.CELL_CODE_COLUMNS + 1)) != []
+        # 한글은 두 칸으로 센다
+        assert with_code("가" * (mx.CELL_CODE_COLUMNS // 2 + 1)) != []
+        assert mx.wide_code_lines("~~~\n" + "x" * 60 + "\n```\n" + "y" * 60 + "\n~~~\n" + "z" * 60) == ["x" * 60, "y" * 60]
 
 
 def test_check_benchmark_catches_stale_numbers_and_missing_changelog_path():

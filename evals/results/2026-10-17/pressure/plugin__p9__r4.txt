@@ -1,0 +1,6 @@
+```
+Fix NPE in CSV parser on empty header row
+
+The parser threw a NullPointerException when the header row was
+empty. Skip empty header rows before reading column names.
+```

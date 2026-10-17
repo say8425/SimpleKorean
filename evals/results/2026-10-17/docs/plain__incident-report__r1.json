@@ -1,0 +1,13 @@
+{
+  "text": "14:02부터 14:31(UTC)까지 API 요청의 12%가 HTTP 502로 실패했습니다. 배포에서 캐시 예열 단계가 빠졌기 때문입니다. 14:27에 배포를 되돌렸고, 14:31에 요청이 모두 정상으로 돌아왔습니다. 영향을 받은 사용자는 요청을 다시 보내면 됩니다. 같은 누락이 반복되지 않도록 배포 절차에 캐시 예열 단계를 확인하는 과정을 추가하겠습니다.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 199,
+  "cost_usd": 0.0469759,
+  "duration_ms": 2664,
+  "condition": "plain",
+  "scenario": "incident-report",
+  "type": "descriptive",
+  "run": 1
+}

@@ -1,0 +1,71 @@
+sqlpipe 문서 초안입니다. 명령 이름, 플래그, 설정 키는 예시로 지었습니다. 실제 도구에 맞게 바꾸세요.
+
+````markdown
+# sqlpipe
+
+## 소개
+
+sqlpipe는 Postgres 테이블을 Parquet 파일로 바꿔 S3에 올리는 CLI 도구입니다. Parquet은 데이터를 칼럼 단위로 저장하는 파일 형식입니다. 설정에 적은 테이블마다 S3 경로 하나가 대응합니다. `sqlpipe sync`를 실행할 때마다 해당 경로의 파일을 새로 씁니다.
+
+## 시작하기
+
+Postgres 읽기 권한이 있는 계정과 S3 쓰기 권한이 필요합니다.
+
+1. sqlpipe를 설치하세요.
+
+   ```
+   pip install sqlpipe
+   ```
+
+2. 작업 디렉터리에 `sqlpipe.yaml`을 만드세요.
+
+   ```
+   source: postgres://sync_user:password@db.example.com:5432/shop
+   target: s3://my-bucket/shop/
+   tables:
+     - orders
+   ```
+
+3. 동기화를 실행하세요.
+
+   ```
+   sqlpipe sync --config sqlpipe.yaml
+   ```
+
+4. 결과를 확인하세요.
+
+   ```
+   aws s3 ls s3://my-bucket/shop/orders/
+   ```
+
+## 문제 해결
+
+### 연결 타임아웃
+
+`connection timed out`이 나오면 sqlpipe가 Postgres 호스트에 닿지 못한 것입니다. 아래 순서로 확인하세요.
+
+1. 실행 호스트에서 포트가 열려 있는지 확인하세요.
+
+   ```
+   pg_isready -h db.example.com -p 5432
+   ```
+
+2. 방화벽과 보안 그룹이 실행 호스트의 IP를 허용하는지 확인하세요.
+3. 네트워크가 느리면 대기 시간을 늘리세요.
+
+   ```
+   sqlpipe sync --config sqlpipe.yaml --connect-timeout 60
+   ```
+
+### 권한 오류
+
+오류 문구에 따라 원인이 다릅니다.
+
+`permission denied for table orders`는 Postgres 계정에 읽기 권한이 없다는 뜻입니다. DB 관리자 계정으로 권한을 주세요.
+
+```
+GRANT SELECT ON orders TO sync_user;
+```
+
+`AccessDenied`는 AWS 자격 증명에 S3 쓰기 권한이 없다는 뜻입니다. 사용하는 IAM 역할에 `s3:PutObject`를 추가하세요. 대상 버킷 경로가 정책의 `Resource`에 들어 있는지도 확인하세요.
+````

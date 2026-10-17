@@ -1,0 +1,59 @@
+## 무슨 일인가요
+
+curl이 서버가 보낸 인증서 체인을 검증하려는데, 체인의 **발급자(루트/중간 CA)를 로컬 신뢰 저장소에서 찾지 못했다**는 뜻입니다. 서버가 위험하다는 뜻이 아니라, 내 머신이 그 CA를 신뢰 목록에 갖고 있지 않다는 뜻입니다.
+
+사내 API에서 흔한 원인은 다음과 같습니다.
+
+1. **사내 사설 CA**로 서명된 인증서를 쓰는데, 그 루트 CA가 내 머신에 설치되어 있지 않음
+2. **서버가 중간 인증서를 빠뜨리고** 리프 인증서만 내려줌 (서버 설정 문제)
+3. **회사 프록시/보안 장비(SSL 인스펙션)**가 TLS를 가로채 자체 CA로 재서명함
+4. curl이 시스템 키체인이 아닌 **별도의 CA 번들**을 쓰고 있어서 사내 CA가 거기엔 없음 (Homebrew curl 등)
+
+## 원인 확인
+
+```sh
+# 서버가 보내는 체인 확인
+openssl s_client -connect api.example.internal:443 -showcerts </dev/null
+
+# curl이 쓰는 CA 번들 경로 확인
+curl -v https://api.example.internal 2>&1 | grep -i -E "CAfile|CApath"
+```
+
+출력에서 `Verify return code: 21 (unable to verify the first certificate)`이면 중간 인증서 누락(원인 2)일 가능성이 높고, `self-signed certificate in certificate chain`이면 사설 CA(원인 1, 3)입니다.
+
+## 해결 방법
+
+**1. 사내 루트 CA를 지정해서 사용 (권장)**
+
+IT/보안팀에서 사내 루트 CA 인증서(`.pem`/`.crt`)를 받아서:
+
+```sh
+curl --cacert /path/to/company-root-ca.pem https://api.example.internal
+```
+
+매번 쓰기 번거로우면 환경변수로 지정합니다.
+
+```sh
+export CURL_CA_BUNDLE=/path/to/company-root-ca.pem
+```
+
+**2. macOS 시스템 키체인에 등록**
+
+```sh
+sudo security add-trusted-cert -d -r trustRoot \
+  -k /Library/Keychains/System.keychain company-root-ca.pem
+```
+
+시스템 curl(`/usr/bin/curl`)은 키체인을 사용하므로 바로 적용됩니다. Homebrew curl처럼 OpenSSL 기반이면 키체인을 안 보므로 1번 방식을 쓰거나, 기본 번들(`$(brew --prefix)/etc/ca-certificates/cert.pem`)에 사내 CA를 이어붙여야 합니다.
+
+**3. 서버 측 문제라면**
+
+중간 인증서가 빠진 경우입니다. API 서버/로드밸런서의 인증서를 **리프 + 중간 CA를 합친 fullchain**으로 교체하도록 담당 팀에 요청하세요.
+
+## 피해야 할 것
+
+`curl -k` / `--insecure`는 검증을 완전히 끕니다. 잠깐 연결 테스트용으로는 괜찮지만, 스크립트나 운영 환경에 남겨두면 중간자 공격에 노출됩니다.
+
+---
+
+`openssl s_client` 출력이나 `curl -v` 결과를 붙여주시면 어느 원인인지 구체적으로 짚어드리겠습니다.

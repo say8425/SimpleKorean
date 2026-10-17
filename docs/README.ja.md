@@ -72,44 +72,54 @@ npm を使う場合は `npx skills add say8425/SimpleKorean` を実行してく�
 <tr>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json -->
+<!-- source: evals/results/2026-10-17/docs/baseline__troubleshooting__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
-> **Postgres 연결 타임아웃**
-> `connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근할 수 있는지 확인하세요. 방화벽, 보안 그룹, VPN 설정이 흔한 원인입니다. 서버가 느리게 응답하는 환경이라면 `--connect-timeout 30`처럼 제한 시간을 늘려 보세요. 클라우드 DB를 쓴다면 접속하는 IP가 허용 목록에 있는지도 확인하세요. 연결 문자열의 `sslmode` 값이 서버 설정과 맞는지도 점검하세요.
+> ### Postgres 연결 타임아웃
 >
-> **S3 권한 오류**
-> `AccessDenied`나 `403`이 나오면 사용 중인 자격 증명이 맞는지 `aws sts get-caller-identity`로 확인하세요. 해당 IAM 역할에 대상 버킷의 `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` 권한이 있어야 합니다. 버킷 정책이나 리전 설정이 다르지 않은지도 살펴보세요. 임시 자격 증명을 쓴다면 만료 여부도 확인하세요.
+> `connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근할 수 있는지 확인하세요. VPN, 방화벽, 보안 그룹의 인바운드 규칙이 흔한 원인입니다. 접근에 문제가 없다면 연결 대기 시간을 늘려 보세요.
+>
+> ```
+> sqlpipe run --timeout 30s ...
+> ```
+>
+> 접속 문자열의 호스트, 포트, `sslmode` 값도 다시 확인하세요. 서버가 SSL을 요구하는데 `sslmode=disable`로 되어 있으면 연결이 멈춘 것처럼 보일 수 있습니다.
+>
+> ### S3 권한 오류
+>
+> `AccessDenied` 또는 `403`이 나오면 자격 증명이 올바른지 먼저 확인하세요. `aws sts get-caller-identity`로 현재 사용 중인 계정을 볼 수 있습니다. 그다음 IAM 정책에 대상 버킷의 `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` 권한이 있는지 확인하세요. 버킷 정책과 리전 설정도 함께 점검해야 합니다.
 <!-- simple-korean: on -->
 
 </td>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-08/docs/plain__troubleshooting__r1.json -->
+<!-- source: evals/results/2026-10-17/docs/plain__troubleshooting__r1.json -->
 <!-- simple-korean: off -->
-> ## 연결 타임아웃
+> ## 문제 해결
 >
-> sqlpipe가 `dial tcp: i/o timeout` 오류를 내면 Postgres 연결이 실패한 것입니다.
+> ### Postgres 연결 타임아웃
 >
-> 1. sqlpipe를 실행하는 호스트가 Postgres 포트(기본값 5432)에 연결할 수 있는지 확인하세요.
-> 2. 방화벽이나 보안 그룹이 연결을 막으면 규칙을 고치세요.
-> 3. 데이터베이스가 관리형(RDS, Cloud SQL)이면 인스턴스가 sqlpipe의 IP에서 오는 연결을 허용하는지 확인하세요.
+> sqlpipe는 Postgres 포트(기본값 5432)에 연결하지 못하면 `dial tcp: i/o timeout` 오류를 내고 멈춥니다.
 >
-> ## S3 권한 오류
+> 1. sqlpipe를 실행하는 호스트가 Postgres 포트에 연결할 수 있는지 확인하세요.
+> 2. 방화벽과 보안 그룹 규칙을 확인하세요. 보통 이 규칙이 연결을 막습니다.
+> 3. 데이터베이스가 관리형(RDS, Cloud SQL)이면, 인스턴스가 sqlpipe의 IP에서 오는 연결을 허용하는지 확인하세요.
 >
-> sqlpipe가 S3에 쓰지 못하면 `AccessDenied` 오류를 냅니다. 이 오류는 sqlpipe가 쓰는 자격 증명에 권한이 없다는 뜻입니다.
+> ### S3 권한 오류
 >
-> 1. sqlpipe를 실행하는 호스트에서 자격 증명이 올바른 계정을 가리키는지 확인하세요.
-> 2. 대상 버킷에 `s3:PutObject` 권한이 있는지 확인하세요.
-> 3. 버킷 정책이 해당 자격 증명을 거부하면 정책을 고치세요.
+> S3 요청이 `AccessDenied` 오류로 실패하면 sqlpipe가 사용하는 자격 증명에 권한이 없다는 뜻입니다.
+>
+> 1. sqlpipe를 실행하는 호스트에서 `aws sts get-caller-identity`를 실행하세요. 이 명령은 현재 자격 증명의 계정과 역할을 보여 줍니다.
+> 2. 그 역할의 IAM 정책이 대상 버킷에 `s3:GetObject`와 `s3:PutObject`를 허용하는지 확인하세요.
+> 3. 버킷 정책이 해당 역할을 거부하는지 확인하세요.
 <!-- simple-korean: on -->
 
 </td>
 </tr>
 </table>
 
-元のファイルは、左が `evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json`、右が `evals/results/2026-10-08/docs/plain__troubleshooting__r1.json` です。
+元のファイルは、左が `evals/results/2026-10-17/docs/baseline__troubleshooting__r1.json`、右が `evals/results/2026-10-17/docs/plain__troubleshooting__r1.json` です。
 
 回答の例とほかの文書の例は [`examples/before-after.md`](../examples/before-after.md) にあります。
 <!-- example:end -->
@@ -118,15 +128,15 @@ npm を使う場合は `npx skills add say8425/SimpleKorean` を実行してく�
 
 下の数値はすべて、コミットした生の出力から計算し直した値です。CI がプッシュのたびに `evals/check_numbers.py` で照合します。文書と回答は `claude-sonnet-5-5`（effort low）が書き、判定は `claude-opus-5-5` が行いました。どの実行も、ユーザー設定、MCP サーバー、AGENTS.md のような指示ファイルを読み込んでいません。判定モデルも Claude なので、同じ系列に有利な偏りがあるかもしれません。語節（어절）は、韓国語で空白によって区切られる単位です。
 
-<!-- benchmark:start evals/results/2026-10-08 -->
+<!-- benchmark:start evals/results/2026-10-17 -->
 ### 回答
 
-専門用語を1つずつ含む質問8個を、条件ごとに2回ずつ尋ねました。回答は全部で32個です。スキルを有効にすると、読者に見える欠陥（em-dash、太字、見出し、箇条書き）が100%減りました（394個から0個）。ブラインド判定では、SimpleKorean の回答が16組のうち15組で勝ち、1組で引き分け、0組で負けました。
+専門用語を1つずつ含む質問8個を、条件ごとに2回ずつ尋ねました。回答は全部で32個です。スキルを有効にすると、読者に見える欠陥（em-dash、太字、表、先頭行の見出しや箇条書き）が100%減りました（130個から0個）。ブラインド判定では、SimpleKorean の回答が16組のうち16組で勝ち、0組で引き分け、0組で負けました。
 
-| 条件 | 回答数 | 平均語節数 | 平均文数 | em-dash | 太字 | 見出し | 箇条書き | 挨拶と結び |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| スキルなし | 16 | 246 | 30.9 | 0 | 141 | 45 | 208 | 12 |
-| SimpleKorean | 16 | 179 | 18.6 | 0 | 0 | 0 | 0 | 1 |
+| 条件 | 回答数 | 平均語節数 | 平均文数 | em-dash | 太字 | 表 | 先頭行の見出し・箇条書き | 見出し | 箇条書き | 挨拶と結び |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| スキルなし | 16 | 238 | 29.6 | 0 | 122 | 2 | 6 | 41 | 186 | 11 |
+| SimpleKorean | 16 | 167 | 20.8 | 0 | 0 | 0 | 0 | 12 | 73 | 0 |
 
 ### 文書
 
@@ -134,11 +144,11 @@ sqlpipe の文書課題8個を、条件ごとに2回ずつ書きました。比�
 
 | 条件 | 文書数 | 100語節あたりのエラー | 100語節あたりの警告 | 100語節あたりの翻訳調 | 指定表記の比率 | やさしい語の比率 | 最長の文 |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| スキルなし | 16 | 0.00 | 1.09 | 0.14 | 95.0% | 40.2% | 18語節 |
-| 基本モード | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 44.8% | 16語節 |
-| 厳格モード | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 45.5% | 17語節 |
+| スキルなし | 16 | 0.00 | 0.96 | 0.28 | 95.1% | 42.2% | 21語節 |
+| 基本モード | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 43.3% | 12語節 |
+| 厳格モード | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 42.2% | 15語節 |
 
-生の出力、表記の分布、測定条件は [`evals/results/2026-10-08/RESULTS.md`](../evals/results/2026-10-08/RESULTS.md) にあります。
+生の出力、表記の分布、測定条件は [`evals/results/2026-10-17/RESULTS.md`](../evals/results/2026-10-17/RESULTS.md) にあります。
 <!-- benchmark:end -->
 
 ## ルール

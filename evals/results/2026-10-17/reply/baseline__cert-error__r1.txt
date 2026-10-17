@@ -1,0 +1,45 @@
+**원인**
+
+curl이 서버의 인증서 체인을 검증하려는데, 체인의 루트(또는 중간) CA를 curl의 신뢰 저장소(CA 번들)에서 찾지 못해서 생기는 오류입니다. 사내 API에서는 보통 다음 중 하나입니다.
+
+1. **사내 사설 CA**로 서명된 인증서라서 시스템/curl이 그 CA를 모르는 경우 (가장 흔함)
+2. **회사 프록시/보안 장비(SSL 인스펙션)**가 중간에서 인증서를 재서명하는 경우
+3. 서버가 **중간 인증서를 빠뜨리고** 리프 인증서만 보내는 경우 (서버 설정 문제)
+
+**확인 방법**
+
+```sh
+# 서버가 보내는 체인 확인
+openssl s_client -connect api.example.internal:443 -showcerts </dev/null
+
+# curl 상세 로그
+curl -v https://api.example.internal/...
+```
+
+`issuer`가 사내 CA 이름이면 1·2번, 체인에 인증서가 하나뿐이면 3번입니다.
+
+**해결 방법**
+
+- **사내 루트 CA를 지정해서 사용 (권장)**
+  ```sh
+  curl --cacert /path/to/company-root-ca.pem https://api.example.internal/...
+  ```
+  매번 쓰기 번거로우면 환경변수로 지정합니다.
+  ```sh
+  export CURL_CA_BUNDLE=/path/to/company-root-ca.pem
+  ```
+
+- **macOS 시스템 키체인에 CA 등록** (IT팀에서 받은 루트 인증서 `.pem`/`.crt`)
+  ```sh
+  sudo security add-trusted-cert -d -r trustRoot \
+    -k /Library/Keychains/System.keychain company-root-ca.pem
+  ```
+  다만 Homebrew로 설치한 curl은 키체인이 아니라 자체 번들(openssl)을 쓰므로, 이 경우엔 `--cacert` 또는 `CURL_CA_BUNDLE`이 필요할 수 있습니다. `/usr/bin/curl`(시스템 curl)은 키체인을 사용합니다.
+
+- **서버 측 문제(3번)라면** 서버/로드밸런서에 중간 인증서를 포함한 fullchain을 설정하도록 담당 팀에 요청하세요.
+
+**피해야 할 것**
+
+`curl -k` / `--insecure`는 검증을 완전히 끄는 것이라 임시 테스트 외에는 권장하지 않습니다. 중간자 공격에 노출되고, 토큰 같은 민감 정보가 있는 요청이라면 특히 위험합니다.
+
+사내 루트 CA 파일은 보통 IT/보안팀이나 사내 위키에서 받을 수 있습니다. `openssl s_client` 출력 결과를 보여주시면 어느 경우인지 같이 좁혀 드릴 수 있어요.

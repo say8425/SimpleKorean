@@ -1,0 +1,74 @@
+## 무슨 일이 일어나는가
+
+`OOMKilled`는 컨테이너가 **memory limit**을 초과해서 리눅스 커널의 OOM killer가 프로세스를 강제 종료(SIGKILL, exit code 137)했다는 뜻입니다. 쿠버네티스는 `restartPolicy`에 따라 컨테이너를 다시 띄우고, 같은 원인이 반복되면 `CrashLoopBackOff`로 재시작 간격이 점점 늘어납니다.
+
+메모리 limit을 넘는 흔한 원인은 다음과 같습니다.
+
+1. **limit이 너무 낮음**: 실제 사용량의 정상 범위보다 낮게 잡힌 경우
+2. **메모리 누수**: 시간이 지나며 사용량이 계속 증가
+3. **런타임 설정 불일치**: JVM 힙, Node.js `--max-old-space-size`, Go GC 등이 컨테이너 limit을 고려하지 않음. 힙 외 메모리(메타스페이스, 스레드 스택, 네이티브 버퍼)까지 합쳐서 limit을 넘음
+4. **트래픽/데이터 급증**: 큰 요청, 대용량 파일 처리, 캐시 증가
+5. **page cache 포함**: 파일 I/O가 많으면 캐시도 cgroup 메모리로 계산됨
+6. **사이드카 또는 같은 파드의 다른 컨테이너**가 메모리를 사용 중
+
+## 먼저 확인할 것
+
+```bash
+# 종료 원인 확인 (Reason: OOMKilled, Exit Code: 137)
+kubectl describe pod <pod> -n <ns>
+kubectl get pod <pod> -n <ns> -o jsonpath='{.status.containerStatuses[*].lastState}'
+
+# 직전 컨테이너 로그
+kubectl logs <pod> -n <ns> --previous
+
+# 현재 사용량 (metrics-server 필요)
+kubectl top pod <pod> -n <ns> --containers
+
+# 설정된 requests/limits
+kubectl get pod <pod> -n <ns> -o jsonpath='{.spec.containers[*].resources}'
+```
+
+또한 Prometheus/Grafana가 있다면 `container_memory_working_set_bytes`를 limit과 함께 그려 보세요. 그래프의 모양으로 원인을 구분할 수 있습니다.
+- **계단식/완만한 우상향**: 누수
+- **시작 직후 급등**: limit이 낮거나 초기 로딩 문제
+- **주기적 스파이크**: 배치 작업이나 특정 요청
+
+노드 전체가 메모리 부족이면 파드가 `Evicted`될 수 있는데, 이것은 OOMKilled와 다른 현상입니다.
+
+## 무엇을 바꿔야 하는가
+
+**1. 단기 조치: limit 상향**
+
+```yaml
+resources:
+  requests:
+    memory: "512Mi"
+  limits:
+    memory: "1Gi"
+```
+
+실제 working set의 피크에 20~30% 여유를 두는 것이 일반적입니다. 가능하면 `requests`와 `limits`를 같게 해서 QoS를 Guaranteed로 두면 노드 압박 시 더 안전합니다.
+
+**2. 런타임을 컨테이너에 맞추기**
+
+- JVM: `-XX:MaxRAMPercentage=70` 정도로 지정 (힙을 limit의 100%로 잡지 말 것)
+- Node.js: `--max-old-space-size`를 limit보다 작게 (예: limit 1Gi면 ~768)
+- Go: `GOMEMLIMIT`을 limit의 80~90%로 설정
+
+**3. 근본 원인 해결**
+
+사용량이 계속 늘어난다면 limit만 올리면 재시작 주기만 늘어날 뿐입니다. 힙 덤프/프로파일링으로 누수를 찾거나, 큰 데이터를 스트리밍 처리하거나, 캐시에 상한을 두세요.
+
+**4. 확장**
+
+부하 때문이라면 레플리카 수를 늘리거나 HPA로 분산하세요. VPA를 쓰면 적정 requests/limits 추천값을 얻을 수 있습니다.
+
+## 다음 단계
+
+원인을 더 좁히려면 아래 정보를 알려주세요.
+- `kubectl describe pod` 출력 중 `Last State`, `Limits` 부분
+- 사용하는 언어/런타임 (Java, Node, Python 등)
+- 재시작까지 걸리는 시간 (시작 직후인지, 몇 시간 뒤인지)
+- `kubectl top` 결과
+
+이 정보가 있으면 limit 문제인지 누수인지 구체적으로 진단해 드릴 수 있습니다.

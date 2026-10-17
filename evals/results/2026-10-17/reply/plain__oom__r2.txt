@@ -1,0 +1,40 @@
+컨테이너가 메모리 상한(limit)을 넘어서 커널이 프로세스를 강제 종료하기 때문에 파드가 재시작됩니다. 먼저 사용량이 상한에 닿는 이유를 확인하고, 그다음 상한이나 애플리케이션 설정을 바꿔야 합니다.
+
+## 무슨 일이 일어나는가
+
+컨테이너 메모리 사용량이 `resources.limits.memory`를 넘으면 리눅스 커널의 OOM killer(메모리가 부족할 때 프로세스를 종료하는 기능)가 컨테이너에 SIGKILL을 보냅니다. 종료 코드는 137입니다. kubelet은 재시작 정책에 따라 컨테이너를 다시 시작합니다. 원인이 그대로이면 같은 지점에서 다시 죽습니다. 재시작 간격이 점점 늘어나 CrashLoopBackOff 상태가 됩니다.
+
+## 원인 확인
+
+다음 명령으로 종료 사유를 확인하세요.
+
+```
+kubectl describe pod <파드 이름>
+```
+
+`Last State: Terminated`, `Reason: OOMKilled`, `Exit Code: 137`이 보이면 메모리 초과가 맞습니다. 실제 사용량은 `kubectl top pod --containers`로 확인하세요. 이 명령은 클러스터에 metrics-server가 있어야 동작합니다.
+
+원인은 보통 네 가지 중 하나입니다.
+
+- limit이 정상 사용량보다 작게 설정되었습니다.
+- 코드에 메모리 누수가 있습니다.
+- JVM이나 Node.js 같은 런타임이 컨테이너 limit을 모르고 힙을 크게 잡습니다.
+- 트래픽이나 입력 데이터가 급증해 일시적으로 사용량이 늘었습니다.
+
+## 바꿀 것
+
+1. 사용량이 안정적으로 limit 아래에 있는데도 죽으면 limit을 올리세요. request도 함께 올려야 스케줄러가 충분한 노드를 고릅니다.
+2. 런타임이 limit을 인식하게 설정하세요. JVM은 `-XX:MaxRAMPercentage=75`, Node.js는 `--max-old-space-size`를 쓸 수 있습니다.
+3. 사용량이 시간이 지날수록 계속 늘면 누수입니다. 코드를 고쳐야 하고, limit을 올리는 것은 재시작 주기를 늦출 뿐입니다.
+
+```yaml
+resources:
+  requests:
+    memory: "512Mi"
+  limits:
+    memory: "1Gi"
+```
+
+limit을 노드의 할당 가능 메모리보다 크게 올리면 파드가 스케줄되지 않습니다. 값을 바꾸기 전에 `kubectl describe node <노드 이름>`으로 `Allocatable`을 확인하세요.
+
+`describe pod` 출력과 사용 중인 런타임을 알려 주면 원인을 더 좁힐 수 있습니다.

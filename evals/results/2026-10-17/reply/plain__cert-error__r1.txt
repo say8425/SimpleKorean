@@ -1,0 +1,34 @@
+curl이 서버 인증서를 서명한 인증 기관(CA)을 신뢰 목록에서 찾지 못해 검증에 실패한 것입니다. 사내 API에서는 보통 사내 사설 CA가 인증서를 발급했거나, 서버가 중간 인증서를 보내지 않았거나, 회사 프록시가 TLS를 가로채기 때문입니다.
+
+## 원인 확인
+
+서버가 보내는 인증서 체인을 보세요. `<host>`는 API 호스트로 바꾸세요.
+
+```
+openssl s_client -connect <host>:443 -showcerts </dev/null
+```
+
+출력의 `Verify return code`와 `issuer`를 확인하세요. issuer가 사내 CA 이름이면 사설 CA 문제입니다. 체인에 서버 인증서 하나만 있으면 서버가 중간 인증서를 빠뜨린 것입니다.
+
+## 해결 방법
+
+사설 CA 문제이면 보안팀이나 인프라팀에서 사내 루트 CA 인증서(PEM 파일)를 받으세요. 그다음 아래 중 하나를 고르세요.
+
+- 한 번만 쓰면 `--cacert`로 파일을 지정하세요.
+  ```
+  curl --cacert ca.pem https://<host>/path
+  ```
+- 셸에서 계속 쓰면 환경 변수를 설정하세요.
+  ```
+  export CURL_CA_BUNDLE=/경로/ca.pem
+  ```
+- macOS 시스템 curl에서 계속 쓰면 키체인에 CA를 신뢰 등록하세요.
+  ```
+  sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ca.pem
+  ```
+
+Homebrew로 설치한 curl은 키체인을 읽지 않고 자체 CA 번들을 씁니다. 그 curl에는 `--cacert`나 `CURL_CA_BUNDLE`을 쓰세요.
+
+서버가 중간 인증서를 빠뜨렸으면 서버 관리자가 서버 인증서와 중간 인증서를 합친 체인 파일(fullchain)로 설정을 고쳐야 합니다. 클라이언트에서는 고칠 수 없습니다.
+
+`-k`(`--insecure`)는 인증서 검증을 완전히 끕니다. 중간자 공격에 노출되므로 운영 환경이나 토큰을 보내는 요청에 쓰면 안 됩니다.
