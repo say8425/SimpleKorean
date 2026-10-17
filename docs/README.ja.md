@@ -240,7 +240,7 @@ SimpleKorean は、[AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEngl
 
 回答のルールも元のプロジェクトとは異なります。元のプロジェクトは、回答で見出しと箇条書きをすべて禁じています。SimpleKorean は、見出しと箇条書きを使うかどうかを、答えの内容と長さを見てモデルが決めるようにしています。その根拠は[回答の書式の研究](../docs/research/reply-formatting.md)（韓国語）にあります。
 
-そのため、ベンチマークが数える回答の欠陥も異なります。元のプロジェクトは em-dash、太字、見出し、箇条書きを数えます。SimpleKorean は em-dash、太字、表、先頭行の見出しや箇条書きを数えます。
+回答のルールが異なるため、ベンチマークが数える回答の欠陥も異なります。元のプロジェクトは em-dash、太字、見出し、箇条書きを数えます。SimpleKorean は em-dash、太字、表、先頭行の見出しや箇条書きを数えます。
 
 ## 貢献
 

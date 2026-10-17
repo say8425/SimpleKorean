@@ -33,7 +33,7 @@ import metrics  # noqa: E402
 import readme_i18n as i18n  # noqa: E402
 import report  # noqa: E402
 
-KEY_PHRASES = ("헤더와 목록을 써도 됩니다", "em-dash를 쓰지 마세요", "첫 문장에 답", "바꾸지 마세요", "확인하다", "레포지토리", "굵은 글씨와 표")
+KEY_PHRASES = ("헤더와 목록을 써도 됩니다", "em-dash를 쓰지 마세요", "첫 문장에 답", "바꾸지 마세요", "확인하다", "레포지토리", "굵은 글씨와 표", "첫 문장 뒤에 두세요")
 SKILL_TRIGGERS = ("쉬운 한국어", "번역투 빼 줘", "AI 티 안 나게", "문서 다듬어 줘", "통제 언어", "엄격 모드", "KS A 0001",
                   "plain Korean", "Simple Korean", "controlled language")
 VERSION_PATTERNS = {

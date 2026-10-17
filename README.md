@@ -246,7 +246,7 @@ SimpleKorean은 [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish
 
 답변 규칙도 원본과 다릅니다. 원본은 답변에서 헤더와 불릿을 모두 막습니다. SimpleKorean은 헤더와 목록을 쓸지 답의 내용과 길이를 보고 정하게 합니다. 이렇게 정한 근거는 [답변 서식 연구](docs/research/reply-formatting.md)에 있습니다.
 
-그래서 벤치마크가 세는 답변 결함도 다릅니다. 원본은 em-dash, 굵은 글씨, 헤더, 불릿을 셉니다. SimpleKorean은 em-dash, 굵은 글씨, 표, 첫 줄의 헤더나 목록을 셉니다.
+답변 규칙이 다르므로 벤치마크가 세는 답변 결함도 다릅니다. 원본은 em-dash, 굵은 글씨, 헤더, 불릿을 셉니다. SimpleKorean은 em-dash, 굵은 글씨, 표, 첫 줄의 헤더나 목록을 셉니다.
 
 ## 기여
 

@@ -240,7 +240,7 @@ SimpleKorean is an unofficial derived project. It forked from [AminBlg/SimpleEng
 
 The reply rules also differ from the original. The original bans headers and bullets in every reply. SimpleKorean lets the model decide from the content and length of each answer whether to use headers and lists. The evidence for this choice is in the [reply formatting study](../docs/research/reply-formatting.md) (in Korean).
 
-The benchmark therefore counts different reply defects. The original counts em-dashes, bold text, headers, and bullets. SimpleKorean counts em-dashes, bold text, tables, and a header or list on the first line.
+Because the reply rules differ, the benchmark also counts different reply defects. The original counts em-dashes, bold text, headers, and bullets. SimpleKorean counts em-dashes, bold text, tables, and a header or list on the first line.
 
 ## Contributing
 

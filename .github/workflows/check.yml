@@ -15,7 +15,7 @@ jobs:
       - run: node --test src/hooks/simple-korean-activate.test.js
       - run: python3 src/hooks/test_lint_hook.py
       - run: python3 evals/check_numbers.py
-      - run: python3 evals/ko_lint.py --gate=warning skills/simple-korean/SKILL.md skills/simple-korean/references/*.md prompts/system-prompt.md output-styles/simple-korean.md README.md CHANGELOG.md tools/slop-lexicon/README.md src/hooks/README.md data/basic-vocabulary/README.md
+      - run: python3 evals/ko_lint.py --gate=warning skills/simple-korean/SKILL.md skills/simple-korean/references/*.md prompts/system-prompt.md output-styles/simple-korean.md README.md CHANGELOG.md tools/slop-lexicon/README.md src/hooks/README.md data/basic-vocabulary/README.md docs/research/*.md evals/pressure-tests.md
   python39:
     # setup-python에 Ubuntu 26.04용 Python 3.9 빌드가 없다.
     runs-on: ubuntu-24.04

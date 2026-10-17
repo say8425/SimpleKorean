@@ -240,7 +240,7 @@ SimpleKorean es un proyecto derivado no oficial. Se separó de [AminBlg/SimpleEn
 
 Las reglas de respuesta también difieren del original. El original prohíbe encabezados y viñetas en todas las respuestas. SimpleKorean deja que el modelo decida, según el contenido y la extensión de cada respuesta, si usa encabezados y listas. La evidencia de esta decisión está en el [estudio sobre el formato de las respuestas](../docs/research/reply-formatting.md) (en coreano).
 
-Por eso, el benchmark cuenta defectos distintos en las respuestas. El original cuenta em-dash, negritas, encabezados y viñetas. SimpleKorean cuenta em-dash, negritas, tablas y un encabezado o una lista en la primera línea.
+Como las reglas de respuesta difieren, el benchmark también cuenta defectos distintos en las respuestas. El original cuenta em-dash, negritas, encabezados y viñetas. SimpleKorean cuenta em-dash, negritas, tablas y un encabezado o una lista en la primera línea.
 
 ## Contribuir
 

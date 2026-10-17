@@ -240,7 +240,7 @@ SimpleKorean 是从 [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEng
 
 回答规则也与原项目不同。原项目在所有回答中都禁止标题和列表符号。SimpleKorean 让模型根据回答的内容和长度决定是否使用标题和列表。依据见[回答格式研究](../docs/research/reply-formatting.md)（韩语）。
 
-因此，基准测试统计的回答缺陷也不同。原项目统计 em-dash、粗体、标题和列表符号。SimpleKorean 统计 em-dash、粗体、表格，以及第一行的标题或列表。
+由于回答规则不同，基准测试统计的回答缺陷也不同。原项目统计 em-dash、粗体、标题和列表符号。SimpleKorean 统计 em-dash、粗体、表格，以及第一行的标题或列表。
 
 ## 贡献
 
