@@ -202,6 +202,7 @@ def test_reply_checks_take_linear_time_on_long_blank_runs():
     start = time.time()
     assert ko_lint.reply_fillers(" " * 10_000 + "답입니다.") == (False, False)
     assert ko_lint.reply_fillers(" " * 10_000 + "좋은 질문입니다.") == (True, False)
+    assert ko_lint.reply_fillers("가" * 30_000 + "주시면 답입니다.") == (False, False)
     ko_lint.reader_check("답입니다.\n" + " " * 30_000 + "x")
     elapsed = time.time() - start
     assert elapsed < 0.5, elapsed
