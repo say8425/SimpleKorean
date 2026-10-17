@@ -151,6 +151,31 @@ def test_reader_check_reply_counts():
     assert report["visible_total"] == 2, report
 
 
+def test_reader_check_counts_tables_and_lead_structure():
+    r = ko_lint.reader_check("답은 둘입니다.\n\n| 이름 | 값 |\n|---|:-:|\n| a | 1 |\n")
+    assert (r["counts"]["tables"], r["counts"]["lead_structure"], r["visible_total"]) == (1, 0, 1), r
+    lead = ko_lint.reader_check("## 요약\n\n디스크가 가득 찼습니다.\n")["counts"]
+    assert (lead["lead_structure"], lead["headers"]) == (1, 1), lead
+    assert ko_lint.reader_check("\n  1. 로그를 지우세요.\n2. 다시 배포하세요.\n")["counts"]["lead_structure"] == 1
+    # 답을 쓴 첫 문장 뒤의 헤더와 목록은 결함이 아니다
+    shaped = ko_lint.reader_check("디스크가 가득 찼습니다.\n\n## 원인\n\n로그가 쌓였습니다. 정리하지 않았습니다.\n\n- 하나\n- 둘\n- 셋\n")
+    assert (shaped["counts"]["lead_structure"], shaped["counts"]["bullets"], shaped["visible_total"]) == (0, 3, 0), shaped
+    fenced = ko_lint.reader_check("```\n| a |\n|---|\n```\n표가 아닙니다. 코드 블록입니다.\n")["counts"]
+    assert (fenced["tables"], fenced["lead_structure"]) == (0, 0), fenced
+
+
+def test_cli_reply_gate_allows_structure_but_not_tables():
+    with tempfile.TemporaryDirectory() as d:
+        shaped = Path(d, "shaped.txt")
+        shaped.write_text("디스크가 가득 찼습니다.\n\n## 원인\n\n로그가 쌓였습니다.\n\n1. 지우세요.\n2. 늘리세요.\n3. 배포하세요.\n",
+                          encoding="utf-8")
+        table = Path(d, "table.txt")
+        table.write_text("답입니다.\n\n| a | b |\n|---|---|\n| 1 | 2 |\n", encoding="utf-8")
+        assert run_cli("--type", "reply", "--gate", str(shaped)).returncode == 0
+        r = run_cli("--type", "reply", "--gate", str(table))
+        assert r.returncode != 0 and '"tables": 1' in r.stdout, (r.returncode, r.stdout)
+
+
 def test_reply_fillers():
     assert ko_lint.reply_fillers("좋은 질문입니다! 답은 이렇습니다.") == (True, False)
     assert ko_lint.reply_fillers("네, 멱등성에 대해 설명드리겠습니다. 답입니다.") == (True, False)

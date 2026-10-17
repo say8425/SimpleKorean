@@ -42,10 +42,11 @@ def test_parse_scenarios_rejects_missing_prompt():
         raise AssertionError("프롬프트 없는 시나리오를 받아들였습니다")
 
 
-def test_real_file_has_nine_numbered_scenarios():
+def test_real_file_has_ten_numbered_scenarios():
     got = run_pressure.parse_scenarios(run_pressure.TESTS_MD.read_text(encoding="utf-8"))
-    assert [s["n"] for s in got] == list(range(1, 10))
+    assert [s["n"] for s in got] == list(range(1, 11))
     assert got[8]["prompt"].startswith("Write a git commit message")
+    assert "디스크 사용량이 90%" in got[9]["prompt"]
     assert all(len(s["prompt"]) > 20 for s in got)
     assert "시도되어지며" in got[1]["prompt"] and "해요체로" in got[6]["prompt"]
 
@@ -79,6 +80,8 @@ def test_machine_report_counts_lint_and_style_criteria():
     assert mixed["다른 문체 문장"] == 1
     r8 = run_pressure.machine_report(8, "백업은 반드시 하루에 한 번 실행해야 합니다.\n")
     assert r8["strict_ending"] == 1
+    r10 = run_pressure.machine_report(10, "## 원인\n\n**로그**가 쌓였습니다.\n")
+    assert r10 == {"visible_total": 1, "lead_structure": 1}, r10
     assert run_pressure.machine_report(4, "아무 글입니다.") == {}
     assert run_pressure.machine_report(9, "fix: handle an empty CSV header row") == {"한글 비율": 0.0}
 

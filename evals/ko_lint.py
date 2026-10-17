@@ -42,6 +42,10 @@ BOLD = re.compile(r"\*\*[^*\n]+\*\*")
 HEADER = re.compile(r"^#{1,6}\s", re.M)
 # 줄 앞 공백은 [^\S\n]*로 센다. re.M에서 \s*는 빈 줄을 넘어가서, 빈 줄이 많으면 시간이 제곱으로 는다.
 BULLET = re.compile(r"^[^\S\n]*([-*+]|\d+[.)])\s", re.M)
+# 표의 구분 줄(|---|:-:|)을 센다. 표마다 하나다
+TABLE_RULE = re.compile(r"^[^\S\n]*(?:\|[^\S\n]*:?-+:?[^\S\n]*(?:\|[^\S\n]*:?-+:?[^\S\n]*)*\|?"
+                        r"|:?-+:?[^\S\n]*(?:\|[^\S\n]*:?-+:?[^\S\n]*)+\|?)[^\S\n]*$", re.M)
+LEAD_STRUCTURE = re.compile(r"\A\s*(?:#{1,6}\s|[-*+]\s|\d+[.)]\s)")
 OPENER = re.compile(  # 공백도 \W이므로 앞부분은 \W* 하나로 쓴다. \s*\W*는 같은 공백을 나눠 갖느라 느리다.
     r"^\W*(?:좋은\s?질문|훌륭한\s?질문|물론(?:입니다|이죠|이에요|요)"
     r"|네[,.!]?\s*(?:알겠습니다|좋습니다|맞습니다)"
@@ -123,9 +127,11 @@ def reply_fillers(text):
 def reader_check(text):
     """채팅 답변에서 독자가 보는 것을 센다.
 
-    visible_total은 답변 규칙이 막는 서식인 em-dash와 굵은 글씨의 합이다. 헤더와 목록 항목은
-    구조를 나타낼 때 쓸 수 있으므로 세기만 하고 넣지 않는다. sentences는 목록 항목과 표 행도
-    문장으로 센다. 답변 규칙에는 문장 수 상한이 없으므로 visible_total에는 넣지 않는다.
+    visible_total은 답변 규칙이 막는 서식인 em-dash, 굵은 글씨, 표의 합이다. 헤더와 목록 항목은
+    구조를 나타낼 때 쓸 수 있으므로 세기만 하고 넣지 않는다. lead_structure는 코드 블록을 뺀 첫 줄이
+    헤더나 목록 항목이면 1이다. 답변 규칙은 답을 쓴 첫 문장 뒤에 헤더와 목록을 두게 한다.
+    sentences는 목록 항목과 표 행도 문장으로 센다. 답변 규칙에는 문장 수 상한이 없으므로
+    visible_total에는 넣지 않는다.
     """
     text = ko_text.nfc(text)
     prose = re.sub(r"```.*?```", " ", text, flags=re.S)
@@ -140,10 +146,12 @@ def reader_check(text):
         "bold_spans": len(BOLD.findall(prose)),
         "headers": len(HEADER.findall(prose)),
         "bullets": len(BULLET.findall(prose)),
+        "tables": len(TABLE_RULE.findall(prose)),
+        "lead_structure": int(bool(LEAD_STRUCTURE.match(prose))),
         "opener": int(opener),
         "closer": int(closer),
     }
-    visible = counts["em_dash"] + counts["bold_spans"]
+    visible = counts["em_dash"] + counts["bold_spans"] + counts["tables"]
     return {"type": "reply", "eojeol": max(1, len(no_md.split())), "counts": counts, "visible_total": visible}
 
 

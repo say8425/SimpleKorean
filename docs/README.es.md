@@ -28,7 +28,7 @@ claude plugin marketplace add say8425/SimpleKorean && claude plugin install simp
 
 El nombre del estilo de salida es `simple-korean:simple-korean`. Con el nombre corto no se encuentra. Elíjalo en Output style de `/config` o añada `{"outputStyle": "simple-korean:simple-korean"}` a `~/.claude/settings.json`.
 
-El hook de inicio de sesión añade un bloque de reglas de 2532 caracteres en cada sesión. El número de tokens que muestra `claude plugin details simple-korean` no incluye este bloque.
+El hook de inicio de sesión añade un bloque de reglas de 2575 caracteres en cada sesión. El número de tokens que muestra `claude plugin details simple-korean` no incluye este bloque.
 
 ### Codex
 
@@ -237,7 +237,7 @@ El coreano no tiene una lista pública que fije a la vez las palabras aprobadas 
 
 SimpleKorean es un proyecto derivado no oficial. Se separó de [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) v2.1.1 (`a6fcb4f`). Del original tomamos la estructura del repositorio, los hooks, la interfaz del linter y el método de medición. Las reglas, la lista de palabras y las tareas de medición las escribimos de nuevo para el coreano. No tomamos los resultados de medición en inglés del original.
 
-Las reglas de respuesta también difieren del original. El original prohíbe encabezados y viñetas en todas las respuestas. SimpleKorean permite encabezados y listas que muestran la estructura de una respuesta larga.
+Las reglas de respuesta también difieren del original. El original prohíbe encabezados y viñetas en todas las respuestas. SimpleKorean permite encabezados y listas que muestren la estructura. Por eso, el benchmark cuenta defectos distintos en las respuestas. El original cuenta em-dash, negritas, encabezados y viñetas. SimpleKorean cuenta em-dash, negritas y tablas.
 
 ## Contribuir
 

@@ -14,10 +14,10 @@ NBSP = " "
 TEXT = {
     "ko": {
         "reply_intro": "### 답변\n\n전문용어가 하나씩 든 질문 {questions}개를 조건마다 {runs}번씩 물었습니다. 답변은 모두 {total}개입니다. ",
-        "headline": ("스킬을 켜면 화면에 드러나는 결함(em-dash, 굵은 글씨)이 {cut} 줄었습니다({base}개에서 {plain}개). "
+        "headline": ("스킬을 켜면 화면에 드러나는 결함(em-dash, 굵은 글씨, 표)이 {cut} 줄었습니다({base}개에서 {plain}개). "
                      "블라인드 판정에서 SimpleKorean 답변은 {n}쌍 가운데 {wins}쌍에서 이겼고, "
                      "{ties}쌍에서 비겼고, {losses}쌍에서 졌습니다."),
-        "reply_header": "| 조건 | 답변 수 | 평균 어절 | 평균 문장 | em-dash | 굵은 글씨 | 헤더 | 불릿 | 인사말과 맺음말 |",
+        "reply_header": "| 조건 | 답변 수 | 평균 어절 | 평균 문장 | em-dash | 굵은 글씨 | 표 | 헤더 | 불릿 | 인사말과 맺음말 |",
         "doc_intro": ("### 문서\n\nsqlpipe 문서 과제 {tasks}개를 조건마다 {runs}번씩 썼습니다. 비율은 린터가 센 수를 어절 수로 나눈 값입니다. "
                       "린터는 정규식 검사이므로 순위로 읽지 말고 방향으로 읽으세요."),
         "doc_header": "| 조건 | 문서 수 | 100어절당 오류 | 100어절당 경고 | 100어절당 번역투 | 지정형 비율 | 쉬운 단어 비율 | 가장 긴 문장 |",
@@ -34,10 +34,10 @@ TEXT = {
     "en": {
         "reply_intro": ("### Replies\n\nWe asked {questions} questions {runs} times in each condition. "
                         "Each question contains one technical term. There are {total} replies in total. "),
-        "headline": ("With the skill on, reader-visible defects (em-dashes, bold text) fell by {cut} "
+        "headline": ("With the skill on, reader-visible defects (em-dashes, bold text, tables) fell by {cut} "
                      "(from {base} to {plain}). In a blind judgment of {n} pairs, the SimpleKorean reply won {wins}, "
                      "tied {ties}, and lost {losses}."),
-        "reply_header": ("| Condition | Replies | Mean eojeol | Mean sentences | em-dash | Bold | Headers | Bullets | "
+        "reply_header": ("| Condition | Replies | Mean eojeol | Mean sentences | em-dash | Bold | Tables | Headers | Bullets | "
                          "Greetings and sign-offs |"),
         "doc_intro": ("### Documents\n\nThe model wrote each of {tasks} sqlpipe documentation tasks {runs} times in each condition. "
                       "Each rate is the linter's count divided by the eojeol count. The linter is a regex check, "
@@ -57,10 +57,10 @@ TEXT = {
     },
     "ja": {
         "reply_intro": "### 回答\n\n専門用語を1つずつ含む質問{questions}個を、条件ごとに{runs}回ずつ尋ねました。回答は全部で{total}個です。",
-        "headline": ("スキルを有効にすると、読者に見える欠陥（em-dash、太字）が{cut}減りました"
+        "headline": ("スキルを有効にすると、読者に見える欠陥（em-dash、太字、表）が{cut}減りました"
                      "（{base}個から{plain}個）。ブラインド判定では、SimpleKorean の回答が{n}組のうち{wins}組で勝ち、"
                      "{ties}組で引き分け、{losses}組で負けました。"),
-        "reply_header": "| 条件 | 回答数 | 平均語節数 | 平均文数 | em-dash | 太字 | 見出し | 箇条書き | 挨拶と結び |",
+        "reply_header": "| 条件 | 回答数 | 平均語節数 | 平均文数 | em-dash | 太字 | 表 | 見出し | 箇条書き | 挨拶と結び |",
         "doc_intro": ("### 文書\n\nsqlpipe の文書課題{tasks}個を、条件ごとに{runs}回ずつ書きました。"
                       "比率は、リンターが数えた件数を語節数で割った値です。"
                       "リンターは正規表現による検査なので、順位ではなく傾向として読んでください。"),
@@ -78,9 +78,9 @@ TEXT = {
     },
     "zh": {
         "reply_intro": "### 回答\n\n我们把 {questions} 个问题在每个条件下各问了 {runs} 次，每个问题含一个专业术语，共得到 {total} 个回答。",
-        "headline": ("启用技能后，读者能看到的缺陷（em-dash、粗体）减少了 {cut}（从 {base} 个降到 {plain} 个）。"
+        "headline": ("启用技能后，读者能看到的缺陷（em-dash、粗体、表格）减少了 {cut}（从 {base} 个降到 {plain} 个）。"
                      "在 {n} 组盲评中，SimpleKorean 的回答赢了 {wins} 组，平了 {ties} 组，输了 {losses} 组。"),
-        "reply_header": "| 条件 | 回答数 | 平均语节数 | 平均句数 | em-dash | 粗体 | 标题 | 列表符号 | 问候语和结束语 |",
+        "reply_header": "| 条件 | 回答数 | 平均语节数 | 平均句数 | em-dash | 粗体 | 表格 | 标题 | 列表符号 | 问候语和结束语 |",
         "doc_intro": ("### 文档\n\nsqlpipe 的 {tasks} 个文档任务在每个条件下各写了 {runs} 次。比率是检查器的计数除以语节数得到的值。"
                       "检查器使用正则表达式，所以请把数字当作方向，而不是排名。"),
         "doc_header": ("| 条件 | 文档数 | 每 100 语节错误 | 每 100 语节警告 | 每 100 语节翻译腔 | 规定写法比例 | "
@@ -98,10 +98,10 @@ TEXT = {
     "es": {
         "reply_intro": ("### Respuestas\n\nHicimos {questions} preguntas {runs} veces en cada condición. "
                         "Cada pregunta contiene un término técnico. En total hay {total} respuestas. "),
-        "headline": ("Con la skill activada, los defectos visibles para el lector (em-dash, negritas) "
+        "headline": ("Con la skill activada, los defectos visibles para el lector (em-dash, negritas, tablas) "
                      "bajaron un {cut} (de {base} a {plain}). En una evaluación a ciegas de {n} pares, la respuesta de "
                      "SimpleKorean ganó {wins}, empató {ties} y perdió {losses}."),
-        "reply_header": ("| Condición | Respuestas | Media de eojeol | Media de oraciones | em-dash | Negritas | "
+        "reply_header": ("| Condición | Respuestas | Media de eojeol | Media de oraciones | em-dash | Negritas | Tablas | "
                          "Encabezados | Viñetas | Saludos y despedidas |"),
         "doc_intro": ("### Documentos\n\nEl modelo escribió cada una de las {tasks} tareas de documentación de sqlpipe {runs} veces "
                       "en cada condición. Cada tasa es el recuento del linter dividido entre el número de eojeol. "
