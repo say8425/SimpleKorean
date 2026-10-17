@@ -28,7 +28,7 @@ claude plugin marketplace add say8425/SimpleKorean && claude plugin install simp
 
 输出样式的名称是 `simple-korean:simple-korean`。用短名称找不到它。请在 `/config` 的 Output style 中选择，或者在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。
 
-会话启动钩子会在每个会话中加入 2,379 个字符的规则块。`claude plugin details simple-korean` 显示的 token 数不包含这个规则块。
+会话启动钩子会在每个会话中加入 2,532 个字符的规则块。`claude plugin details simple-korean` 显示的 token 数不包含这个规则块。
 
 ### Codex
 
@@ -236,6 +236,8 @@ im-not-ai 这类润色技能会从已经写好的文字中去掉 AI 文风和翻
 ## 与原项目的关系
 
 SimpleKorean 是从 [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) v2.1.1（`a6fcb4f`）分出来的非官方派生项目。仓库结构、钩子、检查器接口和测量方法来自原项目。规则、词表和测量任务按韩语重新编写。我们没有沿用原项目的英语测量结果。
+
+回答规则也与原项目不同。原项目在所有回答中都禁止标题和列表符号。SimpleKorean 允许用标题和列表来表现较长回答的结构。
 
 ## 贡献
 

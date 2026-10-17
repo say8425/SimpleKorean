@@ -28,7 +28,7 @@ claude plugin marketplace add say8425/SimpleKorean && claude plugin install simp
 
 出力スタイルの名前は `simple-korean:simple-korean` です。短い名前では見つかりません。`/config` の Output style で選ぶか、`~/.claude/settings.json` に `{"outputStyle": "simple-korean:simple-korean"}` を書いてください。
 
-セッション開始フックは、セッションごとに2,379文字のルールブロックを追加します。`claude plugin details simple-korean` が表示するトークン数には、このブロックは含まれません。
+セッション開始フックは、セッションごとに2,532文字のルールブロックを追加します。`claude plugin details simple-korean` が表示するトークン数には、このブロックは含まれません。
 
 ### Codex
 
@@ -236,6 +236,8 @@ im-not-ai のような文章を整えるスキルは、すでに書いた文章�
 ## 元のプロジェクトとの関係
 
 SimpleKorean は、[AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) v2.1.1（`a6fcb4f`）から分かれた非公式の派生プロジェクトです。リポジトリの構成、フック、リンターのインターフェース、測定の方法は、元のプロジェクトから取り入れました。ルール、語のリスト、測定の課題は、韓国語に合わせて新しく書きました。元のプロジェクトの英語の測定結果は取り入れていません。
+
+回答のルールも元のプロジェクトとは異なります。元のプロジェクトは、回答で見出しと箇条書きをすべて禁じています。SimpleKorean は、長い回答の構造を示す見出しと箇条書きを認めます。
 
 ## 貢献
 

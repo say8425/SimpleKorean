@@ -28,7 +28,7 @@ claude plugin marketplace add say8425/SimpleKorean && claude plugin install simp
 
 The output style name is `simple-korean:simple-korean`. The short name does not work. Select it under Output style in `/config`, or put `{"outputStyle": "simple-korean:simple-korean"}` in `~/.claude/settings.json`.
 
-The session-start hook adds a rule block of 2,379 characters to each session. The token count that `claude plugin details simple-korean` shows does not include this block.
+The session-start hook adds a rule block of 2,532 characters to each session. The token count that `claude plugin details simple-korean` shows does not include this block.
 
 ### Codex
 
@@ -236,6 +236,8 @@ Korean has no public list that sets both approved and unapproved words, like the
 ## Relation to the original
 
 SimpleKorean is an unofficial derived project. It forked from [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) v2.1.1 (`a6fcb4f`). We took the repository structure, the hooks, the linter interface, and the measurement method from the original. We wrote the rules, the word list, and the measurement tasks again for Korean. We did not take the English measurement results of the original.
+
+The reply rules also differ from the original. The original bans headers and bullets in every reply. SimpleKorean allows headers and lists that show the structure of a long reply.
 
 ## Contributing
 

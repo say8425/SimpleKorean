@@ -28,7 +28,7 @@ claude plugin marketplace add say8425/SimpleKorean && claude plugin install simp
 
 출력 스타일 이름은 `simple-korean:simple-korean`입니다. Claude Code는 짧은 이름으로는 이 스타일을 찾지 못합니다. `/config`의 Output style에서 고르거나, `~/.claude/settings.json`에 `{"outputStyle": "simple-korean:simple-korean"}`을 넣으세요.
 
-세션 시작 훅은 세션마다 규칙 블록 2,379자를 넣습니다. `claude plugin details simple-korean`이 보여 주는 토큰 수에는 이 블록이 들어가지 않습니다.
+세션 시작 훅은 세션마다 규칙 블록 2,532자를 넣습니다. `claude plugin details simple-korean`이 보여 주는 토큰 수에는 이 블록이 들어가지 않습니다.
 
 ### Codex
 
@@ -242,6 +242,8 @@ im-not-ai 같은 윤문 스킬은 이미 쓴 글에서 AI 문체와 번역투를
 ## 원본과의 관계
 
 SimpleKorean은 [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) v2.1.1(`a6fcb4f`)에서 갈라져 나온 비공식 파생 프로젝트입니다. 레포지토리 구조, 훅, 린터 인터페이스, 측정 방식은 원본에서 가져왔습니다. 규칙, 단어 목록, 측정 과제는 한국어에 맞게 새로 썼습니다. 원본의 영어 측정 결과는 가져오지 않았습니다.
+
+답변 규칙도 원본과 다릅니다. 원본은 답변에서 헤더와 불릿을 모두 막습니다. SimpleKorean은 긴 답의 구조를 나타내는 헤더와 목록을 허용합니다.
 
 ## 기여
 
