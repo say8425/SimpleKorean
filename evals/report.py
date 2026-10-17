@@ -23,13 +23,13 @@ import readme_i18n as i18n  # noqa: E402
 
 REPLY_CONDS = ("baseline", "plain")
 DOC_CONDS = ("baseline", "plain", "strict")
-REPLY_SEP = "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|"
+REPLY_SEP = "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"
 DOC_SEP = "|---|---:|---:|---:|---:|---:|---:|---:|"
 README_BLOCK = re.compile(r"<!-- benchmark:start (\S+) -->\n(.*?)\n<!-- benchmark:end -->", re.S)
 
 
 def reply_stats(results_dir):
-    """조건별 답변 합계: n, eojeol, sentences, em_dash, bold_spans, tables, headers, bullets, fillers, visible."""
+    """조건별 답변 합계: n, eojeol, sentences, em_dash, bold_spans, tables, lead_structure, headers, bullets, fillers, visible."""
     stats = {c: Counter() for c in REPLY_CONDS}
     for path in sorted(Path(results_dir, "reply").glob("*__*__r*.txt")):
         cond = path.name.split("__")[0]
@@ -37,7 +37,7 @@ def reply_stats(results_dir):
         acc = stats[cond]
         acc["n"] += 1
         acc["eojeol"] += rc["eojeol"]
-        for key in ("sentences", "em_dash", "bold_spans", "tables", "headers", "bullets"):
+        for key in ("sentences", "em_dash", "bold_spans", "tables", "lead_structure", "headers", "bullets"):
             acc[key] += rc["counts"][key]
         acc["fillers"] += rc["counts"]["opener"] + rc["counts"]["closer"]
         acc["visible"] += rc["visible_total"]
@@ -103,7 +103,7 @@ def render_reply_table(stats, lang="ko"):
         n = max(1, s["n"])
         label = labels["reply_plain"] if cond == "plain" else labels[cond]
         lines.append(f"| {label} | {s['n']} | {s['eojeol'] / n:.0f} | {s['sentences'] / n:.1f} | "
-                     f"{s['em_dash']} | {s['bold_spans']} | {s['tables']} | {s['headers']} | {s['bullets']} | {s['fillers']} |")
+                     f"{s['em_dash']} | {s['bold_spans']} | {s['tables']} | {s['lead_structure']} | {s['headers']} | {s['bullets']} | {s['fillers']} |")
     return "\n".join(lines)
 
 

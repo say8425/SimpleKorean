@@ -154,8 +154,10 @@ def test_reader_check_reply_counts():
 def test_reader_check_counts_tables_and_lead_structure():
     r = ko_lint.reader_check("답은 둘입니다.\n\n| 이름 | 값 |\n|---|:-:|\n| a | 1 |\n")
     assert (r["counts"]["tables"], r["counts"]["lead_structure"], r["visible_total"]) == (1, 0, 1), r
-    lead = ko_lint.reader_check("## 요약\n\n디스크가 가득 찼습니다.\n")["counts"]
-    assert (lead["lead_structure"], lead["headers"]) == (1, 1), lead
+    lead = ko_lint.reader_check("## 요약\n\n디스크가 가득 찼습니다.\n")
+    assert (lead["counts"]["lead_structure"], lead["counts"]["headers"], lead["visible_total"]) == (1, 1, 1), lead
+    # 네 칸 이상 들여 쓴 줄은 코드다
+    assert ko_lint.reader_check("    - 코드 안의 줄\n답입니다.\n")["counts"]["lead_structure"] == 0
     assert ko_lint.reader_check("\n  1. 로그를 지우세요.\n2. 다시 배포하세요.\n")["counts"]["lead_structure"] == 1
     # 답을 쓴 첫 문장 뒤의 헤더와 목록은 결함이 아니다
     shaped = ko_lint.reader_check("디스크가 가득 찼습니다.\n\n## 원인\n\n로그가 쌓였습니다. 정리하지 않았습니다.\n\n- 하나\n- 둘\n- 셋\n")

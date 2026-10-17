@@ -81,7 +81,7 @@ def test_machine_report_counts_lint_and_style_criteria():
     r8 = run_pressure.machine_report(8, "백업은 반드시 하루에 한 번 실행해야 합니다.\n")
     assert r8["strict_ending"] == 1
     r10 = run_pressure.machine_report(10, "## 원인\n\n**로그**가 쌓였습니다.\n")
-    assert r10 == {"visible_total": 1, "lead_structure": 1}, r10
+    assert r10 == {"visible_total": 2, "lead_structure": 1}, r10
     assert run_pressure.machine_report(4, "아무 글입니다.") == {}
     assert run_pressure.machine_report(9, "fix: handle an empty CSV header row") == {"한글 비율": 0.0}
 

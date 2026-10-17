@@ -129,7 +129,7 @@ def stop(event):
     if counts["closer"]:
         problems.append("맺음말")
     if problems:
-        message = "simple-korean 답변 점검: " + ", ".join(problems) + ". 다음 답변에서는 이 항목을 빼세요."
+        message = "simple-korean 답변 점검: " + ", ".join(problems) + ". 다음 답변에서는 이 항목을 고치세요."
         print(json.dumps({"systemMessage": message}, ensure_ascii=False))
     return 0
 
