@@ -126,8 +126,9 @@ def check_example_block(text, lang, results_dir):
     m = make_examples.EXAMPLE_BLOCK.search(text)
     if not m:
         return [f"{name}에 보기 블록이 없습니다"]
+    problems = make_examples.pick_problems(results_dir) if lang == "ko" else []
     expected = make_examples.readme_example(results_dir, lang)
-    return [] if m.group(1) == expected else [_diff(f"{name} 보기 블록", expected, m.group(1))]
+    return problems + ([] if m.group(1) == expected else [_diff(f"{name} 보기 블록", expected, m.group(1))])
 
 
 def check_calibration(changelog, calibration=CALIBRATION):

@@ -98,6 +98,12 @@ def _results(d):
     for cond in ("baseline", "plain", "strict"):
         record = {"condition": cond, "scenario": "readme-intro", "text": "메세지를 보냅니다. 서버에 대해 설명합니다."}
         (root / "docs" / f"{cond}__readme-intro__r1.json").write_text(json.dumps(record, ensure_ascii=False), encoding="utf-8")
+    trouble = {"baseline": "## 문제 해결\n\n**연결 타임아웃**\n방화벽을 확인해 보세요.",
+               "plain": "## 연결 타임아웃\n\n1. 방화벽 규칙을 확인하세요.", "strict": "## 연결 타임아웃\n\n1. 방화벽 규칙을 확인해야 합니다."}
+    for cond, text in trouble.items():
+        record = {"condition": cond, "scenario": "troubleshooting", "text": text}
+        (root / "docs" / f"{cond}__troubleshooting__r1.json").write_text(json.dumps(record, ensure_ascii=False),
+                                                                           encoding="utf-8")
     meta = {"date": "2099-01-01", "model": "m", "effort": "low", "judge_model": "j", "isolation": ISO, "isolation_problems": []}
     (root / "meta.json").write_text(json.dumps(meta), encoding="utf-8")
     return root
@@ -107,14 +113,35 @@ def test_readme_example_is_verbatim_and_edits_are_caught():
     with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
         readme = mx.replace_example_block("앞\n<!-- example:start -->\n\n<!-- example:end -->\n", mx.readme_example(_results(d)))
         assert cn.check_examples(readme, "") == []
-        assert "<!-- simple-korean: off -->\n> **네** — 메모리가 부족합니다.\n>\n> - 한도" in readme
-        edited = readme.replace("파드가 끝났습니다", "파드가 끝났어요")
+        assert "<!-- simple-korean: off -->\n> ## 문제 해결\n>\n> **연결 타임아웃**" in readme
+        edited = readme.replace("방화벽 규칙을 확인하세요", "방화벽 규칙을 확인해요")
         assert any("인용한 글이 원본과 다릅니다" in p for p in cn.check_examples(edited, ""))
     assert cn.check_examples("빈 README", "") == ["README.md에 원본 인용 블록이 없습니다"]
 
 
+def test_reply_sources_are_checked_verbatim_too():
+    with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
+        rel = (_results(d) / "reply" / "baseline__oom__r1.txt").resolve().relative_to(cn.ROOT).as_posix()
+        block = mx.source_block(rel)
+        assert "> **네** — 메모리가 부족합니다.\n>\n> - 한도" in block
+        assert mx.check_sources(block) == []
+        assert mx.check_sources(block.replace("**네**", "네")) == [f"{rel}: 인용한 글이 원본과 다릅니다"]
+
+
+def test_readme_pick_is_pre_registered_and_has_no_code_block():
+    assert mx.README_PICK in {pick[:2] for pick in mx.DOC_PICKS}
+    with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
+        root = _results(d)
+        assert mx.pick_problems(root) == []
+        path = root / "docs" / "plain__troubleshooting__r1.json"
+        record = json.loads(path.read_text(encoding="utf-8"))
+        path.write_text(json.dumps({**record, "text": record["text"] + "\n\n```bash\nls\n```"}, ensure_ascii=False),
+                        encoding="utf-8")
+        assert [p for p in mx.pick_problems(root) if "코드 블록이 있어" in p] != []
+
+
 def test_check_benchmark_catches_stale_numbers_and_missing_changelog_path():
-    scenarios = [{"id": "readme-intro", "type": "descriptive"}]
+    scenarios = [{"id": "readme-intro", "type": "descriptive"}, {"id": "troubleshooting", "type": "procedural"}]
     with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
         root = _results(d)
         rel = root.resolve().relative_to(cn.ROOT).as_posix()
@@ -151,7 +178,7 @@ def test_unreleased_means_strictly_after_the_latest_release():
 
 
 def test_check_benchmark_skips_the_changelog_path_for_unreleased_results():
-    scenarios = [{"id": "readme-intro", "type": "descriptive"}]
+    scenarios = [{"id": "readme-intro", "type": "descriptive"}, {"id": "troubleshooting", "type": "procedural"}]
     with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
         root = _results(d)
         readme = report.replace_readme_block("문서와 답변은 `m`이 쓰고 판정은 `j`가 했습니다.\n"
@@ -271,13 +298,13 @@ def test_check_example_block_compares_the_sentences_too():
         for lang in i18n.LANGS:
             assert cn.check_example_block(mx.replace_example_block(empty, mx.readme_example(root, lang)), lang, root) == []
         ko = mx.replace_example_block(empty, mx.readme_example(root, "ko"))
-        edited = ko.replace("스킬 없이 쓴 답변", "스킬 없이 만든 답변")
+        edited = ko.replace("스킬 없이 쓴 문서", "스킬 없이 만든 문서")
         assert any("README.md 보기 블록" in p for p in cn.check_example_block(edited, "ko", root))
         assert cn.check_example_block("블록 없음", "en", root) == ["docs/README.en.md에 보기 블록이 없습니다"]
 
 
 def test_check_translation_passes_a_generated_translation():
-    scenarios = [{"id": "readme-intro", "type": "descriptive"}]
+    scenarios = [{"id": "readme-intro", "type": "descriptive"}, {"id": "troubleshooting", "type": "procedural"}]
     prompt = f"---\n{BLOCK}\n---\n"
     with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
         root = _results(d)
@@ -300,7 +327,7 @@ def test_check_translation_passes_a_generated_translation():
 
 
 def test_check_translation_reports_missing_korean_block_without_crashing():
-    scenarios = [{"id": "readme-intro", "type": "descriptive"}]
+    scenarios = [{"id": "readme-intro", "type": "descriptive"}, {"id": "troubleshooting", "type": "procedural"}]
     en = "<!-- benchmark:start evals/results/x -->\n\n<!-- benchmark:end -->\n"
     assert cn.check_translation("en", en, "한국어판에 블록 없음", scenarios, "") == ["README.md에 벤치마크 블록이 없습니다"]
 
