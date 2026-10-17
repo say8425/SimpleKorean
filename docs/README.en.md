@@ -28,7 +28,7 @@ claude plugin marketplace add say8425/SimpleKorean && claude plugin install simp
 
 The output style name is `simple-korean:simple-korean`. The short name does not work. Select it under Output style in `/config`, or put `{"outputStyle": "simple-korean:simple-korean"}` in `~/.claude/settings.json`.
 
-The session-start hook adds a rule block of 2,583 characters to each session. The token count that `claude plugin details simple-korean` shows does not include this block.
+The session-start hook adds a rule block of 2,464 characters to each session. The token count that `claude plugin details simple-korean` shows does not include this block.
 
 ### Codex
 
@@ -161,7 +161,7 @@ Chat replies use these rules in all modes.
 
 | Rule | What it stops |
 |---|---|
-| Use headers and lists only to show structure. Do not use bold text or tables | Formatting around a one-line answer |
+| Use headers and lists when the content and length of the answer call for them. Do not use bold text or tables | Formatting around a one-line answer |
 | Put the answer in the first sentence | An opening that repeats the question |
 | Do not use em-dashes | Thoughts that are only half joined |
 | Explain a concept term briefly when you first use it | Terms that the reader must look up |
@@ -247,7 +247,9 @@ Korean has no public list that sets both approved and unapproved words, like the
 
 SimpleKorean is an unofficial derived project. It forked from [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) v2.1.1 (`a6fcb4f`). We took the repository structure, the hooks, the linter interface, and the measurement method from the original. We wrote the rules, the word list, and the measurement tasks again for Korean. We did not take the English measurement results of the original.
 
-The reply rules also differ from the original. The original bans headers and bullets in every reply. SimpleKorean allows headers and lists that show structure. The benchmark therefore counts different reply defects. The original counts em-dashes, bold text, headers, and bullets. SimpleKorean counts em-dashes, bold text, tables, and a header or list on the first line.
+The reply rules also differ from the original. The original bans headers and bullets in every reply. SimpleKorean lets the model decide from the content and length of each answer whether to use headers and lists. The evidence for this choice is in the [reply formatting study](../docs/research/reply-formatting.md) (in Korean).
+
+The benchmark therefore counts different reply defects. The original counts em-dashes, bold text, headers, and bullets. SimpleKorean counts em-dashes, bold text, tables, and a header or list on the first line.
 
 ## Contributing
 
