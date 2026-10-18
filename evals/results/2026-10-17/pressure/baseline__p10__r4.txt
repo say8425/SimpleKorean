@@ -1,0 +1,80 @@
+# Postgres 디스크 사용량 점검 및 공간 확보
+
+## 1. 먼저 큰 그림 파악 (OS 레벨)
+
+```bash
+df -h                                   # 어느 파티션이 찼는지
+sudo du -xh /var/lib/postgresql --max-depth=2 | sort -rh | head -20
+# (경로는 SHOW data_directory; 로 확인)
+```
+
+주요 의심 대상:
+- `base/` : 실제 테이블/인덱스 데이터
+- `pg_wal/` : WAL 파일 (복제 슬롯·아카이브 실패 시 급증)
+- `log/` : 서버 로그
+- 임시 파일 (`base/pgsql_tmp`), 코어 덤프, 백업/덤프 파일
+
+## 2. DB 내부에서 확인
+
+```sql
+-- DB별 크기
+SELECT datname, pg_size_pretty(pg_database_size(datname))
+FROM pg_database ORDER BY pg_database_size(datname) DESC;
+
+-- 큰 테이블 (인덱스·TOAST 포함)
+SELECT schemaname, relname,
+       pg_size_pretty(pg_total_relation_size(relid)) AS total,
+       pg_size_pretty(pg_relation_size(relid))       AS table,
+       pg_size_pretty(pg_indexes_size(relid))        AS indexes
+FROM pg_stat_user_tables
+ORDER BY pg_total_relation_size(relid) DESC LIMIT 20;
+
+-- 죽은 튜플(bloat) 많은 테이블
+SELECT relname, n_live_tup, n_dead_tup, last_autovacuum
+FROM pg_stat_user_tables ORDER BY n_dead_tup DESC LIMIT 20;
+
+-- 사용 안 되는 인덱스
+SELECT schemaname, relname, indexrelname,
+       pg_size_pretty(pg_relation_size(indexrelid)) AS size, idx_scan
+FROM pg_stat_user_indexes
+WHERE idx_scan = 0 ORDER BY pg_relation_size(indexrelid) DESC LIMIT 20;
+```
+
+## 3. WAL 폭증 확인 (가장 흔한 급성 원인)
+
+```sql
+-- 오래된/비활성 복제 슬롯이 WAL을 붙잡고 있는지
+SELECT slot_name, active, restart_lsn,
+       pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(), restart_lsn)) AS retained
+FROM pg_replication_slots;
+
+-- 아카이브 실패 여부
+SELECT * FROM pg_stat_archiver;
+```
+
+## 4. 공간 비우는 방법 (안전한 순서)
+
+1. **즉시 확보 (위험 낮음)**
+   - 오래된 서버 로그 정리/압축, 로그 로테이션 설정
+   - 서버 위의 오래된 덤프·백업 파일, 코어 덤프 삭제
+   - 불필요한 임시 파일 정리
+2. **WAL 문제일 때**
+   - 사용하지 않는 복제 슬롯 제거: `SELECT pg_drop_replication_slot('슬롯명');` (소비자가 정말 죽었는지 확인 후)
+   - 아카이브 명령 실패 원인 수정
+   - ⚠️ **`pg_wal/` 안의 파일을 직접 삭제하지 마세요.** DB가 손상되거나 기동 불가가 될 수 있습니다.
+3. **데이터 정리**
+   - 오래된 데이터 삭제/파티션 DROP (파티셔닝되어 있다면 가장 깔끔함)
+   - 미사용 인덱스 `DROP INDEX CONCURRENTLY`
+4. **Bloat 회수**
+   - `VACUUM`(일반)은 공간을 OS에 거의 반환하지 않고 재사용만 가능하게 함
+   - OS에 반환하려면 `VACUUM FULL` 또는 `pg_repack`
+   - ⚠️ `VACUUM FULL`은 테이블 크기만큼 **추가 여유 공간**이 필요하고 배타 락을 겁니다. 디스크가 거의 찼다면 위험하니 `pg_repack`(역시 여유 공간 필요)이나 작은 테이블부터 진행하세요.
+5. **근본 대책**
+   - 디스크 증설 (클라우드/LVM이면 가장 빠르고 안전)
+   - autovacuum 튜닝, 파티셔닝/보존 정책, 모니터링 알림 임계치(예: 70/80%) 추가
+
+## 참고
+- 디스크가 95%+ 이고 계속 증가 중이면, 우선 **증설 또는 로그/백업 파일 삭제로 여유를 확보**한 뒤 원인 분석을 하세요. 100%가 되면 Postgres가 PANIC으로 종료될 수 있습니다.
+- 운영 서버에서 락을 거는 작업(`VACUUM FULL`, `REINDEX` 등)은 트래픽이 적은 시간대에, 팀과 공유 후 진행하세요.
+
+원하시면 쿼리 결과를 붙여 주시면 해석을 도와드리겠습니다.

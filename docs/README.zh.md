@@ -28,7 +28,7 @@ claude plugin marketplace add say8425/SimpleKorean && claude plugin install simp
 
 输出样式的名称是 `simple-korean:simple-korean`。用短名称找不到它。请在 `/config` 的 Output style 中选择，或者在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。
 
-会话启动钩子会在每个会话中加入 2,271 个字符的规则块。`claude plugin details simple-korean` 显示的 token 数不包含这个规则块。
+会话启动钩子会在每个会话中加入 2,464 个字符的规则块。`claude plugin details simple-korean` 显示的 token 数不包含这个规则块。
 
 ### Codex
 
@@ -72,44 +72,45 @@ pnpm dlx skills add say8425/SimpleKorean
 <tr>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json -->
+<!-- source: evals/results/2026-10-17/docs/baseline__troubleshooting__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
-> **Postgres 연결 타임아웃**
-> `connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근할 수 있는지 확인하세요. 방화벽, 보안 그룹, VPN 설정이 흔한 원인입니다. 서버가 느리게 응답하는 환경이라면 `--connect-timeout 30`처럼 제한 시간을 늘려 보세요. 클라우드 DB를 쓴다면 접속하는 IP가 허용 목록에 있는지도 확인하세요. 연결 문자열의 `sslmode` 값이 서버 설정과 맞는지도 점검하세요.
+> ### Postgres 연결 타임아웃
+> `connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근되는지 확인하세요. `nc -zv <호스트> 5432`로 점검할 수 있습니다. 방화벽이나 보안 그룹, VPN 연결 상태도 살펴보세요. 네트워크에 문제가 없는데도 지연된다면 `--connect-timeout 30`처럼 제한 시간을 늘려 보세요. 접속 문자열의 `sslmode` 설정이 서버와 맞는지도 확인해야 합니다.
 >
-> **S3 권한 오류**
-> `AccessDenied`나 `403`이 나오면 사용 중인 자격 증명이 맞는지 `aws sts get-caller-identity`로 확인하세요. 해당 IAM 역할에 대상 버킷의 `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` 권한이 있어야 합니다. 버킷 정책이나 리전 설정이 다르지 않은지도 살펴보세요. 임시 자격 증명을 쓴다면 만료 여부도 확인하세요.
+> ### S3 권한 오류
+> `AccessDenied` 또는 `403`이 나오면 현재 자격 증명이 올바른지 `aws sts get-caller-identity`로 확인하세요. 그다음 IAM 정책에 대상 버킷의 `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` 권한이 있는지 보세요. 버킷 이름과 리전이 맞는지, 버킷 정책이 접근을 막고 있지 않은지도 확인하세요.
 <!-- simple-korean: on -->
 
 </td>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-08/docs/plain__troubleshooting__r1.json -->
+<!-- source: evals/results/2026-10-17/docs/plain__troubleshooting__r1.json -->
 <!-- simple-korean: off -->
-> ## 연결 타임아웃
+> ## 문제 해결
 >
-> sqlpipe가 `dial tcp: i/o timeout` 오류를 내면 Postgres 연결이 실패한 것입니다.
+> ### Postgres 연결 타임아웃
 >
-> 1. sqlpipe를 실행하는 호스트가 Postgres 포트(기본값 5432)에 연결할 수 있는지 확인하세요.
-> 2. 방화벽이나 보안 그룹이 연결을 막으면 규칙을 고치세요.
-> 3. 데이터베이스가 관리형(RDS, Cloud SQL)이면 인스턴스가 sqlpipe의 IP에서 오는 연결을 허용하는지 확인하세요.
+> sqlpipe는 Postgres 포트에 연결하지 못하면 `dial tcp: i/o timeout` 오류를 내고 멈춥니다.
 >
-> ## S3 권한 오류
+> 1. sqlpipe를 실행하는 호스트가 Postgres 포트(기본값 5432)에 연결할 수 있는지 확인하세요. 보통 방화벽이나 보안 그룹이 연결을 막습니다.
+> 2. 데이터베이스가 관리형(RDS, Cloud SQL)이면, 인스턴스가 sqlpipe의 IP에서 오는 연결을 허용하는지 확인하세요.
 >
-> sqlpipe가 S3에 쓰지 못하면 `AccessDenied` 오류를 냅니다. 이 오류는 sqlpipe가 쓰는 자격 증명에 권한이 없다는 뜻입니다.
+> ### S3 권한 오류
 >
-> 1. sqlpipe를 실행하는 호스트에서 자격 증명이 올바른 계정을 가리키는지 확인하세요.
-> 2. 대상 버킷에 `s3:PutObject` 권한이 있는지 확인하세요.
-> 3. 버킷 정책이 해당 자격 증명을 거부하면 정책을 고치세요.
+> sqlpipe가 S3에 쓸 때 `AccessDenied` 오류가 나면 자격 증명에 권한이 없는 것입니다.
+>
+> 1. sqlpipe를 실행하는 호스트에서 어떤 자격 증명을 쓰는지 확인하세요.
+> 2. 그 자격 증명의 IAM 정책이 대상 버킷의 `s3:PutObject`를 허용하는지 확인하세요.
+> 3. 버킷 정책이 해당 자격 증명을 거부하면 버킷 정책을 고치세요.
 <!-- simple-korean: on -->
 
 </td>
 </tr>
 </table>
 
-左边的原始文件是 `evals/results/2026-10-08/docs/baseline__troubleshooting__r1.json`，右边的是 `evals/results/2026-10-08/docs/plain__troubleshooting__r1.json`。
+左边的原始文件是 `evals/results/2026-10-17/docs/baseline__troubleshooting__r1.json`，右边的是 `evals/results/2026-10-17/docs/plain__troubleshooting__r1.json`。
 
 回答示例和更多文档示例见 [`examples/before-after.md`](../examples/before-after.md)。
 <!-- example:end -->
@@ -118,15 +119,15 @@ pnpm dlx skills add say8425/SimpleKorean
 
 下面的数字都是从已提交的原始输出重新计算的。每次推送时，CI 都会用 `evals/check_numbers.py` 核对这些数字。文档和回答由 `claude-sonnet-5-5`（effort low）编写，由 `claude-opus-5-5` 评判。所有运行都没有读取用户设置、MCP 服务器或 AGENTS.md 这类指令文件。评判模型也是 Claude，所以可能偏向同一系列的模型。语节（어절）是韩语中以空格分隔的单位。
 
-<!-- benchmark:start evals/results/2026-10-08 -->
+<!-- benchmark:start evals/results/2026-10-17 -->
 ### 回答
 
-我们把 8 个问题在每个条件下各问了 2 次，每个问题含一个专业术语，共得到 32 个回答。启用技能后，读者能看到的缺陷（em-dash、粗体、标题、列表符号）减少了 100%（从 394 个降到 0 个）。在 16 组盲评中，SimpleKorean 的回答赢了 15 组，平了 1 组，输了 0 组。
+我们把 8 个问题在每个条件下各问了 2 次，每个问题含一个专业术语，共得到 32 个回答。启用技能后，读者能看到的缺陷（em-dash、粗体、表格、第一行的标题或列表）减少了 100%（从 139 个降到 0 个）。在 16 组盲评中，SimpleKorean 的回答赢了 14 组，平了 2 组，输了 0 组。
 
-| 条件 | 回答数 | 平均语节数 | 平均句数 | em-dash | 粗体 | 标题 | 列表符号 | 问候语和结束语 |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 无技能 | 16 | 246 | 30.9 | 0 | 141 | 45 | 208 | 12 |
-| SimpleKorean | 16 | 179 | 18.6 | 0 | 0 | 0 | 0 | 1 |
+| 条件 | 回答数 | 平均语节数 | 平均句数 | em-dash | 粗体 | 表格 | 首行标题或列表 | 标题 | 列表符号 | 问候语和结束语 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 无技能 | 16 | 235 | 28.6 | 0 | 130 | 3 | 6 | 44 | 189 | 14 |
+| SimpleKorean | 16 | 193 | 25.8 | 0 | 0 | 0 | 0 | 49 | 135 | 3 |
 
 ### 文档
 
@@ -134,11 +135,11 @@ sqlpipe 的 8 个文档任务在每个条件下各写了 2 次。比率是检查
 
 | 条件 | 文档数 | 每 100 语节错误 | 每 100 语节警告 | 每 100 语节翻译腔 | 规定写法比例 | 简单词比例 | 最长句子 |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| 无技能 | 16 | 0.00 | 1.09 | 0.14 | 95.0% | 40.2% | 18 个语节 |
-| 基本模式 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 44.8% | 16 个语节 |
-| 严格模式 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 45.5% | 17 个语节 |
+| 无技能 | 16 | 0.14 | 0.97 | 0.28 | 95.1% | 39.7% | 19 个语节 |
+| 基本模式 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 42.9% | 15 个语节 |
+| 严格模式 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 42.9% | 14 个语节 |
 
-原始输出、写法分布和测量条件见 [`evals/results/2026-10-08/RESULTS.md`](../evals/results/2026-10-08/RESULTS.md)。
+原始输出、写法分布和测量条件见 [`evals/results/2026-10-17/RESULTS.md`](../evals/results/2026-10-17/RESULTS.md)。
 <!-- benchmark:end -->
 
 ## 规则
@@ -151,7 +152,7 @@ sqlpipe 的 8 个文档任务在每个条件下各写了 2 次。比率是检查
 
 | 规则 | 防止的问题 |
 |---|---|
-| 用连贯的段落回答，不用标题、列表符号、粗体和表格 | 一行就能回答的内容外面套着格式 |
+| 根据回答的内容和长度决定是否使用标题和列表，不用粗体和表格 | 一行就能回答的内容外面套着格式 |
 | 在第一句写出答案 | 重复问题的开场白 |
 | 不用 em-dash | 只连接了一半的想法 |
 | 概念术语第一次出现时，简短解释 | 读者需要另外查的术语 |
@@ -236,6 +237,10 @@ im-not-ai 这类润色技能会从已经写好的文字中去掉 AI 文风和翻
 ## 与原项目的关系
 
 SimpleKorean 是从 [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) v2.1.1（`a6fcb4f`）分出来的非官方派生项目。仓库结构、钩子、检查器接口和测量方法来自原项目。规则、词表和测量任务按韩语重新编写。我们没有沿用原项目的英语测量结果。
+
+回答规则也与原项目不同。原项目在所有回答中都禁止标题和列表符号。SimpleKorean 让模型根据回答的内容和长度决定是否使用标题和列表。依据见[回答格式研究](../docs/research/reply-formatting.md)（韩语）。
+
+由于回答规则不同，基准测试统计的回答缺陷也不同。原项目统计 em-dash、粗体、标题和列表符号。SimpleKorean 统计 em-dash、粗体、表格，以及第一行的标题或列表。
 
 ## 贡献
 

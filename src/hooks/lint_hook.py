@@ -7,9 +7,9 @@ MAX_HOOK_HITS개까지 줄 번호, 범주, 강도, 문구를 stderr로 보내고
 설정 디렉터리와 .claude 경로의 파일, SIMPLE_KOREAN_LINT_EXCLUDE 글롭에 맞는 파일은 건너뛴다.
 프로젝트의 .simple-korean.json이 깨져 있으면 기본 설정으로 검사하고 그 사실을 한 줄 알린다.
 
-Stop: last_assistant_message가 한국어이면 답변 규칙(헤더, 불릿, 굵은 글씨, em-dash, 슬롭 어휘,
-인사말, 맺음말)을 점검하고, 어긴 것이 있을 때만 systemMessage를 낸다. 항상 0으로 끝내므로
-세션이 되풀이되지 않는다.
+Stop: last_assistant_message가 한국어이면 답변 규칙(굵은 글씨, em-dash, 표, 첫 줄의 헤더나 목록, 슬롭 어휘,
+인사말, 맺음말)을 점검하고, 어긴 것이 있을 때만 systemMessage를 낸다. 첫 줄이 아닌 헤더와 목록 항목은
+답의 내용과 길이를 보고 쓸 수 있으므로 알리지 않는다. 항상 0으로 끝내므로 세션이 되풀이되지 않는다.
 """
 import fnmatch
 import json
@@ -25,7 +25,7 @@ MAX_HOOK_HITS = 12
 MAX_LINE_CHARS = 300
 MIN_HANGUL_RATIO = 0.3
 CLAUDE_DIR = ".claude"
-REPLY_COUNTS = (("em_dash", "em-dash"), ("bold_spans", "굵은 글씨"), ("headers", "헤더"), ("bullets", "목록 항목"))
+REPLY_COUNTS = (("em_dash", "em-dash"), ("bold_spans", "굵은 글씨"), ("tables", "표"))
 
 
 def load_linter():
@@ -119,6 +119,8 @@ def stop(event):
         return 0
     counts = lint.reader_check(reply)["counts"]
     problems = [f"{label} {counts[key]}개" for key, label in REPLY_COUNTS if counts[key]]
+    if counts["lead_structure"]:
+        problems.append("첫 줄의 헤더나 목록")
     slop = len(lint.ko_rules.SLOP_RX.findall(lint.ko_text.mask(lint.ko_text.nfc(reply))))
     if slop:
         problems.append(f"슬롭 어휘 {slop}개")
@@ -127,7 +129,7 @@ def stop(event):
     if counts["closer"]:
         problems.append("맺음말")
     if problems:
-        message = "simple-korean 답변 점검: " + ", ".join(problems) + ". 서술형으로 답하세요."
+        message = "simple-korean 답변 점검: " + ", ".join(problems) + ". 다음 답변에서는 이 항목을 고치세요."
         print(json.dumps({"systemMessage": message}, ensure_ascii=False))
     return 0
 

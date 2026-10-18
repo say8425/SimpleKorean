@@ -139,8 +139,24 @@ def test_stop_flags_slop_reply_and_never_blocks():
     code, out, err = run({"hook_event_name": "Stop", "last_assistant_message": reply})
     assert code == 0 and "systemMessage" in out, (code, out)
     message = json.loads(out)["systemMessage"]
-    for word in ("em-dash 1개", "굵은 글씨 1개", "목록 항목 2개", "슬롭 어휘", "인사말", "맺음말"):
+    for word in ("em-dash 1개", "굵은 글씨 1개", "슬롭 어휘", "인사말", "맺음말"):
         assert word in message, message
+    assert "목록 항목" not in message and "헤더" not in message, message
+    assert message.endswith("다음 답변에서는 이 항목을 고치세요."), message
+
+
+def test_stop_flags_tables_and_a_leading_header():
+    reply = "## 요약\n\n디스크가 가득 찼습니다.\n\n| 원인 | 조치 |\n|---|---|\n| 로그 | 지우기 |\n"
+    code, out, err = run({"hook_event_name": "Stop", "last_assistant_message": reply})
+    assert code == 0 and "systemMessage" in out, (code, out)
+    message = json.loads(out)["systemMessage"]
+    assert "표 1개" in message and "첫 줄의 헤더나 목록" in message, message
+
+
+def test_stop_allows_headers_and_lists():
+    reply = "배포가 두 곳에서 실패했습니다.\n\n## 원인\n\n디스크가 가득 찼습니다. 로그도 쌓였습니다.\n\n## 할 일\n\n1. 로그를 지우세요.\n2. 디스크를 늘리세요.\n3. 다시 배포하세요.\n"
+    code, out, err = run({"hook_event_name": "Stop", "last_assistant_message": reply})
+    assert code == 0 and out.strip() == "", (code, out)
 
 
 def test_stop_does_not_count_sentences():

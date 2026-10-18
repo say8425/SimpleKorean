@@ -1,0 +1,63 @@
+# Postgres 디스크 90% 대응 가이드
+
+## 1단계: 무엇이 공간을 차지하는지 확인
+
+**OS 레벨**
+```bash
+df -h                                   # 어느 파티션인지 확인
+du -xh /var/lib/postgresql --max-depth=2 | sort -rh | head -20
+```
+주로 의심할 곳은 `base/`(데이터), `pg_wal/`(WAL), 로그 디렉터리(`log/`), 그리고 데이터 디렉터리 밖의 백업·덤프 파일입니다.
+
+**DB 레벨**
+```sql
+-- DB별 크기
+SELECT datname, pg_size_pretty(pg_database_size(datname))
+FROM pg_database ORDER BY pg_database_size(datname) DESC;
+
+-- 테이블별 크기 (인덱스·TOAST 포함)
+SELECT schemaname, relname,
+       pg_size_pretty(pg_total_relation_size(relid)) AS total,
+       pg_size_pretty(pg_relation_size(relid)) AS table,
+       pg_size_pretty(pg_indexes_size(relid)) AS indexes
+FROM pg_stat_user_tables
+ORDER BY pg_total_relation_size(relid) DESC LIMIT 20;
+
+-- 죽은 튜플(bloat) 의심 테이블
+SELECT relname, n_live_tup, n_dead_tup, last_autovacuum
+FROM pg_stat_user_tables
+ORDER BY n_dead_tup DESC LIMIT 20;
+```
+
+**WAL이 쌓이는 경우 (자주 놓치는 원인)**
+```sql
+-- 오래된/비활성 복제 슬롯이 WAL을 붙잡고 있는지
+SELECT slot_name, active, restart_lsn,
+       pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(), restart_lsn)) AS retained
+FROM pg_replication_slots;
+
+SHOW archive_mode;  -- 아카이빙 실패 시에도 WAL이 쌓임 (pg_stat_archiver 확인)
+```
+
+## 2단계: 공간 확보 (위험 낮은 순)
+
+1. **로그 정리**: 오래된 서버 로그를 압축하거나 삭제하고, `log_rotation_age`/`log_truncate_on_rotation`을 조정합니다.
+2. **불필요한 파일 삭제**: 데이터 디렉터리 밖의 오래된 덤프·백업, 임시 파일.
+3. **비활성 복제 슬롯 제거**: 더 이상 쓰지 않는 슬롯이 WAL을 붙잡고 있다면
+   `SELECT pg_drop_replication_slot('슬롯이름');`
+   이때 구독자/레플리카가 실제로 죽은 것인지 반드시 확인하세요.
+4. **오래된 데이터 삭제/아카이빙**: 로그성 테이블은 파티셔닝 후 `DROP PARTITION`이 가장 깔끔합니다.
+5. **VACUUM / bloat 제거**
+   - 일반 `VACUUM`은 공간을 OS에 거의 반환하지 않고 재사용만 가능하게 합니다.
+   - OS에 반환하려면 `VACUUM FULL`(테이블 전체 락, 테이블 크기만큼 임시 공간 필요 → 디스크가 거의 찼을 때는 위험) 또는 **`pg_repack`**(락 최소화, 권장)을 사용합니다.
+6. **사용하지 않는 인덱스 제거**: `pg_stat_user_indexes`에서 `idx_scan = 0`인 큰 인덱스를 검토합니다.
+7. **디스크 증설**: 근본적으로 부족하다면 볼륨 확장이 가장 안전합니다.
+
+## 주의사항
+
+- **`pg_wal/` 안의 파일을 직접 삭제하지 마세요.** 복구 불가능한 손상이 생길 수 있습니다. 슬롯·아카이빙 문제를 해결하면 Postgres가 알아서 정리합니다.
+- 디스크가 거의 꽉 찬 상태에서 `VACUUM FULL`, `REINDEX`, 대형 `CREATE INDEX`는 추가 공간이 필요해 실패하거나 상황을 악화시킬 수 있습니다.
+- 삭제 전에는 항상 백업/복제 상태를 확인하세요.
+- 재발 방지를 위해 80% 경고 알림, autovacuum 튜닝, 복제 슬롯 lag 모니터링(`max_slot_wal_keep_size` 설정 포함)을 추가하는 것을 권장합니다.
+
+원하시면 쿼리 결과를 붙여 주시면 해석을 도와드릴게요. 서버 버전이나 환경(RDS, 온프레미스, 쿠버네티스 등)을 알려 주시면 그에 맞춰 더 구체적으로 안내할 수 있습니다.

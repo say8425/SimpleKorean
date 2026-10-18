@@ -144,8 +144,38 @@ def test_cli_rejects_broken_config():
 
 
 def test_reader_check_reply_counts():
-    r = ko_lint.reader_check(ko_lint.REPLY_FIXTURE)["counts"]
+    report = ko_lint.reader_check(ko_lint.REPLY_FIXTURE)
+    r = report["counts"]
     assert (r["sentences"], r["em_dash"], r["bold_spans"], r["headers"], r["bullets"]) == (5, 1, 1, 1, 2)
+    # 헤더와 목록 항목은 세기만 한다. 답변 규칙이 막는 서식은 em-dash와 굵은 글씨다
+    assert report["visible_total"] == 2, report
+
+
+def test_reader_check_counts_tables_and_lead_structure():
+    r = ko_lint.reader_check("답은 둘입니다.\n\n| 이름 | 값 |\n|---|:-:|\n| a | 1 |\n")
+    assert (r["counts"]["tables"], r["counts"]["lead_structure"], r["visible_total"]) == (1, 0, 1), r
+    lead = ko_lint.reader_check("## 요약\n\n디스크가 가득 찼습니다.\n")
+    assert (lead["counts"]["lead_structure"], lead["counts"]["headers"], lead["visible_total"]) == (1, 1, 1), lead
+    # 네 칸 이상 들여 쓴 줄은 코드다
+    assert ko_lint.reader_check("    - 코드 안의 줄\n답입니다.\n")["counts"]["lead_structure"] == 0
+    assert ko_lint.reader_check("\n  1. 로그를 지우세요.\n2. 다시 배포하세요.\n")["counts"]["lead_structure"] == 1
+    # 답을 쓴 첫 문장 뒤의 헤더와 목록은 결함이 아니다
+    shaped = ko_lint.reader_check("디스크가 가득 찼습니다.\n\n## 원인\n\n로그가 쌓였습니다. 정리하지 않았습니다.\n\n- 하나\n- 둘\n- 셋\n")
+    assert (shaped["counts"]["lead_structure"], shaped["counts"]["bullets"], shaped["visible_total"]) == (0, 3, 0), shaped
+    fenced = ko_lint.reader_check("```\n| a |\n|---|\n```\n표가 아닙니다. 코드 블록입니다.\n")["counts"]
+    assert (fenced["tables"], fenced["lead_structure"]) == (0, 0), fenced
+
+
+def test_cli_reply_gate_allows_structure_but_not_tables():
+    with tempfile.TemporaryDirectory() as d:
+        shaped = Path(d, "shaped.txt")
+        shaped.write_text("디스크가 가득 찼습니다.\n\n## 원인\n\n로그가 쌓였습니다.\n\n1. 지우세요.\n2. 늘리세요.\n3. 배포하세요.\n",
+                          encoding="utf-8")
+        table = Path(d, "table.txt")
+        table.write_text("답입니다.\n\n| a | b |\n|---|---|\n| 1 | 2 |\n", encoding="utf-8")
+        assert run_cli("--type", "reply", "--gate", str(shaped)).returncode == 0
+        r = run_cli("--type", "reply", "--gate", str(table))
+        assert r.returncode != 0 and '"tables": 1' in r.stdout, (r.returncode, r.stdout)
 
 
 def test_reply_fillers():
@@ -154,6 +184,17 @@ def test_reply_fillers():
     assert ko_lint.reply_fillers("답입니다. 도움이 되셨기를 바랍니다.") == (False, True)
     assert ko_lint.reply_fillers("원인은 디스크입니다. 원하시면 스크립트를 고쳐 드리겠습니다.") == (False, True)
     assert ko_lint.reply_fillers("그래프를 알려주시면 원인을 더 좁혀 드리겠습니다.") == (False, True)
+    # "드리다" 없이 제안하는 맺음말도 센다
+    assert ko_lint.reply_fillers("클라이언트를 알려 주시면 해당 코드에 맞춰 수정안을 쓰겠습니다.") == (False, True)
+    assert ko_lint.reply_fillers("설정 파일을 보여 주시면 다시 정리할게요.") == (False, True)
+    assert ko_lint.reply_fillers("로그를 보내 주시면 원인을 더 좁혀 드릴 수 있습니다.") == (False, True)
+    assert ko_lint.reply_fillers("설정을 올려 주시면 맞는지 보겠습니다.") == (False, True)
+    assert ko_lint.reply_fillers("요청을 보내 주시면 서버가 응답합니다.") == (False, False)
+    # 동사와 상관없이 "주시면 … 겠습니다"와, 두 문장에 나눈 "알려 주세요. … 겠습니다"도 센다
+    assert ko_lint.reply_fillers("다음 정보를 주시면 대괄호를 채워 다시 쓰겠습니다.") == (False, True)
+    assert ko_lint.reply_fillers("원인을 찾았다면 결과를 알려 주세요. 그에 맞춰 다음 단계를 안내하겠습니다.") == (False, True)
+    assert ko_lint.reply_fillers("배포가 끝나면 결과를 알려 주세요.") == (False, False)
+    assert ko_lint.reply_fillers("필요하면 다시 실행하세요. 로그는 남습니다.") == (False, False)
     assert ko_lint.reply_fillers("빌드가 실패한 이유는 디스크입니다.") == (False, False)
 
 
@@ -161,6 +202,7 @@ def test_reply_checks_take_linear_time_on_long_blank_runs():
     start = time.time()
     assert ko_lint.reply_fillers(" " * 10_000 + "답입니다.") == (False, False)
     assert ko_lint.reply_fillers(" " * 10_000 + "좋은 질문입니다.") == (True, False)
+    assert ko_lint.reply_fillers("가" * 30_000 + "주시면 답입니다.") == (False, False)
     ko_lint.reader_check("답입니다.\n" + " " * 30_000 + "x")
     elapsed = time.time() - start
     assert elapsed < 0.5, elapsed

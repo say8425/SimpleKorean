@@ -1,0 +1,36 @@
+**백필(backfill)**은 기존 행들의 새 컬럼에 값을 채워 넣는 작업입니다. NOT NULL 컬럼은 모든 행에 값이 있어야 하는데, 20GB 테이블에 한 번에 `ALTER TABLE ... ADD COLUMN ... NOT NULL DEFAULT ...`를 하면 DB가 테이블 전체를 다시 쓰거나 긴 락을 잡습니다. 그래서 마이그레이션이 멈춘 겁니다.
+
+## 해야 할 일: 3단계로 쪼개기
+
+**1. 컬럼을 NULL 허용으로 추가** (빠름, 메타데이터만 변경)
+```sql
+ALTER TABLE big_table ADD COLUMN new_col INT NULL;
+```
+
+**2. 배치로 백필** (앱 코드나 스크립트로 반복 실행)
+```sql
+UPDATE big_table
+SET new_col = 0
+WHERE id BETWEEN :start AND :end AND new_col IS NULL;
+```
+- 1만~10만 행 단위로 PK 범위를 나눠 처리하고, 배치마다 커밋하세요.
+- 배치 사이에 짧게 sleep을 넣어 복제 지연과 부하를 확인하세요.
+- 중간에 실패해도 `new_col IS NULL` 조건 덕분에 재실행이 안전합니다.
+- 백필하는 동안 새로 들어오는 행은 앱이 값을 쓰도록 먼저 배포해 두세요.
+
+**3. NOT NULL 제약 추가**
+```sql
+-- PostgreSQL: 락을 최소화하는 방법
+ALTER TABLE big_table ADD CONSTRAINT new_col_nn CHECK (new_col IS NOT NULL) NOT VALID;
+ALTER TABLE big_table VALIDATE CONSTRAINT new_col_nn;  -- 쓰기를 막지 않음
+ALTER TABLE big_table ALTER COLUMN new_col SET NOT NULL; -- PG12+는 위 CHECK를 보고 스캔 생략
+ALTER TABLE big_table DROP CONSTRAINT new_col_nn;
+```
+MySQL이라면 `ALTER ... ALGORITHM=INPLACE, LOCK=NONE`을 쓰거나 `gh-ost`/`pt-online-schema-change`를 쓰세요.
+
+## 참고
+- **상수 기본값이면 더 간단할 수 있습니다.** PostgreSQL 11+는 `ADD COLUMN ... NOT NULL DEFAULT <상수>`가 테이블을 다시 쓰지 않고 즉시 끝납니다. 멈췄다면 버전이 낮거나, 기본값이 `now()` 같은 휘발성 함수이거나, 다른 트랜잭션이 락을 잡고 있을 수 있습니다.
+- **지금 멈춘 마이그레이션은 먼저 정리하세요.** 실행 중인 세션을 확인하고 취소한 뒤(PostgreSQL이면 `pg_stat_activity`, `pg_cancel_backend`) 위 순서로 다시 진행해야 합니다. 그대로 두면 락 때문에 다른 쿼리까지 대기할 수 있습니다.
+- 트래픽이 많은 시간대는 피하고, `lock_timeout`을 설정해 락 대기로 장애가 번지는 것을 막으세요.
+
+DB 종류(PostgreSQL/MySQL)와 버전, 기본값을 알려주시면 그에 맞는 구체적인 스크립트를 써 드리겠습니다.

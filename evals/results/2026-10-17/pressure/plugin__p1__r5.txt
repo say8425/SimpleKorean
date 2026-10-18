@@ -1,0 +1,59 @@
+# sqlpipe
+
+## 소개
+
+sqlpipe는 Postgres 테이블을 Parquet(칼럼 기반 파일 형식) 파일로 바꿔 S3에 동기화하는 CLI 도구입니다. 테이블마다 Parquet 파일을 만들어 S3 경로에 올립니다. 이미 올린 파일은 다시 올리지 않습니다.
+
+## 시작하기
+
+동기화하려면 세 가지가 필요합니다. 테이블을 읽을 수 있는 Postgres 계정, 쓸 수 있는 S3 버킷, AWS 자격 증명입니다.
+
+1. 작업 디렉터리에 `sqlpipe.yaml`을 만드세요.
+
+```yaml
+source: postgres://sqlpipe_user:PASSWORD@db.example.com:5432/shop
+target: s3://my-bucket/shop/
+tables:
+  - orders
+  - customers
+```
+
+2. 동기화를 실행하세요.
+
+```
+sqlpipe sync --config sqlpipe.yaml
+```
+
+3. S3 경로에 `orders.parquet`와 `customers.parquet`가 생겼는지 확인하세요.
+
+## 문제 해결
+
+### 연결 타임아웃
+
+`connection timed out`이 나오면 호스트까지 길이 열려 있는지 확인하세요.
+
+```
+pg_isready -h db.example.com -p 5432
+```
+
+응답이 없으면 방화벽과 보안 그룹을 확인하세요. 실행하는 머신의 IP에서 5432 포트로 들어오는 연결을 허용해야 합니다. VPN이 필요한 데이터베이스는 VPN에 먼저 연결하세요.
+
+네트워크가 느리면 대기 시간을 늘리세요. 기본값은 10초입니다.
+
+```
+sqlpipe sync --config sqlpipe.yaml --connect-timeout 30
+```
+
+### 권한 오류
+
+`permission denied for table orders`가 나오면 Postgres 계정에 읽기 권한을 주세요.
+
+```sql
+GRANT SELECT ON orders TO sqlpipe_user;
+```
+
+`AccessDenied`가 나오면 S3 쪽 권한이 부족합니다. AWS 자격 증명의 IAM 정책에 대상 버킷의 `s3:ListBucket`과 `s3:PutObject`를 허용하세요. 다른 계정의 버킷이면 버킷 정책도 확인해야 합니다.
+
+---
+
+sqlpipe의 실제 명령과 플래그를 몰라서 `sqlpipe sync`, `--config`, `--connect-timeout`, 설정 파일 구조는 제가 가정해서 썼습니다. 기본 대기 시간 10초도 가정한 값입니다. 실제 값을 알려 주시면 맞춰 고치겠습니다.

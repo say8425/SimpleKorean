@@ -1,0 +1,9 @@
+```
+Skip empty header rows in CSV parser
+
+The parser threw a NullPointerException when the header row was
+empty. Add a check that skips empty header rows before parsing
+the column names.
+```
+
+I don't know the real class or file names, so I left them out. Add them if you want the message to be more specific.
