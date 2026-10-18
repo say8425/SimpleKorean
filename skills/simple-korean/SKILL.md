@@ -9,7 +9,7 @@ description: |
 license: MIT
 compatibility: claude-code cursor codex gemini-cli opencode
 metadata:
-  version: "1.0.0" # x-release-please-version
+  version: "1.1.0" # x-release-please-version
   upstream: "AminBlg/SimpleEnglish 2.1.1 (a6fcb4f)"
 ---
 

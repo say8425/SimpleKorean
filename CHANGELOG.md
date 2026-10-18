@@ -2,6 +2,18 @@
 
 항목마다 버전, 날짜, 바뀐 것을 적습니다. 측정 결과가 바뀌면 그 릴리스에 결과 경로를 적습니다.
 
+## [1.1.0](https://github.com/say8425/SimpleKorean/compare/v1.0.0...v1.1.0) (2026-10-18)
+
+
+### 기능
+
+* 답변에서 헤더와 목록을 필요할 때 쓰게 한다 ([#10](https://github.com/say8425/SimpleKorean/issues/10)) ([b1ea7ba](https://github.com/say8425/SimpleKorean/commit/b1ea7ba042be10561611c33d86a790850cf44df2))
+
+
+### 고친 것
+
+* 린터가 '-아니다'로 끝나는 해라체 문장을 합쇼체로 읽지 않게 한다 ([#8](https://github.com/say8425/SimpleKorean/issues/8)) ([318b5a0](https://github.com/say8425/SimpleKorean/commit/318b5a08d9aa771c735cb55f0a07fa690ce4afe7))
+
 ## 1.0.0, 2026-10-10
 
 - 처음 공개합니다. [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) v2.1.1(`a6fcb4f`)의 구조를 따릅니다. 규칙, 단어 목록, 측정 과제는 한국어에 맞게 새로 썼습니다.
