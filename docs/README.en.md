@@ -27,19 +27,19 @@ claude plugin marketplace add say8425/SimpleKorean
 claude plugin install simple-korean@simple-korean
 ```
 
-The plugin contains the five parts below. The skill and the three hooks work as soon as you install the plugin. The output style works only when you apply it yourself.
+The plugin contains the five parts below. The skill and the three hooks work automatically in new sessions after you install the plugin. The output style works only when you apply it yourself.
 
 | Part | What it does | Activation | Needs |
 |---|---|---|---|
-| Skill | Holds the full rules, strict mode, and review mode. The model reads it when it needs it. | Automatic | Nothing |
+| Skill | Holds the full rules, strict mode, and review mode. The model reads it when it needs it. | Automatic | None |
 | Session-start hook | Adds the rule block to each session. The model follows the rules even if you do not name the skill. | Automatic | Node.js |
-| File-check hook | Checks the Markdown files that the model writes or edits. It reports violations to the model. | Automatic | Python 3.9 or later |
-| Reply-check hook | Checks the model's last reply. It reports violations on the screen. | Automatic | Python 3.9 or later |
-| Output style | Puts the same rule block as the session-start hook in the system prompt. | Optional | Nothing |
+| File-check hook | Checks the Korean Markdown files that the model writes or edits. It reports violations to the model. | Automatic | Python 3.9 or later |
+| Reply-check hook | Checks the model's last reply if it is in Korean. It reports violations on the screen. | Automatic | Python 3.9 or later |
+| Output style | Puts the same rule block as the session-start hook in the system prompt. | Optional | None |
 
 The rules apply without the output style, because the session-start hook already adds the same rule block. If the session-start hook does not run because Node.js is missing, apply the output style. To apply the output style, select it under Output style in `/config`, or put `{"outputStyle": "simple-korean:simple-korean"}` in `~/.claude/settings.json`.
 
-The two check hooks only report violations. They do not block your work. To set paths that the check hooks skip, see [`src/hooks/README.md`](../src/hooks/README.md).
+The two check hooks only report violations. They do not block your work. To set paths that the file-check hook skips, see [`src/hooks/README.md`](../src/hooks/README.md).
 
 The session-start hook adds a rule block of 2,464 characters to each session. The token count that `claude plugin details simple-korean` shows does not include this block.
 
@@ -227,7 +227,7 @@ The usage examples of the National Institute of Korean Language are "리포지�
 
 ### What if my company uses different spellings?
 
-Put `.simple-korean.json` at the top of your repository. The session-start hook finds this file and tells the model the changed designated spellings. The linter and the writing-check hook also follow this file. They warn when you use the designated spelling from before the change. A designated spelling can use only Hangul, Latin letters, digits, and spaces, up to 20 characters. You can list up to 100 strings to skip (`skip`). The two hooks use the default settings instead of settings with a wrong format. The linter stops with an error on such settings. The hooks and the linter both ignore concepts that are not in the word list.
+Put `.simple-korean.json` at the top of your repository. The session-start hook finds this file and tells the model the changed designated spellings. The linter and the file-check hook also follow this file. They warn when you use the designated spelling from before the change. A designated spelling can use only Hangul, Latin letters, digits, and spaces, up to 20 characters. You can list up to 100 strings to skip (`skip`). The session-start hook and the file-check hook use the default settings instead of settings with a wrong format. The linter stops with an error on such settings. The hooks and the linter both ignore concepts that are not in the word list.
 
 ```json
 {"terms": {"release": {"write": "릴리즈"}, "column": "컬럼"}, "spacing": "attached"}

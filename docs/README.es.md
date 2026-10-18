@@ -27,19 +27,19 @@ claude plugin marketplace add say8425/SimpleKorean
 claude plugin install simple-korean@simple-korean
 ```
 
-El plugin incluye las cinco partes de abajo. La skill y los tres hooks funcionan en cuanto instala el plugin. El estilo de salida solo funciona si usted lo aplica.
+El plugin incluye las cinco partes de abajo. La skill y los tres hooks funcionan automáticamente en las sesiones nuevas que inicie después de instalar el plugin. El estilo de salida solo funciona si usted lo aplica.
 
 | Parte | Qué hace | Activación | Necesita |
 |---|---|---|---|
 | Skill | Contiene todas las reglas, el modo estricto y el modo de revisión. El modelo la lee cuando la necesita. | Automática | Nada |
 | Hook de inicio de sesión | Añade el bloque de reglas a cada sesión. El modelo sigue las reglas aunque usted no nombre la skill. | Automática | Node.js |
-| Hook de revisión de archivos | Revisa los archivos Markdown que el modelo escribe o edita. Avisa al modelo de las infracciones. | Automática | Python 3.9 o posterior |
-| Hook de revisión de respuestas | Revisa la última respuesta del modelo. Muestra las infracciones en pantalla. | Automática | Python 3.9 o posterior |
+| Hook de revisión de archivos | Revisa los archivos Markdown en coreano que el modelo escribe o edita. Avisa al modelo de las infracciones. | Automática | Python 3.9 o posterior |
+| Hook de revisión de respuestas | Revisa la última respuesta del modelo si está en coreano. Muestra las infracciones en pantalla. | Automática | Python 3.9 o posterior |
 | Estilo de salida | Pone en el prompt del sistema el mismo bloque de reglas que el hook de inicio de sesión. | Opcional | Nada |
 
 Las reglas se aplican sin el estilo de salida, porque el hook de inicio de sesión ya añade el mismo bloque de reglas. Si el hook de inicio de sesión no se ejecuta porque falta Node.js, aplique el estilo de salida. Para aplicarlo, elíjalo en Output style de `/config` o añada `{"outputStyle": "simple-korean:simple-korean"}` a `~/.claude/settings.json`.
 
-Los dos hooks de revisión solo avisan de las infracciones. No bloquean su trabajo. Para elegir las rutas que estos hooks omiten, consulte [`src/hooks/README.md`](../src/hooks/README.md).
+Los dos hooks de revisión solo avisan de las infracciones. No bloquean su trabajo. Para elegir las rutas que omite el hook de revisión de archivos, consulte [`src/hooks/README.md`](../src/hooks/README.md).
 
 El hook de inicio de sesión añade un bloque de reglas de 2464 caracteres en cada sesión. El número de tokens que muestra `claude plugin details simple-korean` no incluye este bloque.
 
@@ -227,7 +227,7 @@ Los ejemplos de uso del Instituto Nacional de la Lengua Coreana son "리포지�
 
 ### ¿Qué hago si mi empresa usa otras grafías?
 
-Ponga `.simple-korean.json` en la raíz del repositorio. El hook de inicio de sesión busca este archivo e informa al modelo de las grafías designadas que cambiaron. El linter y el hook de revisión de escritura también siguen este archivo. Avisan cuando se usa la grafía designada de antes del cambio. En una grafía designada use solo hangul, letras latinas, dígitos y espacios, hasta 20 caracteres. Puede indicar hasta 100 cadenas que se omiten (`skip`). Los dos hooks usan la configuración predeterminada en lugar de una configuración con un formato incorrecto. El linter se detiene con un error ante esa configuración. Los hooks y el linter ignoran los conceptos que no están en la lista de palabras.
+Ponga `.simple-korean.json` en la raíz del repositorio. El hook de inicio de sesión busca este archivo e informa al modelo de las grafías designadas que cambiaron. El linter y el hook de revisión de archivos también siguen este archivo. Avisan cuando se usa la grafía designada de antes del cambio. En una grafía designada use solo hangul, letras latinas, dígitos y espacios, hasta 20 caracteres. Puede indicar hasta 100 cadenas que se omiten (`skip`). El hook de inicio de sesión y el hook de revisión de archivos usan la configuración predeterminada en lugar de una configuración con un formato incorrecto. El linter se detiene con un error ante esa configuración. Los hooks y el linter ignoran los conceptos que no están en la lista de palabras.
 
 ```json
 {"terms": {"release": {"write": "릴리즈"}, "column": "컬럼"}, "spacing": "attached"}
