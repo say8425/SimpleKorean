@@ -14,6 +14,13 @@
 
 * 린터가 '-아니다'로 끝나는 해라체 문장을 합쇼체로 읽지 않게 한다 ([#8](https://github.com/say8425/SimpleKorean/issues/8)) ([318b5a0](https://github.com/say8425/SimpleKorean/commit/318b5a08d9aa771c735cb55f0a07fa690ce4afe7))
 
+
+### 측정
+
+* 측정 결과는 [`evals/results/2026-10-17/RESULTS.md`](evals/results/2026-10-17/RESULTS.md)에 있습니다.
+* 압력 시험 기록은 [`evals/pressure-tests.md`](evals/pressure-tests.md)의 회차 5에 있습니다.
+* 답변 서식 규칙을 고른 근거는 [`docs/research/reply-formatting.md`](docs/research/reply-formatting.md)에 있습니다.
+
 ## 1.0.0, 2026-10-10
 
 - 처음 공개합니다. [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) v2.1.1(`a6fcb4f`)의 구조를 따릅니다. 규칙, 단어 목록, 측정 과제는 한국어에 맞게 새로 썼습니다.
