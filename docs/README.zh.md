@@ -33,13 +33,13 @@ claude plugin install simple-korean@simple-korean
 |---|---|---|---|
 | 技能 | 包含全部规则、严格模式和检查模式。模型在需要时读取。 | 自动 | 无 |
 | 会话启动钩子 | 在每个会话中加入规则块。即使不提技能名称，模型也会遵守规则。 | 自动 | Node.js |
-| 文件检查钩子 | 检查模型写入或修改的韩语 Markdown 文件，并把违规告诉模型。 | 自动 | Python 3.9 或更高版本 |
-| 回答检查钩子 | 如果模型的最后一条回答是韩语，就检查它，并在屏幕上显示违规。 | 自动 | Python 3.9 或更高版本 |
+| 文件检查钩子 | 检查模型写入或修改的 Markdown 文件，并把违规告诉模型。 | 自动 | Python 3.9 或更高版本 |
+| 回答检查钩子 | 检查模型的最后一条回答，并在屏幕上显示违规。 | 自动 | Python 3.9 或更高版本 |
 | 输出样式 | 把与会话启动钩子相同的规则块放进系统提示词。 | 可选 | 无 |
 
 不用输出样式，规则也会生效，因为会话启动钩子已经加入了同一个规则块。如果没有 Node.js，会话启动钩子无法运行，这时请应用输出样式。要应用输出样式，请在 `/config` 的 Output style 中选择，或者在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。
 
-两个检查钩子只报告违规，不会阻止工作。要设置文件检查钩子跳过的路径，请见 [`src/hooks/README.md`](../src/hooks/README.md)。
+两个检查钩子只检查用韩语写的文件和回答。它们只报告违规，不会阻止工作。要设置文件检查钩子跳过的路径，请见 [`src/hooks/README.md`](../src/hooks/README.md)。
 
 会话启动钩子会在每个会话中加入 2,464 个字符的规则块。`claude plugin details simple-korean` 显示的 token 数不包含这个规则块。
 

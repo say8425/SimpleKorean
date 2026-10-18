@@ -33,13 +33,13 @@ El plugin incluye las cinco partes de abajo. La skill y los tres hooks funcionan
 |---|---|---|---|
 | Skill | Contiene todas las reglas, el modo estricto y el modo de revisión. El modelo la lee cuando la necesita. | Automática | Nada |
 | Hook de inicio de sesión | Añade el bloque de reglas a cada sesión. El modelo sigue las reglas aunque usted no nombre la skill. | Automática | Node.js |
-| Hook de revisión de archivos | Revisa los archivos Markdown en coreano que el modelo escribe o edita. Avisa al modelo de las infracciones. | Automática | Python 3.9 o posterior |
-| Hook de revisión de respuestas | Revisa la última respuesta del modelo si está en coreano. Muestra las infracciones en pantalla. | Automática | Python 3.9 o posterior |
+| Hook de revisión de archivos | Revisa los archivos Markdown que el modelo escribe o edita. Avisa al modelo de las infracciones. | Automática | Python 3.9 o posterior |
+| Hook de revisión de respuestas | Revisa la última respuesta del modelo. Muestra las infracciones en pantalla. | Automática | Python 3.9 o posterior |
 | Estilo de salida | Pone en el prompt del sistema el mismo bloque de reglas que el hook de inicio de sesión. | Opcional | Nada |
 
 Las reglas se aplican sin el estilo de salida, porque el hook de inicio de sesión ya añade el mismo bloque de reglas. Si el hook de inicio de sesión no se ejecuta porque falta Node.js, aplique el estilo de salida. Para aplicarlo, elíjalo en Output style de `/config` o añada `{"outputStyle": "simple-korean:simple-korean"}` a `~/.claude/settings.json`.
 
-Los dos hooks de revisión solo avisan de las infracciones. No bloquean su trabajo. Para elegir las rutas que omite el hook de revisión de archivos, consulte [`src/hooks/README.md`](../src/hooks/README.md).
+Los dos hooks de revisión solo revisan archivos y respuestas escritos en coreano. Solo avisan de las infracciones y no bloquean su trabajo. Para elegir las rutas que omite el hook de revisión de archivos, consulte [`src/hooks/README.md`](../src/hooks/README.md).
 
 El hook de inicio de sesión añade un bloque de reglas de 2464 caracteres en cada sesión. El número de tokens que muestra `claude plugin details simple-korean` no incluye este bloque.
 
