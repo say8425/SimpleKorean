@@ -12,7 +12,7 @@
   <a href="../LICENSE"><img src="https://img.shields.io/badge/license-MIT-lightgrey?style=flat" alt="MIT"></a>
 </p>
 
-SimpleKorean is an agent skill that makes LLMs write plain Korean in technical documents and chat replies. Aircraft maintenance manuals use a controlled English called ASD-STE100. We took its rules from [SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) and rebuilt them for Korean grammar. We also added a list of loanword spellings. We measured this list on real Korean developer documents.
+SimpleKorean is an agent skill that makes LLMs write plain Korean in technical documents and chat replies. Aircraft maintenance manuals use a controlled English called ASD-STE100. We took its rules from [SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) and rebuilt them for Korean grammar. We also added a list of loanword spellings. We built this list by counting the spellings used in real Korean developer documents.
 
 The skill runs in agents that read the [Agent Skills standard](https://agentskills.io). Examples are Claude Code, Cursor, Codex, Gemini CLI, and OpenCode.
 
@@ -20,13 +20,26 @@ The skill runs in agents that read the [Agent Skills standard](https://agentskil
 
 ### Claude Code
 
-For Claude Code, install the plugin. The plugin contains the session-start hook, the writing-check hook, and the output style. The session-start hook needs Node.js. The writing-check hook needs Python 3.9 or later.
+For Claude Code, install the plugin.
 
 ```bash
-claude plugin marketplace add say8425/SimpleKorean && claude plugin install simple-korean@simple-korean
+claude plugin marketplace add say8425/SimpleKorean
+claude plugin install simple-korean@simple-korean
 ```
 
-The output style name is `simple-korean:simple-korean`. The short name does not work. Select it under Output style in `/config`, or put `{"outputStyle": "simple-korean:simple-korean"}` in `~/.claude/settings.json`.
+The plugin contains the five parts below. The skill and the three hooks work as soon as you install the plugin. The output style works only when you apply it yourself.
+
+| Part | What it does | Activation | Needs |
+|---|---|---|---|
+| Skill | Holds the full rules, strict mode, and review mode. The model reads it when it needs it. | Automatic | Nothing |
+| Session-start hook | Adds the rule block to each session. The model follows the rules even if you do not name the skill. | Automatic | Node.js |
+| File-check hook | Checks the Markdown files that the model writes or edits. It reports violations to the model. | Automatic | Python 3.9 or later |
+| Reply-check hook | Checks the model's last reply. It reports violations on the screen. | Automatic | Python 3.9 or later |
+| Output style | Puts the same rule block as the session-start hook in the system prompt. | Optional | Nothing |
+
+The rules apply without the output style, because the session-start hook already adds the same rule block. If the session-start hook does not run because Node.js is missing, apply the output style. To apply the output style, select it under Output style in `/config`, or put `{"outputStyle": "simple-korean:simple-korean"}` in `~/.claude/settings.json`.
+
+The two check hooks only report violations. They do not block your work. To set paths that the check hooks skip, see [`src/hooks/README.md`](../src/hooks/README.md).
 
 The session-start hook adds a rule block of 2,464 characters to each session. The token count that `claude plugin details simple-korean` shows does not include this block.
 

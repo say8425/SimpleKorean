@@ -12,7 +12,7 @@
   <a href="../LICENSE"><img src="https://img.shields.io/badge/license-MIT-lightgrey?style=flat" alt="MIT"></a>
 </p>
 
-SimpleKorean es una skill de agente que hace que los LLM escriban en un coreano sencillo en documentos técnicos y respuestas de chat. Los manuales de mantenimiento aeronáutico usan un inglés controlado llamado ASD-STE100. Tomamos sus reglas de [SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) y las reconstruimos para la gramática coreana. También añadimos una lista de grafías de préstamos. Medimos esta lista en documentos reales de desarrollo escritos en coreano.
+SimpleKorean es una skill de agente que hace que los LLM escriban en un coreano sencillo en documentos técnicos y respuestas de chat. Los manuales de mantenimiento aeronáutico usan un inglés controlado llamado ASD-STE100. Tomamos sus reglas de [SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) y las reconstruimos para la gramática coreana. También añadimos una lista de grafías de préstamos. La elaboramos contando las grafías que se usan en documentos reales de desarrollo escritos en coreano.
 
 La skill funciona en los agentes que leen el [estándar Agent Skills](https://agentskills.io). Algunos ejemplos son Claude Code, Cursor, Codex, Gemini CLI y OpenCode.
 
@@ -20,13 +20,26 @@ La skill funciona en los agentes que leen el [estándar Agent Skills](https://ag
 
 ### Claude Code
 
-En Claude Code, instálela como plugin. El plugin incluye el hook de inicio de sesión, el hook de revisión de escritura y el estilo de salida. El hook de inicio de sesión necesita Node.js. El hook de revisión de escritura necesita Python 3.9 o posterior.
+En Claude Code, instálela como plugin.
 
 ```bash
-claude plugin marketplace add say8425/SimpleKorean && claude plugin install simple-korean@simple-korean
+claude plugin marketplace add say8425/SimpleKorean
+claude plugin install simple-korean@simple-korean
 ```
 
-El nombre del estilo de salida es `simple-korean:simple-korean`. Con el nombre corto no se encuentra. Elíjalo en Output style de `/config` o añada `{"outputStyle": "simple-korean:simple-korean"}` a `~/.claude/settings.json`.
+El plugin incluye las cinco partes de abajo. La skill y los tres hooks funcionan en cuanto instala el plugin. El estilo de salida solo funciona si usted lo aplica.
+
+| Parte | Qué hace | Activación | Necesita |
+|---|---|---|---|
+| Skill | Contiene todas las reglas, el modo estricto y el modo de revisión. El modelo la lee cuando la necesita. | Automática | Nada |
+| Hook de inicio de sesión | Añade el bloque de reglas a cada sesión. El modelo sigue las reglas aunque usted no nombre la skill. | Automática | Node.js |
+| Hook de revisión de archivos | Revisa los archivos Markdown que el modelo escribe o edita. Avisa al modelo de las infracciones. | Automática | Python 3.9 o posterior |
+| Hook de revisión de respuestas | Revisa la última respuesta del modelo. Muestra las infracciones en pantalla. | Automática | Python 3.9 o posterior |
+| Estilo de salida | Pone en el prompt del sistema el mismo bloque de reglas que el hook de inicio de sesión. | Opcional | Nada |
+
+Las reglas se aplican sin el estilo de salida, porque el hook de inicio de sesión ya añade el mismo bloque de reglas. Si el hook de inicio de sesión no se ejecuta porque falta Node.js, aplique el estilo de salida. Para aplicarlo, elíjalo en Output style de `/config` o añada `{"outputStyle": "simple-korean:simple-korean"}` a `~/.claude/settings.json`.
+
+Los dos hooks de revisión solo avisan de las infracciones. No bloquean su trabajo. Para elegir las rutas que estos hooks omiten, consulte [`src/hooks/README.md`](../src/hooks/README.md).
 
 El hook de inicio de sesión añade un bloque de reglas de 2464 caracteres en cada sesión. El número de tokens que muestra `claude plugin details simple-korean` no incluye este bloque.
 

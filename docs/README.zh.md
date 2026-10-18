@@ -20,13 +20,26 @@ SimpleKorean 是一个智能体技能，让 LLM 用简单的韩语写技术文�
 
 ### Claude Code
 
-在 Claude Code 中，请以插件方式安装。插件包含会话启动钩子、写作检查钩子和输出样式。会话启动钩子需要 Node.js。写作检查钩子需要 Python 3.9 或更高版本。
+在 Claude Code 中，请以插件方式安装。
 
 ```bash
-claude plugin marketplace add say8425/SimpleKorean && claude plugin install simple-korean@simple-korean
+claude plugin marketplace add say8425/SimpleKorean
+claude plugin install simple-korean@simple-korean
 ```
 
-输出样式的名称是 `simple-korean:simple-korean`。用短名称找不到它。请在 `/config` 的 Output style 中选择，或者在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。
+插件包含下面五个部分。技能和三个钩子在安装后立即生效。输出样式只有手动应用后才生效。
+
+| 组成部分 | 作用 | 启用方式 | 需要 |
+|---|---|---|---|
+| 技能 | 包含全部规则、严格模式和检查模式。模型在需要时读取。 | 自动 | 无 |
+| 会话启动钩子 | 在每个会话中加入规则块。即使不提技能名称，模型也会遵守规则。 | 自动 | Node.js |
+| 文件检查钩子 | 检查模型写入或修改的 Markdown 文件，并把违规告诉模型。 | 自动 | Python 3.9 或更高版本 |
+| 回答检查钩子 | 检查模型的最后一条回答，并在屏幕上显示违规。 | 自动 | Python 3.9 或更高版本 |
+| 输出样式 | 把与会话启动钩子相同的规则块放进系统提示词。 | 可选 | 无 |
+
+不用输出样式，规则也会生效，因为会话启动钩子已经加入了同一个规则块。如果没有 Node.js，会话启动钩子无法运行，这时请应用输出样式。要应用输出样式，请在 `/config` 的 Output style 中选择，或者在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。
+
+两个检查钩子只报告违规，不会阻止工作。要设置检查钩子跳过的路径，请见 [`src/hooks/README.md`](../src/hooks/README.md)。
 
 会话启动钩子会在每个会话中加入 2,464 个字符的规则块。`claude plugin details simple-korean` 显示的 token 数不包含这个规则块。
 

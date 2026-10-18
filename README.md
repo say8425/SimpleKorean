@@ -12,7 +12,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-lightgrey?style=flat" alt="MIT"></a>
 </p>
 
-SimpleKorean은 LLM이 기술 문서와 채팅 답변을 쉬운 한국어로 쓰게 하는 에이전트 스킬입니다. 항공 정비 매뉴얼에 쓰는 통제 영어(쓸 단어와 문법을 정해 둔 영어) ASD-STE100의 규칙을 [SimpleEnglish](https://github.com/AminBlg/SimpleEnglish)에서 가져와 한국어 문법에 맞게 다시 세웠습니다. 여기에 실제 한국어 개발 문서에서 잰 외래어 표기 목록을 더했습니다.
+SimpleKorean은 LLM이 기술 문서와 채팅 답변을 쉬운 한국어로 쓰게 하는 에이전트 스킬입니다. 항공 정비 매뉴얼에 쓰는 통제 영어(쓸 단어와 문법을 정해 둔 영어) ASD-STE100의 규칙을 [SimpleEnglish](https://github.com/AminBlg/SimpleEnglish)에서 가져와 한국어 문법에 맞게 다시 세웠습니다. 여기에 외래어 표기 목록을 더했습니다. 이 목록은 실제 한국어 개발 문서에서 쓰는 표기를 세어 만들었습니다.
 
 [Agent Skills 표준](https://agentskills.io)을 읽는 에이전트에서 동작합니다. Claude Code, Cursor, Codex, Gemini CLI, OpenCode가 그 예입니다.
 
@@ -20,13 +20,26 @@ SimpleKorean은 LLM이 기술 문서와 채팅 답변을 쉬운 한국어로 쓰
 
 ### Claude Code
 
-Claude Code에는 플러그인으로 설치하세요. 플러그인에는 세션 시작 훅, 글쓰기 점검 훅, 출력 스타일이 들어 있습니다. 세션 시작 훅에는 Node.js가 필요합니다. 글쓰기 점검 훅에는 Python 3.9 이상이 필요합니다.
+Claude Code에는 플러그인으로 설치하세요.
 
 ```bash
-claude plugin marketplace add say8425/SimpleKorean && claude plugin install simple-korean@simple-korean
+claude plugin marketplace add say8425/SimpleKorean
+claude plugin install simple-korean@simple-korean
 ```
 
-출력 스타일 이름은 `simple-korean:simple-korean`입니다. Claude Code는 짧은 이름으로는 이 스타일을 찾지 못합니다. `/config`의 Output style에서 고르거나, `~/.claude/settings.json`에 `{"outputStyle": "simple-korean:simple-korean"}`을 넣으세요.
+플러그인에는 아래 다섯 가지가 들어 있습니다. 스킬과 훅 세 개는 설치하면 바로 동작합니다. 출력 스타일은 직접 적용할 때만 동작합니다.
+
+| 구성 요소 | 하는 일 | 적용 | 필요한 것 |
+|---|---|---|---|
+| 스킬 | 전체 규칙, 엄격 모드, 점검 모드를 담습니다. 모델이 필요할 때 읽습니다. | 자동 | 없음 |
+| 세션 시작 훅 | 세션마다 규칙 블록을 넣습니다. 스킬 이름을 말하지 않아도 모델이 규칙을 따릅니다. | 자동 | Node.js |
+| 파일 점검 훅 | 모델이 쓰거나 고친 마크다운 파일을 확인합니다. 위반은 모델에 알립니다. | 자동 | Python 3.9 이상 |
+| 답변 점검 훅 | 모델의 마지막 답변을 확인합니다. 위반은 화면에 알립니다. | 자동 | Python 3.9 이상 |
+| 출력 스타일 | 세션 시작 훅과 같은 규칙 블록을 시스템 프롬프트에 넣습니다. | 선택 | 없음 |
+
+출력 스타일 없이도 규칙은 적용됩니다. 세션 시작 훅이 같은 규칙 블록을 이미 넣기 때문입니다. Node.js가 없어 세션 시작 훅이 동작하지 않으면 출력 스타일을 적용하세요. 출력 스타일을 적용하려면 `/config`의 Output style에서 고르거나, `~/.claude/settings.json`에 `{"outputStyle": "simple-korean:simple-korean"}`을 넣으세요.
+
+점검 훅 두 개는 위반을 알리기만 하고 작업을 막지 않습니다. 건너뛸 경로를 정하는 방법은 [`src/hooks/README.md`](src/hooks/README.md)에 있습니다.
 
 세션 시작 훅은 세션마다 규칙 블록 2,464자를 넣습니다. `claude plugin details simple-korean`이 보여 주는 토큰 수에는 이 블록이 들어가지 않습니다.
 

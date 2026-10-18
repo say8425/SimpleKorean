@@ -12,7 +12,7 @@
   <a href="../LICENSE"><img src="https://img.shields.io/badge/license-MIT-lightgrey?style=flat" alt="MIT"></a>
 </p>
 
-SimpleKorean は、LLM が技術文書とチャットの回答をやさしい韓国語で書くようにするエージェントスキルです。航空機の整備マニュアルでは、ASD-STE100 という統制英語を使います。そのルールを [SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) から取り入れ、韓国語の文法に合わせて作り直しました。さらに、実際の韓国語の開発文書で測った外来語の表記リストを加えました。
+SimpleKorean は、LLM が技術文書とチャットの回答をやさしい韓国語で書くようにするエージェントスキルです。航空機の整備マニュアルでは、ASD-STE100 という統制英語を使います。そのルールを [SimpleEnglish](https://github.com/AminBlg/SimpleEnglish) から取り入れ、韓国語の文法に合わせて作り直しました。さらに、外来語の表記リストを加えました。このリストは、実際の韓国語の開発文書で使われている表記を数えて作りました。
 
 [Agent Skills 標準](https://agentskills.io)を読み込むエージェントで動きます。たとえば Claude Code、Cursor、Codex、Gemini CLI、OpenCode です。
 
@@ -20,13 +20,26 @@ SimpleKorean は、LLM が技術文書とチャットの回答をやさしい韓
 
 ### Claude Code
 
-Claude Code には、プラグインとしてインストールしてください。プラグインには、セッション開始フック、執筆チェックフック、出力スタイルが入っています。セッション開始フックには Node.js が必要です。執筆チェックフックには Python 3.9 以上が必要です。
+Claude Code には、プラグインとしてインストールしてください。
 
 ```bash
-claude plugin marketplace add say8425/SimpleKorean && claude plugin install simple-korean@simple-korean
+claude plugin marketplace add say8425/SimpleKorean
+claude plugin install simple-korean@simple-korean
 ```
 
-出力スタイルの名前は `simple-korean:simple-korean` です。短い名前では見つかりません。`/config` の Output style で選ぶか、`~/.claude/settings.json` に `{"outputStyle": "simple-korean:simple-korean"}` を書いてください。
+プラグインには、次の5つが入っています。スキルと3つのフックは、インストールするとすぐに動きます。出力スタイルは、自分で適用したときだけ動きます。
+
+| 構成要素 | 役割 | 適用 | 必要なもの |
+|---|---|---|---|
+| スキル | ルール全体、厳格モード、点検モードを収めています。モデルが必要なときに読みます。 | 自動 | なし |
+| セッション開始フック | セッションごとにルールブロックを追加します。スキル名を言わなくても、モデルがルールに従います。 | 自動 | Node.js |
+| ファイルチェックフック | モデルが書いたり直したりした Markdown ファイルを確認します。違反はモデルに知らせます。 | 自動 | Python 3.9 以上 |
+| 回答チェックフック | モデルの最後の回答を確認します。違反は画面に表示します。 | 自動 | Python 3.9 以上 |
+| 出力スタイル | セッション開始フックと同じルールブロックを、システムプロンプトに入れます。 | 任意 | なし |
+
+出力スタイルがなくても、ルールは適用されます。セッション開始フックが同じルールブロックをすでに追加するためです。Node.js がなくてセッション開始フックが動かない場合は、出力スタイルを適用してください。出力スタイルを適用するには、`/config` の Output style で選ぶか、`~/.claude/settings.json` に `{"outputStyle": "simple-korean:simple-korean"}` を書いてください。
+
+2つのチェックフックは、違反を知らせるだけで、作業を止めません。チェックの対象外にするパスの決め方は、[`src/hooks/README.md`](../src/hooks/README.md) にあります。
 
 セッション開始フックは、セッションごとに2,464文字のルールブロックを追加します。`claude plugin details simple-korean` が表示するトークン数には、このブロックは含まれません。
 
