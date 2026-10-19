@@ -20,15 +20,26 @@ SimpleKorean 是一个智能体技能，让 LLM 用简单的韩语写技术文�
 
 ### Claude Code
 
-在 Claude Code 中，请以插件方式安装。插件包含会话启动钩子、写作检查钩子和输出样式。会话启动钩子需要 Node.js。写作检查钩子需要 Python 3.9 或更高版本。
+在 Claude Code 中，请以插件方式安装。
 
 ```bash
-claude plugin marketplace add say8425/SimpleKorean && claude plugin install simple-korean@simple-korean
+claude plugin marketplace add say8425/SimpleKorean
+claude plugin install simple-korean@simple-korean
 ```
 
-输出样式的名称是 `simple-korean:simple-korean`。用短名称找不到它。请在 `/config` 的 Output style 中选择，或者在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。
+插件包含下面五个部分。技能和三个钩子在安装后的新会话中自动生效。输出样式只有手动应用后才生效。
 
-会话启动钩子会在每个会话中加入 2,464 个字符的规则块。`claude plugin details simple-korean` 显示的 token 数不包含这个规则块。
+| 组成部分 | 作用 | 启用方式 | 需要 |
+|---|---|---|---|
+| 技能 | 包含全部规则、严格模式和检查模式。模型在需要时读取。 | 自动 | 无 |
+| 会话启动钩子 | 在每个会话中加入规则块。即使不提技能名称，模型也会遵守规则。 | 自动 | Node.js |
+| 文件检查钩子 | 检查模型写入或修改的 Markdown 文件，并把违规告诉模型。 | 自动 | Python 3.9 或更高版本 |
+| 回答检查钩子 | 检查模型的最后一条回答，并在屏幕上显示违规。 | 自动 | Python 3.9 或更高版本 |
+| 输出样式 | 把与会话启动钩子相同的规则块放进系统提示词。 | 可选 | 无 |
+
+不用输出样式，规则也会生效，因为会话启动钩子已经加入了同一个规则块。如果没有 Node.js，会话启动钩子无法运行，这时请应用输出样式。要应用输出样式，请在 `/config` 的 Output style 中选择，或者在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。
+
+会话启动钩子会在每个会话中加入 2,464 个字符的规则块。详情见 [`src/hooks/README.md`](../src/hooks/README.md)。
 
 ### Codex
 
@@ -214,7 +225,7 @@ sqlpipe 的 8 个文档任务在每个条件下各写了 2 次。比率是检查
 
 ### 如果公司的写法不同，怎么办？
 
-请在仓库的根目录放一个 `.simple-korean.json`。会话启动钩子会找到这个文件，并把修改后的规定写法告诉模型。检查器和写作检查钩子也遵守这个文件，使用修改前的规定写法时会发出警告。规定写法只能用韩文、英文字母、数字和空格，最多 20 个字符。要跳过的字符串（`skip`）最多 100 个。两个钩子遇到格式错误的设置时改用默认设置。检查器遇到这种设置会报错并停止。词表中没有的概念，钩子和检查器都会忽略。
+请在仓库的根目录放一个 `.simple-korean.json`。会话启动钩子会找到这个文件，并把修改后的规定写法告诉模型。检查器和文件检查钩子也遵守这个文件，使用修改前的规定写法时会发出警告。规定写法只能用韩文、英文字母、数字和空格，最多 20 个字符。要跳过的字符串（`skip`）最多 100 个。会话启动钩子和文件检查钩子遇到格式错误的设置时改用默认设置。检查器遇到这种设置会报错并停止。词表中没有的概念，钩子和检查器都会忽略。
 
 ```json
 {"terms": {"release": {"write": "릴리즈"}, "column": "컬럼"}, "spacing": "attached"}
