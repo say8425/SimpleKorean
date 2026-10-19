@@ -39,10 +39,6 @@ claude plugin install simple-korean@simple-korean
 
 출력 스타일 없이도 규칙은 적용됩니다. 세션 시작 훅이 같은 규칙 블록을 이미 넣기 때문입니다. Node.js가 없어 세션 시작 훅이 동작하지 않으면 출력 스타일을 적용하세요. 출력 스타일을 적용하려면 `/config`의 Output style에서 고르거나, `~/.claude/settings.json`에 `{"outputStyle": "simple-korean:simple-korean"}`을 넣으세요.
 
-점검 훅 두 개는 한국어로 쓴 파일과 답변만 확인합니다. 위반은 알리기만 하고 작업을 막지 않습니다. 파일 점검 훅이 건너뛸 경로를 정하는 방법은 [`src/hooks/README.md`](src/hooks/README.md)에 있습니다.
-
-세션 시작 훅은 세션마다 규칙 블록 2,464자를 넣습니다. `claude plugin details simple-korean`이 보여 주는 토큰 수에는 이 블록이 들어가지 않습니다.
-
 ### Codex
 
 Codex에는 플러그인으로 설치하세요. 세션 시작 훅이 함께 설치됩니다. 이 훅에는 Node.js가 필요합니다.
@@ -220,6 +216,12 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 | 띄어쓰기 4개 | 기본값, 매개변수, 반환값, 오픈소스(붙여 씀) |
 
 제품 이름, 화면 문구 인용, API 객체 이름, 코드는 원래 표기를 그대로 둡니다.
+
+## 훅
+
+세션 시작 훅은 세션마다 규칙 블록 2,464자를 넣습니다. `claude plugin details simple-korean`이 보여 주는 토큰 수에는 이 블록이 들어가지 않습니다.
+
+Claude Code 플러그인의 점검 훅 두 개는 한국어로 쓴 파일과 답변만 확인합니다. 위반은 알리기만 하고 작업을 막지 않습니다. 파일 점검 훅이 건너뛸 경로를 정하는 방법은 [`src/hooks/README.md`](src/hooks/README.md)에 있습니다.
 
 ## 자주 묻는 질문
 
