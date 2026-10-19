@@ -39,6 +39,8 @@ The plugin contains the five parts below. The skill and the three hooks work aut
 
 The rules apply without the output style, because the session-start hook already adds the same rule block. If the session-start hook does not run because Node.js is missing, apply the output style. To apply the output style, select it under Output style in `/config`, or put `{"outputStyle": "simple-korean:simple-korean"}` in `~/.claude/settings.json`.
 
+The session-start hook adds a rule block of 2,464 characters to each session. For details, see [`src/hooks/README.md`](../src/hooks/README.md).
+
 ### Codex
 
 For Codex, install the plugin. The session-start hook installs with it. This hook needs Node.js.
@@ -210,12 +212,6 @@ Loanwords follow the Korean loanword orthography and the usage examples of the N
 | 4 spacing cases | 기본값, 매개변수, 반환값, 오픈소스 (written without spaces) |
 
 Product names, quoted screen text, API object names, and code keep their original spelling.
-
-## Hooks
-
-The session-start hook adds a rule block of 2,464 characters to each session. The token count that `claude plugin details simple-korean` shows does not include this block.
-
-The two check hooks in the Claude Code plugin look only at Markdown files and replies written in Korean. They only report violations and do not block your work. To set paths that the file-check hook skips, see [`src/hooks/README.md`](../src/hooks/README.md).
 
 ## FAQ
 

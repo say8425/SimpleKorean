@@ -39,6 +39,8 @@ El plugin incluye las cinco partes de abajo. La skill y los tres hooks funcionan
 
 Las reglas se aplican sin el estilo de salida, porque el hook de inicio de sesión ya añade el mismo bloque de reglas. Si el hook de inicio de sesión no se ejecuta porque falta Node.js, aplique el estilo de salida. Para aplicarlo, elíjalo en Output style de `/config` o añada `{"outputStyle": "simple-korean:simple-korean"}` a `~/.claude/settings.json`.
 
+El hook de inicio de sesión añade un bloque de reglas de 2464 caracteres en cada sesión. Los detalles están en [`src/hooks/README.md`](../src/hooks/README.md).
+
 ### Codex
 
 En Codex, instálela como plugin. El hook de inicio de sesión se instala con ella. Este hook necesita Node.js.
@@ -210,12 +212,6 @@ Los préstamos siguen las normas de transcripción de préstamos del coreano y l
 | 4 casos de espaciado | 기본값, 매개변수, 반환값, 오픈소스 (se escriben sin espacios) |
 
 Los nombres de productos, las citas de textos de pantalla, los nombres de objetos de API y el código conservan su grafía original.
-
-## Hooks
-
-El hook de inicio de sesión añade un bloque de reglas de 2464 caracteres en cada sesión. El número de tokens que muestra `claude plugin details simple-korean` no incluye este bloque.
-
-Los dos hooks de revisión del plugin de Claude Code solo revisan archivos Markdown y respuestas escritos en coreano. Solo avisan de las infracciones y no bloquean su trabajo. Para elegir las rutas que omite el hook de revisión de archivos, consulte [`src/hooks/README.md`](../src/hooks/README.md).
 
 ## Preguntas frecuentes
 
