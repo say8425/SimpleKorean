@@ -215,7 +215,7 @@ sqlpipe 的 8 个文档任务在每个条件下各写了 2 次。比率是检查
 
 会话启动钩子会在每个会话中加入 2,464 个字符的规则块。`claude plugin details simple-korean` 显示的 token 数不包含这个规则块。
 
-Claude Code 插件的两个检查钩子只检查用韩语写的文件和回答。它们只报告违规，不会阻止工作。要设置文件检查钩子跳过的路径，请见 [`src/hooks/README.md`](../src/hooks/README.md)。
+Claude Code 插件的两个检查钩子只检查用韩语写的 Markdown 文件和回答。它们只报告违规，不会阻止工作。要设置文件检查钩子跳过的路径，请见 [`src/hooks/README.md`](../src/hooks/README.md)。
 
 ## 常见问题
 

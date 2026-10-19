@@ -221,7 +221,7 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 
 세션 시작 훅은 세션마다 규칙 블록 2,464자를 넣습니다. `claude plugin details simple-korean`이 보여 주는 토큰 수에는 이 블록이 들어가지 않습니다.
 
-Claude Code 플러그인의 점검 훅 두 개는 한국어로 쓴 파일과 답변만 확인합니다. 위반은 알리기만 하고 작업을 막지 않습니다. 파일 점검 훅이 건너뛸 경로를 정하는 방법은 [`src/hooks/README.md`](src/hooks/README.md)에 있습니다.
+Claude Code 플러그인의 점검 훅 두 개는 한국어로 쓴 마크다운 파일과 답변만 확인합니다. 위반은 알리기만 하고 작업을 막지 않습니다. 파일 점검 훅이 건너뛸 경로를 정하는 방법은 [`src/hooks/README.md`](src/hooks/README.md)에 있습니다.
 
 ## 자주 묻는 질문
 

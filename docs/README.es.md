@@ -215,7 +215,7 @@ Los nombres de productos, las citas de textos de pantalla, los nombres de objeto
 
 El hook de inicio de sesión añade un bloque de reglas de 2464 caracteres en cada sesión. El número de tokens que muestra `claude plugin details simple-korean` no incluye este bloque.
 
-Los dos hooks de revisión del plugin de Claude Code solo revisan archivos y respuestas escritos en coreano. Solo avisan de las infracciones y no bloquean su trabajo. Para elegir las rutas que omite el hook de revisión de archivos, consulte [`src/hooks/README.md`](../src/hooks/README.md).
+Los dos hooks de revisión del plugin de Claude Code solo revisan archivos Markdown y respuestas escritos en coreano. Solo avisan de las infracciones y no bloquean su trabajo. Para elegir las rutas que omite el hook de revisión de archivos, consulte [`src/hooks/README.md`](../src/hooks/README.md).
 
 ## Preguntas frecuentes
 

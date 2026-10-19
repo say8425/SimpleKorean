@@ -215,7 +215,7 @@ Product names, quoted screen text, API object names, and code keep their origina
 
 The session-start hook adds a rule block of 2,464 characters to each session. The token count that `claude plugin details simple-korean` shows does not include this block.
 
-The two check hooks in the Claude Code plugin look only at files and replies written in Korean. They only report violations and do not block your work. To set paths that the file-check hook skips, see [`src/hooks/README.md`](../src/hooks/README.md).
+The two check hooks in the Claude Code plugin look only at Markdown files and replies written in Korean. They only report violations and do not block your work. To set paths that the file-check hook skips, see [`src/hooks/README.md`](../src/hooks/README.md).
 
 ## FAQ
 
