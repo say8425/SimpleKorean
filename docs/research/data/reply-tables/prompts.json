@@ -1,0 +1,175 @@
+[
+ {
+  "id": "hook-bench",
+  "type": "측정 결과",
+  "source": "new",
+  "table_fit": true,
+  "prompt": "Claude Code 플러그인의 훅 세 개를 python과 node로 썼습니다. 아래는 훅마다 20번씩 실행해 잰 시간입니다(단위 ms). 모델이 응답 한 단계를 만드는 데는 보통 5초쯤 걸립니다. 이 정도면 속도가 충분한가요?\n\n```\n대상                               중앙값  p90  최댓값\npython3 시작만                         30   41     42\nnode 시작만                            24   26     34\nSessionStart 훅(node)                  25   27     33\nPostToolUse 훅, .md가 아닌 파일         24   28     30\nPostToolUse 훅, 6KB .md                44   46     47\nPostToolUse 훅, 19KB .md               49   53     66\nPostToolUse 훅, 59KB .md               73   75     93\nPostToolUse 훅, 117KB .md             136  140    147\nPostToolUse 훅, 369KB .md             313  316    327\nStop 훅, 답변 326자                     36   40     46\nStop 훅, 답변 3,260자                   46   59     68\nStop 훅, 답변 13,040자                  37   39     41\n```",
+  "targets": [
+   "30",
+   "24",
+   "25",
+   "44",
+   "49",
+   "73",
+   "136",
+   "313",
+   "36"
+  ]
+ },
+ {
+  "id": "ci-matrix",
+  "type": "테스트 결과",
+  "source": "new",
+  "table_fit": true,
+  "prompt": "GitHub Actions 매트릭스 빌드 결과입니다. 어디가 왜 깨졌는지, 무엇부터 고쳐야 하는지 알려 주세요.\n\n```\nubuntu-24.04 / py3.9    통과  4분 12초\nubuntu-24.04 / py3.12   통과  3분 58초\nubuntu-24.04 / py3.14   통과  4분 03초\nmacos-15 / py3.9        통과  6분 40초\nmacos-15 / py3.12       통과  6분 22초\nmacos-15 / py3.14       실패  6분 31초  tests/test_tls.py::test_verify_chain - ssl.SSLCertVerificationError: certificate verify failed: Missing Authority Key Identifier\nwindows-2025 / py3.9    실패  9분 02초  tests/test_paths.py::test_config_path - AssertionError: 'C:\\\\Users\\\\runner\\\\.app\\\\config.json' != '/home/runner/.app/config.json'\nwindows-2025 / py3.12   실패  8분 47초  tests/test_paths.py::test_config_path - (같은 오류)\nwindows-2025 / py3.14   실패  8분 55초  tests/test_paths.py::test_config_path - (같은 오류)\n```",
+  "targets": [
+   "macos-15",
+   "3.14",
+   "test_verify_chain",
+   "windows-2025",
+   "test_config_path"
+  ]
+ },
+ {
+  "id": "pr-status",
+  "type": "상태 보고",
+  "source": "new",
+  "table_fit": true,
+  "prompt": "오늘 릴리스 전에 머지할 PR을 골라야 합니다. 머지 조건은 CI 통과, 승인 1개 이상, main과 충돌 없음입니다. 아래 상태를 보고 지금 머지할 수 있는 PR과 막힌 PR, 막힌 이유를 정리해 주세요.\n\n- #412 결제 재시도 간격 조정: CI 통과, 승인 2, 충돌 없음\n- #415 로그인 세션 만료 버그 수정: CI 실패(e2e 테스트 1건), 승인 1, 충돌 없음\n- #418 주문 목록 API 페이지네이션: CI 통과, 승인 0(리뷰 요청됨), 충돌 없음\n- #420 의존성 업데이트(axios 1.7 → 1.9): CI 통과, 승인 1, main과 충돌\n- #421 관리자 화면 문구 수정: CI 통과, 승인 1, 충돌 없음",
+  "targets": [
+   "412",
+   "415",
+   "418",
+   "420",
+   "421"
+  ]
+ },
+ {
+  "id": "cloud-cost",
+  "type": "비용 비교",
+  "source": "new",
+  "table_fit": true,
+  "prompt": "서비스 배포 방식을 세 가지 가운데에서 고르려 합니다. 지금 트래픽은 월 1.5TB, 요청은 월 6,000만 건입니다. 1년 안에 둘 다 두 배가 될 것으로 봅니다. 지금과 두 배가 됐을 때 각각 어느 쪽이 가장 싼가요?\n\n- A안(가상 서버): 월 고정 600달러, 트래픽 1TB당 90달러\n- B안(컨테이너): 월 고정 200달러, 요청 100만 건당 4달러, 트래픽 1TB당 90달러\n- C안(서버리스): 요청 100만 건당 9달러, 트래픽 요금은 포함",
+  "targets": [
+   "735",
+   "575",
+   "540",
+   "870",
+   "950",
+   "1080"
+  ]
+ },
+ {
+  "id": "db-choice",
+  "type": "선택지 비교",
+  "source": "new",
+  "table_fit": true,
+  "prompt": "사내 도구의 저장소를 SQLite, Postgres, DynamoDB 가운데에서 고르려 합니다. 사용자는 200명이고, 읽기가 대부분이며 쓰기는 하루 몇천 건입니다. 운영 부담, 비용, 확장성, 백업을 기준으로 비교하고 하나를 추천해 주세요."
+ },
+ {
+  "id": "py-tools",
+  "type": "도구 비교",
+  "source": "new",
+  "table_fit": true,
+  "prompt": "Python 프로젝트의 의존성 관리 방법으로 pip와 venv, Poetry, uv 가운데 무엇을 쓸지 정하려 합니다. 설치 속도, 잠금 파일, Python 버전 관리, 팀에 들이는 난이도를 기준으로 비교해 주세요."
+ },
+ {
+  "id": "timeouts",
+  "type": "옵션 정리",
+  "source": "new",
+  "table_fit": true,
+  "prompt": "curl의 --connect-timeout, --max-time, --retry, --retry-max-time이 각각 무엇을 제한하는지와 기본값을 정리해 주세요. 배포 스크립트에서는 어떻게 함께 쓰면 되나요?"
+ },
+ {
+  "id": "http-codes",
+  "type": "대응 정리",
+  "source": "new",
+  "table_fit": true,
+  "prompt": "우리 API가 401, 403, 404, 409, 429를 돌려줄 때 클라이언트는 각각 무엇을 해야 하나요? 다시 시도해도 되는지도 알려 주세요."
+ },
+ {
+  "id": "git-svn",
+  "type": "명령 대응",
+  "source": "new",
+  "table_fit": true,
+  "prompt": "SVN만 써 봤습니다. svn checkout, svn update, svn commit, svn revert, svn log에 해당하는 git 명령을 알려 주세요. 동작이 다른 점도 짚어 주세요."
+ },
+ {
+  "id": "probes",
+  "type": "개념 비교",
+  "source": "reply-format",
+  "table_fit": true,
+  "prompt": "쿠버네티스의 readiness probe와 liveness probe는 무엇이 다른가요? 둘 다 같은 /health 엔드포인트를 써도 되나요?"
+ },
+ {
+  "id": "why-timeout",
+  "type": "짧은 설명",
+  "source": "reply-format",
+  "table_fit": false,
+  "prompt": "배포 스크립트가 타임아웃이 나면 /v2/orders에 POST를 다시 보냅니다. 안전한가요? 엔드포인트가 멱등하다는데 정확히 무슨 뜻인지 모르겠어요. 짧게 설명해 주세요."
+ },
+ {
+  "id": "commit-amend",
+  "type": "짧은 방법",
+  "source": "reply-format",
+  "table_fit": false,
+  "prompt": "방금 만든 커밋의 메시지에 오타가 있어요. 아직 푸시하지 않았는데, 메시지만 고치려면 어떻게 하나요?"
+ },
+ {
+  "id": "cert-error",
+  "type": "문제 해결",
+  "source": "reply-format",
+  "table_fit": false,
+  "prompt": "사내 API에 curl을 보내면 'SSL certificate problem: unable to get local issuer certificate'가 나옵니다. 무슨 일이고 어떻게 고치나요?"
+ },
+ {
+  "id": "oom",
+  "type": "문제 해결",
+  "source": "reply-format",
+  "table_fit": false,
+  "prompt": "쿠버네티스 파드가 OOMKilled 상태로 계속 재시작됩니다. 무슨 일이 일어나는 건지, 뭘 바꿔야 하는지 설명해 주세요."
+ },
+ {
+  "id": "cache",
+  "type": "문제 해결",
+  "source": "reply-format",
+  "table_fit": false,
+  "prompt": "가격을 바꾸면 사용자가 최대 10분 동안 예전 가격을 봅니다. DB 앞에 Redis를 두고 있어요. 왜 그렇고 어떻게 고치나요?"
+ },
+ {
+  "id": "queue-lag",
+  "type": "개념과 영향",
+  "source": "reply-format",
+  "table_fit": false,
+  "prompt": "Kafka 대시보드에서 컨슈머 랙이 200만까지 올라갑니다. 나쁜 건가요? 사용자에게는 무슨 뜻인가요?"
+ },
+ {
+  "id": "pg-setup",
+  "type": "긴 절차",
+  "source": "reply-format",
+  "table_fit": false,
+  "prompt": "macOS에 Postgres 16을 처음 설치하려고 합니다. Homebrew로 설치하고, 앱 전용 사용자와 데이터베이스를 만들고, psql로 접속해 확인하는 데까지 순서대로 알려 주세요."
+ },
+ {
+  "id": "code-review",
+  "type": "코드 리뷰",
+  "source": "reply-format",
+  "table_fit": false,
+  "prompt": "이 함수를 코드 리뷰해 주세요.\n\n```python\ndef get_user(id):\n    conn = psycopg2.connect(DB_URL)\n    cur = conn.cursor()\n    cur.execute(f\"SELECT * FROM users WHERE id = {id}\")\n    row = cur.fetchone()\n    return {\"id\": row[0], \"name\": row[1], \"email\": row[2]}\n```"
+ },
+ {
+  "id": "exec-brief",
+  "type": "비개발자 설명",
+  "source": "reply-format",
+  "table_fit": false,
+  "prompt": "어제 결제가 40분 동안 실패했습니다. 원인은 결제 대행사 연동에 쓰는 인증서가 만료된 것이었습니다. 개발을 모르는 경영진에게 무슨 일이었는지와 재발 방지책을 설명해야 합니다. 어떻게 말하면 될까요?"
+ },
+ {
+  "id": "split-plan",
+  "type": "계획",
+  "source": "reply-format",
+  "table_fit": false,
+  "prompt": "모놀리스에서 결제 기능만 떼어 내 별도 서비스로 만들려고 합니다. 팀은 4명이고 다운타임은 허용되지 않습니다. 어떤 순서로 진행하면 될까요?"
+ }
+]
