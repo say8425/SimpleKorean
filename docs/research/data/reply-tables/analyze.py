@@ -27,6 +27,8 @@ LABEL = {"understand": "이해", "find": "찾기", "overall": "전체 선호"}
 JUDGES = (("judge-opus.jsonl", "Opus"), ("judge-jev.jsonl", "Jev"))
 FENCE = re.compile(r"```.*?```", re.S)
 CODE = re.compile(r"`([^`\n]*)`")
+EMPH = re.compile(r"\*\*|__")
+MD_LINK = re.compile(r"\[([^\]]*)\]\([^)]*\)")
 SEP = re.compile(r"^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?\s*$")
 LINKS = re.compile(r"그러므로|때문|그래서|따라서|하지만|그러나|그러면|므로|반면|대신")
 
@@ -45,10 +47,20 @@ def width(text):
 
 
 def cells(line):
-    """표 행을 셀로 나눈다. 인라인 코드 안의 |는 나누지 않고, 렌더링되면 사라지는 백틱은 뺀다."""
-    masked = CODE.sub(lambda m: m.group(1).replace("|", "\0"), line.strip())
+    """표 행을 셀로 나눈다. 인라인 코드 안의 |는 나누지 않는다.
+
+    렌더링되면 사라지는 표시는 뺀다: 백틱, 굵은 글씨 표시(**, __), 링크의 주소 부분.
+    """
+    codes = []
+
+    def keep(m):
+        codes.append(m.group(1))
+        return f"\0{len(codes) - 1}\0"
+
+    masked = MD_LINK.sub(r"\1", EMPH.sub("", CODE.sub(keep, line.strip())))
     parts = re.split(r"(?<!\\)\|", masked.strip().strip("|"))
-    return [p.replace("\0", "|").replace("\\|", "|").strip() for p in parts]
+    return [re.sub(r"\0(\d+)\0", lambda m: codes[int(m.group(1))], p).replace("\\|", "|").strip()
+            for p in parts]
 
 
 def tables(text):
@@ -99,7 +111,7 @@ def shape(text):
     return {"chars": len(text), "sentences": counts["sentences"], "headers": counts["headers"],
             "tables": len(tbs), "widths": [table_width(t["rows"]) for t in tbs],
             "rows": [len(t["rows"]) - 1 for t in tbs], "cols": [max(len(r) for r in t["rows"]) for t in tbs],
-            "cell_chars": [len(CODE.sub(r"\1", c)) for c in body],
+            "cell_chars": [len(c) for c in body],
             "lead_table": first_line_table(text), "links": len(LINKS.findall(FENCE.sub(" ", text))),
             "em_dash": counts["em_dash"], "bold": counts["bold_spans"]}
 
@@ -151,6 +163,9 @@ def main():
         cov = [coverage(text[k], targets[k[1]]) for k, _ in rows if k[1] in targets]
         if cov:
             print(f"  자료값이 남은 비율(질문 {len(targets)}개 x 2회): 평균 {st.mean(cov):.2f}")
+    print("== 터미널 시험에 쓴 표(render/)의 렌더링 폭: " + ", ".join(
+        f"{p.stem} {table_width(t['rows'])}칸" for p in sorted((HERE / "render").glob("*.md"))
+        for t in tables(p.read_text(encoding="utf-8"))))
     per_q = Counter((k[0], k[1]) for k, s in shapes.items() if s["tables"])
     print("== 질문별 표 있는 답 수(두 회차 합)")
     for p in prompts:
@@ -210,20 +225,25 @@ def main():
                         gain[key][r["id"]] += {x: 1, "prohibit": -1}.get(r["winner"][key], 0)
             print(f"T 질문별 {x}의 앞섬(찾기/전체 선호, 두 회차 합): " +
                   ", ".join(f"{q} {gain['find'][q]:+d}/{gain['overall'][q]:+d}" for q in sorted(fit)))
+        picks = [(r["order1"][k], r["order2"][k]) for r in recs for k in KEYS]
+        picks = [(a.get("choice"), b.get("choice")) if isinstance(a, dict) else (a, b) for a, b in picks]
+        same = Counter(a for a, b in picks if a == b and a in ("A", "B"))
+        print(f"두 순서에서 같은 자리를 고른 판정: {sum(same.values())}/{len(picks)} "
+              f"(A 두 번 {same['A']}, B 두 번 {same['B']})")
         decided = [r for r in recs if tuple(r["pair"]) in PAIRS and r["winner"]["overall"] != "tie"]
         longer = sum(1 for r in decided
                      if len(text[(r["winner"]["overall"], r["id"], r["run"])]) >=
                      len(text[(r["pair"][1] if r["winner"]["overall"] == r["pair"][0] else r["pair"][0], r["id"], r["run"])]))
         print(f"전체 선호에서 승패가 난 {len(decided)}쌍 가운데 긴 답이 이긴 쌍 {longer}")
-    if len(results) == 0:
-        return
     both = [load(name) for name, _ in JUDGES]
-    if all(both):
-        key_of = {(tuple(r["pair"]), r["id"], r["run"]): r["winner"] for r in both[1]}
-        common = [(r["winner"], key_of[(tuple(r["pair"]), r["id"], r["run"])]) for r in both[0]
-                  if tuple(r["pair"]) in PAIRS and (tuple(r["pair"]), r["id"], r["run"]) in key_of]
-        print("== 두 판정 모델의 일치(정책 쌍 120쌍): " +
-              ", ".join(f"{LABEL[k]} {sum(1 for a, b in common if a[k] == b[k])}" for k in KEYS))
+    if not all(both):
+        print("== 판정 기록 두 개가 모두 있어야 판정 모델의 일치와 채택 조건을 셉니다")
+        return
+    key_of = {(tuple(r["pair"]), r["id"], r["run"]): r["winner"] for r in both[1]}
+    common = [(r["winner"], key_of[(tuple(r["pair"]), r["id"], r["run"])]) for r in both[0]
+              if tuple(r["pair"]) in PAIRS and (tuple(r["pair"]), r["id"], r["run"]) in key_of]
+    print("== 두 판정 모델의 일치(정책 쌍 120쌍): " +
+          ", ".join(f"{LABEL[k]} {sum(1 for a, b in common if a[k] == b[k])}" for k in KEYS))
 
     print("== 채택 조건(criteria.md)")
     passed = {}

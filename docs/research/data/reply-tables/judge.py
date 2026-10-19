@@ -87,10 +87,18 @@ def jev_once(question, a, b, cache):
         except urllib.error.HTTPError as err:
             if err.code != 429 and err.code < 500:
                 raise RuntimeError(f"Jev {err.code}: {err.read()[:300]!r}") from err
-            time.sleep(float(err.headers.get("retry-after") or 2 ** attempt))
-        except (urllib.error.URLError, TimeoutError):
+            time.sleep(retry_delay(err.headers.get("retry-after"), attempt))
+        except OSError:  # URLError, 연결 끊김, 읽기 시간 초과(3.9의 socket.timeout 포함)
             time.sleep(2 ** attempt)
     raise RuntimeError("Jev가 여덟 번 모두 응답하지 않았습니다")
+
+
+def retry_delay(header, attempt):
+    """retry-after가 초 단위 숫자면 그 값을, 날짜이거나 없으면 2의 거듭제곱 초를 쓴다."""
+    try:
+        return float(header)
+    except (TypeError, ValueError):
+        return 2 ** attempt
 
 
 def judge_opus(pair, p, run, a, b, _cache):
@@ -116,6 +124,8 @@ def main(argv=None):
     ap.add_argument("--workers", type=int, default=6)
     ap.add_argument("--cache", default=str(Path(tempfile.gettempdir()) / "simple-korean-jev-cache"))
     a = ap.parse_args(argv)
+    if a.judge == "jev" and not os.environ.get("TYPESAFE_API_KEY"):
+        raise SystemExit("Jev로 판정하려면 환경 변수 TYPESAFE_API_KEY가 있어야 합니다")
     prompts = json.loads((HERE / "prompts.json").read_text(encoding="utf-8"))
     out = HERE / a.out
     done = set()
