@@ -1,0 +1,40 @@
+{
+ "opus_prompt_template": "아래는 같은 질문에 대한 두 답변 A와 B입니다. 질문한 사람이 이 답을 채팅으로 받았다고 생각하고 세 가지를 판단하세요.\n\n- understand: 이 분야를 잘 모르는 독자가 한 번 읽고 내용과 그 이유를 정확히 이해하기 쉬운 답\n- find: 독자가 나중에 다시 볼 때 원인, 할 일, 명령처럼 필요한 정보를 빨리 찾을 수 있는 답\n- overall: 질문한 사람이 받고 싶은 답\n\n마크다운은 화면에 렌더링되어 보인다고 생각하세요. 서식이 있거나 없다는 사실만으로 점수를 주거나 빼지 말고, 독자에게 주는 효과만 보세요. 내용이 틀린 답은 고르지 마세요. 차이가 거의 없으면 tie를 고르세요.\n\n다른 말 없이 JSON 한 줄로만 답하세요. 값은 \"A\", \"B\", \"tie\" 가운데 하나이고, reason은 한국어 한 문장입니다.\n{{\"understand\": \"...\", \"find\": \"...\", \"overall\": \"...\", \"reason\": \"...\"}}\n\n질문:\n{question}\n\n답변 A:\n{a}\n\n답변 B:\n{b}",
+ "jev_questions": {
+  "understand": {
+   "type": "choice",
+   "instructions": "The person who asked `question` reads both chat answers once. They are not an expert in the field. Which answer lets them understand correctly what is going on and why?",
+   "criteria": {
+    "A": "`answer_A` is clearly better on this point.",
+    "B": "`answer_B` is clearly better on this point.",
+    "tie": "Neither answer is clearly better on this point."
+   }
+  },
+  "find": {
+   "type": "choice",
+   "instructions": "Later, the person who asked `question` looks back at the answer to find one specific piece of information, such as the cause, the action to take, a command, or a value. Which answer lets them find it faster? Markdown headers, lists, and tables are rendered on screen.",
+   "criteria": {
+    "A": "`answer_A` is clearly better on this point.",
+    "B": "`answer_B` is clearly better on this point.",
+    "tie": "Neither answer is clearly better on this point."
+   }
+  },
+  "overall": {
+   "type": "choice",
+   "instructions": "Which answer would the person who asked `question` rather receive as a chat reply? Judge by the effect on the reader, not by whether an answer uses formatting.",
+   "criteria": {
+    "A": "`answer_A` is clearly better on this point.",
+    "B": "`answer_B` is clearly better on this point.",
+    "tie": "Neither answer is clearly better on this point."
+   }
+  }
+ },
+ "jev_state_fields": [
+  "question",
+  "answer_A",
+  "answer_B"
+ ],
+ "jev_model": "jev-1.14.0",
+ "opus_model": "claude-opus-5-5",
+ "opus_effort": "low"
+}
