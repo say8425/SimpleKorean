@@ -33,6 +33,18 @@ def test_check_rule_block_flags_drift_and_missing_phrases():
     assert missing == ["SKILL.md에 핵심 문구가 없습니다: 레포지토리"]
 
 
+def test_check_rule_block_flags_strict_trigger_list_drift():
+    phrase = "사용자가 엄격 모드, 통제 언어, KS A 0001, STE, ASD-STE100을 말하면"
+    assert phrase in cn.KEY_PHRASES
+    prompt = f"# 시스템 프롬프트\n\n---\n{BLOCK}\n---\n\n짧은 판본\n"
+    style = f"---\nname: x\n---\n{BLOCK}\n"
+    old = BLOCK.replace("STE, ASD-STE100을", "STE를")
+    assert cn.check_rule_block(prompt.replace(BLOCK, old), style.replace(BLOCK, old), SKILL) == [
+        f"규칙 블록에 핵심 문구가 없습니다: {phrase}"]
+    added = SKILL.replace("ASD-STE100을", "ASD-STE100, 간결 모드를")
+    assert cn.check_rule_block(prompt, style, added) == [f"SKILL.md에 핵심 문구가 없습니다: {phrase}"]
+
+
 def test_check_triggers_reads_every_phrase_from_the_description():
     phrases = ", ".join(f'"{t}"' for t in cn.SKILL_TRIGGERS).replace("Simple Korean", "Simple\n  Korean")
     full = f"---\nname: x\ndescription: |\n  설명입니다.\n  {phrases}\nlicense: MIT\n---\n본문\n"

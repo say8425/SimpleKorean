@@ -6,7 +6,7 @@
 |---|---|
 | `criteria.md` | 판정 전에 정한 채택 조건 |
 | `prompts.json` | 질문 20개. `id`, 질문 유형(`type`), 출처(`source`), 표가 맞는 질문인지(`table_fit`), 질문 문장(`prompt`), 답에 남아야 할 자료값(`targets`) |
-| `base-rule-block.md` | 현행(1.1.0) 규칙 블록 |
+| `base-rule-block.md` | 1.1.0 규칙 블록 |
 | `policies.json` | 정책마다 바꾼 답변 문단 두 개(`format`, `lead`) |
 | `generate.py` | 답을 만드는 스크립트 |
 | `answers.jsonl` | `claude-sonnet-5-5`의 답 160개. 조건(`cond`), 질문(`id`), 회차(`run`), 답(`text`) |
@@ -21,7 +21,7 @@
 
 ## 만든 방법
 
-정책마다 `base-rule-block.md`에서 답변 문단 두 개만 `policies.json`의 문장으로 바꿨다. 나머지 문장은 모든 정책에서 같다. `prohibit`의 블록은 현행 규칙 블록 그대로다. 조건은 네 가지다:
+정책마다 `base-rule-block.md`에서 답변 문단 두 개만 `policies.json`의 문장으로 바꿨다. 나머지 문장은 모든 정책에서 같다. `prohibit`의 블록은 1.1.0 규칙 블록 그대로다. 조건은 네 가지다:
 
 - `baseline`: 규칙 블록 없음
 - `prohibit`: 현행 규칙. 굵은 글씨와 표를 막음
