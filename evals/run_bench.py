@@ -22,9 +22,9 @@ TAIL = "\n\n규칙 설명 없이 최종 글만 쓰세요."
 
 
 def task_text(scenario):
-    """과제 글. 다듬기 과제는 지시 뒤에 초안(draft)을 붙인다."""
+    """과제 글. 다듬기 과제는 지시 뒤에 초안(draft)을 붙이고, 초안이 끝난 곳을 밝힌다."""
     draft = scenario.get("draft")
-    return scenario["prompt"] + (f"\n\n초안:\n\n{draft}" if draft else "")
+    return scenario["prompt"] + (f"\n\n초안:\n\n{draft}\n\n(초안 끝)" if draft else "")
 
 
 def build_prompt(scenario, condition):
@@ -67,7 +67,7 @@ def main(argv=None):
     ap.add_argument("--smoke", action="store_true", help="과제 2개를 1회만 돈다")
     a = ap.parse_args(argv)
     conditions = bc.parse_conditions(a.conditions, CONDITIONS)
-    scenarios = json.loads((bc.HERE / "scenarios.json").read_text(encoding="utf-8"))
+    scenarios = bc.save_inputs(a.out, "scenarios.json")
     runs = 1 if a.smoke else a.runs
     generate(a.out, scenarios[:2] if a.smoke else scenarios, runs, conditions=conditions)
     return 0

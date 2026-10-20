@@ -138,8 +138,34 @@ def meta_date(out):
     return name if re.fullmatch(r"\d{4}-\d{2}-\d{2}", name) else time.strftime("%Y-%m-%d")
 
 
+def save_inputs(out, name):
+    """evals/<name>을 결과 디렉터리의 inputs/<name>으로 복사하고 그 내용을 돌려준다.
+
+    결과 디렉터리는 입력 한 벌로만 만든다. 이미 복사한 입력이 지금 입력과 다르면 멈춘다.
+    report.py는 이 복사본으로 초안의 표시 수와 질문의 설명 문장을 정한다.
+    """
+    source = (HERE / name).read_text(encoding="utf-8")
+    target = Path(out) / "inputs" / name
+    if target.exists() and target.read_text(encoding="utf-8") != source:
+        raise SystemExit(f"{target}가 지금의 evals/{name}과 다릅니다. 입력을 바꿨으면 새 결과 디렉터리를 쓰세요")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(source, encoding="utf-8")
+    return json.loads(source)
+
+
+def git_state(run=subprocess.run):
+    """(커밋, 작업 트리에 커밋하지 않은 변경이 있는지). git을 쓸 수 없으면 (None, None)이다."""
+    try:
+        head = run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=ROOT, check=True).stdout.strip()
+        status = run(["git", "status", "--porcelain"], capture_output=True, text=True, cwd=ROOT, check=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        return None, None
+    return head, bool(status.strip())
+
+
 def write_meta(out, summary, problems, date):
-    meta = {"date": date, "model": MODEL, "judge_model": JUDGE_MODEL, "effort": EFFORT,
+    commit, dirty = git_state()
+    meta = {"date": date, "model": MODEL, "judge_model": JUDGE_MODEL, "effort": EFFORT, "commit": commit, "dirty": dirty,
             "isolation": summary, "isolation_problems": problems}
     Path(out).mkdir(parents=True, exist_ok=True)
     Path(out, "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

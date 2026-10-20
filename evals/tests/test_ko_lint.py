@@ -152,9 +152,9 @@ def test_reader_check_reply_counts():
 
 
 def test_reader_check_counts_middle_dots_outside_code_only():
-    r = ko_lint.reader_check("읽기·쓰기ㆍ삭제를 나눕니다. `a·b`\n```\n가·나\n```\n")
+    r = ko_lint.reader_check("읽기·쓰기ㆍ삭제・보관을 나눕니다. `a·b`\n```\n가·나\n```\n")
     # 가운뎃점은 답변 규칙이 막지 않으므로 visible_total에 넣지 않는다
-    assert (r["counts"]["middle_dot"], r["visible_total"]) == (2, 0), r
+    assert (r["counts"]["middle_dot"], r["visible_total"]) == (3, 0), r
 
 
 def test_reader_check_counts_tables_and_lead_structure():

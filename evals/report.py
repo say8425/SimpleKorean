@@ -28,6 +28,10 @@ DOC_SEP = "|---|---:|---:|---:|---:|---:|---:|---:|"
 POLISH_SEP = "|---|---:|---:|---:|---:|"
 # 다듬기 과제에서 세는 표시. 답변과 같이 ko_lint.reader_check로 세므로 코드 안은 세지 않는다.
 MARKS = ("em_dash", "bold_spans", "middle_dot")
+# 측정할 때 쓴 입력을 복사해 두는 하위 디렉터리(bench_common.save_inputs). 옛 결과 디렉터리에는 없다.
+INPUTS = "inputs"
+# 글 전체를 감싼 코드 울타리 한 겹. 여는 줄 뒤의 정보 문자열(markdown 등)은 버린다.
+OUTER_FENCE = re.compile(r"\A\s*(`{3,}|~{3,})[^\n]*\n(.*)\n[^\S\n]*\1[^\S\n]*\s*\Z", re.S)
 README_BLOCK = re.compile(r"<!-- benchmark:start (\S+) -->\n(.*?)\n<!-- benchmark:end -->", re.S)
 
 
@@ -80,9 +84,24 @@ def doc_stats(results_dir, scenarios):
     return {c: dict(v) for c, v in stats.items()}
 
 
+def saved_inputs(results_dir, name):
+    """측정할 때 결과 디렉터리에 복사한 입력 목록. 없으면 None이다."""
+    path = Path(results_dir, INPUTS, name)
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+
+
+def unfenced(text):
+    """글 전체를 감싼 코드 울타리 한 겹을 벗긴 글. 다듬은 문서를 통째로 코드 블록에 넣으면 표시를 세지 못하기 때문이다.
+
+    안에 같은 글자의 울타리가 또 있으면 어디가 끝인지 알 수 없으므로 그대로 둔다.
+    """
+    m = OUTER_FENCE.match(text)
+    return m.group(2) if m and m.group(1)[:3] not in m.group(2) else text
+
+
 def marks(text):
-    """글에 든 em-dash, 굵은 글씨, 가운뎃점의 수."""
-    counts = ko_lint.reader_check(text)["counts"]
+    """글에 든 em-dash, 굵은 글씨, 가운뎃점의 수. 글 전체를 감싼 코드 울타리는 벗기고 센다."""
+    counts = ko_lint.reader_check(unfenced(text))["counts"]
     return Counter({key: counts[key] for key in MARKS})
 
 
@@ -128,7 +147,7 @@ def render_reply_table(stats, lang="ko"):
         n = max(1, s["n"])
         label = labels["reply_plain"] if cond == "plain" else labels[cond]
         lines.append(f"| {label} | {s['n']} | {s['eojeol'] / n:.0f} | {s['sentences'] / n:.1f} | "
-                     f"{s['em_dash']} | {s['middle_dot']} | {s['bold_spans']} | {s['tables']} | {s['lead_structure']} | "
+                     f"{s['em_dash']} | {s['bold_spans']} | {s['tables']} | {s['lead_structure']} | {s['middle_dot']} | "
                      f"{s['headers']} | {s['bullets']} | {s['fillers']} |")
     return "\n".join(lines)
 
@@ -145,16 +164,28 @@ def render_doc_table(stats, lang="ko"):
     return "\n".join(lines)
 
 
-def render_polish(stats, lang="ko"):
-    """다듬기 과제의 설명 문단과 표. 다듬은 문서가 없으면 빈 문자열이다."""
-    if not any(stats[cond].get("n") for cond in DOC_CONDS):
+def polished(stats):
+    """다듬기 과제를 다듬은 문서가 하나라도 있으면 참이다."""
+    return any((stats or {}).get(cond, {}).get("n") for cond in DOC_CONDS)
+
+
+def render_polish(stats, lang="ko", source="evals/scenarios.json"):
+    """다듬기 과제의 설명 문단과 표. 다듬은 문서가 없으면 빈 문자열이다. source는 초안이 든 입력 파일이다.
+
+    표의 수는 다듬은 문서들의 합이다. 초안 하나의 수와 견주지 않도록, 표시가 모두 남았을 때의 합도 문단에 적는다.
+    """
+    if not polished(stats):
         return ""
     labels, draft = _t(lang, "labels"), Counter(stats["draft"])
+    runs = max(Counter(stats[cond])["n"] for cond in DOC_CONDS)
     lines = [_t(lang, "polish_header"), POLISH_SEP]
     for cond in DOC_CONDS:
         s = Counter(stats[cond])
         lines.append(f"| {labels[cond]} | {s['n']} | {s['em_dash']} | {s['bold_spans']} | {s['middle_dot']} |")
-    intro = _t(lang, "polish_intro").format(dash=draft["em_dash"], bold=draft["bold_spans"], dot=draft["middle_dot"])
+    intro = _t(lang, "polish_intro").format(
+        dash=draft["em_dash"], bold=draft["bold_spans"], dot=draft["middle_dot"], runs=runs,
+        dash_all=draft["em_dash"] * runs, bold_all=draft["bold_spans"] * runs, dot_all=draft["middle_dot"] * runs,
+        src=source, href=i18n.link(lang, source))
     return intro + "\n\n" + "\n".join(lines)
 
 
@@ -184,10 +215,21 @@ def _shape(results_dir, sub, pattern):
 
 
 def benchmark_stats(results_dir, scenarios):
-    """README 벤치마크 블록의 수치. 언어마다 다시 세지 않도록 한 번 센다."""
+    """README 벤치마크 블록의 수치. 언어마다 다시 세지 않도록 한 번 센다.
+
+    결과 디렉터리에 측정할 때의 입력(inputs/)이 있으면 그것을 쓴다. 인자 scenarios는 입력을 복사해 두지 않은
+    옛 결과 디렉터리에만 쓰인다. 질문마다 em-dash와 가운뎃점을 하나씩 넣었다는 문장은 복사한 질문으로 정한다.
+    """
+    rel = Path(results_dir).resolve().relative_to(ROOT).as_posix()
+    saved = saved_inputs(results_dir, "scenarios.json")
+    scenarios = saved or scenarios
+    questions = saved_inputs(results_dir, "reply_scenarios.json") or []
     replies = reply_stats(results_dir)
     return {
-        "rel": Path(results_dir).resolve().relative_to(ROOT).as_posix(),
+        "rel": rel,
+        "reply_marked": bool(questions) and all(q["prompt"].count("—") == 1 and q["prompt"].count("·") == 1
+                                                for q in questions),
+        "polish_source": f"{rel}/{INPUTS}/scenarios.json" if saved else "evals/scenarios.json",
         "replies": replies,
         "judge": judge_stats(results_dir),
         "docs": doc_stats(results_dir, scenarios),
@@ -201,13 +243,17 @@ def benchmark_stats(results_dir, scenarios):
 def render_readme_block(stats, lang="ko"):
     """벤치마크 블록 본문을 그 언어로 쓴다. check_numbers.py가 README와 글자 하나까지 대조한다."""
     (questions, reply_runs), (tasks, doc_runs), rel = stats["reply_shape"], stats["doc_shape"], stats["rel"]
+    marked, polish = stats.get("reply_marked"), stats.get("polish")
+    # 질문에 em-dash가 있어도 기준선이 em-dash를 쓰지 않았으면, 지우는지는 다듬기 과제로 본다고 밝힌다
+    no_dash = marked and not stats["replies"]["baseline"].get("em_dash") and polished(polish)
     parts = [
-        _t(lang, "reply_intro").format(questions=questions, runs=reply_runs, total=stats["n_reply"])
-        + render_headline(stats["replies"], stats["judge"], lang),
+        _t(lang, "reply_intro_marked" if marked else "reply_intro").format(
+            questions=questions, runs=reply_runs, total=stats["n_reply"])
+        + render_headline(stats["replies"], stats["judge"], lang) + (_t(lang, "reply_no_dash") if no_dash else ""),
         render_reply_table(stats["replies"], lang),
         _t(lang, "doc_intro").format(tasks=tasks, runs=doc_runs),
         render_doc_table(stats["docs"], lang),
-        render_polish(stats.get("polish") or {c: {} for c in DOC_CONDS}, lang),
+        render_polish(polish, lang, stats.get("polish_source", "evals/scenarios.json")),
         _t(lang, "results_link").format(rel=rel, href=i18n.link(lang, f"{rel}/RESULTS.md")),
     ]
     return "\n\n".join(part for part in parts if part)

@@ -35,6 +35,9 @@ COND_LABELS = {"plain": "기본 모드", "strict": "엄격 모드"}
 EXAMPLE_BLOCK = re.compile(r"<!-- example:start -->\n(.*?)\n<!-- example:end -->", re.S)
 SOURCE_BLOCK = re.compile(
     r"<!-- source: (\S+) -->\n<!-- simple-korean: off -->\n(.*?)\n<!-- simple-korean: on -->", re.S)
+# 다듬기 과제의 초안 인용. 경로는 결과 디렉터리에 복사한 입력(inputs/scenarios.json)이고, # 뒤는 과제 id다.
+DRAFT_BLOCK = re.compile(
+    r"<!-- draft: (\S+)#(\S+) -->\n<!-- simple-korean: off -->\n(.*?)\n<!-- simple-korean: on -->", re.S)
 
 
 def quote(text):
@@ -57,25 +60,50 @@ def source_block(rel):
     return f"<!-- source: {rel} -->\n<!-- simple-korean: off -->\n{quote(raw_text(rel))}\n<!-- simple-korean: on -->"
 
 
+def inputs_rel(results_dir):
+    """결과 디렉터리에 복사한 문서 과제 입력의 레포지토리 기준 경로(bench_common.save_inputs)."""
+    return Path(results_dir, "inputs", "scenarios.json").resolve().relative_to(ROOT).as_posix()
+
+
+def draft_text(rel, scenario):
+    """레포지토리 기준 경로의 입력 파일에서 그 과제의 초안. 파일이나 초안이 없으면 None이다."""
+    path = ROOT / rel
+    if not path.exists():
+        return None
+    return next((s.get("draft") for s in json.loads(path.read_text(encoding="utf-8")) if s["id"] == scenario), None)
+
+
+def draft_block(rel, scenario):
+    return (f"<!-- draft: {rel}#{scenario} -->\n<!-- simple-korean: off -->\n"
+            f"{quote(draft_text(rel, scenario))}\n<!-- simple-korean: on -->")
+
+
 def _pair(results_dir, sub, item, cond, ext):
     base = Path(results_dir, sub).resolve().relative_to(ROOT).as_posix()
     return f"{base}/baseline__{item}__r{RUN}.{ext}", f"{base}/{cond}__{item}__r{RUN}.{ext}"
 
 
-def _section(title, before, after, after_label):
-    return "\n\n".join([f"## {title}", f"전: 스킬 없음, `{before}`", source_block(before),
-                        f"후: {after_label}, `{after}`", source_block(after)])
+def _section(title, before, after, after_label, draft=None):
+    """예시 절 하나. draft가 (입력 경로, 과제 id)이면 두 조건이 다듬은 초안을 먼저 싣는다."""
+    parts = [f"## {title}"]
+    if draft:
+        parts += [f"초안: `{draft[0]}`의 `{draft[1]}` 과제", draft_block(*draft)]
+    return "\n\n".join(parts + [f"전: 스킬 없음, `{before}`", source_block(before),
+                                 f"후: {after_label}, `{after}`", source_block(after)])
 
 
 def examples_md(results_dir):
     """examples/before-after.md 전체."""
     parts = ["# 전후 예시",
              "'전'은 스킬 없이 만든 원본 출력입니다. '후'는 같은 과제를 스킬을 켜고 만든 원본 출력입니다. "
-             "두 글 모두 고치지 않고 옮겼습니다. 과제와 질문은 측정 전에 정했습니다(`evals/make_examples.py`의 PICKS). "
+             "두 글 모두 고치지 않고 옮겼습니다. 다듬기 과제에는 두 조건에 준 초안도 싣습니다. "
+             "과제와 질문은 측정 전에 정했습니다(`evals/make_examples.py`의 PICKS). "
              "`python3 evals/check_numbers.py`가 이 파일의 글을 원본 파일과 글자 하나까지 대조합니다."]
+    rel = inputs_rel(results_dir)
     for scenario, cond, title in DOC_PICKS:
         before, after = _pair(results_dir, "docs", scenario, cond, "json")
-        parts.append(_section(title, before, after, COND_LABELS[cond]))
+        draft = (rel, scenario) if draft_text(rel, scenario) else None
+        parts.append(_section(title, before, after, COND_LABELS[cond], draft))
     for question, title in REPLY_PICKS:
         before, after = _pair(results_dir, "reply", question, "plain", "txt")
         parts.append(_section(f"답변: {title}", before, after, "SimpleKorean"))
@@ -94,15 +122,17 @@ def readme_example(results_dir, lang="ko"):
     """
     scenario, cond = README_PICK
     before, after = _pair(results_dir, "docs", scenario, cond, "json")
-    text = i18n.TEXT[lang]
+    text, rel = i18n.TEXT[lang], inputs_rel(results_dir)
+    lead = [text["example_draft"].format(src=rel, href=i18n.link(lang, rel), id=scenario),
+            draft_block(rel, scenario)] if draft_text(rel, scenario) else []
     table = "\n".join([
         "<table>", "<tr>",
         f'<th width="50%">{text["example_before"]}</th>',
         f'<th width="50%">{text["example_after"]}</th>',
         "</tr>", "<tr>", _cell(before), _cell(after), "</tr>", "</table>",
     ])
-    return "\n\n".join([table, text["example_files"].format(before=before, after=after),
-                        text["example_docs"].format(href=i18n.link(lang, "examples/before-after.md"))])
+    return "\n\n".join(lead + [table, text["example_files"].format(before=before, after=after),
+                                text["example_docs"].format(href=i18n.link(lang, "examples/before-after.md"))])
 
 
 def wide_code_lines(text):
@@ -128,6 +158,10 @@ def pick_problems(results_dir):
         return [f"README_PICK {README_PICK}가 DOC_PICKS에 없습니다"]
     scenario, cond = README_PICK
     problems = []
+    rel = inputs_rel(results_dir)
+    # README의 보기 설명(손으로 쓴 문단과 칸 이름)은 다듬기 과제를 가정한다
+    if (ROOT / rel).exists() and not draft_text(rel, scenario):
+        problems.append(f"{rel}: README_PICK 과제 {scenario}에 초안이 없습니다. README의 보기 설명은 다듬기 과제를 가정합니다")
     for rel in _pair(results_dir, "docs", scenario, cond, "json"):
         try:
             if wide_code_lines(raw_text(rel)):
@@ -171,6 +205,17 @@ def check_sources(markdown):
             continue
         if unquote(m.group(2)) != expected:
             problems.append(f"{rel}: 인용한 글이 원본과 다릅니다")
+    for m in DRAFT_BLOCK.finditer(markdown):
+        rel, scenario = m.group(1), m.group(2)
+        try:
+            expected = draft_text(rel, scenario)
+        except (OSError, ValueError, KeyError) as err:
+            problems.append(f"{rel}#{scenario}: 초안을 읽지 못했습니다({err})")
+            continue
+        if expected is None:
+            problems.append(f"{rel}#{scenario}: 초안이 없습니다")
+        elif unquote(m.group(3)) != expected.rstrip("\n"):
+            problems.append(f"{rel}#{scenario}: 인용한 초안이 원본과 다릅니다")
     return problems
 
 

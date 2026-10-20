@@ -87,7 +87,7 @@ def main(argv=None):
     ap.add_argument("--judge", action="store_true")
     a = ap.parse_args(argv)
     conditions = bc.parse_conditions(a.conditions, CONDITIONS)
-    scenarios = json.loads((bc.HERE / "reply_scenarios.json").read_text(encoding="utf-8"))
+    scenarios = bc.save_inputs(a.out, "reply_scenarios.json")
     if a.judge:
         judge(a.out, scenarios, a.runs)
     else:

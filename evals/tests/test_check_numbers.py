@@ -368,3 +368,13 @@ def test_translation_problems_names_missing_files():
 
 def test_main_requires_every_readme():
     assert {i18n.README[lang] for lang in i18n.LANGS} <= set(cn.REQUIRED)
+
+
+def test_check_example_block_reports_a_missing_pick_without_crashing():
+    with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
+        root = _results(d)
+        readme = mx.replace_example_block("<!-- example:start -->\n\n<!-- example:end -->\n", mx.readme_example(root))
+        (root / "docs" / f"plain__{PICK}__r1.json").unlink()
+        found = cn.check_example_block(readme, "en", root)
+        assert len(found) == 1 and "보기 블록을 다시 만들지 못했습니다" in found[0], found
+        assert any("원본을 읽지 못했습니다" in p for p in cn.check_example_block(readme, "ko", root))

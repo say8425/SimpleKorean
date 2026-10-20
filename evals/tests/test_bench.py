@@ -82,8 +82,9 @@ def test_build_prompt_conditions():
 
 def test_build_prompt_appends_the_draft():
     sc = {"id": "polish", "type": "procedural", "prompt": "초안을 다듬어 주세요.", "draft": "**초안** — 본문"}
-    assert run_bench.build_prompt(sc, "baseline") == "초안을 다듬어 주세요.\n\n초안:\n\n**초안** — 본문"
-    assert "과제: 초안을 다듬어 주세요.\n\n초안:\n\n**초안** — 본문" + run_bench.TAIL in run_bench.build_prompt(sc, "plain")
+    assert run_bench.build_prompt(sc, "baseline") == "초안을 다듬어 주세요.\n\n초안:\n\n**초안** — 본문\n\n(초안 끝)"
+    # 초안 뒤의 지시(TAIL)를 초안으로 읽지 않도록 초안이 끝난 곳을 밝힌다
+    assert "과제: 초안을 다듬어 주세요.\n\n초안:\n\n**초안** — 본문\n\n(초안 끝)" + run_bench.TAIL in run_bench.build_prompt(sc, "plain")
     assert "과제: 엄격 모드로 쓰세요. 초안을 다듬어 주세요.\n\n초안:" in run_bench.build_prompt(sc, "strict")
 
 
@@ -209,11 +210,78 @@ def test_polish_stats_count_marks_in_the_draft_and_the_polished_documents():
         assert stats["draft"] == {"em_dash": 1, "bold_spans": 1, "middle_dot": 1}
         assert stats["baseline"] == {"n": 1, "em_dash": 1, "bold_spans": 1, "middle_dot": 1}
         assert stats["plain"] == {"n": 1, "em_dash": 0, "bold_spans": 0, "middle_dot": 0}
-        intro, table = report.render_polish(stats).split("\n\n")
+        intro, table = report.render_polish(stats, source="x/inputs/scenarios.json").split("\n\n")
         assert intro.startswith("문서 과제 가운데 하나는") and "em-dash 1개, 굵은 글씨 1개, 가운뎃점 1개" in intro
+        assert "모두 남으면 em-dash 1개" in intro and "[`x/inputs/scenarios.json`](x/inputs/scenarios.json)" in intro
         assert table.splitlines()[2] == "| 스킬 없음 | 1 | 1 | 1 | 1 |"
-        # 다듬기 과제가 없으면 문단과 표를 싣지 않는다
+        # 두 번 다듬었으면 표시가 모두 남았을 때의 합은 초안의 두 배다
+        twice = {**stats, "baseline": {**stats["baseline"], "n": 2}}
+        assert "모두 남으면 em-dash 2개, 굵은 글씨 2개, 가운뎃점 2개" in report.render_polish(twice)
+        # 다듬기 과제가 없거나, 과제는 있어도 다듬은 문서가 없으면 문단과 표를 싣지 않는다
         assert report.render_polish(report.polish_stats(root, scenarios[:1])) == ""
+        for path in (root / "docs").glob("*__polish__*.json"):
+            path.unlink()
+        assert report.render_polish(report.polish_stats(root, scenarios)) == ""
+
+
+def test_marks_count_a_polished_document_wrapped_in_one_fence():
+    assert report.marks("```markdown\n**a** — b·c\n```\n") == {"em_dash": 1, "bold_spans": 1, "middle_dot": 1}
+    # 안에 코드 블록이 또 있으면 울타리를 벗기지 않는다
+    nested = "```\n**a** — b\n```\n중간\n```\nc·d\n```"
+    assert report.marks(nested) == report.marks(nested.replace("**a** — b", "").replace("c·d", ""))
+
+
+def test_save_inputs_copies_once_and_refuses_other_inputs():
+    with tempfile.TemporaryDirectory() as d:
+        first = bc.save_inputs(d, "reply_scenarios.json")
+        assert first == json.loads((bc.HERE / "reply_scenarios.json").read_text(encoding="utf-8"))
+        assert bc.save_inputs(d, "reply_scenarios.json") == first
+        Path(d, "inputs", "reply_scenarios.json").write_text("[]\n", encoding="utf-8")
+        try:
+            bc.save_inputs(d, "reply_scenarios.json")
+        except SystemExit as err:
+            assert "새 결과 디렉터리" in str(err)
+        else:
+            raise AssertionError("다른 입력이면 멈춰야 합니다")
+
+
+def test_git_state_reports_commit_and_dirty_or_none():
+    calls = []
+
+    def fake(cmd, **kwargs):
+        calls.append(cmd)
+        return SimpleNamespace(stdout="abc123\n" if cmd[1] == "rev-parse" else " M README.md\n")
+    assert bc.git_state(run=fake) == ("abc123", True)
+
+    def broken(cmd, **kwargs):
+        raise OSError("git 없음")
+    assert bc.git_state(run=broken) == (None, None)
+
+
+def test_benchmark_stats_use_the_inputs_saved_with_the_results():
+    with tempfile.TemporaryDirectory(dir=str(report.ROOT / "evals")) as d:
+        root = _fake_results(d)
+        (root / "docs" / "baseline__polish__r1.json").write_text(
+            json.dumps({"condition": "baseline", "scenario": "polish", "text": "**a** — b"}, ensure_ascii=False), encoding="utf-8")
+        current = [{"id": "readme-intro", "type": "descriptive"}, {"id": "polish", "type": "procedural"}]
+        old = report.benchmark_stats(root, current)
+        # 입력을 복사해 두지 않은 옛 결과는 질문 문장을 원래대로 쓰고, 지금의 scenarios를 쓴다
+        assert old["reply_marked"] is False and old["polish_source"] == "evals/scenarios.json"
+        assert not report.polished(old["polish"])
+        (root / "inputs").mkdir()
+        saved = current[:1] + [{**current[1], "draft": "**a** — b·c"}]
+        (root / "inputs" / "scenarios.json").write_text(json.dumps(saved, ensure_ascii=False), encoding="utf-8")
+        (root / "inputs" / "reply_scenarios.json").write_text(
+            json.dumps([{"id": "q", "prompt": "느립니다 — 목록·검색이요."}], ensure_ascii=False), encoding="utf-8")
+        (root / "reply" / "baseline__q__r1.txt").write_text("**네** 그렇습니다.\n- 하나\n", encoding="utf-8")
+        new = report.benchmark_stats(root, current)
+        assert new["reply_marked"] is True and new["polish_source"].endswith("/inputs/scenarios.json")
+        assert new["polish"]["draft"] == {"em_dash": 1, "bold_spans": 1, "middle_dot": 1}
+        block = report.render_readme_block(new)
+        assert "질문마다 em-dash와 가운뎃점(·)을 하나씩 넣었습니다." in block
+        # 기준선 답변에 em-dash가 없으면 다듬기 과제를 보라고 적는다
+        assert "em-dash를 지우는지는 아래 문서의 다듬기 과제로 봅니다." in block
+        assert "질문마다" not in report.render_readme_block(old) and "다듬기 과제로 봅니다" not in report.render_readme_block(old)
 
 
 def test_readme_block_fills_an_empty_template_block():
