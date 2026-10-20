@@ -37,7 +37,7 @@ claude plugin install simple-korean@simple-korean
 | 回答检查钩子 | 检查模型的最后一条回答，并在屏幕上显示违规。 | 自动 | Python 3.9 或更高版本 |
 | 输出样式 | 把与会话启动钩子相同的规则块放进系统提示词。 | 可选 | 无 |
 
-不用输出样式，规则也会生效，因为会话启动钩子已经加入了同一个规则块。如果没有 Node.js，会话启动钩子无法运行，这时请应用输出样式。要应用输出样式，请在 `/config` 的 Output style 中选择。要通过设置文件应用，请在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。
+不用输出样式，规则也会生效，因为会话启动钩子已经加入了同一个规则块。如果没有 Node.js，会话启动钩子无法运行，这时请应用输出样式。要应用输出样式，请在 `/config` 的 Output style 中选择。或者在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。
 
 会话启动钩子会在每个会话中加入 2,464 个字符的规则块。详情见 [`src/hooks/README.md`](../src/hooks/README.md)。
 
@@ -155,7 +155,7 @@ sqlpipe 的 8 个文档任务在每个条件下各写了 2 次。比率是检查
 
 ## 规则
 
-规则在 [`SKILL.md`](../skills/simple-korean/SKILL.md) 中。检查模式和严格模式使用的全部规则在 [`rule-catalog.md`](../skills/simple-korean/references/rule-catalog.md) 中。每条规则都有一个 K 编号，例如 K1.1。
+规则在 [`SKILL.md`](../skills/simple-korean/SKILL.md) 中。检查模式和严格模式使用的全部规则在 [`rule-catalog.md`](../skills/simple-korean/references/rule-catalog.md) 中。基本模式的规则有 K 编号，例如 K1.1。严格模式的规则有 S 编号，例如 S1。
 
 ### 回答规则
 

@@ -27,7 +27,7 @@ claude plugin marketplace add say8425/SimpleKorean
 claude plugin install simple-korean@simple-korean
 ```
 
-The plugin contains the five parts below. The skill and the three hooks work automatically in new sessions after you install the plugin. The output style works only when you apply it yourself. The rule block that the session-start hook and the output style add is a short version of the skill's rules.
+The plugin contains the five parts below. The skill and the three hooks work automatically in new sessions after you install the plugin. The output style works only when you apply it yourself. The rule block that the session-start hook and the output style add is a condensed version of the skill's rules.
 
 | Part | What it does | Activation | Needs |
 |---|---|---|---|
@@ -37,7 +37,7 @@ The plugin contains the five parts below. The skill and the three hooks work aut
 | Reply-check hook | Checks the model's last reply. It reports violations on the screen. | Automatic | Python 3.9 or later |
 | Output style | Puts the same rule block as the session-start hook in the system prompt. | Optional | None |
 
-The rules apply without the output style, because the session-start hook already adds the same rule block. If the session-start hook does not run because Node.js is missing, apply the output style. To apply the output style, select it under Output style in `/config`. To apply it in the settings file, put `{"outputStyle": "simple-korean:simple-korean"}` in `~/.claude/settings.json`.
+The rules apply without the output style, because the session-start hook already adds the same rule block. If the session-start hook does not run because Node.js is missing, apply the output style. To apply the output style, select it under Output style in `/config`. Or put `{"outputStyle": "simple-korean:simple-korean"}` in `~/.claude/settings.json`.
 
 The session-start hook adds a rule block of 2,464 characters to each session. For details, see [`src/hooks/README.md`](../src/hooks/README.md).
 
@@ -155,7 +155,7 @@ The raw outputs, the spelling distribution, and the test conditions are in [`eva
 
 ## Rules
 
-The rules are in [`SKILL.md`](../skills/simple-korean/SKILL.md). Review mode and strict mode use the full list of rules in [`rule-catalog.md`](../skills/simple-korean/references/rule-catalog.md). Each rule there has a K number, such as K1.1.
+The rules are in [`SKILL.md`](../skills/simple-korean/SKILL.md). Review mode and strict mode use the full list of rules in [`rule-catalog.md`](../skills/simple-korean/references/rule-catalog.md). Default-mode rules have K numbers, such as K1.1. Strict-mode rules have S numbers, such as S1.
 
 ### Reply rules
 

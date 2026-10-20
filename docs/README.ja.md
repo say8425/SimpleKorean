@@ -37,7 +37,7 @@ claude plugin install simple-korean@simple-korean
 | 回答チェックフック | モデルの最後の回答を確認します。<br>違反は画面に表示します。 | 自動 | Python 3.9 以上 |
 | 出力スタイル | セッション開始フックと同じルールブロックを、<br>システムプロンプトに入れます。 | 任意 | なし |
 
-出力スタイルがなくても、ルールは適用されます。セッション開始フックが同じルールブロックをすでに追加するためです。Node.js がなくてセッション開始フックが動かない場合は、出力スタイルを適用してください。出力スタイルを適用するには、`/config` の Output style で選んでください。設定ファイルで適用するには、`~/.claude/settings.json` に `{"outputStyle": "simple-korean:simple-korean"}` を書いてください。
+出力スタイルがなくても、ルールは適用されます。セッション開始フックが同じルールブロックをすでに追加するためです。Node.js がなくてセッション開始フックが動かない場合は、出力スタイルを適用してください。出力スタイルを適用するには、`/config` の Output style で選んでください。または、`~/.claude/settings.json` に `{"outputStyle": "simple-korean:simple-korean"}` を書いてください。
 
 セッション開始フックは、セッションごとに2,464文字のルールブロックを追加します。詳しくは [`src/hooks/README.md`](../src/hooks/README.md) を参照してください。
 
@@ -155,7 +155,7 @@ sqlpipe の文書課題8個を、条件ごとに2回ずつ書きました。比�
 
 ## ルール
 
-ルールは [`SKILL.md`](../skills/simple-korean/SKILL.md) にあります。点検モードと厳格モードで使うルールの全体は、[`rule-catalog.md`](../skills/simple-korean/references/rule-catalog.md) にあります。各ルールには K1.1 のような K 番号が付いています。
+ルールは [`SKILL.md`](../skills/simple-korean/SKILL.md) にあります。点検モードと厳格モードで使うルールの全体は、[`rule-catalog.md`](../skills/simple-korean/references/rule-catalog.md) にあります。基本モードのルールには K1.1 のような K 番号が付いています。厳格モードのルールには S1 のような S 番号が付いています。
 
 ### 回答のルール
 

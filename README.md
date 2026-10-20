@@ -37,7 +37,7 @@ claude plugin install simple-korean@simple-korean
 | 답변 점검 훅 | 모델의 마지막 답변을 확인합니다. 위반은 화면에 알립니다. | 자동 | Python 3.9 이상 |
 | 출력 스타일 | 세션 시작 훅과 같은 규칙 블록을 시스템 프롬프트에 넣습니다. | 선택 | 없음 |
 
-출력 스타일 없이도 규칙은 적용됩니다. 세션 시작 훅이 같은 규칙 블록을 이미 넣기 때문입니다. Node.js가 없어 세션 시작 훅이 동작하지 않으면 출력 스타일을 적용하세요. 출력 스타일을 적용하려면 `/config`의 Output style에서 고르세요. 설정 파일로 적용하려면 `~/.claude/settings.json`에 `{"outputStyle": "simple-korean:simple-korean"}`을 넣으세요.
+출력 스타일 없이도 규칙은 적용됩니다. 세션 시작 훅이 같은 규칙 블록을 이미 넣기 때문입니다. Node.js가 없어 세션 시작 훅이 동작하지 않으면 출력 스타일을 적용하세요. 출력 스타일을 적용하려면 `/config`의 Output style에서 고르세요. 또는 `~/.claude/settings.json`에 `{"outputStyle": "simple-korean:simple-korean"}`을 넣으세요.
 
 세션 시작 훅은 세션마다 규칙 블록 2,464자를 넣습니다. 자세한 내용은 [`src/hooks/README.md`](src/hooks/README.md)에 있습니다.
 
@@ -159,7 +159,7 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 
 ## 규칙
 
-규칙은 [`SKILL.md`](skills/simple-korean/SKILL.md)에 있습니다. 점검 모드와 엄격 모드에서 쓰는 규칙 전체는 [`rule-catalog.md`](skills/simple-korean/references/rule-catalog.md)에 있습니다. 각 규칙에는 K1.1 같은 K 번호가 붙어 있습니다.
+규칙은 [`SKILL.md`](skills/simple-korean/SKILL.md)에 있습니다. 점검 모드와 엄격 모드에서 쓰는 규칙 전체는 [`rule-catalog.md`](skills/simple-korean/references/rule-catalog.md)에 있습니다. 기본 모드 규칙에는 K1.1 같은 K 번호가 붙어 있습니다. 엄격 모드 규칙에는 S1 같은 S 번호가 붙어 있습니다.
 
 ### 답변 규칙
 
@@ -223,7 +223,7 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 
 ### STE 한국어판입니까?
 
-아니요. ASD-STE100에는 한국어판이 없습니다. 한국어 통제 언어의 국가 표준도 없습니다. SimpleKorean은 STE 규칙의 목적을 한국어 문법으로 다시 세운 비공식 기준입니다. 엄격 모드의 문장 끝과 접속어 규칙은 KS A 0001:2023을 바탕으로 합니다.
+아니요. ASD-STE100에는 한국어판이 없습니다. 한국어 통제 언어(controlled language)의 국가 표준도 없습니다. SimpleKorean은 STE 규칙의 목적을 한국어 문법으로 다시 세운 비공식 기준입니다. 엄격 모드의 문장 끝과 접속어 규칙은 KS A 0001:2023을 바탕으로 합니다.
 
 ### 레포지토리와 바디는 왜 규범과 다릅니까?
 

@@ -27,7 +27,7 @@ claude plugin marketplace add say8425/SimpleKorean
 claude plugin install simple-korean@simple-korean
 ```
 
-El plugin incluye las cinco partes de abajo. La skill y los tres hooks funcionan automáticamente en las sesiones nuevas que inicie después de instalar el plugin. El estilo de salida solo funciona si usted lo aplica. El bloque de reglas que añaden el hook de inicio de sesión y el estilo de salida es una versión corta de las reglas de la skill.
+El plugin incluye las cinco partes de abajo. La skill y los tres hooks funcionan automáticamente en las sesiones nuevas que inicie después de instalar el plugin. El estilo de salida solo funciona si usted lo aplica. El bloque de reglas que añaden el hook de inicio de sesión y el estilo de salida es una versión resumida de las reglas de la skill.
 
 | Parte | Qué hace | Activación | Necesita |
 |---|---|---|---|
@@ -37,7 +37,7 @@ El plugin incluye las cinco partes de abajo. La skill y los tres hooks funcionan
 | Hook de revisión de respuestas | Revisa la última respuesta del modelo. Muestra las infracciones en pantalla. | Automática | Python 3.9 o posterior |
 | Estilo de salida | Pone en el prompt del sistema el mismo bloque de reglas que el hook de inicio de sesión. | Opcional | Nada |
 
-Las reglas se aplican sin el estilo de salida, porque el hook de inicio de sesión ya añade el mismo bloque de reglas. Si el hook de inicio de sesión no se ejecuta porque falta Node.js, aplique el estilo de salida. Para aplicarlo, elíjalo en Output style de `/config`. Para aplicarlo desde el archivo de configuración, añada `{"outputStyle": "simple-korean:simple-korean"}` a `~/.claude/settings.json`.
+Las reglas se aplican sin el estilo de salida, porque el hook de inicio de sesión ya añade el mismo bloque de reglas. Si el hook de inicio de sesión no se ejecuta porque falta Node.js, aplique el estilo de salida. Para aplicarlo, elíjalo en Output style de `/config`. O bien, añada `{"outputStyle": "simple-korean:simple-korean"}` a `~/.claude/settings.json`.
 
 El hook de inicio de sesión añade un bloque de reglas de 2464 caracteres en cada sesión. Los detalles están en [`src/hooks/README.md`](../src/hooks/README.md).
 
@@ -155,7 +155,7 @@ Las salidas originales, la distribución de grafías y las condiciones de medici
 
 ## Reglas
 
-Las reglas están en [`SKILL.md`](../skills/simple-korean/SKILL.md). La lista completa de reglas que usan el modo de revisión y el modo estricto está en [`rule-catalog.md`](../skills/simple-korean/references/rule-catalog.md). Cada regla tiene un número K, como K1.1.
+Las reglas están en [`SKILL.md`](../skills/simple-korean/SKILL.md). La lista completa de reglas que usan el modo de revisión y el modo estricto está en [`rule-catalog.md`](../skills/simple-korean/references/rule-catalog.md). Las reglas del modo básico tienen un número K, como K1.1. Las reglas del modo estricto tienen un número S, como S1.
 
 ### Reglas para respuestas
 
