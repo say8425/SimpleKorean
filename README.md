@@ -1,5 +1,5 @@
 <p align="center">
-  <strong>AI가 쓴 한국어 기술 문서를 정비 매뉴얼처럼 읽히게 합니다.</strong>
+  AI가 쓴 한국어 기술 문서를 정비 매뉴얼처럼 읽히게 합니다.
 </p>
 
 <p align="center">
@@ -12,7 +12,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-lightgrey?style=flat" alt="MIT"></a>
 </p>
 
-SimpleKorean은 LLM이 기술 문서와 채팅 답변을 쉬운 한국어로 쓰게 하는 에이전트 스킬입니다. 항공 정비 매뉴얼에 쓰는 통제 영어(쓸 단어와 문법을 정해 둔 영어) ASD-STE100의 규칙을 [SimpleEnglish](https://github.com/AminBlg/SimpleEnglish)에서 가져와 한국어 문법에 맞게 다시 세웠습니다. 여기에 외래어 표기 목록을 더했습니다. 이 목록은 실제 한국어 개발 문서에서 쓰는 표기를 세어 만들었습니다.
+SimpleKorean은 LLM이 기술 문서와 채팅 답변을 쉬운 한국어로 쓰게 하는 에이전트 스킬입니다. 항공 정비 매뉴얼에 쓰는 통제 영어(controlled English, 쓸 단어와 문법을 정해 둔 영어) ASD-STE100의 규칙을 [SimpleEnglish](https://github.com/AminBlg/SimpleEnglish)에서 가져와 한국어 문법에 맞게 다시 세웠습니다. 여기에 외래어 표기 목록을 더했습니다. 이 목록은 실제 한국어 개발 문서에서 쓰는 표기를 세어 만들었습니다.
 
 [Agent Skills 표준](https://agentskills.io)을 읽는 에이전트에서 동작합니다. Claude Code, Cursor, Codex, Gemini CLI, OpenCode가 그 예입니다.
 
@@ -27,7 +27,7 @@ claude plugin marketplace add say8425/SimpleKorean
 claude plugin install simple-korean@simple-korean
 ```
 
-플러그인에는 아래 다섯 가지가 들어 있습니다. 스킬 하나와 훅 세 개는 설치한 뒤 새 세션부터 자동으로 동작합니다. 출력 스타일은 직접 적용할 때만 동작합니다.
+플러그인에는 아래 다섯 가지가 들어 있습니다. 스킬 하나와 훅 세 개는 설치한 뒤 새 세션부터 자동으로 동작합니다. 출력 스타일은 직접 적용할 때만 동작합니다. 세션 시작 훅과 출력 스타일이 넣는 규칙 블록은 스킬의 규칙을 줄인 판본입니다.
 
 | 구성 요소 | 하는 일 | 적용 | 필요한 것 |
 |---|---|---|---|
@@ -37,7 +37,7 @@ claude plugin install simple-korean@simple-korean
 | 답변 점검 훅 | 모델의 마지막 답변을 확인합니다. 위반은 화면에 알립니다. | 자동 | Python 3.9 이상 |
 | 출력 스타일 | 세션 시작 훅과 같은 규칙 블록을 시스템 프롬프트에 넣습니다. | 선택 | 없음 |
 
-출력 스타일 없이도 규칙은 적용됩니다. 세션 시작 훅이 같은 규칙 블록을 이미 넣기 때문입니다. Node.js가 없어 세션 시작 훅이 동작하지 않으면 출력 스타일을 적용하세요. 출력 스타일을 적용하려면 `/config`의 Output style에서 고르거나, `~/.claude/settings.json`에 `{"outputStyle": "simple-korean:simple-korean"}`을 넣으세요.
+출력 스타일 없이도 규칙은 적용됩니다. 세션 시작 훅이 같은 규칙 블록을 이미 넣기 때문입니다. Node.js가 없어 세션 시작 훅이 동작하지 않으면 출력 스타일을 적용하세요. 출력 스타일을 적용하려면 `/config`의 Output style에서 고르세요. 또는 `~/.claude/settings.json`에 `{"outputStyle": "simple-korean:simple-korean"}`을 넣으세요.
 
 세션 시작 훅은 세션마다 규칙 블록 2,464자를 넣습니다. 자세한 내용은 [`src/hooks/README.md`](src/hooks/README.md)에 있습니다.
 
@@ -64,7 +64,7 @@ npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명�
 
 ### 스킬을 지원하지 않는 도구
 
-스킬을 지원하지 않는 도구에는 [`prompts/system-prompt.md`](prompts/system-prompt.md)의 규칙 블록을 붙여 넣으세요. 시스템 프롬프트, `AGENTS.md`, `.cursorrules`에 넣으면 됩니다. 이 파일 끝에는 약 120토큰짜리 짧은 판본도 있습니다.
+스킬을 지원하지 않는 도구에는 [`prompts/system-prompt.md`](prompts/system-prompt.md)의 규칙 블록을 붙여 넣으세요. 규칙 블록은 시스템 프롬프트, `AGENTS.md`, `.cursorrules`에 넣을 수 있습니다. `prompts/system-prompt.md` 끝에는 약 120토큰짜리 짧은 판본도 있습니다.
 
 ### 설치한 뒤
 
@@ -146,7 +146,7 @@ npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명�
 
 ### 문서
 
-sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린터가 센 수를 어절 수로 나눈 값입니다. 린터는 정규식 검사이므로 순위로 읽지 말고 방향으로 읽으세요.
+sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린터가 센 수를 어절 수로 나눈 값입니다. 린터는 정규식으로 세므로 순위로 읽지 말고 방향으로 읽으세요.
 
 | 조건 | 문서 수 | 100어절당 오류 | 100어절당 경고 | 100어절당 번역투 | 지정형 비율 | 쉬운 단어 비율 | 가장 긴 문장 |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -159,7 +159,7 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 
 ## 규칙
 
-규칙은 [`SKILL.md`](skills/simple-korean/SKILL.md)에 있습니다. 점검 모드와 엄격 모드에서 쓰는 K 번호 규칙 전체는 [`rule-catalog.md`](skills/simple-korean/references/rule-catalog.md)에 있습니다.
+규칙은 [`SKILL.md`](skills/simple-korean/SKILL.md)에 있습니다. 점검 모드와 엄격 모드에서 쓰는 규칙 전체는 [`rule-catalog.md`](skills/simple-korean/references/rule-catalog.md)에 있습니다. 기본 모드 규칙에는 K1.1 같은 K 번호가 붙어 있습니다. 엄격 모드 규칙에는 S1 같은 S 번호가 붙어 있습니다.
 
 ### 답변 규칙
 
@@ -192,11 +192,11 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 
 ### 기본 모드
 
-기본 모드는 위의 규칙 전부입니다. 따로 켜지 않아도 됩니다.
+기본 모드는 위의 규칙 전부입니다. 기본 모드는 따로 켜지 않아도 적용됩니다.
 
 ### 엄격 모드
 
-엄격 모드는 "엄격 모드", "통제 언어", "KS A 0001", "STE"라고 말하면 켜집니다. 엄격 모드는 문서의 문장 끝을 다섯 가지로 닫습니다. 의무는 "-해야 합니다", 금지는 "-하면 안 됩니다", 허용은 "-해도 됩니다", 능력은 "-ㄹ 수 있습니다", 사실은 현재형입니다.
+엄격 모드는 "엄격 모드", "통제 언어", "KS A 0001", "STE", "ASD-STE100"이라고 말하면 켜집니다. 엄격 모드는 문서의 문장 끝을 다섯 가지로 닫습니다. 의무는 "-해야 합니다", 금지는 "-하면 안 됩니다", 허용은 "-해도 됩니다", 능력은 "-ㄹ 수 있습니다", 사실은 현재형입니다.
 
 엄격 모드에서는 접속어 "(이)나"를 쓰지 않습니다. 조건은 "-면"으로만 씁니다. 근거는 KS A 0001:2023 부속서 H와 I입니다. 답변은 엄격 모드에서도 기본 모드 규칙을 따릅니다.
 
@@ -211,9 +211,9 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 | 무리 | 쓰는 형태 |
 |---|---|
 | 규범대로 쓰이는 단어 23개 | 규범형(메시지, 애플리케이션, 메서드, 라이선스) |
-| 출처마다 갈리는 단어 4개 | 규범형(디렉터리, 릴리스, 셸, 리디렉션) |
+| 출처마다 갈리는 단어 4개 | 규범형(디렉터리, 릴리스, 셸, 리디렉션(redirection)) |
 | 관용이 굳은 단어 4개 | 레포지토리, 바디, 칼럼, 대상 |
-| 공식 표기가 없는 단어 2개 | 리디렉션, 리팩터링 |
+| 공식 표기가 없는 단어 2개 | 리디렉션(redirect), 리팩터링(refactoring) |
 | 외래어와 우리말 가운데 고르는 단어 5개 | 오류, 매개변수, 사용자, 기본값, 배포 |
 | 띄어쓰기 4개 | 기본값, 매개변수, 반환값, 오픈소스(붙여 씀) |
 
@@ -223,7 +223,7 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 
 ### STE 한국어판입니까?
 
-아니요. ASD-STE100에는 한국어판이 없습니다. 한국어 통제 언어의 국가 표준도 없습니다. SimpleKorean은 STE 규칙의 목적을 한국어 문법으로 다시 세운 비공식 기준입니다. 엄격 모드의 문장 끝과 접속어 규칙은 KS A 0001:2023을 바탕으로 합니다.
+아니요. ASD-STE100에는 한국어판이 없습니다. 한국어 통제 언어(controlled language)의 국가 표준도 없습니다. SimpleKorean은 STE 규칙의 목적을 한국어 문법으로 다시 세운 비공식 기준입니다. 엄격 모드의 문장 끝과 접속어 규칙은 KS A 0001:2023을 바탕으로 합니다.
 
 ### 레포지토리와 바디는 왜 규범과 다릅니까?
 
@@ -245,7 +245,7 @@ im-not-ai 같은 윤문 스킬은 이미 쓴 글에서 AI 문체와 번역투를
 
 ### 15/20어절은 어디서 나온 숫자입니까?
 
-한국어 기술 문서의 문장 길이 상한을 정한 실증 연구는 찾지 못했습니다. 그래서 설계로 정한 값입니다. 보정(린터 기준을 실제 출력으로 확인하는 작업)에서 규칙을 지킨 예문과 스킬 없이 만든 출력의 문장 길이를 쟀습니다. 결과는 [`evals/calibration/RECORD.md`](evals/calibration/RECORD.md)에 있습니다.
+한국어 기술 문서의 문장 길이 상한을 정한 실증 연구는 찾지 못했습니다. 그래서 설계로 정한 값입니다. 보정(calibration, 린터 기준을 실제 출력으로 확인하는 작업)에서 규칙을 지킨 예문과 스킬 없이 만든 출력의 문장 길이를 쟀습니다. 결과는 [`evals/calibration/RECORD.md`](evals/calibration/RECORD.md)에 있습니다.
 
 ### 엄격 모드에는 왜 한국어 승인 사전이 없습니까?
 
@@ -266,7 +266,8 @@ SimpleKorean은 [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish
 레포지토리 최상위에서 다음을 실행하세요:
 
 ```bash
-uv venv .venv --python 3.12 && uv pip install --python .venv/bin/python kiwipiepy==0.24.0 kiwipiepy-model==0.24.0
+uv venv .venv --python 3.12
+uv pip install --python .venv/bin/python kiwipiepy==0.24.0 kiwipiepy-model==0.24.0
 .venv/bin/python evals/check_numbers.py
 ```
 

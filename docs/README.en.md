@@ -1,5 +1,5 @@
 <p align="center">
-  <strong>Makes Korean technical documents written by AI read like a maintenance manual.</strong>
+  Makes Korean technical documents written by AI read like a maintenance manual.
 </p>
 
 <p align="center">
@@ -27,7 +27,7 @@ claude plugin marketplace add say8425/SimpleKorean
 claude plugin install simple-korean@simple-korean
 ```
 
-The plugin contains the five parts below. The skill and the three hooks work automatically in new sessions after you install the plugin. The output style works only when you apply it yourself.
+The plugin contains the five parts below. The skill and the three hooks work automatically in new sessions after you install the plugin. The output style works only when you apply it yourself. The rule block that the session-start hook and the output style add is a condensed version of the skill's rules.
 
 | Part | What it does | Activation | Needs |
 |---|---|---|---|
@@ -37,7 +37,7 @@ The plugin contains the five parts below. The skill and the three hooks work aut
 | Reply-check hook | Checks the model's last reply. It reports violations on the screen. | Automatic | Python 3.9 or later |
 | Output style | Puts the same rule block as the session-start hook in the system prompt. | Optional | None |
 
-The rules apply without the output style, because the session-start hook already adds the same rule block. If the session-start hook does not run because Node.js is missing, apply the output style. To apply the output style, select it under Output style in `/config`, or put `{"outputStyle": "simple-korean:simple-korean"}` in `~/.claude/settings.json`.
+The rules apply without the output style, because the session-start hook already adds the same rule block. If the session-start hook does not run because Node.js is missing, apply the output style. To apply the output style, select it under Output style in `/config`. Or put `{"outputStyle": "simple-korean:simple-korean"}` in `~/.claude/settings.json`.
 
 The session-start hook adds a rule block of 2,464 characters to each session. For details, see [`src/hooks/README.md`](../src/hooks/README.md).
 
@@ -64,7 +64,7 @@ If you use npm, run `npx skills add say8425/SimpleKorean`. This command installs
 
 ### Tools without skill support
 
-For tools that do not support skills, paste the rule block from [`prompts/system-prompt.md`](../prompts/system-prompt.md). You can put it in a system prompt, `AGENTS.md`, or `.cursorrules`. The end of this file also has a short version of about 120 tokens.
+For tools that do not support skills, paste the rule block from [`prompts/system-prompt.md`](../prompts/system-prompt.md). You can put it in a system prompt, `AGENTS.md`, or `.cursorrules`. The end of `prompts/system-prompt.md` also has a short version of about 120 tokens.
 
 ### After installing
 
@@ -155,7 +155,7 @@ The raw outputs, the spelling distribution, and the test conditions are in [`eva
 
 ## Rules
 
-The rules are in [`SKILL.md`](../skills/simple-korean/SKILL.md). Review mode and strict mode use the full list of K-numbered rules in [`rule-catalog.md`](../skills/simple-korean/references/rule-catalog.md).
+The rules are in [`SKILL.md`](../skills/simple-korean/SKILL.md). Review mode and strict mode use the full list of rules in [`rule-catalog.md`](../skills/simple-korean/references/rule-catalog.md). Default-mode rules have K numbers, such as K1.1. Strict-mode rules have S numbers, such as S1.
 
 ### Reply rules
 
@@ -192,7 +192,7 @@ The default mode is all the rules above. You do not need to turn it on.
 
 ### Strict mode
 
-Strict mode turns on when you say "엄격 모드" (strict mode), "통제 언어" (controlled language), "KS A 0001", or "STE". Strict mode limits the sentence endings in documents to five forms. Obligation is "-해야 합니다" (must). Prohibition is "-하면 안 됩니다" (must not). Permission is "-해도 됩니다" (may). Ability is "-ㄹ 수 있습니다" (can). Facts use the present tense. Strict mode does not use the connective "(이)나" (or), and it writes conditions only with "-면" (if). The source is Annexes H and I of KS A 0001:2023. In strict mode, replies still follow the default mode rules.
+Strict mode turns on when you say "엄격 모드" (strict mode), "통제 언어" (controlled language), "KS A 0001", "STE", or "ASD-STE100". Strict mode limits the sentence endings in documents to five forms. Obligation is "-해야 합니다" (must). Prohibition is "-하면 안 됩니다" (must not). Permission is "-해도 됩니다" (may). Ability is "-ㄹ 수 있습니다" (can). Facts use the present tense. Strict mode does not use the connective "(이)나" (or), and it writes conditions only with "-면" (if). The source is Annexes H and I of KS A 0001:2023. In strict mode, replies still follow the default mode rules.
 
 ### Review mode
 
@@ -207,7 +207,7 @@ Loanwords follow the Korean loanword orthography and the usage examples of the N
 | 23 words used as the standard says | Standard form (메시지 message, 애플리케이션 application, 메서드 method, 라이선스 license) |
 | 4 words that differ by source | Standard form (디렉터리 directory, 릴리스 release, 셸 shell, 리디렉션 redirection) |
 | 4 words with a fixed common form | 레포지토리 (repository), 바디 (body), 칼럼 (column), 대상 (target) |
-| 2 words with no official spelling | 리디렉션 (redirection), 리팩터링 (refactoring) |
+| 2 words with no official spelling | 리디렉션 (redirect), 리팩터링 (refactoring) |
 | 5 words with a choice between a loanword and a native word | 오류 (error), 매개변수 (parameter), 사용자 (user), 기본값 (default value), 배포 (deployment) |
 | 4 spacing cases | 기본값, 매개변수, 반환값, 오픈소스 (written without spaces) |
 
@@ -260,7 +260,8 @@ Report questions and bugs in an issue. PRs are welcome. A change to published nu
 Run these commands from the repository root:
 
 ```bash
-uv venv .venv --python 3.12 && uv pip install --python .venv/bin/python kiwipiepy==0.24.0 kiwipiepy-model==0.24.0
+uv venv .venv --python 3.12
+uv pip install --python .venv/bin/python kiwipiepy==0.24.0 kiwipiepy-model==0.24.0
 .venv/bin/python evals/check_numbers.py
 ```
 
