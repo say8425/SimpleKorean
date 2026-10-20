@@ -39,7 +39,7 @@ The plugin contains the five parts below. The skill and the three hooks work aut
 
 The rules apply without the output style, because the session-start hook already adds the same rule block. If the session-start hook does not run because Node.js is missing, apply the output style. To apply the output style, select it under Output style in `/config`. Or put `{"outputStyle": "simple-korean:simple-korean"}` in `~/.claude/settings.json`.
 
-The session-start hook adds a rule block of 2,464 characters to each session. For details, see [`src/hooks/README.md`](../src/hooks/README.md).
+The session-start hook adds a rule block of 2,476 characters to each session. For details, see [`src/hooks/README.md`](../src/hooks/README.md).
 
 ### Codex
 

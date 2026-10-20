@@ -12,7 +12,7 @@ import make_examples as mx  # noqa: E402
 import readme_i18n as i18n  # noqa: E402
 import report  # noqa: E402
 
-BLOCK = '헤더와 목록을 써도 됩니다. em-dash를 쓰지 마세요. 첫 문장에 답을 쓰세요. 코드는 바꾸지 마세요. "확인하다" 하나로 쓰세요. 레포지토리. 굵은 글씨와 표는 쓰지 마세요. 헤더와 목록은 첫 문장 뒤에 두세요.'
+BLOCK = '헤더와 목록을 써도 됩니다. em-dash를 쓰지 마세요. 첫 문장에 답을 쓰세요. 코드는 바꾸지 마세요. "확인하다" 하나로 쓰세요. 레포지토리. 굵은 글씨와 표는 쓰지 마세요. 헤더와 목록은 첫 문장 뒤에 두세요. 사용자가 엄격 모드, 통제 언어, KS A 0001, STE, ASD-STE100을 말하면 엄격 모드를 쓰세요.'
 SKILL = f'---\nname: simple-korean\nmetadata:\n  version: "1.0.0"\n---\n{BLOCK}\n'
 ISO = {"found": True, "claude_code_version": "2.1.294", "model": "m", "mcp_servers": [], "plugins": [],
        "output_style": "default", "memory_paths": []}
@@ -31,6 +31,18 @@ def test_check_rule_block_flags_drift_and_missing_phrases():
     assert any("규칙 블록이 다릅니다" in p for p in cn.check_rule_block(prompt, style + "더함\n", SKILL))
     missing = cn.check_rule_block(prompt, style, SKILL.replace("레포지토리", "저장소"))
     assert missing == ["SKILL.md에 핵심 문구가 없습니다: 레포지토리"]
+
+
+def test_check_rule_block_flags_strict_trigger_list_drift():
+    phrase = "사용자가 엄격 모드, 통제 언어, KS A 0001, STE, ASD-STE100을 말하면"
+    assert phrase in cn.KEY_PHRASES
+    prompt = f"# 시스템 프롬프트\n\n---\n{BLOCK}\n---\n\n짧은 판본\n"
+    style = f"---\nname: x\n---\n{BLOCK}\n"
+    old = BLOCK.replace("STE, ASD-STE100을", "STE를")
+    assert cn.check_rule_block(prompt.replace(BLOCK, old), style.replace(BLOCK, old), SKILL) == [
+        f"규칙 블록에 핵심 문구가 없습니다: {phrase}"]
+    added = SKILL.replace("ASD-STE100을", "ASD-STE100, 간결 모드를")
+    assert cn.check_rule_block(prompt, style, added) == [f"SKILL.md에 핵심 문구가 없습니다: {phrase}"]
 
 
 def test_check_triggers_reads_every_phrase_from_the_description():

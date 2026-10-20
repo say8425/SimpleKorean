@@ -39,7 +39,7 @@ El plugin incluye las cinco partes de abajo. La skill y los tres hooks funcionan
 
 Las reglas se aplican sin el estilo de salida, porque el hook de inicio de sesión ya añade el mismo bloque de reglas. Si el hook de inicio de sesión no se ejecuta porque falta Node.js, aplique el estilo de salida. Para aplicarlo, elíjalo en Output style de `/config`. O bien, añada `{"outputStyle": "simple-korean:simple-korean"}` a `~/.claude/settings.json`.
 
-El hook de inicio de sesión añade un bloque de reglas de 2464 caracteres en cada sesión. Los detalles están en [`src/hooks/README.md`](../src/hooks/README.md).
+El hook de inicio de sesión añade un bloque de reglas de 2476 caracteres en cada sesión. Los detalles están en [`src/hooks/README.md`](../src/hooks/README.md).
 
 ### Codex
 
