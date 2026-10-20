@@ -39,7 +39,7 @@ claude plugin install simple-korean@simple-korean
 
 출력 스타일 없이도 규칙은 적용됩니다. 세션 시작 훅이 같은 규칙 블록을 이미 넣기 때문입니다. Node.js가 없어 세션 시작 훅이 동작하지 않으면 출력 스타일을 적용하세요. 출력 스타일을 적용하려면 `/config`의 Output style에서 고르세요. 또는 `~/.claude/settings.json`에 `{"outputStyle": "simple-korean:simple-korean"}`을 넣으세요.
 
-세션 시작 훅은 세션마다 규칙 블록 2,464자를 넣습니다. 자세한 내용은 [`src/hooks/README.md`](src/hooks/README.md)에 있습니다.
+세션 시작 훅은 세션마다 규칙 블록 2,476자를 넣습니다. 자세한 내용은 [`src/hooks/README.md`](src/hooks/README.md)에 있습니다.
 
 ### Codex
 

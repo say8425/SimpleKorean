@@ -39,7 +39,7 @@ claude plugin install simple-korean@simple-korean
 
 出力スタイルがなくても、ルールは適用されます。セッション開始フックが同じルールブロックをすでに追加するためです。Node.js がなくてセッション開始フックが動かない場合は、出力スタイルを適用してください。出力スタイルを適用するには、`/config` の Output style で選んでください。または、`~/.claude/settings.json` に `{"outputStyle": "simple-korean:simple-korean"}` を書いてください。
 
-セッション開始フックは、セッションごとに2,464文字のルールブロックを追加します。詳しくは [`src/hooks/README.md`](../src/hooks/README.md) を参照してください。
+セッション開始フックは、セッションごとに2,476文字のルールブロックを追加します。詳しくは [`src/hooks/README.md`](../src/hooks/README.md) を参照してください。
 
 ### Codex
 

@@ -39,7 +39,7 @@ claude plugin install simple-korean@simple-korean
 
 不用输出样式，规则也会生效，因为会话启动钩子已经加入了同一个规则块。如果没有 Node.js，会话启动钩子无法运行，这时请应用输出样式。要应用输出样式，请在 `/config` 的 Output style 中选择。或者在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。
 
-会话启动钩子会在每个会话中加入 2,464 个字符的规则块。详情见 [`src/hooks/README.md`](../src/hooks/README.md)。
+会话启动钩子会在每个会话中加入 2,476 个字符的规则块。详情见 [`src/hooks/README.md`](../src/hooks/README.md)。
 
 ### Codex
 
