@@ -27,12 +27,12 @@ claude plugin marketplace add say8425/SimpleKorean
 claude plugin install simple-korean@simple-korean
 ```
 
-The plugin contains the five parts below. The skill and the three hooks work automatically in new sessions after you install the plugin. The output style works only when you apply it yourself.
+The plugin contains the five parts below. The skill and the three hooks work automatically in new sessions after you install the plugin. The output style works only when you apply it yourself. The rule block that the session-start hook and the output style add is a short version of the skill's rules.
 
 | Part | What it does | Activation | Needs |
 |---|---|---|---|
 | Skill | Holds the full rules, strict mode, and review mode. The model reads it when it needs it. | Automatic | None |
-| Session-start hook | Adds the rule block (a short version of the skill's rules) to each session. The model follows the rules even if you do not name the skill. | Automatic | Node.js |
+| Session-start hook | Adds the rule block to each session. The model follows the rules even if you do not name the skill. | Automatic | Node.js |
 | File-check hook | Checks the Markdown files that the model writes or edits. It reports violations to the model. | Automatic | Python 3.9 or later |
 | Reply-check hook | Checks the model's last reply. It reports violations on the screen. | Automatic | Python 3.9 or later |
 | Output style | Puts the same rule block as the session-start hook in the system prompt. | Optional | None |

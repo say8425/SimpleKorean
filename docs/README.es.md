@@ -27,12 +27,12 @@ claude plugin marketplace add say8425/SimpleKorean
 claude plugin install simple-korean@simple-korean
 ```
 
-El plugin incluye las cinco partes de abajo. La skill y los tres hooks funcionan automáticamente en las sesiones nuevas que inicie después de instalar el plugin. El estilo de salida solo funciona si usted lo aplica.
+El plugin incluye las cinco partes de abajo. La skill y los tres hooks funcionan automáticamente en las sesiones nuevas que inicie después de instalar el plugin. El estilo de salida solo funciona si usted lo aplica. El bloque de reglas que añaden el hook de inicio de sesión y el estilo de salida es una versión corta de las reglas de la skill.
 
 | Parte | Qué hace | Activación | Necesita |
 |---|---|---|---|
 | Skill | Contiene todas las reglas, el modo estricto y el modo de revisión. El modelo la lee cuando la necesita. | Automática | Nada |
-| Hook de inicio de sesión | Añade el bloque de reglas (una versión corta de las reglas de la skill) a cada sesión. El modelo sigue las reglas aunque usted no nombre la skill. | Automática | Node.js |
+| Hook de inicio de sesión | Añade el bloque de reglas a cada sesión. El modelo sigue las reglas aunque usted no nombre la skill. | Automática | Node.js |
 | Hook de revisión de archivos | Revisa los archivos Markdown que el modelo escribe o edita. Avisa al modelo de las infracciones. | Automática | Python 3.9 o posterior |
 | Hook de revisión de respuestas | Revisa la última respuesta del modelo. Muestra las infracciones en pantalla. | Automática | Python 3.9 o posterior |
 | Estilo de salida | Pone en el prompt del sistema el mismo bloque de reglas que el hook de inicio de sesión. | Opcional | Nada |
