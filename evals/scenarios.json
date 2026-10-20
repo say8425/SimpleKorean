@@ -6,5 +6,6 @@
   {"id": "incident-report", "type": "descriptive", "prompt": "공개 상태 페이지에 올릴 장애 보고를 써 주세요. 14:02부터 14:31(UTC)까지 API 요청의 12%가 HTTP 502로 실패했습니다. 배포에서 캐시 예열 단계가 빠졌고, 14:27에 배포를 되돌렸습니다. 250자 안팎으로 쓰세요. 본문만 답하세요."},
   {"id": "release-notes", "type": "descriptive", "prompt": "sqlpipe v2.0 릴리스 노트를 써 주세요. /v2/users의 `name` 필드가 `first_name`과 `last_name`으로 나뉘었습니다(호환성 깨짐). `--incremental` 플래그가 새로 생겼고, Parquet 쓰기가 40% 빨라졌습니다. 300자 안팎으로 쓰세요. 본문만 답하세요."},
   {"id": "runbook-terse", "type": "procedural", "prompt": "이 런북 단계를 최대한 짧게 다시 써 주세요: '마이그레이션을 실행하기 전에 백업이 존재하는지 반드시 확인해야 합니다.' 고친 단계만 답하세요."},
-  {"id": "architecture", "type": "descriptive", "prompt": "sqlpipe의 아키텍처 개요를 써 주세요. 리더 프로세스가 Postgres 행을 배치 단위로 스트리밍하고, 컨버터가 배치를 Parquet 로우 그룹으로 바꾸고, 업로더가 재시도와 함께 S3에 멀티파트 객체를 씁니다. 330자 안팎으로 쓰세요. 본문만 답하세요."}
+  {"id": "architecture", "type": "descriptive", "prompt": "sqlpipe의 아키텍처 개요를 써 주세요. 리더 프로세스가 Postgres 행을 배치 단위로 스트리밍하고, 컨버터가 배치를 Parquet 로우 그룹으로 바꾸고, 업로더가 재시도와 함께 S3에 멀티파트 객체를 씁니다. 330자 안팎으로 쓰세요. 본문만 답하세요."},
+  {"id": "polish", "type": "procedural", "prompt": "CLI 도구 sqlpipe의 문제 해결 절 초안을 다듬어 주세요. 400자 안팎으로 쓰세요. 본문만 답하세요.", "draft": "## 문제 해결\n\n**Postgres 연결 타임아웃** — sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽·보안 그룹이 5432 포트를 막고 있는 것입니다. `nc -zv <호스트> 5432`로 연결되는지 확인해 보시기 바랍니다.\n\n**S3 권한 오류** — `AccessDenied`가 나면 IAM 정책·버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 먼저 `aws sts get-caller-identity`로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다."}
 ]

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""문서 벤치마크. 과제 8개를 기준선, 기본 모드, 엄격 모드로 쓰게 하고 원본 출력을 저장한다.
+"""문서 벤치마크. 과제 9개를 기준선, 기본 모드, 엄격 모드로 쓰게 하고 원본 출력을 저장한다.
 
 이미 있는 원본 파일은 건너뛰므로 중간에 멈춰도 다시 이어서 돌릴 수 있다.
 
@@ -21,12 +21,18 @@ LEAD = "다음 글쓰기 지침을 자가 점검 단계까지 정확히 따르�
 TAIL = "\n\n규칙 설명 없이 최종 글만 쓰세요."
 
 
+def task_text(scenario):
+    """과제 글. 다듬기 과제는 지시 뒤에 초안(draft)을 붙인다."""
+    draft = scenario.get("draft")
+    return scenario["prompt"] + (f"\n\n초안:\n\n{draft}" if draft else "")
+
+
 def build_prompt(scenario, condition):
     """조건에 맞는 프롬프트. 기준선은 과제만, 기본 모드는 SKILL.md 본문을, 엄격 모드는 strict-mode.md까지 붙인다."""
     if condition == "baseline":
-        return scenario["prompt"]
+        return task_text(scenario)
     rules = bc.skill_body(SKILL)
-    task = scenario["prompt"]
+    task = task_text(scenario)
     if condition == "strict":
         rules = rules + "\n\n" + bc.skill_body(STRICT)
         task = "엄격 모드로 쓰세요. " + task

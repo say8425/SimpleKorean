@@ -39,6 +39,8 @@ USAGE = ("사용법: ko_lint.py [--type procedural|descriptive|reply] [--strict]
 VALUE_FLAGS = ("--type", "--config")
 GATES = {"--gate": "error", "--gate=error": "error", "--gate=warning": "warning"}
 BOLD = re.compile(r"\*\*[^*\n]+\*\*")
+# 가운뎃점. 표준 글자 ·(U+00B7)와 흔히 대신 쓰는 ㆍ(U+318D), ・(U+30FB)를 센다.
+MIDDLE_DOT = re.compile("[·ㆍ・]")
 HEADER = re.compile(r"^#{1,6}\s", re.M)
 # 줄 앞 공백은 [^\S\n]*로 센다. re.M에서 \s*는 빈 줄을 넘어가서, 빈 줄이 많으면 시간이 제곱으로 는다.
 BULLET = re.compile(r"^[^\S\n]*([-*+]|\d+[.)])\s", re.M)
@@ -135,6 +137,7 @@ def reader_check(text):
     visible_total은 답변 규칙이 막는 서식의 합이다. em-dash, 굵은 글씨, 표, 첫 줄의 헤더나 목록(lead_structure)을
     더한다. lead_structure는 코드 블록을 뺀 첫 줄이 헤더나 목록 항목이면 1이다. 답변 규칙은 답을 쓴 첫 문장
     뒤에 헤더와 목록을 두게 한다. 그 밖의 헤더와 목록 항목은 답의 내용과 길이를 보고 쓸 수 있으므로 세기만 한다.
+    가운뎃점(middle_dot)도 답변 규칙이 막지 않으므로 세기만 한다. 코드 안의 가운뎃점은 세지 않는다.
     sentences는 목록 항목과 표 행도 문장으로 센다. 답변 규칙에는 문장 수 상한이 없으므로
     visible_total에는 넣지 않는다.
     """
@@ -148,6 +151,7 @@ def reader_check(text):
     counts = {
         "sentences": len(sents),
         "em_dash": len(ko_rules.DASH.findall(prose)),
+        "middle_dot": len(MIDDLE_DOT.findall(prose)),
         "bold_spans": len(BOLD.findall(prose)),
         "headers": len(HEADER.findall(prose)),
         "bullets": len(BULLET.findall(prose)),
@@ -244,6 +248,8 @@ def self_test():
     assert (r["sentences"], r["em_dash"], r["bold_spans"], r["headers"], r["bullets"]) == (5, 1, 1, 1, 2), r
     t = reader_check(TRICKY_REPLY)["counts"]
     assert (t["sentences"], t["headers"], t["bold_spans"], t["bullets"]) == (3, 0, 0, 0), t
+    dots = reader_check("읽기·쓰기ㆍ삭제를 나눕니다. `a·b`\n```\n가·나\n```\n")
+    assert (dots["counts"]["middle_dot"], dots["visible_total"]) == (2, 0), dots
     detail = lint_detail(SLOP_FIXTURE, "procedural", config={})
     assert len(detail) == slop["violations_total"]
     assert Counter(h["category"] for h in detail) == Counter(slop["violations"])

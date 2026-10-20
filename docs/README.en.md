@@ -72,7 +72,7 @@ After you install, ask for a technical document. To fix existing text, say "simp
 
 ## Example
 
-Below are two documents that the same model wrote for the same task: a troubleshooting section for a CLI tool. The left one was written without the skill, and the right one with the default mode of SimpleKorean on. We copied both documents without changes. They are in Korean, because this skill makes the model write Korean.
+Below are two documents in which the same model polished the same draft: a troubleshooting section for a CLI tool. We put em-dashes, bold text, and middle dots in the draft on purpose. The left one was polished without the skill, and the right one with the default mode of SimpleKorean on. We copied both documents without changes. They are in Korean, because this skill makes the model write Korean.
 
 <!-- example:start -->
 <table>

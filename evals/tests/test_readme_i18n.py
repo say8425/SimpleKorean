@@ -19,6 +19,13 @@ def test_every_language_has_every_template():
     assert set(i18n.README) == set(i18n.NAMES) == set(i18n.LANGS)
 
 
+def test_table_headers_have_as_many_columns_as_their_separators():
+    for lang in i18n.LANGS:
+        for key, sep in (("reply_header", report.REPLY_SEP), ("doc_header", report.DOC_SEP),
+                         ("polish_header", report.POLISH_SEP)):
+            assert i18n.TEXT[lang][key].count("|") == sep.count("|"), (lang, key)
+
+
 def test_korean_templates_keep_the_current_sentences():
     ko = i18n.TEXT["ko"]
     assert ko["block_size"].format(n=i18n.grouped(2271, "ko")) == "규칙 블록 2,271자"
@@ -50,7 +57,9 @@ def test_links_get_the_language_prefix():
     assert i18n.link("ja", "examples/before-after.md") == "../examples/before-after.md"
 
 
-SCENARIOS = [{"id": "readme-intro", "type": "descriptive"}, {"id": "troubleshooting", "type": "procedural"}]
+PICK = mx.README_PICK[0]
+SCENARIOS = [{"id": "readme-intro", "type": "descriptive"},
+             {"id": PICK, "type": "procedural", "draft": "**초안** — 방화벽·보안 그룹을 확인해 보세요."}]
 EMPTY = "<!-- example:start -->\n\n<!-- example:end -->\n\n<!-- benchmark:start x -->\n\n<!-- benchmark:end -->\n"
 
 
@@ -70,8 +79,8 @@ def _results(d):
     trouble = {"baseline": "## 문제 해결\n\n**연결 타임아웃**\n방화벽을 확인해 보세요.",
                "plain": "## 연결 타임아웃\n\n1. 방화벽 규칙을 확인하세요.", "strict": "## 연결 타임아웃\n\n1. 방화벽 규칙을 확인해야 합니다."}
     for cond, text in trouble.items():
-        record = {"condition": cond, "scenario": "troubleshooting", "text": text}
-        (root / "docs" / f"{cond}__troubleshooting__r1.json").write_text(json.dumps(record, ensure_ascii=False),
+        record = {"condition": cond, "scenario": PICK, "text": text}
+        (root / "docs" / f"{cond}__{PICK}__r1.json").write_text(json.dumps(record, ensure_ascii=False),
                                                                            encoding="utf-8")
     return root
 
@@ -133,7 +142,7 @@ def test_example_block_is_a_two_column_table():
             assert body.count('<td valign="top">\n\n<!-- source: ') == 2, lang
             assert body.count("<!-- simple-korean: on -->\n\n</td>") == 2, lang
             sources = [m[0] for m in mx.SOURCE_BLOCK.findall(body)]
-            assert sources == [f"{rel}/docs/baseline__troubleshooting__r1.json", f"{rel}/docs/plain__troubleshooting__r1.json"], lang
+            assert sources == [f"{rel}/docs/baseline__{PICK}__r1.json", f"{rel}/docs/plain__{PICK}__r1.json"], lang
             after_table = body.split("</table>", 1)[1]
             assert f"`{sources[0]}`" in after_table and f"`{sources[1]}`" in after_table, lang
 

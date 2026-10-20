@@ -23,13 +23,17 @@ import readme_i18n as i18n  # noqa: E402
 
 REPLY_CONDS = ("baseline", "plain")
 DOC_CONDS = ("baseline", "plain", "strict")
-REPLY_SEP = "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"
+REPLY_SEP = "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"
 DOC_SEP = "|---|---:|---:|---:|---:|---:|---:|---:|"
+POLISH_SEP = "|---|---:|---:|---:|---:|"
+# 다듬기 과제에서 세는 표시. 답변과 같이 ko_lint.reader_check로 세므로 코드 안은 세지 않는다.
+MARKS = ("em_dash", "bold_spans", "middle_dot")
 README_BLOCK = re.compile(r"<!-- benchmark:start (\S+) -->\n(.*?)\n<!-- benchmark:end -->", re.S)
 
 
 def reply_stats(results_dir):
-    """조건별 답변 합계: n, eojeol, sentences, em_dash, bold_spans, tables, lead_structure, headers, bullets, fillers, visible."""
+    """조건별 답변 합계: n, eojeol, sentences, em_dash, middle_dot, bold_spans, tables, lead_structure, headers, bullets,
+    fillers, visible."""
     stats = {c: Counter() for c in REPLY_CONDS}
     for path in sorted(Path(results_dir, "reply").glob("*__*__r*.txt")):
         cond = path.name.split("__")[0]
@@ -37,7 +41,7 @@ def reply_stats(results_dir):
         acc = stats[cond]
         acc["n"] += 1
         acc["eojeol"] += rc["eojeol"]
-        for key in ("sentences", "em_dash", "bold_spans", "tables", "lead_structure", "headers", "bullets"):
+        for key in ("sentences", "em_dash", "middle_dot", "bold_spans", "tables", "lead_structure", "headers", "bullets"):
             acc[key] += rc["counts"][key]
         acc["fillers"] += rc["counts"]["opener"] + rc["counts"]["closer"]
         acc["visible"] += rc["visible_total"]
@@ -76,6 +80,27 @@ def doc_stats(results_dir, scenarios):
     return {c: dict(v) for c, v in stats.items()}
 
 
+def marks(text):
+    """글에 든 em-dash, 굵은 글씨, 가운뎃점의 수."""
+    counts = ko_lint.reader_check(text)["counts"]
+    return Counter({key: counts[key] for key in MARKS})
+
+
+def polish_stats(results_dir, scenarios):
+    """다듬기 과제(초안 draft가 있는 과제)의 표시 수. draft는 초안의 합이고, 조건마다 다듬은 문서 수 n과 표시 수의 합이다."""
+    drafts = {s["id"]: s["draft"] for s in scenarios if s.get("draft")}
+    stats = {"draft": Counter(), **{c: Counter() for c in DOC_CONDS}}
+    for draft in drafts.values():
+        stats["draft"].update(marks(draft))
+    for path in sorted(Path(results_dir, "docs").glob("*.json")):
+        record = json.loads(path.read_text(encoding="utf-8"))
+        if record["scenario"] in drafts:
+            acc = stats[record["condition"]]
+            acc["n"] += 1
+            acc.update(marks(record["text"]))
+    return {key: dict(value) for key, value in stats.items()}
+
+
 def spelling_distribution(results_dir):
     """{개념: {조건: Counter(형태)}}. 스킬이 만든 표기 변화를 따로 보기 위한 표의 재료다."""
     concepts = ko_terms.load_terms()
@@ -103,7 +128,8 @@ def render_reply_table(stats, lang="ko"):
         n = max(1, s["n"])
         label = labels["reply_plain"] if cond == "plain" else labels[cond]
         lines.append(f"| {label} | {s['n']} | {s['eojeol'] / n:.0f} | {s['sentences'] / n:.1f} | "
-                     f"{s['em_dash']} | {s['bold_spans']} | {s['tables']} | {s['lead_structure']} | {s['headers']} | {s['bullets']} | {s['fillers']} |")
+                     f"{s['em_dash']} | {s['middle_dot']} | {s['bold_spans']} | {s['tables']} | {s['lead_structure']} | "
+                     f"{s['headers']} | {s['bullets']} | {s['fillers']} |")
     return "\n".join(lines)
 
 
@@ -117,6 +143,19 @@ def render_doc_table(stats, lang="ko"):
                      f"{100 * s['translationese'] / w:.2f} | {_pct(s['designated'], s['terms'], lang)} | "
                      f"{_pct(s['easy'], s['content'], lang)} | {_t(lang, 'longest').format(n=s['longest'])} |")
     return "\n".join(lines)
+
+
+def render_polish(stats, lang="ko"):
+    """다듬기 과제의 설명 문단과 표. 다듬은 문서가 없으면 빈 문자열이다."""
+    if not any(stats[cond].get("n") for cond in DOC_CONDS):
+        return ""
+    labels, draft = _t(lang, "labels"), Counter(stats["draft"])
+    lines = [_t(lang, "polish_header"), POLISH_SEP]
+    for cond in DOC_CONDS:
+        s = Counter(stats[cond])
+        lines.append(f"| {labels[cond]} | {s['n']} | {s['em_dash']} | {s['bold_spans']} | {s['middle_dot']} |")
+    intro = _t(lang, "polish_intro").format(dash=draft["em_dash"], bold=draft["bold_spans"], dot=draft["middle_dot"])
+    return intro + "\n\n" + "\n".join(lines)
 
 
 def render_headline(stats, judge, lang="ko"):
@@ -152,6 +191,7 @@ def benchmark_stats(results_dir, scenarios):
         "replies": replies,
         "judge": judge_stats(results_dir),
         "docs": doc_stats(results_dir, scenarios),
+        "polish": polish_stats(results_dir, scenarios),
         "n_reply": replies["plain"].get("n", 0) + replies["baseline"].get("n", 0),
         "reply_shape": _shape(results_dir, "reply", "*.txt"),
         "doc_shape": _shape(results_dir, "docs", "*.json"),
@@ -161,14 +201,16 @@ def benchmark_stats(results_dir, scenarios):
 def render_readme_block(stats, lang="ko"):
     """벤치마크 블록 본문을 그 언어로 쓴다. check_numbers.py가 README와 글자 하나까지 대조한다."""
     (questions, reply_runs), (tasks, doc_runs), rel = stats["reply_shape"], stats["doc_shape"], stats["rel"]
-    return "\n\n".join([
+    parts = [
         _t(lang, "reply_intro").format(questions=questions, runs=reply_runs, total=stats["n_reply"])
         + render_headline(stats["replies"], stats["judge"], lang),
         render_reply_table(stats["replies"], lang),
         _t(lang, "doc_intro").format(tasks=tasks, runs=doc_runs),
         render_doc_table(stats["docs"], lang),
+        render_polish(stats.get("polish") or {c: {} for c in DOC_CONDS}, lang),
         _t(lang, "results_link").format(rel=rel, href=i18n.link(lang, f"{rel}/RESULTS.md")),
-    ])
+    ]
+    return "\n\n".join(part for part in parts if part)
 
 
 def readme_block(results_dir, scenarios, lang="ko"):

@@ -72,7 +72,7 @@ Después de instalarla, pida un documento técnico. Para corregir un texto que y
 
 ## Ejemplo
 
-Estos son dos documentos que el mismo modelo escribió para la misma tarea: una sección de solución de problemas de una herramienta CLI. El de la izquierda se escribió sin la skill y el de la derecha, con el modo básico de SimpleKorean activado. Copiamos los dos documentos sin cambios. Están en coreano, porque esta skill hace que el modelo escriba en coreano.
+Estos son dos documentos en los que el mismo modelo pulió el mismo borrador: una sección de solución de problemas de una herramienta CLI. Pusimos a propósito em-dash, negritas y puntos medios en el borrador. El de la izquierda se pulió sin la skill y el de la derecha, con el modo básico de SimpleKorean activado. Copiamos los dos documentos sin cambios. Están en coreano, porque esta skill hace que el modelo escriba en coreano.
 
 <!-- example:start -->
 <table>

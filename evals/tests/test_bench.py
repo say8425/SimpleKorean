@@ -80,6 +80,22 @@ def test_build_prompt_conditions():
     assert "엄격 모드: 문장 끝, 접속어, 단어" in strict and "과제: 엄격 모드로 쓰세요. 과제 본문" in strict
 
 
+def test_build_prompt_appends_the_draft():
+    sc = {"id": "polish", "type": "procedural", "prompt": "초안을 다듬어 주세요.", "draft": "**초안** — 본문"}
+    assert run_bench.build_prompt(sc, "baseline") == "초안을 다듬어 주세요.\n\n초안:\n\n**초안** — 본문"
+    assert "과제: 초안을 다듬어 주세요.\n\n초안:\n\n**초안** — 본문" + run_bench.TAIL in run_bench.build_prompt(sc, "plain")
+    assert "과제: 엄격 모드로 쓰세요. 초안을 다듬어 주세요.\n\n초안:" in run_bench.build_prompt(sc, "strict")
+
+
+def test_benchmark_inputs_carry_the_marks_the_readme_describes():
+    # README는 질문마다 em-dash와 가운뎃점을 하나씩 넣었고, 다듬기 초안에 세 표시가 모두 있다고 쓴다
+    for sc in json.loads((bc.HERE / "reply_scenarios.json").read_text(encoding="utf-8")):
+        assert (sc["prompt"].count("—"), sc["prompt"].count("·")) == (1, 1), sc["id"]
+    drafts = [s for s in json.loads((bc.HERE / "scenarios.json").read_text(encoding="utf-8")) if s.get("draft")]
+    assert [s["id"] for s in drafts] == ["polish"]
+    assert all(report.marks(drafts[0]["draft"])[key] > 0 for key in report.MARKS)
+
+
 def test_generate_writes_and_resumes():
     calls = []
 
@@ -177,6 +193,27 @@ def test_report_tables_from_fake_results():
         dist = report.spelling_distribution(root)
         assert dict(dist["message"]["baseline"]) == {"메세지": 1}
         assert "| message | 메세지 1 | 메시지 1 | 메시지 1 |" in report.render_spelling_table(dist)
+
+
+def test_polish_stats_count_marks_in_the_draft_and_the_polished_documents():
+    with tempfile.TemporaryDirectory() as d:
+        root = _fake_results(d)
+        for cond, text in (("baseline", "**연결** — 방화벽·보안 그룹을 보세요."), ("plain", "방화벽과 보안 그룹을 확인하세요."),
+                           ("strict", "방화벽을 확인해야 합니다.")):
+            (root / "docs" / f"{cond}__polish__r1.json").write_text(
+                json.dumps({"condition": cond, "scenario": "polish", "text": text}, ensure_ascii=False), encoding="utf-8")
+        scenarios = [{"id": "readme-intro", "type": "descriptive"},
+                     {"id": "polish", "type": "procedural", "draft": "**a** — b·c `d·e`"}]
+        stats = report.polish_stats(root, scenarios)
+        # 코드 안의 가운뎃점은 세지 않는다
+        assert stats["draft"] == {"em_dash": 1, "bold_spans": 1, "middle_dot": 1}
+        assert stats["baseline"] == {"n": 1, "em_dash": 1, "bold_spans": 1, "middle_dot": 1}
+        assert stats["plain"] == {"n": 1, "em_dash": 0, "bold_spans": 0, "middle_dot": 0}
+        intro, table = report.render_polish(stats).split("\n\n")
+        assert intro.startswith("문서 과제 가운데 하나는") and "em-dash 1개, 굵은 글씨 1개, 가운뎃점 1개" in intro
+        assert table.splitlines()[2] == "| 스킬 없음 | 1 | 1 | 1 | 1 |"
+        # 다듬기 과제가 없으면 문단과 표를 싣지 않는다
+        assert report.render_polish(report.polish_stats(root, scenarios[:1])) == ""
 
 
 def test_readme_block_fills_an_empty_template_block():

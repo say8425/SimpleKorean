@@ -17,6 +17,7 @@ ROOT = HERE.parent
 EXAMPLES = ROOT / "examples" / "before-after.md"
 RUN = 1
 DOC_PICKS = (
+    ("polish", "plain", "초안 다듬기(절차문)"),
     ("readme-intro", "plain", "README 소개(설명문)"),
     ("troubleshooting", "plain", "문제 해결(절차문)"),
     ("error-message", "plain", "오류 메시지"),
@@ -24,8 +25,9 @@ DOC_PICKS = (
 )
 REPLY_PICKS = (("oom", "OOMKilled 질문"), ("cache", "캐시 무효화 질문"))
 # README 보기 블록은 문서 예시 하나를 좌우 표로 보인다. 답변 예시는 코드 블록이 표 칸보다 넓어서
-# 오른쪽 칸을 밀어내므로 examples/before-after.md에만 둔다.
-README_PICK = ("troubleshooting", "plain")
+# 오른쪽 칸을 밀어내므로 examples/before-after.md에만 둔다. 보기 예시는 초안 다듬기 과제다. 이 과제의 초안에는
+# em-dash, 굵은 글씨, 가운뎃점이 들어 있어서 스킬이 이것을 지우는지 보인다.
+README_PICK = ("polish", "plain")
 # 표 칸 하나에 들어가는 코드 줄의 너비다. 고정폭 글꼴의 칸으로 세고, 넓은 글자(한글 등)는 두 칸이다.
 # 이보다 넓은 코드 줄이 있으면 칸이 넓어져 옆 칸을 밀어낸다.
 CELL_CODE_COLUMNS = 50
