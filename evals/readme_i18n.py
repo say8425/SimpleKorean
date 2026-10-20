@@ -1,8 +1,7 @@
 """README 다섯 언어판의 언어 표와 생성 블록의 문장 틀.
 
 report.py와 make_examples.py는 이 틀로 언어마다 블록을 만들고, check_numbers.py는 같은 틀로 대조한다.
-한국어 틀은 두 생성기가 쓰던 문장 그대로라서 한국어 README의 블록은 바뀌지 않는다. 틀을 고치면
-`report.py <결과 디렉터리> --readme`와 `make_examples.py <결과 디렉터리> --readme`로 README를 다시 쓴다.
+틀을 고치면 `report.py <결과 디렉터리> --readme`와 `make_examples.py <결과 디렉터리> --readme`로 README를 다시 쓴다.
 """
 
 LANGS = ("ko", "en", "ja", "zh", "es")
@@ -19,7 +18,7 @@ TEXT = {
                      "{ties}쌍에서 비겼고, {losses}쌍에서 졌습니다."),
         "reply_header": "| 조건 | 답변 수 | 평균 어절 | 평균 문장 | em-dash | 굵은 글씨 | 표 | 첫 줄 헤더·목록 | 헤더 | 불릿 | 인사말과 맺음말 |",
         "doc_intro": ("### 문서\n\nsqlpipe 문서 과제 {tasks}개를 조건마다 {runs}번씩 썼습니다. 비율은 린터가 센 수를 어절 수로 나눈 값입니다. "
-                      "린터는 정규식 검사이므로 순위로 읽지 말고 방향으로 읽으세요."),
+                      "린터는 정규식으로 세므로 순위로 읽지 말고 방향으로 읽으세요."),
         "doc_header": "| 조건 | 문서 수 | 100어절당 오류 | 100어절당 경고 | 100어절당 번역투 | 지정형 비율 | 쉬운 단어 비율 | 가장 긴 문장 |",
         "longest": "{n}어절",
         "not_measured": "측정 안 함",

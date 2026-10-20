@@ -1,5 +1,5 @@
 <p align="center">
-  <strong>Hace que los documentos técnicos en coreano escritos por IA se lean como un manual de mantenimiento.</strong>
+  Hace que los documentos técnicos en coreano escritos por IA se lean como un manual de mantenimiento.
 </p>
 
 <p align="center">
@@ -32,12 +32,12 @@ El plugin incluye las cinco partes de abajo. La skill y los tres hooks funcionan
 | Parte | Qué hace | Activación | Necesita |
 |---|---|---|---|
 | Skill | Contiene todas las reglas, el modo estricto y el modo de revisión. El modelo la lee cuando la necesita. | Automática | Nada |
-| Hook de inicio de sesión | Añade el bloque de reglas a cada sesión. El modelo sigue las reglas aunque usted no nombre la skill. | Automática | Node.js |
+| Hook de inicio de sesión | Añade el bloque de reglas (una versión corta de las reglas de la skill) a cada sesión. El modelo sigue las reglas aunque usted no nombre la skill. | Automática | Node.js |
 | Hook de revisión de archivos | Revisa los archivos Markdown que el modelo escribe o edita. Avisa al modelo de las infracciones. | Automática | Python 3.9 o posterior |
 | Hook de revisión de respuestas | Revisa la última respuesta del modelo. Muestra las infracciones en pantalla. | Automática | Python 3.9 o posterior |
 | Estilo de salida | Pone en el prompt del sistema el mismo bloque de reglas que el hook de inicio de sesión. | Opcional | Nada |
 
-Las reglas se aplican sin el estilo de salida, porque el hook de inicio de sesión ya añade el mismo bloque de reglas. Si el hook de inicio de sesión no se ejecuta porque falta Node.js, aplique el estilo de salida. Para aplicarlo, elíjalo en Output style de `/config` o añada `{"outputStyle": "simple-korean:simple-korean"}` a `~/.claude/settings.json`.
+Las reglas se aplican sin el estilo de salida, porque el hook de inicio de sesión ya añade el mismo bloque de reglas. Si el hook de inicio de sesión no se ejecuta porque falta Node.js, aplique el estilo de salida. Para aplicarlo, elíjalo en Output style de `/config`. Para aplicarlo desde el archivo de configuración, añada `{"outputStyle": "simple-korean:simple-korean"}` a `~/.claude/settings.json`.
 
 El hook de inicio de sesión añade un bloque de reglas de 2464 caracteres en cada sesión. Los detalles están en [`src/hooks/README.md`](../src/hooks/README.md).
 
@@ -64,7 +64,7 @@ Si usa npm, ejecute `npx skills add say8425/SimpleKorean`. Este comando solo ins
 
 ### Herramientas sin soporte de skills
 
-En las herramientas que no admiten skills, pegue el bloque de reglas de [`prompts/system-prompt.md`](../prompts/system-prompt.md). Puede ponerlo en el prompt del sistema, en `AGENTS.md` o en `.cursorrules`. Al final de este archivo también hay una versión corta de unos 120 tokens.
+En las herramientas que no admiten skills, pegue el bloque de reglas de [`prompts/system-prompt.md`](../prompts/system-prompt.md). Puede ponerlo en el prompt del sistema, en `AGENTS.md` o en `.cursorrules`. Al final de `prompts/system-prompt.md` también hay una versión corta de unos 120 tokens.
 
 ### Después de instalar
 
@@ -155,7 +155,7 @@ Las salidas originales, la distribución de grafías y las condiciones de medici
 
 ## Reglas
 
-Las reglas están en [`SKILL.md`](../skills/simple-korean/SKILL.md). La lista completa de reglas con número K que usan el modo de revisión y el modo estricto está en [`rule-catalog.md`](../skills/simple-korean/references/rule-catalog.md).
+Las reglas están en [`SKILL.md`](../skills/simple-korean/SKILL.md). La lista completa de reglas que usan el modo de revisión y el modo estricto está en [`rule-catalog.md`](../skills/simple-korean/references/rule-catalog.md). Cada regla tiene un número K, como K1.1.
 
 ### Reglas para respuestas
 
@@ -192,7 +192,7 @@ El modo básico son todas las reglas de arriba. No hace falta activarlo.
 
 ### Modo estricto
 
-El modo estricto se activa cuando usted dice "엄격 모드" (modo estricto), "통제 언어" (lenguaje controlado), "KS A 0001" o "STE". El modo estricto limita los finales de oración de los documentos a cinco formas. La obligación es "-해야 합니다" (debe). La prohibición es "-하면 안 됩니다" (no debe). El permiso es "-해도 됩니다" (puede). La capacidad es "-ㄹ 수 있습니다" (es capaz de). Los hechos van en presente. El modo estricto no usa el conectivo "(이)나" (o) y escribe las condiciones solo con "-면" (si). La base son los anexos H e I de KS A 0001:2023. En modo estricto, las respuestas siguen igualmente las reglas del modo básico.
+El modo estricto se activa cuando usted dice "엄격 모드" (modo estricto), "통제 언어" (lenguaje controlado), "KS A 0001", "STE" o "ASD-STE100". El modo estricto limita los finales de oración de los documentos a cinco formas. La obligación es "-해야 합니다" (debe). La prohibición es "-하면 안 됩니다" (no debe). El permiso es "-해도 됩니다" (puede). La capacidad es "-ㄹ 수 있습니다" (es capaz de). Los hechos van en presente. El modo estricto no usa el conectivo "(이)나" (o) y escribe las condiciones solo con "-면" (si). La base son los anexos H e I de KS A 0001:2023. En modo estricto, las respuestas siguen igualmente las reglas del modo básico.
 
 ### Modo de revisión
 
@@ -207,7 +207,7 @@ Los préstamos siguen las normas de transcripción de préstamos del coreano y l
 | 23 palabras que se usan según la norma | Forma normativa (메시지 mensaje, 애플리케이션 aplicación, 메서드 método, 라이선스 licencia) |
 | 4 palabras que varían según la fuente | Forma normativa (디렉터리 directorio, 릴리스 release, 셸 shell, 리디렉션 redirección) |
 | 4 palabras con una forma habitual ya fijada | 레포지토리 (repositorio), 바디 (cuerpo), 칼럼 (columna), 대상 (destino) |
-| 2 palabras sin grafía oficial | 리디렉션 (redirección), 리팩터링 (refactorización) |
+| 2 palabras sin grafía oficial | 리디렉션 (redirect), 리팩터링 (refactorización) |
 | 5 palabras en las que se elige entre un préstamo y una palabra coreana | 오류 (error), 매개변수 (parámetro), 사용자 (usuario), 기본값 (valor predeterminado), 배포 (despliegue) |
 | 4 casos de espaciado | 기본값, 매개변수, 반환값, 오픈소스 (se escriben sin espacios) |
 
@@ -260,7 +260,8 @@ Comunique sus preguntas y los errores en un issue. Los PR son bienvenidos. Un ca
 Ejecute estos comandos desde la raíz del repositorio:
 
 ```bash
-uv venv .venv --python 3.12 && uv pip install --python .venv/bin/python kiwipiepy==0.24.0 kiwipiepy-model==0.24.0
+uv venv .venv --python 3.12
+uv pip install --python .venv/bin/python kiwipiepy==0.24.0 kiwipiepy-model==0.24.0
 .venv/bin/python evals/check_numbers.py
 ```
 

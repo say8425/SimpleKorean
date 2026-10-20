@@ -1,5 +1,5 @@
 <p align="center">
-  <strong>让 AI 写的韩语技术文档读起来像维修手册。</strong>
+  让 AI 写的韩语技术文档读起来像维修手册。
 </p>
 
 <p align="center">
@@ -32,12 +32,12 @@ claude plugin install simple-korean@simple-korean
 | 组成部分 | 作用 | 启用方式 | 需要 |
 |---|---|---|---|
 | 技能 | 包含全部规则、严格模式和检查模式。模型在需要时读取。 | 自动 | 无 |
-| 会话启动钩子 | 在每个会话中加入规则块。即使不提技能名称，模型也会遵守规则。 | 自动 | Node.js |
+| 会话启动钩子 | 在每个会话中加入规则块（技能规则的精简版）。即使不提技能名称，模型也会遵守规则。 | 自动 | Node.js |
 | 文件检查钩子 | 检查模型写入或修改的 Markdown 文件，并把违规告诉模型。 | 自动 | Python 3.9 或更高版本 |
 | 回答检查钩子 | 检查模型的最后一条回答，并在屏幕上显示违规。 | 自动 | Python 3.9 或更高版本 |
 | 输出样式 | 把与会话启动钩子相同的规则块放进系统提示词。 | 可选 | 无 |
 
-不用输出样式，规则也会生效，因为会话启动钩子已经加入了同一个规则块。如果没有 Node.js，会话启动钩子无法运行，这时请应用输出样式。要应用输出样式，请在 `/config` 的 Output style 中选择，或者在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。
+不用输出样式，规则也会生效，因为会话启动钩子已经加入了同一个规则块。如果没有 Node.js，会话启动钩子无法运行，这时请应用输出样式。要应用输出样式，请在 `/config` 的 Output style 中选择。要通过设置文件应用，请在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。
 
 会话启动钩子会在每个会话中加入 2,464 个字符的规则块。详情见 [`src/hooks/README.md`](../src/hooks/README.md)。
 
@@ -64,7 +64,7 @@ pnpm dlx skills add say8425/SimpleKorean
 
 ### 不支持技能的工具
 
-对于不支持技能的工具，请粘贴 [`prompts/system-prompt.md`](../prompts/system-prompt.md) 中的规则块。可以放进系统提示词、`AGENTS.md` 或 `.cursorrules`。这个文件末尾还有一个约 120 token 的简短版本。
+对于不支持技能的工具，请粘贴 [`prompts/system-prompt.md`](../prompts/system-prompt.md) 中的规则块。可以放进系统提示词、`AGENTS.md` 或 `.cursorrules`。`prompts/system-prompt.md` 末尾还有一个约 120 token 的简短版本。
 
 ### 安装之后
 
@@ -155,7 +155,7 @@ sqlpipe 的 8 个文档任务在每个条件下各写了 2 次。比率是检查
 
 ## 规则
 
-规则在 [`SKILL.md`](../skills/simple-korean/SKILL.md) 中。检查模式和严格模式使用的全部 K 编号规则在 [`rule-catalog.md`](../skills/simple-korean/references/rule-catalog.md) 中。
+规则在 [`SKILL.md`](../skills/simple-korean/SKILL.md) 中。检查模式和严格模式使用的全部规则在 [`rule-catalog.md`](../skills/simple-korean/references/rule-catalog.md) 中。每条规则都有一个 K 编号，例如 K1.1。
 
 ### 回答规则
 
@@ -192,7 +192,7 @@ sqlpipe 的 8 个文档任务在每个条件下各写了 2 次。比率是检查
 
 ### 严格模式
 
-说“엄격 모드”（严格模式）、“통제 언어”（受控语言）、“KS A 0001”或“STE”时，严格模式会开启。严格模式把文档的句尾限定为五种。义务用“-해야 합니다”（必须……），禁止用“-하면 안 됩니다”（不得……），许可用“-해도 됩니다”（可以……），能力用“-ㄹ 수 있습니다”（能够……），事实用现在时。不用连接词“(이)나”（或），条件只用“-면”。依据是 KS A 0001:2023 的附录 H 和 I。在严格模式下，回答也遵守基本模式的规则。
+说“엄격 모드”（严格模式）、“통제 언어”（受控语言）、“KS A 0001”、“STE”或“ASD-STE100”时，严格模式会开启。严格模式把文档的句尾限定为五种。义务用“-해야 합니다”（必须……），禁止用“-하면 안 됩니다”（不得……），许可用“-해도 됩니다”（可以……），能力用“-ㄹ 수 있습니다”（能够……），事实用现在时。不用连接词“(이)나”（或），条件只用“-면”。依据是 KS A 0001:2023 的附录 H 和 I。在严格模式下，回答也遵守基本模式的规则。
 
 ### 检查模式
 
@@ -205,9 +205,9 @@ sqlpipe 的 8 个文档任务在每个条件下各写了 2 次。比率是检查
 | 类别 | 使用的形式 |
 |---|---|
 | 按规范使用的词 23 个 | 规范形（메시지、애플리케이션、메서드、라이선스，即消息、应用程序、方法、许可证） |
-| 不同来源写法不同的词 4 个 | 规范形（디렉터리、릴리스、셸、리디렉션，即目录、发布、shell、重定向） |
+| 不同来源写法不同的词 4 个 | 规范形（디렉터리、릴리스、셸、리디렉션，即目录、发布、shell、redirection） |
 | 惯用写法已经固定的词 4 个 | 레포지토리、바디、칼럼、대상（仓库、正文、列、目标） |
-| 没有官方写法的词 2 个 | 리디렉션、리팩터링（重定向、重构） |
+| 没有官方写法的词 2 个 | 리디렉션、리팩터링（redirect、重构） |
 | 在外来语和韩语固有词之间选择的词 5 个 | 오류、매개변수、사용자、기본값、배포（错误、参数、用户、默认值、部署） |
 | 空格规则 4 个 | 기본값、매개변수、반환값、오픈소스（默认值、参数、返回值、开源；连写） |
 
@@ -260,7 +260,8 @@ SimpleKorean 是从 [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEng
 请在仓库根目录运行以下命令：
 
 ```bash
-uv venv .venv --python 3.12 && uv pip install --python .venv/bin/python kiwipiepy==0.24.0 kiwipiepy-model==0.24.0
+uv venv .venv --python 3.12
+uv pip install --python .venv/bin/python kiwipiepy==0.24.0 kiwipiepy-model==0.24.0
 .venv/bin/python evals/check_numbers.py
 ```
 
