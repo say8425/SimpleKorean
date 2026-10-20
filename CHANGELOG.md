@@ -2,6 +2,13 @@
 
 항목마다 버전, 날짜, 바뀐 것을 적습니다. 측정 결과가 바뀌면 그 릴리스에 결과 경로를 적습니다.
 
+## [1.1.1](https://github.com/say8425/SimpleKorean/compare/v1.1.0...v1.1.1) (2026-10-20)
+
+
+### 고친 것
+
+* 규칙 블록의 엄격 모드를 켜는 말에 ASD-STE100을 넣는다 ([#14](https://github.com/say8425/SimpleKorean/issues/14)) ([0b8a654](https://github.com/say8425/SimpleKorean/commit/0b8a65488d2adc4281bda05e1a620d3905ce1583))
+
 ## [1.1.0](https://github.com/say8425/SimpleKorean/compare/v1.0.0...v1.1.0) (2026-10-18)
 
 
