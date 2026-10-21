@@ -75,7 +75,7 @@ Después de instalarla, pida un documento técnico. Para corregir un texto que y
 Estos son dos documentos en los que el mismo modelo pulió el mismo borrador: una sección de solución de problemas de una herramienta CLI. Pusimos a propósito em-dash, negritas y puntos medios en el borrador. El de la izquierda se pulió sin la skill y el de la derecha, con el modo básico de SimpleKorean activado. Copiamos los dos documentos sin cambios. Están en coreano, porque esta skill hace que el modelo escriba en coreano.
 
 <!-- example:start -->
-Este es el borrador que pulen los dos documentos. Es la tarea `polish` de [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
+Este es el borrador del que parten los dos documentos. Es la tarea `polish` de [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
 
 <!-- draft: evals/results/2026-10-21/inputs/scenarios.json#polish -->
 <!-- simple-korean: off -->
@@ -144,15 +144,15 @@ Hicimos 8 preguntas 2 veces en cada condición. Cada pregunta contiene un térmi
 
 ### Documentos
 
-El modelo escribió cada una de las 9 tareas de documentación de sqlpipe 2 veces en cada condición. Cada tasa es el recuento del linter dividido entre el número de eojeol. El linter es una comprobación con expresiones regulares, así que lea las cifras como una dirección, no como una clasificación.
+El modelo escribió cada una de las 8 tareas de documentación de sqlpipe 2 veces en cada condición. Cada tasa es el recuento del linter dividido entre el número de eojeol. El linter es una comprobación con expresiones regulares, así que lea las cifras como una dirección, no como una clasificación.
 
 | Condición | Documentos | Errores por 100 eojeol | Avisos por 100 eojeol | Calcos por 100 eojeol | Tasa de grafía designada | Tasa de palabras fáciles | Oración más larga |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Sin skill | 18 | 0.75 | 0.63 | 0.38 | 100.0 % | 42.7 % | 18 eojeol |
-| Modo básico | 18 | 0.00 | 0.15 | 0.15 | 100.0 % | 45.6 % | 15 eojeol |
-| Modo estricto | 18 | 0.00 | 0.00 | 0.00 | 100.0 % | 40.8 % | 13 eojeol |
+| Sin skill | 16 | 0.14 | 0.71 | 0.42 | 100.0 % | 41.9 % | 18 eojeol |
+| Modo básico | 16 | 0.00 | 0.17 | 0.17 | 100.0 % | 45.3 % | 15 eojeol |
+| Modo estricto | 16 | 0.00 | 0.00 | 0.00 | 100.0 % | 39.6 % | 13 eojeol |
 
-Una de las tareas de documentación pide pulir un borrador con em-dash, negritas y puntos medios. El borrador tiene estas marcas: em-dash 2, negritas 2, punto medio 3. La tabla siguiente suma estas marcas en los documentos pulidos de cada condición. Cada condición pulió el borrador 2 veces, así que si quedaran todas las marcas, las sumas serían em-dash 4, negritas 4 y punto medio 6. Las reglas de documentos tampoco prohíben el punto medio, así que solo lo contamos como referencia. El borrador es la tarea `polish` de [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
+La tarea de pulir un borrador con em-dash, negritas y puntos medios puestos a propósito no está en la tabla anterior y se cuenta aparte. El borrador tiene estas marcas: em-dash 2, negritas 2, punto medio 3. La tabla siguiente suma estas marcas en los documentos pulidos de cada condición. Cada condición pulió el borrador 2 veces, así que si quedaran todas las marcas, las sumas serían em-dash 4, negritas 4 y punto medio 6. Las reglas de documentos tampoco prohíben el punto medio, así que solo lo contamos como referencia. El borrador es la tarea `polish` de [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
 
 | Condición | Documentos | em-dash | Negritas | Punto medio |
 |---|---:|---:|---:|---:|

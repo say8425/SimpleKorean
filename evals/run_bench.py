@@ -67,7 +67,7 @@ def main(argv=None):
     ap.add_argument("--smoke", action="store_true", help="과제 2개를 1회만 돈다")
     a = ap.parse_args(argv)
     conditions = bc.parse_conditions(a.conditions, CONDITIONS)
-    scenarios = bc.save_inputs(a.out, "scenarios.json")
+    scenarios = bc.save_inputs(a.out, "scenarios.json", outputs=("docs",))
     runs = 1 if a.smoke else a.runs
     generate(a.out, scenarios[:2] if a.smoke else scenarios, runs, conditions=conditions)
     return 0

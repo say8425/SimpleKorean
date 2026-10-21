@@ -7,6 +7,7 @@
     python3 evals/report.py evals/results/<날짜> --readme   # README 다섯 개의 벤치마크 블록도 바꾼다(readme_i18n.README)
 """
 import json
+import os
 import re
 import sys
 from collections import Counter
@@ -32,6 +33,10 @@ MARKS = ("em_dash", "bold_spans", "middle_dot")
 INPUTS = "inputs"
 # 글 전체를 감싼 코드 울타리 한 겹. 여는 줄 뒤의 정보 문자열(markdown 등)은 버린다.
 OUTER_FENCE = re.compile(r"\A\s*(`{3,}|~{3,})[^\n]*\n(.*)\n[^\S\n]*\1[^\S\n]*\s*\Z", re.S)
+# 설명 문장 뒤에 문서를 넣은 markdown 울타리. 정보 문자열이 markdown이나 md인 울타리만 문서로 본다.
+MD_FENCE = re.compile(r"^[^\S\n]*(`{3,}|~{3,})[^\S\n]*(?:markdown|md)[^\S\n]*\n(.*?)\n[^\S\n]*\1[^\S\n]*$", re.M | re.S)
+# 마크다운 링크의 대상. RESULTS.md에 실을 때 결과 디렉터리 기준으로 바꾼다.
+LINK_TARGET = re.compile(r"\]\(([^)\s]+)\)")
 README_BLOCK = re.compile(r"<!-- benchmark:start (\S+) -->\n(.*?)\n<!-- benchmark:end -->", re.S)
 
 
@@ -59,13 +64,23 @@ def judge_stats(results_dir):
     return {"plain": tally["plain"], "tie": tally["tie"], "baseline": tally["baseline"], "n": sum(tally.values())}
 
 
+def draft_ids(scenarios):
+    """초안(draft)을 주고 다듬게 한 과제의 id."""
+    return {s["id"] for s in scenarios if s.get("draft")}
+
+
 def doc_stats(results_dir, scenarios):
-    """조건별 문서 합계. 모든 조건을 같은 기준(기본 모드 린터, 기본 단어 목록)으로 잰다."""
-    types = {s["id"]: s["type"] for s in scenarios}
+    """조건별 문서 합계. 모든 조건을 같은 기준(기본 모드 린터, 기본 단어 목록)으로 잰다.
+
+    다듬기 과제는 빼고 센다. 초안에 일부러 넣은 표시가 오류 수에 섞이기 때문이다. 이 과제는 polish_stats가 센다.
+    """
+    types, drafts = {s["id"]: s["type"] for s in scenarios}, draft_ids(scenarios)
     concepts = ko_terms.load_terms()
     stats = {c: Counter() for c in DOC_CONDS}
     for path in sorted(Path(results_dir, "docs").glob("*.json")):
         record = json.loads(path.read_text(encoding="utf-8"))
+        if record["scenario"] in drafts:
+            continue
         text, acc = record["text"], stats[record["condition"]]
         report = ko_lint.lint(text, types[record["scenario"]], config={})
         acc["n"] += 1
@@ -91,12 +106,16 @@ def saved_inputs(results_dir, name):
 
 
 def unfenced(text):
-    """글 전체를 감싼 코드 울타리 한 겹을 벗긴 글. 다듬은 문서를 통째로 코드 블록에 넣으면 표시를 세지 못하기 때문이다.
+    """문서를 감싼 코드 울타리를 벗긴 글. 다듬은 문서를 통째로 코드 블록에 넣으면 표시를 세지 못하기 때문이다.
 
-    안에 같은 글자의 울타리가 또 있으면 어디가 끝인지 알 수 없으므로 그대로 둔다.
+    글 전체를 감싼 울타리 한 겹은 정보 문자열과 상관없이 벗긴다. 앞에 설명 문장이 있으면 markdown이나 md 울타리만
+    벗긴다. 이름 없는 울타리는 명령 같은 코드일 수 있기 때문이다. 안에 같은 글자의 울타리가 또 있으면 어디가 끝인지
+    알 수 없으므로 그대로 둔다.
     """
+    def inner(m):
+        return m.group(2) if m.group(1)[:3] not in m.group(2) else m.group(0)
     m = OUTER_FENCE.match(text)
-    return m.group(2) if m and m.group(1)[:3] not in m.group(2) else text
+    return inner(m) if m else MD_FENCE.sub(inner, text)
 
 
 def marks(text):
@@ -108,6 +127,9 @@ def marks(text):
 def polish_stats(results_dir, scenarios):
     """다듬기 과제(초안 draft가 있는 과제)의 표시 수. draft는 초안의 합이고, 조건마다 다듬은 문서 수 n과 표시 수의 합이다."""
     drafts = {s["id"]: s["draft"] for s in scenarios if s.get("draft")}
+    # README의 설명 문단은 다듬기 과제가 하나라고 가정한다
+    if len(drafts) > 1:
+        raise ValueError(f"다듬기 과제는 하나만 둘 수 있습니다: {', '.join(sorted(drafts))}")
     stats = {"draft": Counter(), **{c: Counter() for c in DOC_CONDS}}
     for draft in drafts.values():
         stats["draft"].update(marks(draft))
@@ -206,12 +228,11 @@ def render_spelling_table(dist):
     return "\n".join(lines)
 
 
-def _shape(results_dir, sub, pattern):
-    """원본 파일 이름에서 (과제 수, 회차 수)를 센다. 파일 이름은 <조건>__<id>__r<회차>.<확장자>다."""
+def _shape(results_dir, sub, pattern, skip=frozenset()):
+    """원본 파일 이름에서 (과제 수, 회차 수)를 센다. 파일 이름은 <조건>__<id>__r<회차>.<확장자>다. skip의 과제는 뺀다."""
     names = [p.name.rsplit(".", 1)[0].split("__") for p in Path(results_dir, sub).glob(pattern)]
-    ids = {n[1] for n in names if len(n) == 3}
-    runs = {n[2] for n in names if len(n) == 3}
-    return len(ids), len(runs)
+    names = [n for n in names if len(n) == 3 and n[1] not in skip]
+    return len({n[1] for n in names}), len({n[2] for n in names})
 
 
 def benchmark_stats(results_dir, scenarios):
@@ -236,7 +257,7 @@ def benchmark_stats(results_dir, scenarios):
         "polish": polish_stats(results_dir, scenarios),
         "n_reply": replies["plain"].get("n", 0) + replies["baseline"].get("n", 0),
         "reply_shape": _shape(results_dir, "reply", "*.txt"),
-        "doc_shape": _shape(results_dir, "docs", "*.json"),
+        "doc_shape": _shape(results_dir, "docs", "*.json", draft_ids(scenarios)),
     }
 
 
@@ -264,6 +285,18 @@ def readme_block(results_dir, scenarios, lang="ko"):
     return render_readme_block(benchmark_stats(results_dir, scenarios), lang)
 
 
+def from_results(text, results_dir):
+    """레포 기준 링크를 결과 디렉터리 안의 RESULTS.md에서 쓸 상대 링크로 바꾼 글."""
+    base = Path(results_dir).resolve()
+
+    def fix(m):
+        target = m.group(1)
+        if re.match(r"[a-z][a-z0-9+.-]*:|[#/]", target):
+            return m.group(0)
+        return "](" + Path(os.path.relpath(ROOT / target, base)).as_posix() + ")"
+    return LINK_TARGET.sub(fix, text)
+
+
 def results_md(results_dir, scenarios):
     """RESULTS.md 전체. meta.json의 격리 확인 결과를 함께 싣는다."""
     meta = json.loads(Path(results_dir, "meta.json").read_text(encoding="utf-8"))
@@ -275,7 +308,7 @@ def results_md(results_dir, scenarios):
         f"격리 확인: MCP 서버 {len(iso['mcp_servers'])}개, 플러그인 {', '.join(iso['plugins']) or '없음'}, "
         f"출력 스타일 `{iso['output_style']}`, 문제 {len(meta['isolation_problems'])}건.",
         "## README 블록",
-        readme_block(results_dir, scenarios),
+        from_results(readme_block(results_dir, scenarios), results_dir),
         "## 표기 분포",
         "기본 단어 목록으로 센 개념별 표기 수입니다. 스킬이 만든 표기 변화를 사람의 관행과 따로 보려고 싣습니다.",
         "<!-- simple-korean: off -->\n" + render_spelling_table(spelling_distribution(results_dir)) + "\n<!-- simple-korean: on -->",

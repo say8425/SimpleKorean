@@ -223,8 +223,12 @@ def main(argv=None):
     args = sys.argv[1:] if argv is None else argv
     if not args:
         raise SystemExit("사용법: make_examples.py <결과 디렉터리> [--readme]")
+    try:
+        text = examples_md(args[0])
+    except (OSError, ValueError, KeyError) as err:
+        raise SystemExit(f"{args[0]}: 보기에 쓸 원본을 읽지 못했습니다({err}). DOC_PICKS의 과제가 모두 있는 결과 디렉터리를 쓰세요")
     EXAMPLES.parent.mkdir(parents=True, exist_ok=True)
-    EXAMPLES.write_text(examples_md(args[0]), encoding="utf-8")
+    EXAMPLES.write_text(text, encoding="utf-8")
     if "--readme" in args:
         update_readmes(args[0])
     return 0

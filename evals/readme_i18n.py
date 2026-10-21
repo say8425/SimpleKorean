@@ -25,7 +25,7 @@ TEXT = {
         "doc_intro": ("### 문서\n\nsqlpipe 문서 과제 {tasks}개를 조건마다 {runs}번씩 썼습니다. 비율은 린터가 센 수를 어절 수로 나눈 값입니다. "
                       "린터는 정규식으로 세므로 순위로 읽지 말고 방향으로 읽으세요."),
         "doc_header": "| 조건 | 문서 수 | 100어절당 오류 | 100어절당 경고 | 100어절당 번역투 | 지정형 비율 | 쉬운 단어 비율 | 가장 긴 문장 |",
-        "polish_intro": ("문서 과제 가운데 하나는 em-dash, 굵은 글씨, 가운뎃점이 든 초안을 다듬는 과제입니다. "
+        "polish_intro": ("em-dash, 굵은 글씨, 가운뎃점을 일부러 넣은 초안을 다듬는 과제는 위 표에 넣지 않고 따로 셉니다. "
                          "초안에는 em-dash {dash}개, 굵은 글씨 {bold}개, 가운뎃점 {dot}개가 있습니다. "
                          "아래 표는 조건마다 다듬은 문서에 든 수를 더한 값입니다. "
                          "조건마다 {runs}번 다듬었으므로, 초안의 표시가 모두 남으면 em-dash {dash_all}개, 굵은 글씨 {bold_all}개, "
@@ -38,7 +38,7 @@ TEXT = {
         "labels": {"baseline": "스킬 없음", "reply_plain": "SimpleKorean", "plain": "기본 모드", "strict": "엄격 모드"},
         "example_before": "스킬 없이 다듬은 문서",
         "example_after": "SimpleKorean을 켜고 다듬은 문서",
-        "example_draft": "아래는 두 문서가 다듬은 초안입니다. 원본은 [`{src}`]({href})의 `{id}` 과제입니다.",
+        "example_draft": "아래는 두 문서의 바탕이 된 초안입니다. 원본은 [`{src}`]({href})의 `{id}` 과제입니다.",
         "example_files": "원본 파일은 왼쪽이 `{before}`, 오른쪽이 `{after}`입니다.",
         "example_docs": "답변 예시와 나머지 문서 예시는 [`examples/before-after.md`]({href})에 있습니다.",
         "block_size": "규칙 블록 {n}자",
@@ -62,8 +62,9 @@ TEXT = {
                       "so read the numbers as a direction, not as a ranking."),
         "doc_header": ("| Condition | Documents | Errors per 100 eojeol | Warnings per 100 eojeol | "
                        "Translationese per 100 eojeol | Designated spelling rate | Easy word rate | Longest sentence |"),
-        "polish_intro": ("One of the documentation tasks asks the model to polish a draft that contains em-dashes, bold text, "
-                         "and middle dots. The draft has these marks: em-dash {dash}, bold {bold}, middle dot {dot}. "
+        "polish_intro": ("The task of polishing a draft with deliberately added em-dashes, bold text, and middle dots "
+                         "is counted separately, not in the table above. "
+                         "The draft has these marks: em-dash {dash}, bold {bold}, middle dot {dot}. "
                          "The table below sums these marks in the polished documents of each condition. "
                          "Each condition polished the draft {runs} times, so if every mark stayed, the sums would be "
                          "em-dash {dash_all}, bold {bold_all}, and middle dot {dot_all}. "
@@ -77,7 +78,7 @@ TEXT = {
         "labels": {"baseline": "No skill", "reply_plain": "SimpleKorean", "plain": "Default mode", "strict": "Strict mode"},
         "example_before": "Polished without the skill",
         "example_after": "Polished with SimpleKorean on",
-        "example_draft": "Below is the draft that both documents polish. It is the `{id}` task in [`{src}`]({href}).",
+        "example_draft": "Below is the draft that both documents start from. It is the `{id}` task in [`{src}`]({href}).",
         "example_files": "The raw files are `{before}` (left) and `{after}` (right).",
         "example_docs": "Reply examples and more document examples are in [`examples/before-after.md`]({href}).",
         "block_size": "rule block of {n} characters",
@@ -98,7 +99,7 @@ TEXT = {
                       "リンターは正規表現による検査なので、順位ではなく傾向として読んでください。"),
         "doc_header": ("| 条件 | 文書数 | 100語節あたりのエラー | 100語節あたりの警告 | 100語節あたりの翻訳調 | "
                        "指定表記の比率 | やさしい語の比率 | 最長の文 |"),
-        "polish_intro": ("文書課題のうち1つは、em-dash、太字、中点を含む下書きを整える課題です。"
+        "polish_intro": ("em-dash、太字、中点をわざと入れた下書きを整える課題は、上の表に含めず別に数えます。"
                          "下書きには em-dash が{dash}個、太字が{bold}か所、中点が{dot}個あります。"
                          "下の表は、条件ごとに整えた文書に含まれる数の合計です。"
                          "条件ごとに{runs}回整えたので、下書きの印がすべて残れば em-dash {dash_all}個、太字 {bold_all}か所、"
@@ -111,7 +112,7 @@ TEXT = {
         "labels": {"baseline": "スキルなし", "reply_plain": "SimpleKorean", "plain": "基本モード", "strict": "厳格モード"},
         "example_before": "スキルなしで整えた文書",
         "example_after": "SimpleKorean を有効にして整えた文書",
-        "example_draft": "次は2つの文書が整えた下書きです。元は [`{src}`]({href}) の `{id}` 課題です。",
+        "example_draft": "次は2つの文書のもとになった下書きです。元は [`{src}`]({href}) の `{id}` 課題です。",
         "example_files": "元のファイルは、左が `{before}`、右が `{after}` です。",
         "example_docs": "回答の例とほかの文書の例は [`examples/before-after.md`]({href}) にあります。",
         "block_size": "{n}文字のルールブロック",
@@ -128,7 +129,7 @@ TEXT = {
                       "检查器使用正则表达式，所以请把数字当作方向，而不是排名。"),
         "doc_header": ("| 条件 | 文档数 | 每 100 语节错误 | 每 100 语节警告 | 每 100 语节翻译腔 | 规定写法比例 | "
                        "简单词比例 | 最长句子 |"),
-        "polish_intro": ("其中一个文档任务是润色一份含有 em-dash、粗体和间隔号的草稿。"
+        "polish_intro": ("润色一份故意放入 em-dash、粗体和间隔号的草稿的任务不计入上表，而是单独统计。"
                          "草稿里有 {dash} 个 em-dash、{bold} 处粗体和 {dot} 个间隔号。"
                          "下表是每个条件下润色后的文档中这些标记的总数。"
                          "每个条件润色了 {runs} 次，所以如果草稿的标记全部保留，总数会是 {dash_all} 个 em-dash、{bold_all} 处粗体和 "
@@ -141,7 +142,7 @@ TEXT = {
         "labels": {"baseline": "无技能", "reply_plain": "SimpleKorean", "plain": "基本模式", "strict": "严格模式"},
         "example_before": "未启用技能时润色的文档",
         "example_after": "启用 SimpleKorean 后润色的文档",
-        "example_draft": "下面是两份文档润色的草稿，原文见 [`{src}`]({href}) 中的 `{id}` 任务。",
+        "example_draft": "下面是两份文档所依据的草稿，原文见 [`{src}`]({href}) 中的 `{id}` 任务。",
         "example_files": "左边的原始文件是 `{before}`，右边的是 `{after}`。",
         "example_docs": "回答示例和更多文档示例见 [`examples/before-after.md`]({href})。",
         "block_size": "{n} 个字符的规则块",
@@ -166,7 +167,8 @@ TEXT = {
                       "no como una clasificación."),
         "doc_header": ("| Condición | Documentos | Errores por 100 eojeol | Avisos por 100 eojeol | Calcos por 100 eojeol | "
                        "Tasa de grafía designada | Tasa de palabras fáciles | Oración más larga |"),
-        "polish_intro": ("Una de las tareas de documentación pide pulir un borrador con em-dash, negritas y puntos medios. "
+        "polish_intro": ("La tarea de pulir un borrador con em-dash, negritas y puntos medios puestos a propósito "
+                         "no está en la tabla anterior y se cuenta aparte. "
                          "El borrador tiene estas marcas: em-dash {dash}, negritas {bold}, punto medio {dot}. "
                          "La tabla siguiente suma estas marcas en los documentos pulidos de cada condición. "
                          "Cada condición pulió el borrador {runs} veces, así que si quedaran todas las marcas, las sumas serían "
@@ -181,7 +183,7 @@ TEXT = {
         "labels": {"baseline": "Sin skill", "reply_plain": "SimpleKorean", "plain": "Modo básico", "strict": "Modo estricto"},
         "example_before": "Pulido sin la skill",
         "example_after": "Pulido con SimpleKorean activado",
-        "example_draft": "Este es el borrador que pulen los dos documentos. Es la tarea `{id}` de [`{src}`]({href}).",
+        "example_draft": "Este es el borrador del que parten los dos documentos. Es la tarea `{id}` de [`{src}`]({href}).",
         "example_files": "Los archivos originales son `{before}` (izquierda) y `{after}` (derecha).",
         "example_docs": "Los ejemplos de respuestas y más ejemplos de documentos están en [`examples/before-after.md`]({href}).",
         "block_size": "bloque de reglas de {n} caracteres",

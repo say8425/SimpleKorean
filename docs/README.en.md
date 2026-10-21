@@ -75,7 +75,7 @@ After you install, ask for a technical document. To fix existing text, say "simp
 Below are two documents in which the same model polished the same draft: a troubleshooting section for a CLI tool. We put em-dashes, bold text, and middle dots in the draft on purpose. The left one was polished without the skill, and the right one with the default mode of SimpleKorean on. We copied both documents without changes. They are in Korean, because this skill makes the model write Korean.
 
 <!-- example:start -->
-Below is the draft that both documents polish. It is the `polish` task in [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
+Below is the draft that both documents start from. It is the `polish` task in [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
 
 <!-- draft: evals/results/2026-10-21/inputs/scenarios.json#polish -->
 <!-- simple-korean: off -->
@@ -144,15 +144,15 @@ We asked 8 questions 2 times in each condition. Each question contains one techn
 
 ### Documents
 
-The model wrote each of 9 sqlpipe documentation tasks 2 times in each condition. Each rate is the linter's count divided by the eojeol count. The linter is a regex check, so read the numbers as a direction, not as a ranking.
+The model wrote each of 8 sqlpipe documentation tasks 2 times in each condition. Each rate is the linter's count divided by the eojeol count. The linter is a regex check, so read the numbers as a direction, not as a ranking.
 
 | Condition | Documents | Errors per 100 eojeol | Warnings per 100 eojeol | Translationese per 100 eojeol | Designated spelling rate | Easy word rate | Longest sentence |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| No skill | 18 | 0.75 | 0.63 | 0.38 | 100.0% | 42.7% | 18 eojeol |
-| Default mode | 18 | 0.00 | 0.15 | 0.15 | 100.0% | 45.6% | 15 eojeol |
-| Strict mode | 18 | 0.00 | 0.00 | 0.00 | 100.0% | 40.8% | 13 eojeol |
+| No skill | 16 | 0.14 | 0.71 | 0.42 | 100.0% | 41.9% | 18 eojeol |
+| Default mode | 16 | 0.00 | 0.17 | 0.17 | 100.0% | 45.3% | 15 eojeol |
+| Strict mode | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 39.6% | 13 eojeol |
 
-One of the documentation tasks asks the model to polish a draft that contains em-dashes, bold text, and middle dots. The draft has these marks: em-dash 2, bold 2, middle dot 3. The table below sums these marks in the polished documents of each condition. Each condition polished the draft 2 times, so if every mark stayed, the sums would be em-dash 4, bold 4, and middle dot 6. The document rules do not ban the middle dot either, so we count it for reference only. The draft is the `polish` task in [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
+The task of polishing a draft with deliberately added em-dashes, bold text, and middle dots is counted separately, not in the table above. The draft has these marks: em-dash 2, bold 2, middle dot 3. The table below sums these marks in the polished documents of each condition. Each condition polished the draft 2 times, so if every mark stayed, the sums would be em-dash 4, bold 4, and middle dot 6. The document rules do not ban the middle dot either, so we count it for reference only. The draft is the `polish` task in [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
 
 | Condition | Documents | em-dash | Bold | Middle dot |
 |---|---:|---:|---:|---:|
