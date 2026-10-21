@@ -72,17 +72,28 @@ Después de instalarla, pida un documento técnico. Para corregir un texto que y
 
 ## Ejemplo
 
-Estos son dos documentos en los que el mismo modelo pulió el mismo borrador: una sección de solución de problemas de una herramienta CLI. Pusimos a propósito em-dash, negritas y puntos medios en el borrador. El de la izquierda se pulió sin la skill y el de la derecha, con el modo básico de SimpleKorean activado. Copiamos los dos documentos sin cambios. Están en coreano, porque esta skill hace que el modelo escriba en coreano.
+Estos son dos documentos en los que el mismo modelo pulió el mismo borrador: una sección de solución de problemas de una herramienta CLI. Pusimos a propósito em-dash, negritas y puntos medios en el borrador. La primera columna de la tabla es el borrador. La segunda se pulió sin la skill y la tercera, con el modo básico de SimpleKorean activado. Copiamos los tres textos sin cambios. Están en coreano, porque esta skill hace que el modelo escriba en coreano.
 
 <!-- example:start -->
-El borrador es la tarea `polish` de [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
-
 <table>
 <tr>
-<th width="50%">Pulido sin la skill</th>
-<th width="50%">Pulido con SimpleKorean activado</th>
+<th width="34%">Borrador</th>
+<th width="33%">Pulido sin la skill</th>
+<th width="33%">Pulido con SimpleKorean activado</th>
 </tr>
 <tr>
+<td valign="top">
+
+<!-- draft: evals/results/2026-10-21/inputs/scenarios.json#polish -->
+<!-- simple-korean: off -->
+> ## 문제 해결
+>
+> **Postgres 연결 타임아웃** — sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽·보안 그룹이 5432 포트를 막고 있는 것입니다. `nc -zv <호스트> 5432`로 연결되는지 확인해 보시기 바랍니다.
+>
+> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책·버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 먼저 `aws sts get-caller-identity`로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.
+<!-- simple-korean: on -->
+
+</td>
 <td valign="top">
 
 <!-- source: evals/results/2026-10-21/docs/baseline__polish__r1.json -->
@@ -114,7 +125,9 @@ El borrador es la tarea `polish` de [`evals/results/2026-10-21/inputs/scenarios.
 </tr>
 </table>
 
-Los archivos originales son `evals/results/2026-10-21/docs/baseline__polish__r1.json` (izquierda) y `evals/results/2026-10-21/docs/plain__polish__r1.json` (derecha).
+Los archivos originales de los documentos pulidos son `evals/results/2026-10-21/docs/baseline__polish__r1.json` (centro) y `evals/results/2026-10-21/docs/plain__polish__r1.json` (derecha).
+
+El borrador es la tarea `polish` de [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
 
 Los ejemplos de respuestas y más ejemplos de documentos están en [`examples/before-after.md`](../examples/before-after.md).
 <!-- example:end -->

@@ -72,17 +72,28 @@ After you install, ask for a technical document. To fix existing text, say "simp
 
 ## Example
 
-Below are two documents in which the same model polished the same draft: a troubleshooting section for a CLI tool. We put em-dashes, bold text, and middle dots in the draft on purpose. The left one was polished without the skill, and the right one with the default mode of SimpleKorean on. We copied both documents without changes. They are in Korean, because this skill makes the model write Korean.
+Below are two documents in which the same model polished the same draft: a troubleshooting section for a CLI tool. We put em-dashes, bold text, and middle dots in the draft on purpose. The first column of the table is the draft. The second was polished without the skill, and the third with the default mode of SimpleKorean on. We copied all three texts without changes. They are in Korean, because this skill makes the model write Korean.
 
 <!-- example:start -->
-The draft is the `polish` task in [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
-
 <table>
 <tr>
-<th width="50%">Polished without the skill</th>
-<th width="50%">Polished with SimpleKorean on</th>
+<th width="34%">Draft</th>
+<th width="33%">Polished without the skill</th>
+<th width="33%">Polished with SimpleKorean on</th>
 </tr>
 <tr>
+<td valign="top">
+
+<!-- draft: evals/results/2026-10-21/inputs/scenarios.json#polish -->
+<!-- simple-korean: off -->
+> ## 문제 해결
+>
+> **Postgres 연결 타임아웃** — sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽·보안 그룹이 5432 포트를 막고 있는 것입니다. `nc -zv <호스트> 5432`로 연결되는지 확인해 보시기 바랍니다.
+>
+> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책·버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 먼저 `aws sts get-caller-identity`로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.
+<!-- simple-korean: on -->
+
+</td>
 <td valign="top">
 
 <!-- source: evals/results/2026-10-21/docs/baseline__polish__r1.json -->
@@ -114,7 +125,9 @@ The draft is the `polish` task in [`evals/results/2026-10-21/inputs/scenarios.js
 </tr>
 </table>
 
-The raw files are `evals/results/2026-10-21/docs/baseline__polish__r1.json` (left) and `evals/results/2026-10-21/docs/plain__polish__r1.json` (right).
+The raw files of the polished documents are `evals/results/2026-10-21/docs/baseline__polish__r1.json` (middle) and `evals/results/2026-10-21/docs/plain__polish__r1.json` (right).
+
+The draft is the `polish` task in [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
 
 Reply examples and more document examples are in [`examples/before-after.md`](../examples/before-after.md).
 <!-- example:end -->

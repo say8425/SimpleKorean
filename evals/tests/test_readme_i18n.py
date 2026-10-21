@@ -82,6 +82,9 @@ def _results(d):
         record = {"condition": cond, "scenario": PICK, "text": text}
         (root / "docs" / f"{cond}__{PICK}__r1.json").write_text(json.dumps(record, ensure_ascii=False),
                                                                            encoding="utf-8")
+    # 보기 표의 첫째 칸은 측정할 때 복사한 입력의 초안이다
+    (root / "inputs").mkdir()
+    (root / "inputs" / "scenarios.json").write_text(json.dumps(SCENARIOS, ensure_ascii=False), encoding="utf-8")
     return root
 
 
@@ -130,17 +133,20 @@ def test_example_blocks_keep_the_korean_outputs():
             assert "](../examples/before-after.md)" in body, lang
 
 
-def test_example_block_is_a_two_column_table():
+def test_example_block_is_a_three_column_table():
     with tempfile.TemporaryDirectory(dir=str(ROOT / "evals")) as d:
         root = _results(d)
         rel = root.resolve().relative_to(ROOT).as_posix()
         for lang in i18n.LANGS:
             body = mx.readme_example(root, lang)
-            assert body.startswith("<table>\n<tr>\n<th width=\"50%\">"), lang
+            assert body.startswith("<table>\n<tr>\n<th width=\"34%\">"), lang
             labels = i18n.TEXT[lang]
-            assert body.index(labels["example_before"]) < body.index(labels["example_after"]) < body.index("<td"), lang
+            heads = [labels[k] for k in ("example_draft_head", "example_before", "example_after")]
+            spots = [body.index(h) for h in heads]
+            assert spots == sorted(spots) and spots[-1] < body.index("<td"), lang
+            assert body.count('<td valign="top">\n\n<!-- draft: ') == 1, lang
             assert body.count('<td valign="top">\n\n<!-- source: ') == 2, lang
-            assert body.count("<!-- simple-korean: on -->\n\n</td>") == 2, lang
+            assert body.count("<!-- simple-korean: on -->\n\n</td>") == 3, lang
             sources = [m[0] for m in mx.SOURCE_BLOCK.findall(body)]
             assert sources == [f"{rel}/docs/baseline__{PICK}__r1.json", f"{rel}/docs/plain__{PICK}__r1.json"], lang
             after_table = body.split("</table>", 1)[1]
@@ -179,11 +185,9 @@ def test_readme_pick_is_a_polish_task_with_a_draft():
     assert pick.get("draft"), pick
 
 
-def test_example_block_links_the_saved_draft_and_examples_quote_it():
+def test_example_table_puts_the_saved_draft_in_the_first_column():
     with tempfile.TemporaryDirectory(dir=str(ROOT / "evals")) as d:
         root = _results(d)
-        assert "<!-- draft: " not in mx.readme_example(root)
-        (root / "inputs").mkdir()
         draft = "**연결** — 방화벽·보안 그룹을 확인해 보세요."
         (root / "inputs" / "scenarios.json").write_text(
             json.dumps([{"id": PICK, "type": "procedural", "prompt": "다듬으세요.", "draft": draft}], ensure_ascii=False),
@@ -191,9 +195,14 @@ def test_example_block_links_the_saved_draft_and_examples_quote_it():
         rel = mx.inputs_rel(root)
         for lang in i18n.LANGS:
             body = mx.readme_example(root, lang)
-            assert body.startswith(i18n.TEXT[lang]["example_draft"].format(src=rel, href=i18n.link(lang, rel), id=PICK)), lang
-            # README에는 초안을 인용하지 않는다. 스킬 없는 문서와 거의 같아 두 번 실린 것처럼 보인다
-            assert "<!-- draft: " not in body and draft not in body, lang
+            assert i18n.TEXT[lang]["example_draft"].format(src=rel, href=i18n.link(lang, rel), id=PICK) in body, lang
+            # 초안은 표의 첫째 칸이다. 표 밖에 따로 인용하지 않는다
+            table = body[body.index("<table>"):body.index("</table>")]
+            assert table.index(f"<!-- draft: {rel}#{PICK} -->") < table.index("<!-- source: "), lang
+            assert body.count("<!-- draft: ") == 1 and table.count("<th ") == 3, lang
+        body = mx.readme_example(root)
+        assert mx.check_sources(body) == []
+        assert mx.check_sources(body.replace("> **연결** —", "> 연결:")) == [f"{rel}#{PICK}: 인용한 초안이 원본과 다릅니다"]
         assert mx.pick_problems(root) == []
         before, after = (f"{root.resolve().relative_to(ROOT).as_posix()}/docs/{c}__{PICK}__r1.json" for c in ("baseline", "plain"))
         section = mx._section("초안 다듬기", before, after, "기본 모드", (rel, PICK))

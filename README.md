@@ -72,17 +72,28 @@ npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명�
 
 ## 보기
 
-같은 모델이 같은 초안을 다듬은 문서 두 개입니다. 초안은 CLI 도구의 문제 해결 절입니다. 이 초안에는 em-dash, 굵은 글씨, 가운뎃점을 일부러 넣었습니다. 왼쪽은 스킬 없이, 오른쪽은 SimpleKorean의 기본 모드를 켜고 다듬었습니다. 두 문서 모두 고치지 않고 옮겼습니다.
+같은 모델이 같은 초안을 다듬은 문서 두 개입니다. 초안은 CLI 도구의 문제 해결 절입니다. 이 초안에는 em-dash, 굵은 글씨, 가운뎃점을 일부러 넣었습니다. 표의 첫째 칸은 초안입니다. 둘째 칸은 스킬 없이, 셋째 칸은 SimpleKorean의 기본 모드를 켜고 다듬은 문서입니다. 세 글 모두 고치지 않고 옮겼습니다.
 
 <!-- example:start -->
-초안은 [`evals/results/2026-10-21/inputs/scenarios.json`](evals/results/2026-10-21/inputs/scenarios.json)의 `polish` 과제에 있습니다.
-
 <table>
 <tr>
-<th width="50%">스킬 없이 다듬은 문서</th>
-<th width="50%">SimpleKorean을 켜고 다듬은 문서</th>
+<th width="34%">초안</th>
+<th width="33%">스킬 없이 다듬은 문서</th>
+<th width="33%">SimpleKorean을 켜고 다듬은 문서</th>
 </tr>
 <tr>
+<td valign="top">
+
+<!-- draft: evals/results/2026-10-21/inputs/scenarios.json#polish -->
+<!-- simple-korean: off -->
+> ## 문제 해결
+>
+> **Postgres 연결 타임아웃** — sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽·보안 그룹이 5432 포트를 막고 있는 것입니다. `nc -zv <호스트> 5432`로 연결되는지 확인해 보시기 바랍니다.
+>
+> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책·버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 먼저 `aws sts get-caller-identity`로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.
+<!-- simple-korean: on -->
+
+</td>
 <td valign="top">
 
 <!-- source: evals/results/2026-10-21/docs/baseline__polish__r1.json -->
@@ -114,7 +125,9 @@ npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명�
 </tr>
 </table>
 
-원본 파일은 왼쪽이 `evals/results/2026-10-21/docs/baseline__polish__r1.json`, 오른쪽이 `evals/results/2026-10-21/docs/plain__polish__r1.json`입니다.
+다듬은 문서의 원본 파일은 가운데가 `evals/results/2026-10-21/docs/baseline__polish__r1.json`, 오른쪽이 `evals/results/2026-10-21/docs/plain__polish__r1.json`입니다.
+
+초안은 [`evals/results/2026-10-21/inputs/scenarios.json`](evals/results/2026-10-21/inputs/scenarios.json)의 `polish` 과제에 있습니다.
 
 답변 예시와 나머지 문서 예시는 [`examples/before-after.md`](examples/before-after.md)에 있습니다.
 <!-- example:end -->

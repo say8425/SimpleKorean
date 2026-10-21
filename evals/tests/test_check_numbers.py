@@ -118,6 +118,9 @@ def _results(d):
         record = {"condition": cond, "scenario": PICK, "text": text}
         (root / "docs" / f"{cond}__{PICK}__r1.json").write_text(json.dumps(record, ensure_ascii=False),
                                                                            encoding="utf-8")
+    # 보기 표의 첫째 칸은 측정할 때 복사한 입력의 초안이다
+    (root / "inputs").mkdir()
+    (root / "inputs" / "scenarios.json").write_text(json.dumps([{"id": "readme-intro", "type": "descriptive"}, {"id": PICK, "type": "procedural", "draft": DRAFT}], ensure_ascii=False), encoding="utf-8")
     meta = {"date": "2099-01-01", "model": "m", "effort": "low", "judge_model": "j", "isolation": ISO, "isolation_problems": []}
     (root / "meta.json").write_text(json.dumps(meta), encoding="utf-8")
     return root

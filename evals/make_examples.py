@@ -29,8 +29,8 @@ REPLY_PICKS = (("oom", "OOMKilled 질문"), ("cache", "캐시 무효화 질문")
 # em-dash, 굵은 글씨, 가운뎃점이 들어 있어서 스킬이 이것을 지우는지 보인다.
 README_PICK = ("polish", "plain")
 # 표 칸 하나에 들어가는 코드 줄의 너비다. 고정폭 글꼴의 칸으로 세고, 넓은 글자(한글 등)는 두 칸이다.
-# 이보다 넓은 코드 줄이 있으면 칸이 넓어져 옆 칸을 밀어낸다.
-CELL_CODE_COLUMNS = 50
+# 이보다 넓은 코드 줄이 있으면 칸이 넓어져 옆 칸을 밀어낸다. 보기 표는 초안까지 세 칸이다.
+CELL_CODE_COLUMNS = 34
 COND_LABELS = {"plain": "기본 모드", "strict": "엄격 모드"}
 EXAMPLE_BLOCK = re.compile(r"<!-- example:start -->\n(.*?)\n<!-- example:end -->", re.S)
 SOURCE_BLOCK = re.compile(
@@ -116,23 +116,26 @@ def _cell(rel):
 
 
 def readme_example(results_dir, lang="ko"):
-    """README 보기 블록의 본문. 왼쪽 칸은 스킬 없이, 오른쪽 칸은 SimpleKorean을 켜고 쓴 문서다.
+    """README 보기 블록의 본문. 표의 칸은 차례로 초안, 스킬 없이 다듬은 문서, SimpleKorean을 켜고 다듬은 문서다.
 
-    인용한 출력은 어느 언어에서나 한국어 원문이다. 초안은 링크만 싣는다. 스킬 없는 문서가 초안과 거의 같아서
-    초안까지 인용하면 같은 글이 두 번 실린 것처럼 보이기 때문이다. 초안 인용은 examples/before-after.md에 있다.
+    초안을 표 밖에 따로 인용하면 초안과 거의 같은 스킬 없는 문서가 두 번 실린 것처럼 보인다. 그래서 세 글을 한 표에
+    나란히 둔다. 인용한 글은 어느 언어에서나 한국어 원문이다.
     """
     scenario, cond = README_PICK
     before, after = _pair(results_dir, "docs", scenario, cond, "json")
     text, rel = i18n.TEXT[lang], inputs_rel(results_dir)
-    lead = [text["example_draft"].format(src=rel, href=i18n.link(lang, rel), id=scenario)] if draft_text(rel, scenario) else []
     table = "\n".join([
         "<table>", "<tr>",
-        f'<th width="50%">{text["example_before"]}</th>',
-        f'<th width="50%">{text["example_after"]}</th>',
-        "</tr>", "<tr>", _cell(before), _cell(after), "</tr>", "</table>",
+        f'<th width="34%">{text["example_draft_head"]}</th>',
+        f'<th width="33%">{text["example_before"]}</th>',
+        f'<th width="33%">{text["example_after"]}</th>',
+        "</tr>", "<tr>",
+        f'<td valign="top">\n\n{draft_block(rel, scenario)}\n\n</td>', _cell(before), _cell(after),
+        "</tr>", "</table>",
     ])
-    return "\n\n".join(lead + [table, text["example_files"].format(before=before, after=after),
-                                text["example_docs"].format(href=i18n.link(lang, "examples/before-after.md"))])
+    return "\n\n".join([table, text["example_files"].format(before=before, after=after),
+                         text["example_draft"].format(src=rel, href=i18n.link(lang, rel), id=scenario),
+                         text["example_docs"].format(href=i18n.link(lang, "examples/before-after.md"))])
 
 
 def wide_code_lines(text):

@@ -72,17 +72,28 @@ pnpm dlx skills add say8425/SimpleKorean
 
 ## 示例
 
-以下是同一模型润色同一份草稿（CLI 工具的故障排查一节）得到的两份文档。我们故意在草稿里放了 em-dash、粗体和间隔号。左边未启用技能，右边启用了 SimpleKorean 的基本模式。两份文档都未作修改。本技能让模型写韩语，所以文档保持韩语原文。
+以下是同一模型润色同一份草稿（CLI 工具的故障排查一节）得到的两份文档。我们故意在草稿里放了 em-dash、粗体和间隔号。表格第一列是草稿，第二列未启用技能，第三列启用了 SimpleKorean 的基本模式。三段文字都未作修改。本技能让模型写韩语，所以文档保持韩语原文。
 
 <!-- example:start -->
-草稿见 [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json) 中的 `polish` 任务。
-
 <table>
 <tr>
-<th width="50%">未启用技能时润色的文档</th>
-<th width="50%">启用 SimpleKorean 后润色的文档</th>
+<th width="34%">草稿</th>
+<th width="33%">未启用技能时润色的文档</th>
+<th width="33%">启用 SimpleKorean 后润色的文档</th>
 </tr>
 <tr>
+<td valign="top">
+
+<!-- draft: evals/results/2026-10-21/inputs/scenarios.json#polish -->
+<!-- simple-korean: off -->
+> ## 문제 해결
+>
+> **Postgres 연결 타임아웃** — sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽·보안 그룹이 5432 포트를 막고 있는 것입니다. `nc -zv <호스트> 5432`로 연결되는지 확인해 보시기 바랍니다.
+>
+> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책·버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 먼저 `aws sts get-caller-identity`로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.
+<!-- simple-korean: on -->
+
+</td>
 <td valign="top">
 
 <!-- source: evals/results/2026-10-21/docs/baseline__polish__r1.json -->
@@ -114,7 +125,9 @@ pnpm dlx skills add say8425/SimpleKorean
 </tr>
 </table>
 
-左边的原始文件是 `evals/results/2026-10-21/docs/baseline__polish__r1.json`，右边的是 `evals/results/2026-10-21/docs/plain__polish__r1.json`。
+润色后文档的原始文件：中间是 `evals/results/2026-10-21/docs/baseline__polish__r1.json`，右边是 `evals/results/2026-10-21/docs/plain__polish__r1.json`。
+
+草稿见 [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json) 中的 `polish` 任务。
 
 回答示例和更多文档示例见 [`examples/before-after.md`](../examples/before-after.md)。
 <!-- example:end -->
