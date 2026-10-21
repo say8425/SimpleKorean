@@ -128,7 +128,11 @@ def check_example_block(text, lang, results_dir):
     if not m:
         return [f"{name}에 보기 블록이 없습니다"]
     problems = make_examples.pick_problems(results_dir) if lang == "ko" else []
-    expected = make_examples.readme_example(results_dir, lang)
+    try:
+        expected = make_examples.readme_example(results_dir, lang)
+    except (OSError, ValueError, KeyError) as err:
+        # 원본을 읽지 못해도 멈추지 않는다. 뒤의 검사(보정, 규칙 블록, 버전, 번역판)도 돌아야 한다
+        return problems + [f"{name} 보기 블록을 다시 만들지 못했습니다({err})"]
     return problems + ([] if m.group(1) == expected else [_diff(f"{name} 보기 블록", expected, m.group(1))])
 
 

@@ -72,56 +72,62 @@ pnpm dlx skills add say8425/SimpleKorean
 
 ## 示例
 
-以下是同一模型为同一任务（CLI 工具的故障排查一节）写的两份文档。左边未启用技能，右边启用了 SimpleKorean 的基本模式。两份文档都未作修改。本技能让模型写韩语，所以文档保持韩语原文。
+以下是同一模型润色同一份草稿（CLI 工具的故障排查一节）得到的两份文档。我们故意在草稿里放了 em-dash、粗体和间隔号。表格第一列是草稿，第二列未启用技能，第三列启用了 SimpleKorean 的基本模式。三段文字都未作修改。本技能让模型写韩语，所以文档保持韩语原文。
 
 <!-- example:start -->
 <table>
 <tr>
-<th width="50%">未启用技能时写的文档</th>
-<th width="50%">启用 SimpleKorean 后写的文档</th>
+<th width="34%">草稿</th>
+<th width="33%">未启用技能时润色的文档</th>
+<th width="33%">启用 SimpleKorean 后润色的文档</th>
 </tr>
 <tr>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-17/docs/baseline__troubleshooting__r1.json -->
+<!-- draft: evals/results/2026-10-21/inputs/scenarios.json#polish -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
-> ### Postgres 연결 타임아웃
-> `connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근되는지 확인하세요. `nc -zv <호스트> 5432`로 점검할 수 있습니다. 방화벽이나 보안 그룹, VPN 연결 상태도 살펴보세요. 네트워크에 문제가 없는데도 지연된다면 `--connect-timeout 30`처럼 제한 시간을 늘려 보세요. 접속 문자열의 `sslmode` 설정이 서버와 맞는지도 확인해야 합니다.
+> **Postgres 연결 타임아웃** — sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽·보안 그룹이 5432 포트를 막고 있는 것입니다. `nc -zv <호스트> 5432`로 연결되는지 확인해 보시기 바랍니다.
 >
-> ### S3 권한 오류
-> `AccessDenied` 또는 `403`이 나오면 현재 자격 증명이 올바른지 `aws sts get-caller-identity`로 확인하세요. 그다음 IAM 정책에 대상 버킷의 `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` 권한이 있는지 보세요. 버킷 이름과 리전이 맞는지, 버킷 정책이 접근을 막고 있지 않은지도 확인하세요.
+> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책·버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 먼저 `aws sts get-caller-identity`로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.
 <!-- simple-korean: on -->
 
 </td>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-17/docs/plain__troubleshooting__r1.json -->
+<!-- source: evals/results/2026-10-21/docs/baseline__polish__r1.json -->
+<!-- simple-korean: off -->
+> ## 문제 해결
+>
+> **Postgres 연결 타임아웃** — sqlpipe에서 `connection timed out` 오류가 나면 대개 방화벽이나 보안 그룹이 5432 포트를 막고 있는 경우입니다. `nc -zv <호스트> 5432`로 연결 가능 여부를 먼저 확인하세요.
+>
+> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책과 버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 그 전에 `aws sts get-caller-identity`로 현재 사용 중인 자격 증명이 맞는지 먼저 확인하는 것이 좋습니다.
+<!-- simple-korean: on -->
+
+</td>
+<td valign="top">
+
+<!-- source: evals/results/2026-10-21/docs/plain__polish__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
 > ### Postgres 연결 타임아웃
 >
-> sqlpipe는 Postgres 포트에 연결하지 못하면 `dial tcp: i/o timeout` 오류를 내고 멈춥니다.
->
-> 1. sqlpipe를 실행하는 호스트가 Postgres 포트(기본값 5432)에 연결할 수 있는지 확인하세요. 보통 방화벽이나 보안 그룹이 연결을 막습니다.
-> 2. 데이터베이스가 관리형(RDS, Cloud SQL)이면, 인스턴스가 sqlpipe의 IP에서 오는 연결을 허용하는지 확인하세요.
+> sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽이나 보안 그룹이 5432 포트를 막습니다. sqlpipe를 실행하는 호스트에서 `nc -zv <호스트> 5432`로 연결되는지 확인하세요.
 >
 > ### S3 권한 오류
 >
-> sqlpipe가 S3에 쓸 때 `AccessDenied` 오류가 나면 자격 증명에 권한이 없는 것입니다.
->
-> 1. sqlpipe를 실행하는 호스트에서 어떤 자격 증명을 쓰는지 확인하세요.
-> 2. 그 자격 증명의 IAM 정책이 대상 버킷의 `s3:PutObject`를 허용하는지 확인하세요.
-> 3. 버킷 정책이 해당 자격 증명을 거부하면 버킷 정책을 고치세요.
+> sqlpipe가 `AccessDenied` 오류를 내면 먼저 `aws sts get-caller-identity`로 현재 쓰는 자격 증명을 확인하세요. 그다음 IAM 정책과 버킷 정책에 읽기와 쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요.
 <!-- simple-korean: on -->
 
 </td>
 </tr>
 </table>
 
-左边的原始文件是 `evals/results/2026-10-17/docs/baseline__troubleshooting__r1.json`，右边的是 `evals/results/2026-10-17/docs/plain__troubleshooting__r1.json`。
+润色后文档的原始文件：中间是 `evals/results/2026-10-21/docs/baseline__polish__r1.json`，右边是 `evals/results/2026-10-21/docs/plain__polish__r1.json`。
+
+草稿见 [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json) 中的 `polish` 任务。
 
 回答示例和更多文档示例见 [`examples/before-after.md`](../examples/before-after.md)。
 <!-- example:end -->
@@ -130,15 +136,15 @@ pnpm dlx skills add say8425/SimpleKorean
 
 下面的数字都是从已提交的原始输出重新计算的。每次推送时，CI 都会用 `evals/check_numbers.py` 核对这些数字。文档和回答由 `claude-sonnet-5-5`（effort low）编写，由 `claude-opus-5-5` 评判。所有运行都没有读取用户设置、MCP 服务器或 AGENTS.md 这类指令文件。评判模型也是 Claude，所以可能偏向同一系列的模型。语节（어절）是韩语中以空格分隔的单位。
 
-<!-- benchmark:start evals/results/2026-10-17 -->
+<!-- benchmark:start evals/results/2026-10-21 -->
 ### 回答
 
-我们把 8 个问题在每个条件下各问了 2 次，每个问题含一个专业术语，共得到 32 个回答。启用技能后，读者能看到的缺陷（em-dash、粗体、表格、第一行的标题或列表）减少了 100%（从 139 个降到 0 个）。在 16 组盲评中，SimpleKorean 的回答赢了 14 组，平了 2 组，输了 0 组。
+我们把 8 个问题在每个条件下各问了 2 次，每个问题含一个专业术语、一个 em-dash 和一个间隔号（·）。回答规则不禁止间隔号，所以没有把它算作缺陷，而是单独统计。共得到 32 个回答。启用技能后，读者能看到的缺陷（em-dash、粗体、表格、第一行的标题或列表）减少了 100%（从 162 个降到 0 个）。在 16 组盲评中，SimpleKorean 的回答赢了 12 组，平了 3 组，输了 1 组。即使问题里有 em-dash，未启用技能的回答也没有使用 em-dash。所以技能能否去掉 em-dash，要看下面文档部分的草稿润色任务。
 
-| 条件 | 回答数 | 平均语节数 | 平均句数 | em-dash | 粗体 | 表格 | 首行标题或列表 | 标题 | 列表符号 | 问候语和结束语 |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 无技能 | 16 | 235 | 28.6 | 0 | 130 | 3 | 6 | 44 | 189 | 14 |
-| SimpleKorean | 16 | 193 | 25.8 | 0 | 0 | 0 | 0 | 49 | 135 | 3 |
+| 条件 | 回答数 | 平均语节数 | 平均句数 | em-dash | 粗体 | 表格 | 首行标题或列表 | 间隔号 | 标题 | 列表符号 | 问候语和结束语 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 无技能 | 16 | 266 | 31.2 | 0 | 155 | 3 | 4 | 26 | 36 | 211 | 13 |
+| SimpleKorean | 16 | 223 | 31.0 | 0 | 0 | 0 | 0 | 2 | 54 | 173 | 5 |
 
 ### 文档
 
@@ -146,11 +152,19 @@ sqlpipe 的 8 个文档任务在每个条件下各写了 2 次。比率是检查
 
 | 条件 | 文档数 | 每 100 语节错误 | 每 100 语节警告 | 每 100 语节翻译腔 | 规定写法比例 | 简单词比例 | 最长句子 |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| 无技能 | 16 | 0.14 | 0.97 | 0.28 | 95.1% | 39.7% | 19 个语节 |
-| 基本模式 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 42.9% | 15 个语节 |
-| 严格模式 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 42.9% | 14 个语节 |
+| 无技能 | 16 | 0.14 | 0.71 | 0.42 | 100.0% | 41.9% | 18 个语节 |
+| 基本模式 | 16 | 0.00 | 0.17 | 0.17 | 100.0% | 45.3% | 15 个语节 |
+| 严格模式 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 39.6% | 13 个语节 |
 
-原始输出、写法分布和测量条件见 [`evals/results/2026-10-17/RESULTS.md`](../evals/results/2026-10-17/RESULTS.md)。
+润色一份故意放入 em-dash、粗体和间隔号的草稿的任务不计入上表，而是单独统计。草稿里有 2 个 em-dash、2 处粗体和 3 个间隔号。下表是每个条件下润色后的文档中这些标记的总数。每个条件润色了 2 次，所以如果草稿的标记全部保留，总数会是 4 个 em-dash、4 处粗体和 6 个间隔号。文档规则也不禁止间隔号，所以只作参考统计。草稿见 [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json) 中的 `polish` 任务。
+
+| 条件 | 文档数 | em-dash | 粗体 | 间隔号 |
+|---|---:|---:|---:|---:|
+| 无技能 | 2 | 4 | 4 | 1 |
+| 基本模式 | 2 | 0 | 0 | 0 |
+| 严格模式 | 2 | 0 | 0 | 0 |
+
+原始输出、写法分布和测量条件见 [`evals/results/2026-10-21/RESULTS.md`](../evals/results/2026-10-21/RESULTS.md)。
 <!-- benchmark:end -->
 
 ## 规则

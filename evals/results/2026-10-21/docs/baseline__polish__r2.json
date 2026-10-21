@@ -1,0 +1,13 @@
+{
+  "text": "## 문제 해결\n\n**Postgres 연결 타임아웃** — `connection timed out` 오류는 대개 방화벽이나 보안 그룹이 5432 포트를 막아서 발생합니다. `nc -zv <호스트> 5432`로 해당 포트에 연결되는지 확인하세요.\n\n**S3 권한 오류** — `AccessDenied`가 나타나면 IAM 정책과 버킷 정책에 `s3:GetObject`, `s3:PutObject` 권한이 있는지 확인하세요. 먼저 `aws sts get-caller-identity`로 현재 사용 중인 자격 증명을 확인하세요.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 228,
+  "cost_usd": 0.0258939,
+  "duration_ms": 2703,
+  "condition": "baseline",
+  "scenario": "polish",
+  "type": "procedural",
+  "run": 2
+}

@@ -12,6 +12,8 @@ import make_examples as mx  # noqa: E402
 import readme_i18n as i18n  # noqa: E402
 import report  # noqa: E402
 
+PICK = mx.README_PICK[0]
+DRAFT = "**초안** — 방화벽·보안 그룹을 확인해 보세요."
 BLOCK = '헤더와 목록을 써도 됩니다. em-dash를 쓰지 마세요. 첫 문장에 답을 쓰세요. 코드는 바꾸지 마세요. "확인하다" 하나로 쓰세요. 레포지토리. 굵은 글씨와 표는 쓰지 마세요. 헤더와 목록은 첫 문장 뒤에 두세요. 사용자가 엄격 모드, 통제 언어, KS A 0001, STE, ASD-STE100을 말하면 엄격 모드를 쓰세요.'
 SKILL = f'---\nname: simple-korean\nmetadata:\n  version: "1.0.0"\n---\n{BLOCK}\n'
 ISO = {"found": True, "claude_code_version": "2.1.294", "model": "m", "mcp_servers": [], "plugins": [],
@@ -113,9 +115,12 @@ def _results(d):
     trouble = {"baseline": "## 문제 해결\n\n**연결 타임아웃**\n방화벽을 확인해 보세요.",
                "plain": "## 연결 타임아웃\n\n1. 방화벽 규칙을 확인하세요.", "strict": "## 연결 타임아웃\n\n1. 방화벽 규칙을 확인해야 합니다."}
     for cond, text in trouble.items():
-        record = {"condition": cond, "scenario": "troubleshooting", "text": text}
-        (root / "docs" / f"{cond}__troubleshooting__r1.json").write_text(json.dumps(record, ensure_ascii=False),
+        record = {"condition": cond, "scenario": PICK, "text": text}
+        (root / "docs" / f"{cond}__{PICK}__r1.json").write_text(json.dumps(record, ensure_ascii=False),
                                                                            encoding="utf-8")
+    # 보기 표의 첫째 칸은 측정할 때 복사한 입력의 초안이다
+    (root / "inputs").mkdir()
+    (root / "inputs" / "scenarios.json").write_text(json.dumps([{"id": "readme-intro", "type": "descriptive"}, {"id": PICK, "type": "procedural", "draft": DRAFT}], ensure_ascii=False), encoding="utf-8")
     meta = {"date": "2099-01-01", "model": "m", "effort": "low", "judge_model": "j", "isolation": ISO, "isolation_problems": []}
     (root / "meta.json").write_text(json.dumps(meta), encoding="utf-8")
     return root
@@ -145,7 +150,7 @@ def test_readme_pick_is_pre_registered_and_has_no_wide_code_line():
     with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
         root = _results(d)
         assert mx.pick_problems(root) == []
-        path = root / "docs" / "plain__troubleshooting__r1.json"
+        path = root / "docs" / f"plain__{PICK}__r1.json"
         record = json.loads(path.read_text(encoding="utf-8"))
         def with_code(line):
             text = record["text"] + f"\n\n```bash\n{line}\n```"
@@ -163,7 +168,7 @@ def test_readme_pick_is_pre_registered_and_has_no_wide_code_line():
 
 
 def test_check_benchmark_catches_stale_numbers_and_missing_changelog_path():
-    scenarios = [{"id": "readme-intro", "type": "descriptive"}, {"id": "troubleshooting", "type": "procedural"}]
+    scenarios = [{"id": "readme-intro", "type": "descriptive"}, {"id": PICK, "type": "procedural", "draft": DRAFT}]
     with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
         root = _results(d)
         rel = root.resolve().relative_to(cn.ROOT).as_posix()
@@ -200,7 +205,7 @@ def test_unreleased_means_strictly_after_the_latest_release():
 
 
 def test_check_benchmark_skips_the_changelog_path_for_unreleased_results():
-    scenarios = [{"id": "readme-intro", "type": "descriptive"}, {"id": "troubleshooting", "type": "procedural"}]
+    scenarios = [{"id": "readme-intro", "type": "descriptive"}, {"id": PICK, "type": "procedural", "draft": DRAFT}]
     with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
         root = _results(d)
         readme = report.replace_readme_block("문서와 답변은 `m`이 쓰고 판정은 `j`가 했습니다.\n"
@@ -320,13 +325,13 @@ def test_check_example_block_compares_the_sentences_too():
         for lang in i18n.LANGS:
             assert cn.check_example_block(mx.replace_example_block(empty, mx.readme_example(root, lang)), lang, root) == []
         ko = mx.replace_example_block(empty, mx.readme_example(root, "ko"))
-        edited = ko.replace("스킬 없이 쓴 문서", "스킬 없이 만든 문서")
+        edited = ko.replace(i18n.TEXT["ko"]["example_before"], "스킬 없이 만든 문서")
         assert any("README.md 보기 블록" in p for p in cn.check_example_block(edited, "ko", root))
         assert cn.check_example_block("블록 없음", "en", root) == ["docs/README.en.md에 보기 블록이 없습니다"]
 
 
 def test_check_translation_passes_a_generated_translation():
-    scenarios = [{"id": "readme-intro", "type": "descriptive"}, {"id": "troubleshooting", "type": "procedural"}]
+    scenarios = [{"id": "readme-intro", "type": "descriptive"}, {"id": PICK, "type": "procedural", "draft": DRAFT}]
     prompt = f"---\n{BLOCK}\n---\n"
     with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
         root = _results(d)
@@ -349,7 +354,7 @@ def test_check_translation_passes_a_generated_translation():
 
 
 def test_check_translation_reports_missing_korean_block_without_crashing():
-    scenarios = [{"id": "readme-intro", "type": "descriptive"}, {"id": "troubleshooting", "type": "procedural"}]
+    scenarios = [{"id": "readme-intro", "type": "descriptive"}, {"id": PICK, "type": "procedural", "draft": DRAFT}]
     en = "<!-- benchmark:start evals/results/x -->\n\n<!-- benchmark:end -->\n"
     assert cn.check_translation("en", en, "한국어판에 블록 없음", scenarios, "") == ["README.md에 벤치마크 블록이 없습니다"]
 
@@ -366,3 +371,13 @@ def test_translation_problems_names_missing_files():
 
 def test_main_requires_every_readme():
     assert {i18n.README[lang] for lang in i18n.LANGS} <= set(cn.REQUIRED)
+
+
+def test_check_example_block_reports_a_missing_pick_without_crashing():
+    with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d:
+        root = _results(d)
+        readme = mx.replace_example_block("<!-- example:start -->\n\n<!-- example:end -->\n", mx.readme_example(root))
+        (root / "docs" / f"plain__{PICK}__r1.json").unlink()
+        found = cn.check_example_block(readme, "en", root)
+        assert len(found) == 1 and "보기 블록을 다시 만들지 못했습니다" in found[0], found
+        assert any("원본을 읽지 못했습니다" in p for p in cn.check_example_block(readme, "ko", root))

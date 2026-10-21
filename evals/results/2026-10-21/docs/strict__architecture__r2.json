@@ -1,0 +1,13 @@
+{
+  "text": "한국어 통제 언어 국가 표준은 없습니다. 이 기준은 KS A 0001과 공개 연구를 바탕으로 한 비공식 기준입니다.\n\n## sqlpipe 아키텍처 개요\n\nsqlpipe는 세 컴포넌트가 순서대로 데이터를 넘기는 구조입니다. 리더 프로세스는 Postgres 행을 배치(batch, 행을 묶은 단위) 단위로 스트리밍(streaming)합니다. 컨버터는 각 배치를 Parquet 로우 그룹(row group)으로 바꿉니다. 업로더는 로우 그룹을 S3에 멀티파트(multipart, 큰 객체를 조각으로 나눠 올리는 방식) 객체로 씁니다. 업로드가 실패하면 업로더는 해당 조각을 다시 시도합니다. 각 컴포넌트는 하나의 일만 맡습니다.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 1460,
+  "cost_usd": 0.06740589999999999,
+  "duration_ms": 10239,
+  "condition": "strict",
+  "scenario": "architecture",
+  "type": "descriptive",
+  "run": 2
+}

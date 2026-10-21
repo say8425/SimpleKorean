@@ -1,0 +1,36 @@
+## 무슨 일이 일어난 건가요
+
+`ALTER TABLE ... ADD COLUMN ... NOT NULL`을 20GB 테이블에 실행하면, DB는 기존 모든 행에 값을 채우거나 검증해야 합니다. 이 작업이 테이블 전체에 락을 잡은 채 오래 걸리고, 그동안 읽기·쓰기가 대기열에 쌓여 같이 막힙니다. 대기 중인 쿼리가 늘면 커넥션 풀이 고갈되어 장애로 번지기도 합니다.
+
+## 백필이란
+
+**기존 행들의 새 컬럼 값을 나중에 채우는 작업**입니다. 한 번에 거대한 DDL로 처리하지 않고, 작은 배치(예: 1~10천 행씩)로 나눠 `UPDATE`합니다. 그래서 락이 짧게 잡히고 서비스가 계속 동작합니다.
+
+## 해야 할 일
+
+**1. 먼저 멈춘 마이그레이션 정리**
+- 실행 중인 ALTER 세션을 확인하고 취소(`pg_cancel_backend` / `KILL`)합니다. 롤백에도 시간이 걸릴 수 있으니 DBA와 함께 진행하세요.
+- 락 대기가 풀리고 읽기·쓰기가 돌아오는지 확인합니다.
+
+**2. 안전한 3단계로 다시 진행 (expand → backfill → contract)**
+
+1. **nullable로 컬럼 추가**: `ADD COLUMN new_col type NULL` (필요하면 DEFAULT 포함)
+   - PostgreSQL 11+는 상수 DEFAULT가 있으면 테이블을 다시 쓰지 않아 즉시 끝납니다.
+   - MySQL 8.0은 `ALGORITHM=INSTANT`를 지원합니다.
+2. **배치 백필**: 기본키 범위로 나눠 업데이트합니다.
+   ```sql
+   UPDATE t SET new_col = <값>
+   WHERE id BETWEEN :start AND :end AND new_col IS NULL;
+   ```
+   - 배치마다 커밋하고 짧게 sleep해서 복제 지연과 부하를 조절합니다.
+   - 그동안 애플리케이션은 새 행에 값을 쓰도록 먼저 배포해 두세요(신규 행이 NULL로 쌓이지 않게).
+3. **NOT NULL 제약 적용**
+   - PostgreSQL: `ADD CONSTRAINT ... CHECK (new_col IS NOT NULL) NOT VALID` → `VALIDATE CONSTRAINT`(락이 약함) → 그다음 `SET NOT NULL`(PG 12+는 검증된 CHECK가 있으면 스캔 생략)
+   - MySQL: `pt-online-schema-change`나 `gh-ost` 같은 온라인 스키마 변경 도구 사용
+
+**3. 안전장치**
+- 마이그레이션 세션에 `lock_timeout`(PG)이나 `lock_wait_timeout`(MySQL)을 설정해, 락을 못 잡으면 서비스를 막지 않고 빨리 실패하게 합니다.
+- 트래픽이 적은 시간대에 실행합니다.
+
+## 확인할 것
+어떤 DB(PostgreSQL/MySQL, 버전)를 쓰는지, 마이그레이션 도구(Rails, Flyway, Alembic 등)가 무엇인지 알려주시면 실제 명령어와 배치 스크립트를 맞춰서 드릴 수 있습니다.

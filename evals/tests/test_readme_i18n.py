@@ -19,6 +19,13 @@ def test_every_language_has_every_template():
     assert set(i18n.README) == set(i18n.NAMES) == set(i18n.LANGS)
 
 
+def test_table_headers_have_as_many_columns_as_their_separators():
+    for lang in i18n.LANGS:
+        for key, sep in (("reply_header", report.REPLY_SEP), ("doc_header", report.DOC_SEP),
+                         ("polish_header", report.POLISH_SEP)):
+            assert i18n.TEXT[lang][key].count("|") == sep.count("|"), (lang, key)
+
+
 def test_korean_templates_keep_the_current_sentences():
     ko = i18n.TEXT["ko"]
     assert ko["block_size"].format(n=i18n.grouped(2271, "ko")) == "규칙 블록 2,271자"
@@ -50,7 +57,9 @@ def test_links_get_the_language_prefix():
     assert i18n.link("ja", "examples/before-after.md") == "../examples/before-after.md"
 
 
-SCENARIOS = [{"id": "readme-intro", "type": "descriptive"}, {"id": "troubleshooting", "type": "procedural"}]
+PICK = mx.README_PICK[0]
+SCENARIOS = [{"id": "readme-intro", "type": "descriptive"},
+             {"id": PICK, "type": "procedural", "draft": "**초안** — 방화벽·보안 그룹을 확인해 보세요."}]
 EMPTY = "<!-- example:start -->\n\n<!-- example:end -->\n\n<!-- benchmark:start x -->\n\n<!-- benchmark:end -->\n"
 
 
@@ -70,9 +79,12 @@ def _results(d):
     trouble = {"baseline": "## 문제 해결\n\n**연결 타임아웃**\n방화벽을 확인해 보세요.",
                "plain": "## 연결 타임아웃\n\n1. 방화벽 규칙을 확인하세요.", "strict": "## 연결 타임아웃\n\n1. 방화벽 규칙을 확인해야 합니다."}
     for cond, text in trouble.items():
-        record = {"condition": cond, "scenario": "troubleshooting", "text": text}
-        (root / "docs" / f"{cond}__troubleshooting__r1.json").write_text(json.dumps(record, ensure_ascii=False),
+        record = {"condition": cond, "scenario": PICK, "text": text}
+        (root / "docs" / f"{cond}__{PICK}__r1.json").write_text(json.dumps(record, ensure_ascii=False),
                                                                            encoding="utf-8")
+    # 보기 표의 첫째 칸은 측정할 때 복사한 입력의 초안이다
+    (root / "inputs").mkdir()
+    (root / "inputs" / "scenarios.json").write_text(json.dumps(SCENARIOS, ensure_ascii=False), encoding="utf-8")
     return root
 
 
@@ -121,19 +133,22 @@ def test_example_blocks_keep_the_korean_outputs():
             assert "](../examples/before-after.md)" in body, lang
 
 
-def test_example_block_is_a_two_column_table():
+def test_example_block_is_a_three_column_table():
     with tempfile.TemporaryDirectory(dir=str(ROOT / "evals")) as d:
         root = _results(d)
         rel = root.resolve().relative_to(ROOT).as_posix()
         for lang in i18n.LANGS:
             body = mx.readme_example(root, lang)
-            assert body.startswith("<table>\n<tr>\n<th width=\"50%\">"), lang
+            assert body.startswith("<table>\n<tr>\n<th width=\"34%\">"), lang
             labels = i18n.TEXT[lang]
-            assert body.index(labels["example_before"]) < body.index(labels["example_after"]) < body.index("<td"), lang
+            heads = [labels[k] for k in ("example_draft_head", "example_before", "example_after")]
+            spots = [body.index(h) for h in heads]
+            assert spots == sorted(spots) and spots[-1] < body.index("<td"), lang
+            assert body.count('<td valign="top">\n\n<!-- draft: ') == 1, lang
             assert body.count('<td valign="top">\n\n<!-- source: ') == 2, lang
-            assert body.count("<!-- simple-korean: on -->\n\n</td>") == 2, lang
+            assert body.count("<!-- simple-korean: on -->\n\n</td>") == 3, lang
             sources = [m[0] for m in mx.SOURCE_BLOCK.findall(body)]
-            assert sources == [f"{rel}/docs/baseline__troubleshooting__r1.json", f"{rel}/docs/plain__troubleshooting__r1.json"], lang
+            assert sources == [f"{rel}/docs/baseline__{PICK}__r1.json", f"{rel}/docs/plain__{PICK}__r1.json"], lang
             after_table = body.split("</table>", 1)[1]
             assert f"`{sources[0]}`" in after_table and f"`{sources[1]}`" in after_table, lang
 
@@ -161,3 +176,39 @@ def test_update_readmes_stops_before_writing_when_a_readme_is_broken():
         (site / "docs/README.ja.md").unlink()
         assert "docs/README.ja.md" in _exit_message(lambda: mx.update_readmes(root, root=site))
         assert "docs/README.ja.md" in _exit_message(lambda: report.update_readmes(root, SCENARIOS, root=site))
+
+
+def test_readme_pick_is_a_polish_task_with_a_draft():
+    # README의 보기 설명과 칸 이름(다듬은 문서)은 보기 예시가 다듬기 과제라고 가정한다
+    scenarios = json.loads((ROOT / "evals" / "scenarios.json").read_text(encoding="utf-8"))
+    pick = next(s for s in scenarios if s["id"] == PICK)
+    assert pick.get("draft"), pick
+
+
+def test_example_table_puts_the_saved_draft_in_the_first_column():
+    with tempfile.TemporaryDirectory(dir=str(ROOT / "evals")) as d:
+        root = _results(d)
+        draft = "**연결** — 방화벽·보안 그룹을 확인해 보세요."
+        (root / "inputs" / "scenarios.json").write_text(
+            json.dumps([{"id": PICK, "type": "procedural", "prompt": "다듬으세요.", "draft": draft}], ensure_ascii=False),
+            encoding="utf-8")
+        rel = mx.inputs_rel(root)
+        for lang in i18n.LANGS:
+            body = mx.readme_example(root, lang)
+            assert i18n.TEXT[lang]["example_draft"].format(src=rel, href=i18n.link(lang, rel), id=PICK) in body, lang
+            # 초안은 표의 첫째 칸이다. 표 밖에 따로 인용하지 않는다
+            table = body[body.index("<table>"):body.index("</table>")]
+            assert table.index(f"<!-- draft: {rel}#{PICK} -->") < table.index("<!-- source: "), lang
+            assert body.count("<!-- draft: ") == 1 and table.count("<th ") == 3, lang
+        body = mx.readme_example(root)
+        assert mx.check_sources(body) == []
+        assert mx.check_sources(body.replace("> **연결** —", "> 연결:")) == [f"{rel}#{PICK}: 인용한 초안이 원본과 다릅니다"]
+        assert mx.pick_problems(root) == []
+        before, after = (f"{root.resolve().relative_to(ROOT).as_posix()}/docs/{c}__{PICK}__r1.json" for c in ("baseline", "plain"))
+        section = mx._section("초안 다듬기", before, after, "기본 모드", (rel, PICK))
+        assert section.index(f"<!-- draft: {rel}#{PICK} -->") < section.index("전: 스킬 없음") and mx.check_sources(section) == []
+        assert "> **연결** — 방화벽·보안 그룹을 확인해 보세요." in section
+        assert mx.check_sources(section.replace("> **연결** —", "> 연결:")) == [f"{rel}#{PICK}: 인용한 초안이 원본과 다릅니다"]
+        # 보기 과제에 초안이 없으면 보기 설명과 맞지 않는다
+        (root / "inputs" / "scenarios.json").write_text(json.dumps([{"id": PICK, "type": "procedural"}]), encoding="utf-8")
+        assert any("초안이 없습니다" in p for p in mx.pick_problems(root))

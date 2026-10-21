@@ -151,6 +151,12 @@ def test_reader_check_reply_counts():
     assert report["visible_total"] == 2, report
 
 
+def test_reader_check_counts_middle_dots_outside_code_only():
+    r = ko_lint.reader_check("읽기·쓰기ㆍ삭제・보관을 나눕니다. `a·b`\n```\n가·나\n```\n")
+    # 가운뎃점은 답변 규칙이 막지 않으므로 visible_total에 넣지 않는다
+    assert (r["counts"]["middle_dot"], r["visible_total"]) == (3, 0), r
+
+
 def test_reader_check_counts_tables_and_lead_structure():
     r = ko_lint.reader_check("답은 둘입니다.\n\n| 이름 | 값 |\n|---|:-:|\n| a | 1 |\n")
     assert (r["counts"]["tables"], r["counts"]["lead_structure"], r["visible_total"]) == (1, 0, 1), r

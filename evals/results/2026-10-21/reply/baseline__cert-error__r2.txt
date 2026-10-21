@@ -1,0 +1,36 @@
+**원인:** curl이 서버가 보낸 인증서 체인을 검증하다가, 체인을 끝까지 따라가도 신뢰하는 루트 CA를 찾지 못한 겁니다. 개발·스테이징이 둘 다 그렇다면 서버 한 대의 문제라기보다 클라이언트 쪽 신뢰 저장소에 문제가 있을 가능성이 큽니다. 사내 API는 보통 사내 사설 CA로 서명한 인증서를 쓰는데, 이 CA가 curl의 CA 번들에 없어서 생기는 경우가 가장 흔합니다.
+
+**가능한 원인 (흔한 순서)**
+1. **사내 사설 CA 미등록:** 사내 루트 CA가 curl이 쓰는 번들에 없습니다.
+2. **중간 인증서 누락:** 서버가 leaf 인증서만 보내고 intermediate를 빼먹었습니다. 이 경우 브라우저는 되는데 curl만 실패하기도 합니다.
+3. **프록시/보안 장비의 TLS 가로채기:** 회사 프록시가 인증서를 재서명하는 경우입니다.
+4. **curl이 쓰는 CA 번들이 다름:** Homebrew curl과 시스템 curl은 참조하는 번들이 서로 다릅니다.
+
+**진단**
+```sh
+# 서버가 보내는 체인과 발급자 확인
+openssl s_client -connect api.dev.example.com:443 -showcerts </dev/null
+
+# curl이 쓰는 CA 번들 확인
+curl -v https://api.dev.example.com 2>&1 | grep -i -E "CAfile|CApath"
+```
+출력의 `issuer`가 사내 CA인지, 체인이 몇 단계로 오는지 확인해 보세요. `Verify return code: 20`이면 로컬 발급자 인증서를 못 찾았다는 뜻입니다.
+
+**해결**
+- **사내 루트 CA를 신뢰 등록하는 방법 (권장):** IT/보안팀에서 루트 CA `.pem`을 받아 등록합니다.
+  ```sh
+  # 한 번만 쓸 때
+  curl --cacert /path/to/company-root-ca.pem https://api.dev.example.com
+
+  # 계속 쓸 때 (셸 프로필에 추가)
+  export CURL_CA_BUNDLE=/path/to/company-root-ca.pem
+  # 또는 macOS 시스템 키체인에 등록
+  sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain company-root-ca.pem
+  ```
+  Homebrew curl은 키체인을 보지 않을 수 있어, 이 경우에는 `--cacert`나 환경변수 방식이 확실합니다.
+- **중간 인증서가 빠진 경우:** 서버 쪽에서 `fullchain`(leaf와 intermediate를 합친 파일)을 내보내도록 인프라 담당자에게 요청해야 합니다.
+- **프록시가 원인인 경우:** 프록시의 루트 CA를 위와 같이 등록합니다.
+
+**`-k`/`--insecure`는 임시 확인용으로만 쓰세요.** 인증서 검증을 통째로 끄기 때문에 중간자 공격에 노출됩니다. 스크립트나 CI에는 넣지 않는 게 좋습니다.
+
+`openssl s_client` 출력(민감 정보는 가리고)을 알려 주시면 위 원인 중 어느 쪽인지 같이 좁혀 볼 수 있습니다.
