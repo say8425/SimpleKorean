@@ -75,16 +75,7 @@ npm を使う場合は `npx skills add say8425/SimpleKorean` を実行してく�
 同じモデルが同じ下書き（CLI ツールのトラブルシューティングの節）を整えた2つの文書です。下書きには em-dash、太字、中点をわざと入れました。左はスキルなしで、右は SimpleKorean の基本モードを有効にして整えました。どちらの文書も手を加えずに載せました。このスキルはモデルに韓国語を書かせるものなので、文書は韓国語のままです。
 
 <!-- example:start -->
-次は2つの文書のもとになった下書きです。元は [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json) の `polish` 課題です。
-
-<!-- draft: evals/results/2026-10-21/inputs/scenarios.json#polish -->
-<!-- simple-korean: off -->
-> ## 문제 해결
->
-> **Postgres 연결 타임아웃** — sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽·보안 그룹이 5432 포트를 막고 있는 것입니다. `nc -zv <호스트> 5432`로 연결되는지 확인해 보시기 바랍니다.
->
-> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책·버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 먼저 `aws sts get-caller-identity`로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.
-<!-- simple-korean: on -->
+下書きは [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json) の `polish` 課題にあります。
 
 <table>
 <tr>

@@ -179,7 +179,7 @@ def test_readme_pick_is_a_polish_task_with_a_draft():
     assert pick.get("draft"), pick
 
 
-def test_example_block_shows_the_saved_draft_and_checks_it():
+def test_example_block_links_the_saved_draft_and_examples_quote_it():
     with tempfile.TemporaryDirectory(dir=str(ROOT / "evals")) as d:
         root = _results(d)
         assert "<!-- draft: " not in mx.readme_example(root)
@@ -192,14 +192,14 @@ def test_example_block_shows_the_saved_draft_and_checks_it():
         for lang in i18n.LANGS:
             body = mx.readme_example(root, lang)
             assert body.startswith(i18n.TEXT[lang]["example_draft"].format(src=rel, href=i18n.link(lang, rel), id=PICK)), lang
-            assert body.index(f"<!-- draft: {rel}#{PICK} -->") < body.index("<table>"), lang
-        body = mx.readme_example(root)
-        assert mx.check_sources(body) == [] and "> **연결** — 방화벽·보안 그룹을 확인해 보세요." in body
-        assert mx.check_sources(body.replace("> **연결** —", "> 연결:")) == [f"{rel}#{PICK}: 인용한 초안이 원본과 다릅니다"]
+            # README에는 초안을 인용하지 않는다. 스킬 없는 문서와 거의 같아 두 번 실린 것처럼 보인다
+            assert "<!-- draft: " not in body and draft not in body, lang
         assert mx.pick_problems(root) == []
         before, after = (f"{root.resolve().relative_to(ROOT).as_posix()}/docs/{c}__{PICK}__r1.json" for c in ("baseline", "plain"))
         section = mx._section("초안 다듬기", before, after, "기본 모드", (rel, PICK))
         assert section.index(f"<!-- draft: {rel}#{PICK} -->") < section.index("전: 스킬 없음") and mx.check_sources(section) == []
+        assert "> **연결** — 방화벽·보안 그룹을 확인해 보세요." in section
+        assert mx.check_sources(section.replace("> **연결** —", "> 연결:")) == [f"{rel}#{PICK}: 인용한 초안이 원본과 다릅니다"]
         # 보기 과제에 초안이 없으면 보기 설명과 맞지 않는다
         (root / "inputs" / "scenarios.json").write_text(json.dumps([{"id": PICK, "type": "procedural"}]), encoding="utf-8")
         assert any("초안이 없습니다" in p for p in mx.pick_problems(root))

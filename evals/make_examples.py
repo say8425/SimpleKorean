@@ -118,13 +118,13 @@ def _cell(rel):
 def readme_example(results_dir, lang="ko"):
     """README 보기 블록의 본문. 왼쪽 칸은 스킬 없이, 오른쪽 칸은 SimpleKorean을 켜고 쓴 문서다.
 
-    인용한 출력은 어느 언어에서나 한국어 원문이다.
+    인용한 출력은 어느 언어에서나 한국어 원문이다. 초안은 링크만 싣는다. 스킬 없는 문서가 초안과 거의 같아서
+    초안까지 인용하면 같은 글이 두 번 실린 것처럼 보이기 때문이다. 초안 인용은 examples/before-after.md에 있다.
     """
     scenario, cond = README_PICK
     before, after = _pair(results_dir, "docs", scenario, cond, "json")
     text, rel = i18n.TEXT[lang], inputs_rel(results_dir)
-    lead = [text["example_draft"].format(src=rel, href=i18n.link(lang, rel), id=scenario),
-            draft_block(rel, scenario)] if draft_text(rel, scenario) else []
+    lead = [text["example_draft"].format(src=rel, href=i18n.link(lang, rel), id=scenario)] if draft_text(rel, scenario) else []
     table = "\n".join([
         "<table>", "<tr>",
         f'<th width="50%">{text["example_before"]}</th>',
