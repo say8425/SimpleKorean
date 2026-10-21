@@ -1,0 +1,40 @@
+**원인:** curl이 서버가 보낸 인증서 체인을 검증하려는데, 체인을 서명한 발급자(CA)가 curl의 신뢰 저장소(CA 번들)에 없다는 뜻입니다. 사내 API는 보통 사내 사설 CA로 서명한 인증서를 쓰기 때문에 공인 CA 번들에는 그 CA가 없습니다. 개발·스테이징 서버 모두에서 나는 것도 같은 사내 CA를 쓰기 때문일 가능성이 큽니다.
+
+가능한 원인은 다음과 같습니다.
+1. **사내 루트/중간 CA가 내 머신에 신뢰 등록되어 있지 않음.** 가장 흔한 경우입니다.
+2. **서버가 중간 인증서를 빠뜨리고 leaf 인증서만 보냄.** 이 경우 서버 설정 문제입니다.
+3. **사내 프록시나 보안 장비가 TLS를 가로채며** 자체 CA로 재서명함.
+4. 최근에 CA를 교체하거나 인증서를 갱신했는데 클라이언트에 반영되지 않음.
+
+**진단:**
+```bash
+# 서버가 보내는 체인과 발급자 확인
+openssl s_client -connect api.internal.example.com:443 -showcerts </dev/null 2>/dev/null | grep -E 's:|i:|Verify'
+
+# curl이 쓰는 CA 번들 경로
+curl -v https://api.internal.example.com 2>&1 | grep -i cafile
+```
+- 체인에 leaf 인증서 하나만 보이면 2번(서버의 중간 인증서 누락)입니다.
+- 발급자(`i:`)가 사내 CA 이름이면 1번입니다.
+- 발급자가 프록시/보안 장비 이름이면 3번입니다.
+
+**해결 (권장 순서):**
+
+1. **사내 루트 CA를 받아 신뢰 등록합니다.** IT/보안팀이나 사내 위키에서 루트 CA(`.crt`/`.pem`)를 받습니다.
+   - macOS 시스템 전체에 등록하려면 아래 명령을 씁니다. 다만 시스템 키체인에 등록해도 curl 빌드에 따라 반영되지 않을 수 있습니다.
+     ```bash
+     sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain company-root-ca.crt
+     ```
+   - curl에만 적용하려면 `--cacert`를 쓰거나 환경변수를 지정합니다.
+     ```bash
+     curl --cacert company-root-ca.pem https://api.internal.example.com
+     # 또는 셸 설정(~/.zshrc)에
+     export CURL_CA_BUNDLE=/path/to/company-root-ca.pem
+     ```
+     단, `CURL_CA_BUNDLE`은 기본 번들을 대체하므로 공인 사이트 호출이 깨질 수 있습니다. 그럴 때는 기본 번들에 사내 CA를 이어 붙인 파일을 만들어 쓰세요.
+2. **서버 쪽 문제(원인 2)라면** 서버나 로드밸런서에 leaf 인증서 뒤에 중간 인증서까지 이어 붙인 fullchain을 설정하도록 인프라팀에 요청합니다.
+3. **프록시 때문이라면** 해당 프록시의 루트 CA도 같은 방식으로 등록합니다.
+
+**피해야 할 것:** `curl -k`(`--insecure`)는 검증을 완전히 끄므로 일시적인 연결 확인용으로만 쓰세요. 스크립트나 CI에 남기면 중간자 공격에 노출됩니다.
+
+위 진단 명령의 출력(발급자 `i:` 줄과 `Verify return code`)을 알려주시면 어느 원인인지 좁혀 드리겠습니다.

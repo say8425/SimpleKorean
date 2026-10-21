@@ -1,0 +1,49 @@
+curl이 서버 인증서를 발급한 인증 기관(CA)을 신뢰 목록에서 찾지 못했기 때문에 나는 오류입니다. 개발과 스테이징 서버가 모두 실패하므로, 사내 사설 CA가 서명한 인증서를 쓰고 있을 가능성이 가장 높습니다.
+
+## 원인 후보
+
+1. 사내 루트 CA가 내 컴퓨터의 신뢰 목록에 없습니다. 가장 흔한 원인입니다.
+2. 서버가 중간 인증서를 보내지 않습니다. 이 경우 체인이 끊깁니다.
+3. 회사 프록시가 TLS 검사(암호화된 통신을 풀어 보는 기능)를 하고, 프록시의 CA를 신뢰하지 않습니다.
+
+## 원인 확인
+
+아래 명령으로 서버가 보내는 인증서 체인을 확인하세요. `api.example.internal`은 실제 호스트로 바꾸세요.
+
+```
+openssl s_client -connect api.example.internal:443 -showcerts
+```
+
+출력에서 `Verify return code`와 `issuer` 줄을 보세요. 사내 CA 이름이 보이면 원인 1 또는 3입니다. 체인에 서버 인증서 하나만 있으면 원인 2입니다.
+
+## 해결 방법
+
+원인 1과 3은 사내 루트 CA 파일(PEM 형식)을 받아서 신뢰시키면 해결됩니다. 보안팀이나 인프라팀에 파일 위치를 물어보세요.
+
+curl 한 번만 쓸 때는 CA 파일을 직접 지정하세요.
+
+```
+curl --cacert /path/to/internal-root-ca.pem https://api.example.internal/health
+```
+
+모든 curl에 적용하려면 환경 변수를 설정하세요.
+
+```
+export CURL_CA_BUNDLE=/path/to/internal-root-ca.pem
+```
+
+macOS 키체인에 등록하려면 아래 명령을 실행하세요. 관리자 권한이 필요합니다.
+
+```
+sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /path/to/internal-root-ca.pem
+```
+
+Homebrew로 설치한 curl은 키체인을 읽지 않고 자체 CA 번들을 씁니다. 이 curl에서는 키체인 등록이 효과가 없을 수 있으므로 `--cacert`나 `CURL_CA_BUNDLE`을 쓰세요.
+
+원인 2는 서버 쪽에서 고쳐야 합니다. 서버나 로드 밸런서가 서버 인증서와 중간 인증서를 합친 전체 체인(fullchain)을 보내도록 설정하세요.
+
+## 주의
+
+`curl -k`(또는 `--insecure`)는 인증서 검증을 끕니다. 원인을 찾는 임시 확인에만 쓰세요. 스크립트나 CI에 남기면 중간자 공격(통신 중간에서 내용을 가로채는 공격)에 노출됩니다.
+
+호스트 이름과 `openssl s_client` 출력을 알려주시면 어느 원인인지 같이 판단하겠습니다.

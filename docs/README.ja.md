@@ -75,53 +75,55 @@ npm を使う場合は `npx skills add say8425/SimpleKorean` を実行してく�
 同じモデルが同じ下書き（CLI ツールのトラブルシューティングの節）を整えた2つの文書です。下書きには em-dash、太字、中点をわざと入れました。左はスキルなしで、右は SimpleKorean の基本モードを有効にして整えました。どちらの文書も手を加えずに載せました。このスキルはモデルに韓国語を書かせるものなので、文書は韓国語のままです。
 
 <!-- example:start -->
+次は2つの文書が整えた下書きです。元は [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json) の `polish` 課題です。
+
+<!-- draft: evals/results/2026-10-21/inputs/scenarios.json#polish -->
+<!-- simple-korean: off -->
+> ## 문제 해결
+>
+> **Postgres 연결 타임아웃** — sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽·보안 그룹이 5432 포트를 막고 있는 것입니다. `nc -zv <호스트> 5432`로 연결되는지 확인해 보시기 바랍니다.
+>
+> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책·버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 먼저 `aws sts get-caller-identity`로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.
+<!-- simple-korean: on -->
+
 <table>
 <tr>
-<th width="50%">スキルなしで書いた文書</th>
-<th width="50%">SimpleKorean を有効にして書いた文書</th>
+<th width="50%">スキルなしで整えた文書</th>
+<th width="50%">SimpleKorean を有効にして整えた文書</th>
 </tr>
 <tr>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-17/docs/baseline__troubleshooting__r1.json -->
+<!-- source: evals/results/2026-10-21/docs/baseline__polish__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
-> ### Postgres 연결 타임아웃
-> `connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근되는지 확인하세요. `nc -zv <호스트> 5432`로 점검할 수 있습니다. 방화벽이나 보안 그룹, VPN 연결 상태도 살펴보세요. 네트워크에 문제가 없는데도 지연된다면 `--connect-timeout 30`처럼 제한 시간을 늘려 보세요. 접속 문자열의 `sslmode` 설정이 서버와 맞는지도 확인해야 합니다.
+> **Postgres 연결 타임아웃** — sqlpipe에서 `connection timed out` 오류가 나면 대개 방화벽이나 보안 그룹이 5432 포트를 막고 있는 경우입니다. `nc -zv <호스트> 5432`로 연결 가능 여부를 먼저 확인하세요.
 >
-> ### S3 권한 오류
-> `AccessDenied` 또는 `403`이 나오면 현재 자격 증명이 올바른지 `aws sts get-caller-identity`로 확인하세요. 그다음 IAM 정책에 대상 버킷의 `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` 권한이 있는지 보세요. 버킷 이름과 리전이 맞는지, 버킷 정책이 접근을 막고 있지 않은지도 확인하세요.
+> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책과 버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 그 전에 `aws sts get-caller-identity`로 현재 사용 중인 자격 증명이 맞는지 먼저 확인하는 것이 좋습니다.
 <!-- simple-korean: on -->
 
 </td>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-17/docs/plain__troubleshooting__r1.json -->
+<!-- source: evals/results/2026-10-21/docs/plain__polish__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
 > ### Postgres 연결 타임아웃
 >
-> sqlpipe는 Postgres 포트에 연결하지 못하면 `dial tcp: i/o timeout` 오류를 내고 멈춥니다.
->
-> 1. sqlpipe를 실행하는 호스트가 Postgres 포트(기본값 5432)에 연결할 수 있는지 확인하세요. 보통 방화벽이나 보안 그룹이 연결을 막습니다.
-> 2. 데이터베이스가 관리형(RDS, Cloud SQL)이면, 인스턴스가 sqlpipe의 IP에서 오는 연결을 허용하는지 확인하세요.
+> sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽이나 보안 그룹이 5432 포트를 막습니다. sqlpipe를 실행하는 호스트에서 `nc -zv <호스트> 5432`로 연결되는지 확인하세요.
 >
 > ### S3 권한 오류
 >
-> sqlpipe가 S3에 쓸 때 `AccessDenied` 오류가 나면 자격 증명에 권한이 없는 것입니다.
->
-> 1. sqlpipe를 실행하는 호스트에서 어떤 자격 증명을 쓰는지 확인하세요.
-> 2. 그 자격 증명의 IAM 정책이 대상 버킷의 `s3:PutObject`를 허용하는지 확인하세요.
-> 3. 버킷 정책이 해당 자격 증명을 거부하면 버킷 정책을 고치세요.
+> sqlpipe가 `AccessDenied` 오류를 내면 먼저 `aws sts get-caller-identity`로 현재 쓰는 자격 증명을 확인하세요. 그다음 IAM 정책과 버킷 정책에 읽기와 쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요.
 <!-- simple-korean: on -->
 
 </td>
 </tr>
 </table>
 
-元のファイルは、左が `evals/results/2026-10-17/docs/baseline__troubleshooting__r1.json`、右が `evals/results/2026-10-17/docs/plain__troubleshooting__r1.json` です。
+元のファイルは、左が `evals/results/2026-10-21/docs/baseline__polish__r1.json`、右が `evals/results/2026-10-21/docs/plain__polish__r1.json` です。
 
 回答の例とほかの文書の例は [`examples/before-after.md`](../examples/before-after.md) にあります。
 <!-- example:end -->
@@ -130,27 +132,35 @@ npm を使う場合は `npx skills add say8425/SimpleKorean` を実行してく�
 
 下の数値はすべて、コミットした生の出力から計算し直した値です。CI がプッシュのたびに `evals/check_numbers.py` で照合します。文書と回答は `claude-sonnet-5-5`（effort low）が書き、判定は `claude-opus-5-5` が行いました。どの実行も、ユーザー設定、MCP サーバー、AGENTS.md のような指示ファイルを読み込んでいません。判定モデルも Claude なので、同じ系列に有利な偏りがあるかもしれません。語節（어절）は、韓国語で空白によって区切られる単位です。
 
-<!-- benchmark:start evals/results/2026-10-17 -->
+<!-- benchmark:start evals/results/2026-10-21 -->
 ### 回答
 
-専門用語を1つずつ含む質問8個を、条件ごとに2回ずつ尋ねました。回答は全部で32個です。スキルを有効にすると、読者に見える欠陥（em-dash、太字、表、先頭行の見出しや箇条書き）が100%減りました（139個から0個）。ブラインド判定では、SimpleKorean の回答が16組のうち14組で勝ち、2組で引き分け、0組で負けました。
+専門用語を1つずつ含む質問8個を、条件ごとに2回ずつ尋ねました。どの質問にも em-dash と中点（·）を1つずつ入れました。中点は回答ルールで禁止していないため、欠陥には含めず別に数えました。回答は全部で32個です。スキルを有効にすると、読者に見える欠陥（em-dash、太字、表、先頭行の見出しや箇条書き）が100%減りました（162個から0個）。ブラインド判定では、SimpleKorean の回答が16組のうち12組で勝ち、3組で引き分け、1組で負けました。質問に em-dash があっても、スキルなしの回答は em-dash を使いませんでした。そのため、em-dash を取り除くかどうかは、下の文書の下書きを整える課題で確かめます。
 
-| 条件 | 回答数 | 平均語節数 | 平均文数 | em-dash | 太字 | 表 | 先頭行の見出し・箇条書き | 見出し | 箇条書き | 挨拶と結び |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| スキルなし | 16 | 235 | 28.6 | 0 | 130 | 3 | 6 | 44 | 189 | 14 |
-| SimpleKorean | 16 | 193 | 25.8 | 0 | 0 | 0 | 0 | 49 | 135 | 3 |
+| 条件 | 回答数 | 平均語節数 | 平均文数 | em-dash | 太字 | 表 | 先頭行の見出し・箇条書き | 中点 | 見出し | 箇条書き | 挨拶と結び |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| スキルなし | 16 | 266 | 31.2 | 0 | 155 | 3 | 4 | 26 | 36 | 211 | 13 |
+| SimpleKorean | 16 | 223 | 31.0 | 0 | 0 | 0 | 0 | 2 | 54 | 173 | 5 |
 
 ### 文書
 
-sqlpipe の文書課題8個を、条件ごとに2回ずつ書きました。比率は、リンターが数えた件数を語節数で割った値です。リンターは正規表現による検査なので、順位ではなく傾向として読んでください。
+sqlpipe の文書課題9個を、条件ごとに2回ずつ書きました。比率は、リンターが数えた件数を語節数で割った値です。リンターは正規表現による検査なので、順位ではなく傾向として読んでください。
 
 | 条件 | 文書数 | 100語節あたりのエラー | 100語節あたりの警告 | 100語節あたりの翻訳調 | 指定表記の比率 | やさしい語の比率 | 最長の文 |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| スキルなし | 16 | 0.14 | 0.97 | 0.28 | 95.1% | 39.7% | 19語節 |
-| 基本モード | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 42.9% | 15語節 |
-| 厳格モード | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 42.9% | 14語節 |
+| スキルなし | 18 | 0.75 | 0.63 | 0.38 | 100.0% | 42.7% | 18語節 |
+| 基本モード | 18 | 0.00 | 0.15 | 0.15 | 100.0% | 45.6% | 15語節 |
+| 厳格モード | 18 | 0.00 | 0.00 | 0.00 | 100.0% | 40.8% | 13語節 |
 
-生の出力、表記の分布、測定条件は [`evals/results/2026-10-17/RESULTS.md`](../evals/results/2026-10-17/RESULTS.md) にあります。
+文書課題のうち1つは、em-dash、太字、中点を含む下書きを整える課題です。下書きには em-dash が2個、太字が2か所、中点が3個あります。下の表は、条件ごとに整えた文書に含まれる数の合計です。条件ごとに2回整えたので、下書きの印がすべて残れば em-dash 4個、太字 4か所、中点 6個になります。中点は文書ルールでも禁止していないため、参考として数えます。下書きは [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json) の `polish` 課題にあります。
+
+| 条件 | 文書数 | em-dash | 太字 | 中点 |
+|---|---:|---:|---:|---:|
+| スキルなし | 2 | 4 | 4 | 1 |
+| 基本モード | 2 | 0 | 0 | 0 |
+| 厳格モード | 2 | 0 | 0 | 0 |
+
+生の出力、表記の分布、測定条件は [`evals/results/2026-10-21/RESULTS.md`](../evals/results/2026-10-21/RESULTS.md) にあります。
 <!-- benchmark:end -->
 
 ## ルール

@@ -1,0 +1,13 @@
+{
+  "text": "sqlpipe는 Postgres 테이블을 Parquet 파일로 변환해 S3에 동기화하는 CLI 도구입니다. 복잡한 ETL 파이프라인이나 별도 인프라 없이, 명령어 한 줄로 운영 데이터베이스의 데이터를 분석용 데이터 레이크로 옮길 수 있습니다.\n\n동기화할 테이블과 대상 S3 경로만 지정하면, sqlpipe가 스키마를 읽어 Parquet 형식으로 저장합니다. 반복 실행해도 안전하므로 cron이나 CI 작업에 쉽게 붙일 수 있습니다.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 234,
+  "cost_usd": 0.0249859,
+  "duration_ms": 2976,
+  "condition": "baseline",
+  "scenario": "readme-intro",
+  "type": "descriptive",
+  "run": 2
+}

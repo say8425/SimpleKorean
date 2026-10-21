@@ -75,53 +75,55 @@ npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명�
 같은 모델이 같은 초안을 다듬은 문서 두 개입니다. 초안은 CLI 도구의 문제 해결 절입니다. 이 초안에는 em-dash, 굵은 글씨, 가운뎃점을 일부러 넣었습니다. 왼쪽은 스킬 없이, 오른쪽은 SimpleKorean의 기본 모드를 켜고 다듬었습니다. 두 문서 모두 고치지 않고 옮겼습니다.
 
 <!-- example:start -->
+아래는 두 문서가 다듬은 초안입니다. 원본은 [`evals/results/2026-10-21/inputs/scenarios.json`](evals/results/2026-10-21/inputs/scenarios.json)의 `polish` 과제입니다.
+
+<!-- draft: evals/results/2026-10-21/inputs/scenarios.json#polish -->
+<!-- simple-korean: off -->
+> ## 문제 해결
+>
+> **Postgres 연결 타임아웃** — sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽·보안 그룹이 5432 포트를 막고 있는 것입니다. `nc -zv <호스트> 5432`로 연결되는지 확인해 보시기 바랍니다.
+>
+> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책·버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 먼저 `aws sts get-caller-identity`로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.
+<!-- simple-korean: on -->
+
 <table>
 <tr>
-<th width="50%">스킬 없이 쓴 문서</th>
-<th width="50%">SimpleKorean을 켜고 쓴 문서</th>
+<th width="50%">스킬 없이 다듬은 문서</th>
+<th width="50%">SimpleKorean을 켜고 다듬은 문서</th>
 </tr>
 <tr>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-17/docs/baseline__troubleshooting__r1.json -->
+<!-- source: evals/results/2026-10-21/docs/baseline__polish__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
-> ### Postgres 연결 타임아웃
-> `connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근되는지 확인하세요. `nc -zv <호스트> 5432`로 점검할 수 있습니다. 방화벽이나 보안 그룹, VPN 연결 상태도 살펴보세요. 네트워크에 문제가 없는데도 지연된다면 `--connect-timeout 30`처럼 제한 시간을 늘려 보세요. 접속 문자열의 `sslmode` 설정이 서버와 맞는지도 확인해야 합니다.
+> **Postgres 연결 타임아웃** — sqlpipe에서 `connection timed out` 오류가 나면 대개 방화벽이나 보안 그룹이 5432 포트를 막고 있는 경우입니다. `nc -zv <호스트> 5432`로 연결 가능 여부를 먼저 확인하세요.
 >
-> ### S3 권한 오류
-> `AccessDenied` 또는 `403`이 나오면 현재 자격 증명이 올바른지 `aws sts get-caller-identity`로 확인하세요. 그다음 IAM 정책에 대상 버킷의 `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` 권한이 있는지 보세요. 버킷 이름과 리전이 맞는지, 버킷 정책이 접근을 막고 있지 않은지도 확인하세요.
+> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책과 버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 그 전에 `aws sts get-caller-identity`로 현재 사용 중인 자격 증명이 맞는지 먼저 확인하는 것이 좋습니다.
 <!-- simple-korean: on -->
 
 </td>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-17/docs/plain__troubleshooting__r1.json -->
+<!-- source: evals/results/2026-10-21/docs/plain__polish__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
 > ### Postgres 연결 타임아웃
 >
-> sqlpipe는 Postgres 포트에 연결하지 못하면 `dial tcp: i/o timeout` 오류를 내고 멈춥니다.
->
-> 1. sqlpipe를 실행하는 호스트가 Postgres 포트(기본값 5432)에 연결할 수 있는지 확인하세요. 보통 방화벽이나 보안 그룹이 연결을 막습니다.
-> 2. 데이터베이스가 관리형(RDS, Cloud SQL)이면, 인스턴스가 sqlpipe의 IP에서 오는 연결을 허용하는지 확인하세요.
+> sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽이나 보안 그룹이 5432 포트를 막습니다. sqlpipe를 실행하는 호스트에서 `nc -zv <호스트> 5432`로 연결되는지 확인하세요.
 >
 > ### S3 권한 오류
 >
-> sqlpipe가 S3에 쓸 때 `AccessDenied` 오류가 나면 자격 증명에 권한이 없는 것입니다.
->
-> 1. sqlpipe를 실행하는 호스트에서 어떤 자격 증명을 쓰는지 확인하세요.
-> 2. 그 자격 증명의 IAM 정책이 대상 버킷의 `s3:PutObject`를 허용하는지 확인하세요.
-> 3. 버킷 정책이 해당 자격 증명을 거부하면 버킷 정책을 고치세요.
+> sqlpipe가 `AccessDenied` 오류를 내면 먼저 `aws sts get-caller-identity`로 현재 쓰는 자격 증명을 확인하세요. 그다음 IAM 정책과 버킷 정책에 읽기와 쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요.
 <!-- simple-korean: on -->
 
 </td>
 </tr>
 </table>
 
-원본 파일은 왼쪽이 `evals/results/2026-10-17/docs/baseline__troubleshooting__r1.json`, 오른쪽이 `evals/results/2026-10-17/docs/plain__troubleshooting__r1.json`입니다.
+원본 파일은 왼쪽이 `evals/results/2026-10-21/docs/baseline__polish__r1.json`, 오른쪽이 `evals/results/2026-10-21/docs/plain__polish__r1.json`입니다.
 
 답변 예시와 나머지 문서 예시는 [`examples/before-after.md`](examples/before-after.md)에 있습니다.
 <!-- example:end -->
@@ -134,27 +136,35 @@ npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명�
 
 어절은 띄어쓰기로 나눈 단위입니다. 지정형은 단어 목록이 쓰라고 정한 표기입니다.
 
-<!-- benchmark:start evals/results/2026-10-17 -->
+<!-- benchmark:start evals/results/2026-10-21 -->
 ### 답변
 
-전문용어가 하나씩 든 질문 8개를 조건마다 2번씩 물었습니다. 답변은 모두 32개입니다. 스킬을 켜면 화면에 드러나는 결함(em-dash, 굵은 글씨, 표, 첫 줄의 헤더나 목록)이 100% 줄었습니다(139개에서 0개). 블라인드 판정에서 SimpleKorean 답변은 16쌍 가운데 14쌍에서 이겼고, 2쌍에서 비겼고, 0쌍에서 졌습니다.
+전문용어가 하나씩 든 질문 8개를 조건마다 2번씩 물었습니다. 질문마다 em-dash와 가운뎃점(·)을 하나씩 넣었습니다. 가운뎃점은 답변 규칙이 막지 않으므로 결함에 넣지 않고 따로 셌습니다. 답변은 모두 32개입니다. 스킬을 켜면 화면에 드러나는 결함(em-dash, 굵은 글씨, 표, 첫 줄의 헤더나 목록)이 100% 줄었습니다(162개에서 0개). 블라인드 판정에서 SimpleKorean 답변은 16쌍 가운데 12쌍에서 이겼고, 3쌍에서 비겼고, 1쌍에서 졌습니다. 질문에 em-dash가 있어도 스킬 없는 답변은 em-dash를 쓰지 않았습니다. 그래서 em-dash를 지우는지는 아래 문서의 다듬기 과제로 봅니다.
 
-| 조건 | 답변 수 | 평균 어절 | 평균 문장 | em-dash | 굵은 글씨 | 표 | 첫 줄 헤더·목록 | 헤더 | 불릿 | 인사말과 맺음말 |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 스킬 없음 | 16 | 235 | 28.6 | 0 | 130 | 3 | 6 | 44 | 189 | 14 |
-| SimpleKorean | 16 | 193 | 25.8 | 0 | 0 | 0 | 0 | 49 | 135 | 3 |
+| 조건 | 답변 수 | 평균 어절 | 평균 문장 | em-dash | 굵은 글씨 | 표 | 첫 줄 헤더·목록 | 가운뎃점 | 헤더 | 불릿 | 인사말과 맺음말 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 스킬 없음 | 16 | 266 | 31.2 | 0 | 155 | 3 | 4 | 26 | 36 | 211 | 13 |
+| SimpleKorean | 16 | 223 | 31.0 | 0 | 0 | 0 | 0 | 2 | 54 | 173 | 5 |
 
 ### 문서
 
-sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린터가 센 수를 어절 수로 나눈 값입니다. 린터는 정규식으로 세므로 순위로 읽지 말고 방향으로 읽으세요.
+sqlpipe 문서 과제 9개를 조건마다 2번씩 썼습니다. 비율은 린터가 센 수를 어절 수로 나눈 값입니다. 린터는 정규식으로 세므로 순위로 읽지 말고 방향으로 읽으세요.
 
 | 조건 | 문서 수 | 100어절당 오류 | 100어절당 경고 | 100어절당 번역투 | 지정형 비율 | 쉬운 단어 비율 | 가장 긴 문장 |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| 스킬 없음 | 16 | 0.14 | 0.97 | 0.28 | 95.1% | 39.7% | 19어절 |
-| 기본 모드 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 42.9% | 15어절 |
-| 엄격 모드 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 42.9% | 14어절 |
+| 스킬 없음 | 18 | 0.75 | 0.63 | 0.38 | 100.0% | 42.7% | 18어절 |
+| 기본 모드 | 18 | 0.00 | 0.15 | 0.15 | 100.0% | 45.6% | 15어절 |
+| 엄격 모드 | 18 | 0.00 | 0.00 | 0.00 | 100.0% | 40.8% | 13어절 |
 
-원본 출력, 표기 분포, 측정 조건은 [`evals/results/2026-10-17/RESULTS.md`](evals/results/2026-10-17/RESULTS.md)에 있습니다.
+문서 과제 가운데 하나는 em-dash, 굵은 글씨, 가운뎃점이 든 초안을 다듬는 과제입니다. 초안에는 em-dash 2개, 굵은 글씨 2개, 가운뎃점 3개가 있습니다. 아래 표는 조건마다 다듬은 문서에 든 수를 더한 값입니다. 조건마다 2번 다듬었으므로, 초안의 표시가 모두 남으면 em-dash 4개, 굵은 글씨 4개, 가운뎃점 6개입니다. 가운뎃점은 문서 규칙도 막지 않으므로 참고로 셉니다. 초안은 [`evals/results/2026-10-21/inputs/scenarios.json`](evals/results/2026-10-21/inputs/scenarios.json)의 `polish` 과제에 있습니다.
+
+| 조건 | 문서 수 | em-dash | 굵은 글씨 | 가운뎃점 |
+|---|---:|---:|---:|---:|
+| 스킬 없음 | 2 | 4 | 4 | 1 |
+| 기본 모드 | 2 | 0 | 0 | 0 |
+| 엄격 모드 | 2 | 0 | 0 | 0 |
+
+원본 출력, 표기 분포, 측정 조건은 [`evals/results/2026-10-21/RESULTS.md`](evals/results/2026-10-21/RESULTS.md)에 있습니다.
 <!-- benchmark:end -->
 
 ## 규칙

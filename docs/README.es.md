@@ -75,53 +75,55 @@ Después de instalarla, pida un documento técnico. Para corregir un texto que y
 Estos son dos documentos en los que el mismo modelo pulió el mismo borrador: una sección de solución de problemas de una herramienta CLI. Pusimos a propósito em-dash, negritas y puntos medios en el borrador. El de la izquierda se pulió sin la skill y el de la derecha, con el modo básico de SimpleKorean activado. Copiamos los dos documentos sin cambios. Están en coreano, porque esta skill hace que el modelo escriba en coreano.
 
 <!-- example:start -->
+Este es el borrador que pulen los dos documentos. Es la tarea `polish` de [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
+
+<!-- draft: evals/results/2026-10-21/inputs/scenarios.json#polish -->
+<!-- simple-korean: off -->
+> ## 문제 해결
+>
+> **Postgres 연결 타임아웃** — sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽·보안 그룹이 5432 포트를 막고 있는 것입니다. `nc -zv <호스트> 5432`로 연결되는지 확인해 보시기 바랍니다.
+>
+> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책·버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 먼저 `aws sts get-caller-identity`로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.
+<!-- simple-korean: on -->
+
 <table>
 <tr>
-<th width="50%">Escrito sin la skill</th>
-<th width="50%">Escrito con SimpleKorean activado</th>
+<th width="50%">Pulido sin la skill</th>
+<th width="50%">Pulido con SimpleKorean activado</th>
 </tr>
 <tr>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-17/docs/baseline__troubleshooting__r1.json -->
+<!-- source: evals/results/2026-10-21/docs/baseline__polish__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
-> ### Postgres 연결 타임아웃
-> `connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근되는지 확인하세요. `nc -zv <호스트> 5432`로 점검할 수 있습니다. 방화벽이나 보안 그룹, VPN 연결 상태도 살펴보세요. 네트워크에 문제가 없는데도 지연된다면 `--connect-timeout 30`처럼 제한 시간을 늘려 보세요. 접속 문자열의 `sslmode` 설정이 서버와 맞는지도 확인해야 합니다.
+> **Postgres 연결 타임아웃** — sqlpipe에서 `connection timed out` 오류가 나면 대개 방화벽이나 보안 그룹이 5432 포트를 막고 있는 경우입니다. `nc -zv <호스트> 5432`로 연결 가능 여부를 먼저 확인하세요.
 >
-> ### S3 권한 오류
-> `AccessDenied` 또는 `403`이 나오면 현재 자격 증명이 올바른지 `aws sts get-caller-identity`로 확인하세요. 그다음 IAM 정책에 대상 버킷의 `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` 권한이 있는지 보세요. 버킷 이름과 리전이 맞는지, 버킷 정책이 접근을 막고 있지 않은지도 확인하세요.
+> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책과 버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 그 전에 `aws sts get-caller-identity`로 현재 사용 중인 자격 증명이 맞는지 먼저 확인하는 것이 좋습니다.
 <!-- simple-korean: on -->
 
 </td>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-17/docs/plain__troubleshooting__r1.json -->
+<!-- source: evals/results/2026-10-21/docs/plain__polish__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
 > ### Postgres 연결 타임아웃
 >
-> sqlpipe는 Postgres 포트에 연결하지 못하면 `dial tcp: i/o timeout` 오류를 내고 멈춥니다.
->
-> 1. sqlpipe를 실행하는 호스트가 Postgres 포트(기본값 5432)에 연결할 수 있는지 확인하세요. 보통 방화벽이나 보안 그룹이 연결을 막습니다.
-> 2. 데이터베이스가 관리형(RDS, Cloud SQL)이면, 인스턴스가 sqlpipe의 IP에서 오는 연결을 허용하는지 확인하세요.
+> sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽이나 보안 그룹이 5432 포트를 막습니다. sqlpipe를 실행하는 호스트에서 `nc -zv <호스트> 5432`로 연결되는지 확인하세요.
 >
 > ### S3 권한 오류
 >
-> sqlpipe가 S3에 쓸 때 `AccessDenied` 오류가 나면 자격 증명에 권한이 없는 것입니다.
->
-> 1. sqlpipe를 실행하는 호스트에서 어떤 자격 증명을 쓰는지 확인하세요.
-> 2. 그 자격 증명의 IAM 정책이 대상 버킷의 `s3:PutObject`를 허용하는지 확인하세요.
-> 3. 버킷 정책이 해당 자격 증명을 거부하면 버킷 정책을 고치세요.
+> sqlpipe가 `AccessDenied` 오류를 내면 먼저 `aws sts get-caller-identity`로 현재 쓰는 자격 증명을 확인하세요. 그다음 IAM 정책과 버킷 정책에 읽기와 쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요.
 <!-- simple-korean: on -->
 
 </td>
 </tr>
 </table>
 
-Los archivos originales son `evals/results/2026-10-17/docs/baseline__troubleshooting__r1.json` (izquierda) y `evals/results/2026-10-17/docs/plain__troubleshooting__r1.json` (derecha).
+Los archivos originales son `evals/results/2026-10-21/docs/baseline__polish__r1.json` (izquierda) y `evals/results/2026-10-21/docs/plain__polish__r1.json` (derecha).
 
 Los ejemplos de respuestas y más ejemplos de documentos están en [`examples/before-after.md`](../examples/before-after.md).
 <!-- example:end -->
@@ -130,27 +132,35 @@ Los ejemplos de respuestas y más ejemplos de documentos están en [`examples/be
 
 Volvimos a calcular todas las cifras de abajo a partir de las salidas originales guardadas en los commits. En cada push, la CI las compara con `evals/check_numbers.py`. `claude-sonnet-5-5` (effort low) escribió los documentos y las respuestas, y `claude-opus-5-5` hizo la evaluación. Ninguna ejecución leyó la configuración del usuario, servidores MCP ni archivos de instrucciones como AGENTS.md. El modelo evaluador también es Claude, así que puede tener un sesgo a favor de su misma familia de modelos. Un eojeol es una unidad del coreano separada por espacios.
 
-<!-- benchmark:start evals/results/2026-10-17 -->
+<!-- benchmark:start evals/results/2026-10-21 -->
 ### Respuestas
 
-Hicimos 8 preguntas 2 veces en cada condición. Cada pregunta contiene un término técnico. En total hay 32 respuestas. Con la skill activada, los defectos visibles para el lector (em-dash, negritas, tablas, encabezado o lista en la primera línea) bajaron un 100 % (de 139 a 0). En una evaluación a ciegas de 16 pares, la respuesta de SimpleKorean ganó 14, empató 2 y perdió 0.
+Hicimos 8 preguntas 2 veces en cada condición. Cada pregunta contiene un término técnico, un em-dash y un punto medio (·). Las reglas de respuesta no prohíben el punto medio, así que lo contamos aparte y no lo sumamos a los defectos. En total hay 32 respuestas. Con la skill activada, los defectos visibles para el lector (em-dash, negritas, tablas, encabezado o lista en la primera línea) bajaron un 100 % (de 162 a 0). En una evaluación a ciegas de 16 pares, la respuesta de SimpleKorean ganó 12, empató 3 y perdió 1. Aunque cada pregunta tenía un em-dash, las respuestas sin la skill no usaron ninguno. Por eso, la tarea de pulido de la sección de documentos comprueba si la skill los quita.
 
-| Condición | Respuestas | Media de eojeol | Media de oraciones | em-dash | Negritas | Tablas | Encabezado o lista en la primera línea | Encabezados | Viñetas | Saludos y despedidas |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Sin skill | 16 | 235 | 28.6 | 0 | 130 | 3 | 6 | 44 | 189 | 14 |
-| SimpleKorean | 16 | 193 | 25.8 | 0 | 0 | 0 | 0 | 49 | 135 | 3 |
+| Condición | Respuestas | Media de eojeol | Media de oraciones | em-dash | Negritas | Tablas | Encabezado o lista en la primera línea | Punto medio | Encabezados | Viñetas | Saludos y despedidas |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Sin skill | 16 | 266 | 31.2 | 0 | 155 | 3 | 4 | 26 | 36 | 211 | 13 |
+| SimpleKorean | 16 | 223 | 31.0 | 0 | 0 | 0 | 0 | 2 | 54 | 173 | 5 |
 
 ### Documentos
 
-El modelo escribió cada una de las 8 tareas de documentación de sqlpipe 2 veces en cada condición. Cada tasa es el recuento del linter dividido entre el número de eojeol. El linter es una comprobación con expresiones regulares, así que lea las cifras como una dirección, no como una clasificación.
+El modelo escribió cada una de las 9 tareas de documentación de sqlpipe 2 veces en cada condición. Cada tasa es el recuento del linter dividido entre el número de eojeol. El linter es una comprobación con expresiones regulares, así que lea las cifras como una dirección, no como una clasificación.
 
 | Condición | Documentos | Errores por 100 eojeol | Avisos por 100 eojeol | Calcos por 100 eojeol | Tasa de grafía designada | Tasa de palabras fáciles | Oración más larga |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Sin skill | 16 | 0.14 | 0.97 | 0.28 | 95.1 % | 39.7 % | 19 eojeol |
-| Modo básico | 16 | 0.00 | 0.00 | 0.00 | 100.0 % | 42.9 % | 15 eojeol |
-| Modo estricto | 16 | 0.00 | 0.00 | 0.00 | 100.0 % | 42.9 % | 14 eojeol |
+| Sin skill | 18 | 0.75 | 0.63 | 0.38 | 100.0 % | 42.7 % | 18 eojeol |
+| Modo básico | 18 | 0.00 | 0.15 | 0.15 | 100.0 % | 45.6 % | 15 eojeol |
+| Modo estricto | 18 | 0.00 | 0.00 | 0.00 | 100.0 % | 40.8 % | 13 eojeol |
 
-Las salidas originales, la distribución de grafías y las condiciones de medición están en [`evals/results/2026-10-17/RESULTS.md`](../evals/results/2026-10-17/RESULTS.md).
+Una de las tareas de documentación pide pulir un borrador con em-dash, negritas y puntos medios. El borrador tiene estas marcas: em-dash 2, negritas 2, punto medio 3. La tabla siguiente suma estas marcas en los documentos pulidos de cada condición. Cada condición pulió el borrador 2 veces, así que si quedaran todas las marcas, las sumas serían em-dash 4, negritas 4 y punto medio 6. Las reglas de documentos tampoco prohíben el punto medio, así que solo lo contamos como referencia. El borrador es la tarea `polish` de [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
+
+| Condición | Documentos | em-dash | Negritas | Punto medio |
+|---|---:|---:|---:|---:|
+| Sin skill | 2 | 4 | 4 | 1 |
+| Modo básico | 2 | 0 | 0 | 0 |
+| Modo estricto | 2 | 0 | 0 | 0 |
+
+Las salidas originales, la distribución de grafías y las condiciones de medición están en [`evals/results/2026-10-21/RESULTS.md`](../evals/results/2026-10-21/RESULTS.md).
 <!-- benchmark:end -->
 
 ## Reglas

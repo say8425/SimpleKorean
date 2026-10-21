@@ -1,0 +1,13 @@
+{
+  "text": "sqlpipe는 Postgres 테이블을 Parquet 파일로 변환해 S3에 동기화하는 CLI 도구입니다. 테이블 하나를 지정하면 sqlpipe가 행을 읽어 Parquet 파일로 쓰고 S3 버킷에 올립니다.\n\nsqlpipe를 실행하는 호스트는 Postgres 포트와 S3에 모두 연결할 수 있어야 합니다. 연결하지 못하면 sqlpipe는 오류를 내고 멈춥니다.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 190,
+  "cost_usd": 0.046161900000000006,
+  "duration_ms": 2315,
+  "condition": "plain",
+  "scenario": "readme-intro",
+  "type": "descriptive",
+  "run": 1
+}

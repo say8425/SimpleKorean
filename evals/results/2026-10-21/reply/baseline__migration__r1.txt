@@ -1,0 +1,38 @@
+## 백필(backfill)이란?
+
+기존 행들의 새 컬럼에 값을 채워 넣는 작업입니다. `NOT NULL` 컬럼을 추가하려면 기존 수천만 행에 모두 값이 있어야 합니다. 그래서 DBA가 "먼저 값을 채워야 한다"고 한 겁니다.
+
+## 왜 읽기·쓰기까지 막혔나
+
+원인은 보통 둘 중 하나, 또는 둘 다입니다.
+
+1. **테이블 재작성**: DB 버전이나 기본값 종류에 따라 `ALTER TABLE ... ADD COLUMN ... NOT NULL DEFAULT ...`가 20GB 전체를 다시 쓰면서 테이블 락을 오래 잡습니다.
+   - PostgreSQL 11 이상에서 상수 기본값은 메타데이터만 바꿔서 거의 즉시 끝납니다. 하지만 `now()`나 `random()` 같은 volatile 기본값이면 재작성이 일어납니다.
+   - MySQL 8.0 이상은 `ALGORITHM=INSTANT`가 되는 경우가 많습니다. 5.7 이하는 테이블을 복사합니다.
+2. **락 큐 대기**: ALTER가 강한 락(PostgreSQL의 ACCESS EXCLUSIVE, MySQL의 metadata lock)을 기다리는 동안 뒤에 오는 모든 쿼리가 그 뒤에 줄을 섭니다. 앞에 오래 도는 트랜잭션이 하나만 있어도 서비스 전체가 멈춥니다.
+
+## 지금 할 일
+
+1. **마이그레이션을 중단합니다.** 서비스 복구가 먼저입니다.
+   - PostgreSQL: `pg_stat_activity`에서 ALTER의 pid를 찾아 `pg_cancel_backend(pid)`를 실행합니다.
+   - MySQL: `SHOW PROCESSLIST`로 확인한 뒤 `KILL <id>`를 실행합니다.
+   - 이미 재작성이 한참 진행됐다면 롤백에 시간이 걸릴 수 있으니 DBA와 같이 진행하세요.
+2. **막고 있던 장기 트랜잭션이 있었는지 확인합니다.** 있었다면 재시도할 때 같은 일이 반복됩니다.
+
+## 안전한 방식으로 다시 하기 (3단계 분리)
+
+1. **컬럼을 NULL 허용으로 추가합니다.** 기본값 없이 추가하면 메타데이터만 바뀌어 즉시 끝납니다. 락 대기 시간 제한도 겁니다. PostgreSQL이면 `SET lock_timeout = '3s'`, MySQL이면 `SET lock_wait_timeout = 3`입니다. 락을 못 잡으면 실패하고 서비스는 영향받지 않으니 재시도하면 됩니다.
+2. **애플리케이션을 먼저 배포합니다.** 신규 쓰기에는 새 컬럼 값을 항상 넣도록 바꿉니다.
+3. **백필을 배치로 실행합니다.** PK 범위로 1천~1만 건씩 `UPDATE ... WHERE id BETWEEN a AND b AND new_col IS NULL`을 돌립니다.
+   - 배치 사이에 짧게 sleep을 둡니다.
+   - 복제 지연과 부하를 모니터링합니다.
+   - 한 트랜잭션으로 20GB 전체를 UPDATE하면 안 됩니다. 락, WAL/undo 폭증, 복제 지연이 생깁니다.
+4. **NOT NULL 제약을 추가합니다.**
+   - PostgreSQL: `ADD CONSTRAINT ... CHECK (new_col IS NOT NULL) NOT VALID`로 추가하고 `VALIDATE CONSTRAINT`를 실행합니다. 검증은 가벼운 락만 잡습니다. PG 12 이상이면 그 뒤에 `SET NOT NULL`이 풀스캔 없이 끝나고, 이후 CHECK 제약은 지워도 됩니다.
+   - MySQL: `ALTER ... MODIFY ... NOT NULL`을 `pt-online-schema-change`나 `gh-ost`로 실행하거나, 8.0이면 INPLACE 가능 여부를 확인합니다.
+
+## 대안
+
+상수 기본값이고 PostgreSQL 11 이상 또는 MySQL 8.0 이상이면, 한 번의 `ADD COLUMN ... NOT NULL DEFAULT <상수>`로 끝날 수도 있습니다. 이건 DB 종류와 버전에 달려 있습니다.
+
+DB 종류와 버전, 사용한 정확한 ALTER 문을 알려주시면 상황에 맞는 명령어와 백필 스크립트를 써 드리겠습니다.

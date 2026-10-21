@@ -1,0 +1,43 @@
+curl이 서버 인증서를 발급한 인증 기관(CA)을 신뢰 목록에서 찾지 못해서 나는 오류입니다. 개발과 스테이징 서버에서 모두 나므로 원인은 사내 사설 CA일 가능성이 큽니다. 서버가 중간 인증서를 보내지 않는 경우도 같은 오류를 냅니다.
+
+## 원인 확인
+
+인증서 체인을 먼저 확인하세요. 호스트 이름은 실제 주소로 바꾸세요.
+
+```
+openssl s_client -connect api.example.internal:443 -showcerts
+```
+
+출력 끝의 `Verify return code`와 발급자(`issuer`)를 보세요. 발급자가 사내 CA이면 그 CA가 신뢰 목록에 없는 것입니다. 체인에 서버 인증서 하나만 있으면 서버가 중간 인증서를 빠뜨린 것입니다.
+
+## 해결 방법
+
+원인이 사내 사설 CA이면 보안팀이나 인프라팀에서 루트 CA 인증서(PEM 파일)를 받으세요. 그다음 다음 중 하나를 쓰세요.
+
+1. 한 번만 쓰려면 `--cacert` 플래그로 파일을 지정하세요.
+
+```
+curl --cacert /path/to/company-root-ca.pem https://api.example.internal/health
+```
+
+2. 모든 요청에 쓰려면 환경 변수를 설정하세요.
+
+```
+export CURL_CA_BUNDLE=/path/to/company-root-ca.pem
+```
+
+3. macOS 시스템 curl(`/usr/bin/curl`)에는 키체인에 CA를 등록하세요.
+
+```
+sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /path/to/company-root-ca.pem
+```
+
+Homebrew로 설치한 curl은 키체인을 읽지 않습니다. 그 curl에는 1번이나 2번을 쓰세요.
+
+중간 인증서가 빠진 경우는 서버 쪽에서 고쳐야 합니다. 서버 인증서와 중간 인증서를 이은 전체 체인 파일을 웹 서버나 로드 밸런서에 설정하세요.
+
+## 쓰면 안 되는 방법
+
+`curl -k`는 인증서 검증을 끕니다. 원인을 가리는 임시 확인용으로만 쓰세요. 토큰이나 개인 정보를 보내는 요청에는 쓰면 안 됩니다. 중간자 공격(통신 중간에서 내용을 가로채는 공격)을 막지 못하기 때문입니다.
+
+사내 VPN이나 프록시가 TLS 트래픽을 검사하는 환경이면 프록시의 CA가 발급자로 보입니다. 이때도 그 CA 인증서를 위 방법으로 등록하세요.
