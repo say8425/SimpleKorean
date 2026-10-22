@@ -26,20 +26,20 @@ SimpleKorean은 LLM이 기술 문서와 채팅 답변을 쉬운 한국어로 쓰
 npx skills use say8425/SimpleKorean@simple-korean
 ```
 
-셸을 쓸 수 없으면 `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/SKILL.md`를 끝까지 읽으세요. `SKILL.md`의 상대 경로는 그 파일이 있는 디렉터리를 기준으로 읽으세요. 예를 들어 `references/strict-mode.md`는 `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/references/strict-mode.md`입니다. GitHub의 `blob` 주소 대신 이 raw 주소를 쓰세요. `blob` 주소는 원문 대신 HTML 페이지를 줍니다.
+셸을 쓸 수 없으면 `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/SKILL.md`를 끝까지 읽으세요. `SKILL.md`의 상대 경로는 그 파일이 있는 디렉터리를 기준으로 읽으세요. 예를 들어 `references/strict-mode.md`는 `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/references/strict-mode.md`입니다. GitHub의 `blob` 주소 대신 이 raw 주소(파일 원문만 주는 주소)를 쓰세요. `blob` 주소는 원문 대신 HTML 페이지를 줍니다.
 
-설치하지 않으면 훅이 동작하지 않습니다. 그래서 훅이 하던 일을 직접 해야 합니다:
+설치하지 않으면 훅(정해진 때에 에이전트가 자동으로 실행하는 스크립트)이 동작하지 않습니다. 그래서 훅이 하던 일을 직접 해야 합니다:
 
-- 대화가 압축되면 `SKILL.md`를 다시 읽으세요.
+- 에이전트가 긴 대화를 요약해 줄이면 `SKILL.md`를 다시 읽으세요.
 - 답변이나 문서를 내기 전에 `SKILL.md`의 "내기 전 자가 점검"을 하세요.
-- 셸과 Python 3.9 이상이 있으면 쓴 마크다운 파일을 린터로 확인하세요.
+- 셸과 Python 3.9 이상이 있으면 쓴 마크다운 파일을 린터(규칙 위반을 세는 스크립트)로 확인하세요.
 
 ```bash
 git clone --depth 1 https://github.com/say8425/SimpleKorean.git /tmp/SimpleKorean
 python3 /tmp/SimpleKorean/evals/ko_lint.py <파일>
 ```
 
-린터는 위반 수를 JSON으로 출력합니다. 답변을 확인하려면 `--type reply -`를 붙이고 답변을 표준 입력으로 넘기세요.
+린터는 위반 수를 JSON으로 출력합니다. 답변을 확인하려면 `--type reply -`를 붙이세요. 그다음 답변을 표준 입력으로 넘기세요.
 
 ## 설치
 

@@ -26,20 +26,20 @@ If you can use a shell, run this command. It prints all of `SKILL.md`. It also t
 npx skills use say8425/SimpleKorean@simple-korean
 ```
 
-If you cannot use a shell, read `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/SKILL.md` to the end. Read relative paths in `SKILL.md` from the directory of that file. For example, `references/strict-mode.md` is `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/references/strict-mode.md`. Use these raw URLs, not GitHub `blob` URLs. A `blob` URL returns an HTML page instead of the source text.
+If you cannot use a shell, read `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/SKILL.md` to the end. Read relative paths in `SKILL.md` from the directory of that file. For example, `references/strict-mode.md` is `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/references/strict-mode.md`. Use these raw URLs (URLs that return only the file text), not GitHub `blob` URLs. A `blob` URL returns an HTML page instead of the source text.
 
-Without installation, the hooks do not run. So you must do their work yourself:
+Without installation, the hooks (scripts that the agent runs automatically at set times) do not run. So you must do their work yourself:
 
-- If the conversation is compacted, read `SKILL.md` again.
+- If the agent summarizes a long conversation to shorten it, read `SKILL.md` again.
 - Before you send a reply or a document, do the self-check in `SKILL.md` (the section "내기 전 자가 점검").
-- If you have a shell and Python 3.9 or later, check the Markdown files you wrote with the linter.
+- If you have a shell and Python 3.9 or later, check the Markdown files you wrote with the linter (a script that counts rule violations).
 
 ```bash
 git clone --depth 1 https://github.com/say8425/SimpleKorean.git /tmp/SimpleKorean
 python3 /tmp/SimpleKorean/evals/ko_lint.py <file>
 ```
 
-The linter prints violation counts as JSON. To check a reply, add `--type reply -` and pass the reply on standard input.
+The linter prints violation counts as JSON. To check a reply, add `--type reply -`. Then pass the reply on standard input.
 
 ## Install
 

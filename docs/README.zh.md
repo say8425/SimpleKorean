@@ -26,20 +26,20 @@ SimpleKorean 是一个智能体技能，让 LLM 用简单的韩语写技术文�
 npx skills use say8425/SimpleKorean@simple-korean
 ```
 
-如果不能使用 shell，请把 `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/SKILL.md` 读到最后。`SKILL.md` 中的相对路径以该文件所在的目录为基准。例如 `references/strict-mode.md` 是 `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/references/strict-mode.md`。请使用这些 raw 地址，不要用 GitHub 的 `blob` 地址。`blob` 地址返回的是 HTML 页面，不是原文。
+如果不能使用 shell，请把 `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/SKILL.md` 读到最后。`SKILL.md` 中的相对路径以该文件所在的目录为基准。例如 `references/strict-mode.md` 是 `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/references/strict-mode.md`。请使用这些 raw 地址（只返回文件原文的地址），不要用 GitHub 的 `blob` 地址。`blob` 地址返回的是 HTML 页面，不是原文。
 
-不安装时钩子不会运行，所以你要自己完成钩子的工作：
+不安装时钩子（智能体在固定时机自动运行的脚本）不会运行，所以你要自己完成钩子的工作：
 
-- 对话被压缩后，请重新阅读 `SKILL.md`。
+- 智能体把长对话总结缩短后，请重新阅读 `SKILL.md`。
 - 发出回答或文档之前，请做 `SKILL.md` 中的自查（“내기 전 자가 점검”一节）。
-- 如果有 shell 和 Python 3.9 或更高版本，请用检查工具确认你写的 Markdown 文件。
+- 如果有 shell 和 Python 3.9 或更高版本，请用检查工具（统计规则违规的脚本）确认你写的 Markdown 文件。
 
 ```bash
 git clone --depth 1 https://github.com/say8425/SimpleKorean.git /tmp/SimpleKorean
 python3 /tmp/SimpleKorean/evals/ko_lint.py <文件>
 ```
 
-检查工具以 JSON 输出违规数量。要检查回答，请加上 `--type reply -`，并通过标准输入传入回答。
+检查工具以 JSON 输出违规数量。要检查回答，请加上 `--type reply -`。然后通过标准输入传入回答。
 
 ## 安装
 

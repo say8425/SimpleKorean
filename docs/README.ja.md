@@ -26,20 +26,20 @@ SimpleKorean は、LLM が技術文書とチャットの回答をやさしい韓
 npx skills use say8425/SimpleKorean@simple-korean
 ```
 
-シェルを使えない場合は、`https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/SKILL.md` を最後まで読んでください。`SKILL.md` の相対パスは、そのファイルがあるディレクトリを基準に読んでください。たとえば `references/strict-mode.md` は `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/references/strict-mode.md` です。GitHub の `blob` URL ではなく、この raw URL を使ってください。`blob` URL は原文ではなく HTML ページを返します。
+シェルを使えない場合は、`https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/SKILL.md` を最後まで読んでください。`SKILL.md` の相対パスは、そのファイルがあるディレクトリを基準に読んでください。たとえば `references/strict-mode.md` は `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/references/strict-mode.md` です。GitHub の `blob` URL ではなく、この raw URL（ファイルの原文だけを返す URL）を使ってください。`blob` URL は原文ではなく HTML ページを返します。
 
-インストールしないとフックは動きません。そのため、フックの役目を自分で果たしてください。
+インストールしないとフック（決まったときにエージェントが自動で実行するスクリプト）は動きません。そのため、フックの役目を自分で果たしてください。
 
-- 会話が圧縮されたら、`SKILL.md` をもう一度読んでください。
+- エージェントが長い会話を要約して短くしたら、`SKILL.md` をもう一度読んでください。
 - 回答や文書を出す前に、`SKILL.md` の自己点検（「내기 전 자가 점검」の節）をしてください。
-- シェルと Python 3.9 以降があれば、書いた Markdown ファイルをリンターで確認してください。
+- シェルと Python 3.9 以降があれば、書いた Markdown ファイルをリンター（ルール違反を数えるスクリプト）で確認してください。
 
 ```bash
 git clone --depth 1 https://github.com/say8425/SimpleKorean.git /tmp/SimpleKorean
 python3 /tmp/SimpleKorean/evals/ko_lint.py <ファイル>
 ```
 
-リンターは違反の数を JSON で出力します。回答を確認するには、`--type reply -` を付けて回答を標準入力で渡してください。
+リンターは違反の数を JSON で出力します。回答を確認するには、`--type reply -` を付けてください。次に、回答を標準入力で渡してください。
 
 ## インストール
 
