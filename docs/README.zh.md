@@ -16,6 +16,43 @@ SimpleKorean 是一个智能体技能，让 LLM 用简单的韩语写技术文�
 
 它可以在读取 [Agent Skills 标准](https://agentskills.io) 的智能体中运行，例如 Claude Code、Cursor、Codex、Gemini CLI、OpenCode。
 
+## 不安装就让它照做
+
+你可以只把这个仓库的地址交给智能体，让它照做。本节就是智能体这时要读的指示。
+
+如果用户要求你不安装就按这个仓库的规则写作，请照本节去做。这份 README 中的规则表只是摘要。规则原文在 `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/SKILL.md`。
+
+如果有 shell 和 Node.js，请先把下面的命令告诉用户，然后运行它。这个命令会输出 `SKILL.md` 全文，还会告诉你参考文件下载到了哪个目录。
+
+```bash
+npx skills use say8425/SimpleKorean@simple-korean
+```
+
+如果命令失败或不能使用 shell，请从上面的 raw 地址（只返回文件原文的地址）把 `SKILL.md` 读到最后。如果抓取工具会总结内容，请要求它返回原文。如果有 `curl`，请用 `curl` 获取。
+
+`SKILL.md` 中以 `references/` 开头的路径，以 `SKILL.md` 所在的目录为基准。例如 `references/strict-mode.md` 是 `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/references/strict-mode.md`。完整的词表在 `https://raw.githubusercontent.com/say8425/SimpleKorean/main/data/terms.json`。请使用 raw 地址，不要用 GitHub 的 `blob` 地址。`blob` 地址返回的是 HTML 页面，不是原文。
+
+不安装时钩子（智能体在固定时机自动运行的脚本）不会运行，所以你要自己完成钩子的工作：
+
+- 智能体把长对话总结缩短后，请重新阅读 `SKILL.md`。
+- 发出回答或文档之前，请做 `SKILL.md` 中的自查（“내기 전 자가 점검”一节）。
+- 如果有 shell、git 和 Python 3.9 或更高版本，请用检查工具（统计规则违规的脚本）确认你写的内容。
+
+如果没有 `/tmp/SimpleKorean`，请先获取仓库：
+
+```bash
+git clone --depth 1 https://github.com/say8425/SimpleKorean.git /tmp/SimpleKorean
+```
+
+文档用第一条命令检查，回答用第二条命令检查。写有操作步骤的文档，请在第一条命令中加上 `--type procedural`：
+
+```bash
+python3 /tmp/SimpleKorean/evals/ko_lint.py doc.md
+python3 /tmp/SimpleKorean/evals/ko_lint.py --type reply - < reply.txt
+```
+
+检查工具以 JSON 输出违规数量。文档的 `errors_total` 和 `warnings_total` 必须为 0。回答的 `visible_total` 必须为 0。
+
 ## 安装
 
 ### Claude Code
@@ -61,6 +98,8 @@ pnpm dlx skills add say8425/SimpleKorean
 ```
 
 如果使用 npm，请运行 `npx skills add say8425/SimpleKorean`。这个命令只安装技能，不安装上面介绍的钩子和输出样式。
+
+如果不安装、只用一次，请运行 `npx skills use say8425/SimpleKorean@simple-korean`。这个命令会输出包含技能的提示词。加上 `--agent claude-code`，就会用这个提示词运行 Claude Code。
 
 ### 不支持技能的工具
 

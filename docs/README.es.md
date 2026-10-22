@@ -16,6 +16,43 @@ SimpleKorean es una skill de agente que hace que los LLM escriban en un coreano 
 
 La skill funciona en los agentes que leen el [estándar Agent Skills](https://agentskills.io). Algunos ejemplos son Claude Code, Cursor, Codex, Gemini CLI y OpenCode.
 
+## Hacer que un agente lo siga sin instalar
+
+Puede dar a un agente solo la dirección de este repositorio y pedirle que lo siga. Esta sección es la instrucción que el agente lee en ese caso.
+
+Siga esta sección cuando un usuario le pida escribir según las reglas de este repositorio sin instalarlo. Las tablas de reglas de este README son resúmenes. Las reglas completas están en `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/SKILL.md`.
+
+Si tiene una shell y Node.js, informe al usuario del comando siguiente. Después, ejecútelo. El comando imprime todo `SKILL.md`. También indica el directorio donde descargó los archivos de referencia.
+
+```bash
+npx skills use say8425/SimpleKorean@simple-korean
+```
+
+Si el comando falla o no puede usar una shell, lea `SKILL.md` hasta el final desde la URL raw de arriba (una URL que devuelve solo el texto del archivo). Si su herramienta de descarga resume el contenido, pídale el texto original. Si tiene `curl`, use `curl`.
+
+En `SKILL.md`, lea las rutas que empiezan por `references/` desde el directorio de `SKILL.md`. Por ejemplo, `references/strict-mode.md` es `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/references/strict-mode.md`. La lista completa de palabras está en `https://raw.githubusercontent.com/say8425/SimpleKorean/main/data/terms.json`. Use URL raw, no las URL `blob` de GitHub. Una URL `blob` devuelve una página HTML en lugar del texto original.
+
+Sin instalación, los hooks (scripts que el agente ejecuta automáticamente en momentos fijos) no se ejecutan. Por eso debe hacer usted mismo su trabajo:
+
+- Si el agente resume una conversación larga para acortarla, vuelva a leer `SKILL.md`.
+- Antes de enviar una respuesta o un documento, haga la autorrevisión de `SKILL.md` (la sección "내기 전 자가 점검").
+- Si tiene una shell, git y Python 3.9 o posterior, revise lo que escribió con el linter (un script que cuenta las infracciones de las reglas).
+
+Si `/tmp/SimpleKorean` no existe, descargue primero el repositorio:
+
+```bash
+git clone --depth 1 https://github.com/say8425/SimpleKorean.git /tmp/SimpleKorean
+```
+
+Revise un documento con el primer comando y una respuesta con el segundo. En un documento con procedimientos, añada `--type procedural` al primer comando:
+
+```bash
+python3 /tmp/SimpleKorean/evals/ko_lint.py doc.md
+python3 /tmp/SimpleKorean/evals/ko_lint.py --type reply - < reply.txt
+```
+
+El linter imprime el número de infracciones en JSON. En un documento, `errors_total` y `warnings_total` deben ser 0. En una respuesta, `visible_total` debe ser 0.
+
 ## Instalación
 
 ### Claude Code
@@ -61,6 +98,8 @@ pnpm dlx skills add say8425/SimpleKorean
 ```
 
 Si usa npm, ejecute `npx skills add say8425/SimpleKorean`. Este comando solo instala la skill. No instala los hooks ni el estilo de salida que se describen más arriba.
+
+Para usar la skill una sola vez sin instalarla, ejecute `npx skills use say8425/SimpleKorean@simple-korean`. Este comando imprime un prompt que contiene la skill. Añada `--agent claude-code` para ejecutar Claude Code con ese prompt.
 
 ### Herramientas sin soporte de skills
 
