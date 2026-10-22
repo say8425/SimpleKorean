@@ -18,7 +18,13 @@
         {"type": "json", "path": ".claude-plugin/plugin.json", "jsonpath": "$.version"},
         {"type": "json", "path": ".claude-plugin/marketplace.json", "jsonpath": "$.plugins[0].version"},
         {"type": "json", "path": ".codex-plugin/plugin.json", "jsonpath": "$.version"},
-        "skills/simple-korean/SKILL.md"
+        "skills/simple-korean/SKILL.md",
+        "pyproject.toml",
+        "src/simple_korean/__init__.py",
+        "prompts/sentence-rules.ko.md",
+        "prompts/sentence-rules.en.md",
+        "prompts/format-rules.ko.md",
+        "prompts/format-rules.en.md"
       ]
     }
   }

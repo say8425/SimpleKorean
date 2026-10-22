@@ -13,7 +13,9 @@
 - 측정 결과 경로와 보정 줄이 CHANGELOG에 있는지 본다. 마지막 릴리스보다 늦은 측정과 보정은 건너뛴다.
 - 규칙 블록 두 벌이 같은지, 핵심 문구가 SKILL.md와 규칙 블록에 모두 있는지 본다.
 - SKILL.md description에 스펙 10절의 호출 문구가 모두 있는지 본다.
-- 버전 문자열이 SKILL.md, 플러그인 매니페스트 세 개, .release-please-manifest.json, CHANGELOG 첫 항목에서 같은지 본다.
+- 한국어 답변 판본(prompts/sentence-rules.ko.md, format-rules.ko.md)이 핵심 문구를 담는지, 문장 판본에 서식 문구가 없는지 본다.
+- 버전 문자열이 SKILL.md, 플러그인 매니페스트 세 개, .release-please-manifest.json, CHANGELOG 첫 항목, pyproject.toml,
+  패키지의 __version__, 답변 판본 네 개의 첫 줄에서 같은지 본다.
 """
 import difflib
 import json
@@ -35,6 +37,11 @@ import report  # noqa: E402
 
 KEY_PHRASES = ("헤더와 목록을 써도 됩니다", "em-dash를 쓰지 마세요", "첫 문장에 답", "바꾸지 마세요", "확인하다", "레포지토리", "굵은 글씨와 표", "첫 문장 뒤에 두세요",
                "사용자가 엄격 모드, 통제 언어, KS A 0001, STE, ASD-STE100을 말하면")
+# 답변 판본(prompts/의 sentence-rules, format-rules) 가운데 한국어판이 담아야 하는 문구. 서식 문구는 문장 판본에 없어야 한다.
+SENTENCE_PHRASES = ("em-dash를 쓰지 마세요", "첫 문장에 답", "바꾸지 마세요", "확인하다", "레포지토리")
+FORMAT_PHRASES = ("헤더와 목록을 써도 됩니다", "굵은 글씨와 표", "첫 문장 뒤에 두세요")
+PROMPT_VARIANTS = {"sentences": "prompts/sentence-rules.ko.md", "format": "prompts/format-rules.ko.md"}
+PROMPT_VERSION = r"\A<!-- simple-korean [a-z-]+ [a-z]+ ([0-9][^ ]*) x-release-please-version -->\n"
 SKILL_TRIGGERS = ("쉬운 한국어", "번역투 빼 줘", "AI 티 안 나게", "문서 다듬어 줘", "통제 언어", "엄격 모드", "KS A 0001",
                   "plain Korean", "Simple Korean", "controlled language")
 VERSION_PATTERNS = {
@@ -44,6 +51,9 @@ VERSION_PATTERNS = {
     ".codex-plugin/plugin.json": r'"version":\s*"([^"]+)"',
     ".release-please-manifest.json": r'"\."\s*:\s*"([^"]+)"',
     "CHANGELOG.md": r"(?m)^## \[?([0-9]+\.[0-9]+\.[0-9]+)",
+    "pyproject.toml": r'(?m)^version = "([^"]+)" # x-release-please-version$',
+    "src/simple_korean/__init__.py": r'__version__ = "([^"]+)"  # x-release-please-version',
+    **{f"prompts/{name}.{lang}.md": PROMPT_VERSION for name in ("sentence-rules", "format-rules") for lang in ("ko", "en")},
 }
 CHANGELOG_ENTRY = re.compile(r"(?m)^## \[?[0-9]+\.[0-9]+\.[0-9]+\]?.*?([0-9]{4}-[0-9]{2}-[0-9]{2})")
 RECORD_DATE = re.compile(r"\A# 보정 기록 \(([0-9]{4}-[0-9]{2}-[0-9]{2})\)")
@@ -166,6 +176,16 @@ def check_rule_block(prompt_md, style_md, skill_md):
         problems += [f"{name}에 핵심 문구가 없습니다: {phrase}"
                      for name, text in (("SKILL.md", skill_md), ("규칙 블록", prompt)) if phrase not in text]
     return problems
+
+
+def check_prompt_variants(texts):
+    """{판본: 글}에서 한국어 답변 판본이 핵심 문구를 담는지, 문장 판본에 서식 문구가 없는지 본다."""
+    problems = []
+    for variant, phrases in (("sentences", SENTENCE_PHRASES), ("format", FORMAT_PHRASES)):
+        name = PROMPT_VARIANTS[variant]
+        problems += [f"{name}에 핵심 문구가 없습니다: {p}" for p in phrases if p not in texts[variant]]
+    name = PROMPT_VARIANTS["sentences"]
+    return problems + [f"{name}에 서식 문구가 있습니다: {p}" for p in FORMAT_PHRASES if p in texts["sentences"]]
 
 
 def check_triggers(skill_md):
@@ -300,6 +320,7 @@ def main():
                 + check_examples(readme, _read("examples/before-after.md"))
                 + check_calibration(changelog)
                 + check_rule_block(prompt, _read("output-styles/simple-korean.md"), _read("skills/simple-korean/SKILL.md"))
+                + check_prompt_variants({v: _read(name) for v, name in PROMPT_VARIANTS.items()})
                 + check_triggers(_read("skills/simple-korean/SKILL.md"))
                 + check_block_size(readme, prompt)
                 + check_readme_structure(readme, "ko", readme)

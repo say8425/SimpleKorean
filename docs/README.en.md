@@ -105,6 +105,26 @@ To use the skill once without installing it, run `npx skills use say8425/SimpleK
 
 For tools that do not support skills, paste the rule block from [`prompts/system-prompt.md`](../prompts/system-prompt.md). You can put it in a system prompt, `AGENTS.md`, or `.cursorrules`. The end of `prompts/system-prompt.md` also has a short version of about 120 tokens.
 
+### Bots and programs
+
+Put a reply variant in the system prompt of a bot. [`prompts/sentence-rules.ko.md`](../prompts/sentence-rules.ko.md) has only the sentence rules for replies. [`prompts/format-rules.ko.md`](../prompts/format-rules.ko.md) has only the formatting rules, such as headers, bold text, and tables. The two files together make the full reply rules. The variants written in English end in `.en.md`. The first line of each file is an HTML comment with the variant, the language, and the version.
+
+To pin a variant, download it from the raw URL of a release tag, for example `https://raw.githubusercontent.com/say8425/SimpleKorean/<tag>/prompts/sentence-rules.ko.md`. The variant files keep the same path in every tag.
+
+In Python, install the package. The package uses only the standard library. Replace `<tag>` with a release tag:
+
+```bash
+pip install "git+https://github.com/say8425/SimpleKorean@<tag>"
+```
+
+```python
+from simple_korean import __version__, prompt_block
+
+prompt = prompt_block(variant="sentences", lang="en")
+```
+
+`variant` is `sentences` or `format`. `lang` is `ko` or `en`.
+
 ### After installing
 
 After you install, ask for a technical document. To fix existing text, say "simple-korean으로 고쳐 줘" (fix this with simple-korean).

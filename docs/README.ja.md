@@ -105,6 +105,26 @@ npm を使う場合は `npx skills add say8425/SimpleKorean` を実行してく�
 
 スキルに対応していないツールには、[`prompts/system-prompt.md`](../prompts/system-prompt.md) のルールブロックを貼り付けてください。システムプロンプト、`AGENTS.md`、`.cursorrules` に入れてください。`prompts/system-prompt.md` の最後には、約120トークンの短い版もあります。
 
+### ボットとプログラム
+
+ボットのシステムプロンプトには、返答用の版を入れてください。[`prompts/sentence-rules.ko.md`](../prompts/sentence-rules.ko.md) は返答の文のルールだけを含みます。[`prompts/format-rules.ko.md`](../prompts/format-rules.ko.md) は見出し、太字、表などの書式ルールだけを含みます。二つのファイルをつなげると、返答ルールの全体になります。英語で書いた版は、名前が `.en.md` で終わります。各ファイルの最初の行は、版、言語、バージョンを書いた HTML コメントです。
+
+版を固定するには、リリースタグの raw URL から取得してください。たとえば `https://raw.githubusercontent.com/say8425/SimpleKorean/<tag>/prompts/sentence-rules.ko.md` です。版のファイルのパスは、どのタグでも同じです。
+
+Python ではパッケージをインストールしてください。パッケージは標準ライブラリだけを使います。`<tag>` にはリリースタグを入れてください:
+
+```bash
+pip install "git+https://github.com/say8425/SimpleKorean@<tag>"
+```
+
+```python
+from simple_korean import __version__, prompt_block
+
+prompt = prompt_block(variant="sentences", lang="en")
+```
+
+`variant` は `sentences` または `format`、`lang` は `ko` または `en` です。
+
 ### インストールした後
 
 インストールしたら、技術文書を依頼してください。すでにある文章を直すときは、「simple-korean으로 고쳐 줘」（simple-korean で直して）と伝えてください。

@@ -64,6 +64,10 @@ def test_check_versions_requires_one_value_everywhere():
         ".codex-plugin/plugin.json": '{"version": "1.0.0"}',
         ".release-please-manifest.json": '{\n  ".": "1.0.0"\n}\n',
         "CHANGELOG.md": "# 변경 기록\n\n## 1.0.0, 2026-10-09\n",
+        "pyproject.toml": '[project]\nname = "simple-korean"\nversion = "1.0.0" # x-release-please-version\n',
+        "src/simple_korean/__init__.py": '__version__ = "1.0.0"  # x-release-please-version\n',
+        **{f"prompts/{name}.{lang}.md": f"<!-- simple-korean {name} {lang} 1.0.0 x-release-please-version -->\n본문\n"
+           for name in ("sentence-rules", "format-rules") for lang in ("ko", "en")},
     }
     assert "README.md" not in cn.VERSION_PATTERNS
     assert cn.check_versions(texts) == []
