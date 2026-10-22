@@ -3,6 +3,7 @@ Replies (chat replies in every mode).
 In a reply, put the answer or the result in the first sentence.
 Do not repeat the question.
 Do not use em-dashes. State the relation with "때문에", "하지만", or "예를 들어".
+Remove words that carry no fact ("원활하게", "강력한", "손쉽게") and translationese ("~에 대해", "~를 통해", "~로 인해").
 
 In a reply, explain a concept term briefly the first time you use it ("멱등(같은 요청을 여러 번 보내도 결과가 같음)").
 Do not explain product names.

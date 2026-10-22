@@ -54,6 +54,12 @@ def test_check_prompt_variants_flags_drift():
     assert cn.check_prompt_variants(prompt, added) == [
         "답변 판본에 규칙 블록의 답변 절 문장이 없습니다: 질문을 되풀이하지 마세요.",
         "답변 판본의 문장이 규칙 블록의 답변 절에 없습니다: 질문을 되풀이하지 마세요. 짧게 쓰세요."]
+    extra = '사실을 담지 않은 말("원활하게", "강력한", "손쉽게")과 번역투("~에 대해", "~를 통해", "~로 인해")를 지우세요.'
+    assert extra in cn.REPLY_EXTRA and extra in texts[ko]
+    no_slop = {**texts, ko: texts[ko].replace(extra + "\n", "")}
+    assert f"답변 판본에 규칙 블록의 답변 절 문장이 없습니다: {extra}" in cn.check_prompt_variants(prompt, no_slop)
+    assert cn.check_prompt_variants(prompt.replace(extra, "슬롭을 지우세요."), texts)[0] == (
+        f"규칙 블록에 답변에도 적용하는 문장이 없습니다: {extra}")
     quoted = {**texts, en: texts[en].replace('"하지만", ', "")}
     assert cn.check_prompt_variants(prompt, quoted) == [f"{en} 5번 줄의 따옴표 안 한국어가 {ko}와 다릅니다"]
 

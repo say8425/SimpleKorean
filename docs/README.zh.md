@@ -107,9 +107,9 @@ pnpm dlx skills add say8425/SimpleKorean
 
 ### 机器人和程序
 
-请把回答用的版本放进机器人的系统提示词。回答用的版本把规则块中的回答规则分成了两个文件。[`prompts/sentence-rules.ko.md`](../prompts/sentence-rules.ko.md) 包含句子规则。[`prompts/format-rules.ko.md`](../prompts/format-rules.ko.md) 包含标题、粗体、表格等格式规则。把两个文件拼在一起，就是完整的回答规则。它们不包含文档规则。
+请把回答用的版本放进机器人的系统提示词。回答用的版本把规则块中的回答规则分成了两个文件。[`prompts/sentence-rules.ko.md`](../prompts/sentence-rules.ko.md) 包含句子规则。删除套话（slop）词汇和翻译腔的规则也在这里。[`prompts/format-rules.ko.md`](../prompts/format-rules.ko.md) 包含标题、粗体、表格等格式规则。把两个文件拼在一起，就是完整的回答规则。
 
-文件名以 `.en.md` 结尾的文件用英语写了同样的规则。每个文件的第一行是 HTML 注释，写着版本类型、语言和版本号。
+回答用的版本不包含文档规则。文件名以 `.en.md` 结尾的文件用英语写了同样的规则。每个文件的第一行是 HTML 注释，写着版本类型、语言和版本号。
 
 要固定版本，请从发布标签的 raw 地址下载，例如 `https://raw.githubusercontent.com/say8425/SimpleKorean/<tag>/prompts/sentence-rules.ko.md`。这些文件的路径在每个标签中都相同。
 

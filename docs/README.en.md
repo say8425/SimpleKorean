@@ -107,9 +107,9 @@ For tools that do not support skills, paste the rule block from [`prompts/system
 
 ### Bots and programs
 
-Put a reply variant in the system prompt of a bot. The reply variants split the reply rules of the rule block into two files. [`prompts/sentence-rules.ko.md`](../prompts/sentence-rules.ko.md) has the sentence rules. [`prompts/format-rules.ko.md`](../prompts/format-rules.ko.md) has the formatting rules, such as headers, bold text, and tables. The two files together make the full reply rules. They do not have the document rules.
+Put a reply variant in the system prompt of a bot. The reply variants split the reply rules of the rule block into two files. [`prompts/sentence-rules.ko.md`](../prompts/sentence-rules.ko.md) has the sentence rules. It also has the rule that removes slop words and translationese. [`prompts/format-rules.ko.md`](../prompts/format-rules.ko.md) has the formatting rules, such as headers, bold text, and tables. The two files together make the full reply rules.
 
-The files whose names end in `.en.md` have the same rules, written in English. The first line of each file is an HTML comment with the variant, the language, and the version.
+The reply variants do not have the document rules. The files whose names end in `.en.md` have the same rules, written in English. The first line of each file is an HTML comment with the variant, the language, and the version.
 
 To pin a variant, download it from the raw URL of a release tag, for example `https://raw.githubusercontent.com/say8425/SimpleKorean/<tag>/prompts/sentence-rules.ko.md`. The variant files keep the same path in every tag.
 
