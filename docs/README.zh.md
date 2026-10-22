@@ -107,7 +107,9 @@ pnpm dlx skills add say8425/SimpleKorean
 
 ### 机器人和程序
 
-请把回答用的版本放进机器人的系统提示词。[`prompts/sentence-rules.ko.md`](../prompts/sentence-rules.ko.md) 只包含回答的句子规则。[`prompts/format-rules.ko.md`](../prompts/format-rules.ko.md) 只包含标题、粗体、表格等格式规则。把两个文件拼在一起，就是完整的回答规则。用英语写的版本以 `.en.md` 结尾。每个文件的第一行是 HTML 注释，写着版本类型、语言和版本号。
+请把回答用的版本放进机器人的系统提示词。回答用的版本把规则块中的回答规则分成了两个文件。[`prompts/sentence-rules.ko.md`](../prompts/sentence-rules.ko.md) 包含句子规则。[`prompts/format-rules.ko.md`](../prompts/format-rules.ko.md) 包含标题、粗体、表格等格式规则。把两个文件拼在一起，就是完整的回答规则。它们不包含文档规则。
+
+文件名以 `.en.md` 结尾的文件用英语写了同样的规则。每个文件的第一行是 HTML 注释，写着版本类型、语言和版本号。
 
 要固定版本，请从发布标签的 raw 地址下载，例如 `https://raw.githubusercontent.com/say8425/SimpleKorean/<tag>/prompts/sentence-rules.ko.md`。这些文件的路径在每个标签中都相同。
 
@@ -123,7 +125,7 @@ from simple_korean import __version__, prompt_block
 prompt = prompt_block(variant="sentences", lang="en")
 ```
 
-`variant` 是 `sentences` 或 `format`，`lang` 是 `ko` 或 `en`。
+`variant` 是 `sentences` 或 `format`。`lang` 是规则文字所用的语言，取 `ko` 或 `en`。`lang` 不决定回答的语言。
 
 ### 安装之后
 

@@ -3,15 +3,17 @@
     from simple_korean import prompt_block, __version__
     prompt = prompt_block(variant="sentences", lang="en")
 
-판본은 prompts/의 파일이다. sentences는 답변의 문장 규칙만 담고, format은 답변의 서식 규칙만 담는다. 두 판본을
-이어 붙이면 답변 규칙 전체가 된다. 파일의 첫 줄은 판본, 언어, 버전을 적은 HTML 주석이다. 설치한 패키지에서는
-패키지 안의 사본을 읽고, 레포지토리에서는 prompts/의 원본을 읽는다.
+판본은 prompts/의 파일이다. 규칙 블록(prompts/system-prompt.md)의 답변 절을 둘로 나눴다. sentences는 문장 규칙을,
+format은 서식 규칙을 담는다. 두 판본을 이어 붙이면 답변 규칙 전체가 된다. 문서 규칙은 담지 않는다. lang은 규칙을
+적은 언어이고 답변의 언어를 정하지 않는다. 파일의 첫 줄은 판본, 언어, 버전을 적은 HTML 주석이다. 설치한
+패키지에서는 패키지 안의 사본을 읽고, 레포지토리에서는 prompts/의 원본을 읽는다.
 """
 from pathlib import Path
+from types import MappingProxyType
 
 __version__ = "1.1.1"  # x-release-please-version
 
-VARIANTS = {"sentences": "sentence-rules", "format": "format-rules"}
+VARIANTS = MappingProxyType({"sentences": "sentence-rules", "format": "format-rules"})
 LANGS = ("ko", "en")
 _HERE = Path(__file__).resolve().parent
 

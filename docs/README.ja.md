@@ -107,7 +107,9 @@ npm を使う場合は `npx skills add say8425/SimpleKorean` を実行してく�
 
 ### ボットとプログラム
 
-ボットのシステムプロンプトには、返答用の版を入れてください。[`prompts/sentence-rules.ko.md`](../prompts/sentence-rules.ko.md) は返答の文のルールだけを含みます。[`prompts/format-rules.ko.md`](../prompts/format-rules.ko.md) は見出し、太字、表などの書式ルールだけを含みます。二つのファイルをつなげると、返答ルールの全体になります。英語で書いた版は、名前が `.en.md` で終わります。各ファイルの最初の行は、版、言語、バージョンを書いた HTML コメントです。
+ボットのシステムプロンプトには、返答用の版を入れてください。返答用の版は、ルールブロックの返答ルールを二つのファイルに分けたものです。[`prompts/sentence-rules.ko.md`](../prompts/sentence-rules.ko.md) は文のルールを含みます。[`prompts/format-rules.ko.md`](../prompts/format-rules.ko.md) は見出し、太字、表などの書式ルールを含みます。二つのファイルをつなげると、返答ルールの全体になります。文書のルールは含みません。
+
+名前が `.en.md` で終わるファイルは、同じルールを英語で書いた版です。各ファイルの最初の行は、版、言語、バージョンを書いた HTML コメントです。
 
 版を固定するには、リリースタグの raw URL から取得してください。たとえば `https://raw.githubusercontent.com/say8425/SimpleKorean/<tag>/prompts/sentence-rules.ko.md` です。版のファイルのパスは、どのタグでも同じです。
 
@@ -123,7 +125,7 @@ from simple_korean import __version__, prompt_block
 prompt = prompt_block(variant="sentences", lang="en")
 ```
 
-`variant` は `sentences` または `format`、`lang` は `ko` または `en` です。
+`variant` は `sentences` または `format` です。`lang` はルールを書いた言語で、`ko` または `en` です。`lang` は返答の言語を決めません。
 
 ### インストールした後
 

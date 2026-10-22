@@ -13,7 +13,8 @@
 - 측정 결과 경로와 보정 줄이 CHANGELOG에 있는지 본다. 마지막 릴리스보다 늦은 측정과 보정은 건너뛴다.
 - 규칙 블록 두 벌이 같은지, 핵심 문구가 SKILL.md와 규칙 블록에 모두 있는지 본다.
 - SKILL.md description에 스펙 10절의 호출 문구가 모두 있는지 본다.
-- 한국어 답변 판본(prompts/sentence-rules.ko.md, format-rules.ko.md)이 핵심 문구를 담는지, 문장 판본에 서식 문구가 없는지 본다.
+- 답변 판본(prompts/의 sentence-rules, format-rules)의 한국어판이 규칙 블록의 답변 절을 빠짐없이 그대로 나눠 담는지,
+  영어판이 한국어판과 줄마다 맞는지 본다.
 - 버전 문자열이 SKILL.md, 플러그인 매니페스트 세 개, .release-please-manifest.json, CHANGELOG 첫 항목, pyproject.toml,
   패키지의 __version__, 답변 판본 네 개의 첫 줄에서 같은지 본다.
 """
@@ -21,6 +22,7 @@ import difflib
 import json
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -37,10 +39,12 @@ import report  # noqa: E402
 
 KEY_PHRASES = ("헤더와 목록을 써도 됩니다", "em-dash를 쓰지 마세요", "첫 문장에 답", "바꾸지 마세요", "확인하다", "레포지토리", "굵은 글씨와 표", "첫 문장 뒤에 두세요",
                "사용자가 엄격 모드, 통제 언어, KS A 0001, STE, ASD-STE100을 말하면")
-# 답변 판본(prompts/의 sentence-rules, format-rules) 가운데 한국어판이 담아야 하는 문구. 서식 문구는 문장 판본에 없어야 한다.
-SENTENCE_PHRASES = ("em-dash를 쓰지 마세요", "첫 문장에 답", "바꾸지 마세요", "확인하다", "레포지토리")
-FORMAT_PHRASES = ("헤더와 목록을 써도 됩니다", "굵은 글씨와 표", "첫 문장 뒤에 두세요")
-PROMPT_VARIANTS = {"sentences": "prompts/sentence-rules.ko.md", "format": "prompts/format-rules.ko.md"}
+# 답변 판본은 규칙 블록의 답변 절을 문장 규칙과 서식 규칙으로 나눈 파일이다. 한 줄에 한 문장씩 두고 둘째 줄에 절 이름을 둔다.
+PROMPT_VARIANTS = ("sentence-rules", "format-rules")
+REPLY_LABEL = "답변(모든 모드의 채팅 답변)."
+SENTENCE_BREAK = re.compile(r"(?<=[.!?])\s+")
+QUOTED = re.compile(r'"([^"]*)"')
+HANGUL = re.compile(r"[가-힣]")
 PROMPT_VERSION = r"\A<!-- simple-korean [a-z-]+ [a-z]+ ([0-9][^ ]*) x-release-please-version -->\n"
 SKILL_TRIGGERS = ("쉬운 한국어", "번역투 빼 줘", "AI 티 안 나게", "문서 다듬어 줘", "통제 언어", "엄격 모드", "KS A 0001",
                   "plain Korean", "Simple Korean", "controlled language")
@@ -178,14 +182,39 @@ def check_rule_block(prompt_md, style_md, skill_md):
     return problems
 
 
-def check_prompt_variants(texts):
-    """{판본: 글}에서 한국어 답변 판본이 핵심 문구를 담는지, 문장 판본에 서식 문구가 없는지 본다."""
-    problems = []
-    for variant, phrases in (("sentences", SENTENCE_PHRASES), ("format", FORMAT_PHRASES)):
-        name = PROMPT_VARIANTS[variant]
-        problems += [f"{name}에 핵심 문구가 없습니다: {p}" for p in phrases if p not in texts[variant]]
-    name = PROMPT_VARIANTS["sentences"]
-    return problems + [f"{name}에 서식 문구가 있습니다: {p}" for p in FORMAT_PHRASES if p in texts["sentences"]]
+def _variant_lines(text):
+    """판본에서 첫 줄(버전 주석)을 뺀 줄 목록. 끝의 빈 줄은 뺀다."""
+    return text.rstrip("\n").split("\n")[1:]
+
+
+def _quoted_korean(line):
+    return [q for q in QUOTED.findall(line) if HANGUL.search(q)]
+
+
+def check_prompt_variants(prompt_md, texts):
+    """답변 판본이 규칙 블록의 답변 절을 빠짐없이 그대로 나눠 담는지, 영어판이 한국어판과 줄마다 맞는지 본다.
+
+    texts는 {경로: 글}이다. 한국어판의 줄은 절 이름이거나 답변 절의 문장 하나다. 영어판은 한국어판과 빈 줄의
+    자리가 같아야 하고, 줄마다 따옴표 안의 한국어가 같아야 한다.
+    """
+    block = bench_common.rule_block(prompt_md)
+    if REPLY_LABEL not in block:
+        return [f"규칙 블록에 답변 절({REPLY_LABEL})이 없습니다"]
+    expected = Counter(SENTENCE_BREAK.split(block.split(REPLY_LABEL, 1)[1].strip()))
+    problems, found = [], Counter()
+    for name in PROMPT_VARIANTS:
+        ko_path, en_path = f"prompts/{name}.ko.md", f"prompts/{name}.en.md"
+        ko, en = _variant_lines(texts[ko_path]), _variant_lines(texts[en_path])
+        if not ko or ko[0] != REPLY_LABEL:
+            problems.append(f"{ko_path}의 둘째 줄은 {REPLY_LABEL}이어야 합니다")
+        found.update(line for line in ko[1:] if line.strip())
+        if [bool(line.strip()) for line in ko] != [bool(line.strip()) for line in en]:
+            problems.append(f"{en_path}의 줄 구조가 {ko_path}와 다릅니다")
+            continue
+        problems += [f"{en_path} {n}번 줄의 따옴표 안 한국어가 {ko_path}와 다릅니다"
+                     for n, (k, e) in enumerate(zip(ko, en), 2) if _quoted_korean(k) != _quoted_korean(e)]
+    problems += [f"답변 판본에 규칙 블록의 답변 절 문장이 없습니다: {s}" for s in (expected - found).elements()]
+    return problems + [f"답변 판본의 문장이 규칙 블록의 답변 절에 없습니다: {s}" for s in (found - expected).elements()]
 
 
 def check_triggers(skill_md):
@@ -320,7 +349,7 @@ def main():
                 + check_examples(readme, _read("examples/before-after.md"))
                 + check_calibration(changelog)
                 + check_rule_block(prompt, _read("output-styles/simple-korean.md"), _read("skills/simple-korean/SKILL.md"))
-                + check_prompt_variants({v: _read(name) for v, name in PROMPT_VARIANTS.items()})
+                + check_prompt_variants(prompt, {name: _read(name) for name in VERSION_PATTERNS if name.startswith("prompts/")})
                 + check_triggers(_read("skills/simple-korean/SKILL.md"))
                 + check_block_size(readme, prompt)
                 + check_readme_structure(readme, "ko", readme)

@@ -31,19 +31,36 @@ def test_prompt_block_rejects_unknown_variant_and_lang():
             raise AssertionError(kwargs)
 
 
-def test_sentence_rules_leave_out_format_rules():
+def _variant_texts():
+    return {f"prompts/{sk.VARIANTS[v]}.{lang}.md": sk.prompt_block(v, lang) for v in sk.VARIANTS for lang in sk.LANGS}
+
+
+def test_variants_split_the_reply_section_of_the_rule_block():
+    prompt = (cn.ROOT / "prompts" / "system-prompt.md").read_text(encoding="utf-8")
+    assert cn.check_prompt_variants(prompt, _variant_texts()) == []
     sentences, fmt = sk.prompt_block("sentences", "ko"), sk.prompt_block("format", "ko")
-    for phrase in cn.FORMAT_PHRASES:
-        assert phrase in fmt and phrase not in sentences, phrase
-    for phrase in cn.SENTENCE_PHRASES:
-        assert phrase in sentences, phrase
-    assert "**" not in sentences and "|" not in sentences
+    assert "굵은 글씨와 표" in fmt and "굵은 글씨" not in sentences and "첫 문장에 답" in sentences
 
 
-def test_check_prompt_variants_flags_missing_phrase():
-    texts = {"sentences": sk.prompt_block("sentences", "ko"), "format": sk.prompt_block("format", "ko")}
-    assert cn.check_prompt_variants(texts) == []
-    broken = {**texts, "sentences": texts["sentences"].replace("레포지토리", "저장소")}
-    assert cn.check_prompt_variants(broken) == ["prompts/sentence-rules.ko.md에 핵심 문구가 없습니다: 레포지토리"]
-    leaked = {**texts, "sentences": texts["sentences"] + "굵은 글씨와 표를 쓰지 마세요.\n"}
-    assert cn.check_prompt_variants(leaked) == ["prompts/sentence-rules.ko.md에 서식 문구가 있습니다: 굵은 글씨와 표"]
+def test_check_prompt_variants_flags_drift():
+    prompt = (cn.ROOT / "prompts" / "system-prompt.md").read_text(encoding="utf-8")
+    texts = _variant_texts()
+    ko, en = "prompts/sentence-rules.ko.md", "prompts/sentence-rules.en.md"
+    dropped = {**texts, ko: texts[ko].replace("질문을 되풀이하지 마세요.\n", "")}
+    problems = cn.check_prompt_variants(prompt, dropped)
+    assert "답변 판본에 규칙 블록의 답변 절 문장이 없습니다: 질문을 되풀이하지 마세요." in problems
+    assert f"{en}의 줄 구조가 {ko}와 다릅니다" in problems
+    added = {**texts, ko: texts[ko].replace("질문을 되풀이하지 마세요.", "질문을 되풀이하지 마세요. 짧게 쓰세요.")}
+    assert cn.check_prompt_variants(prompt, added) == [
+        "답변 판본에 규칙 블록의 답변 절 문장이 없습니다: 질문을 되풀이하지 마세요.",
+        "답변 판본의 문장이 규칙 블록의 답변 절에 없습니다: 질문을 되풀이하지 마세요. 짧게 쓰세요."]
+    quoted = {**texts, en: texts[en].replace('"하지만", ', "")}
+    assert cn.check_prompt_variants(prompt, quoted) == [f"{en} 5번 줄의 따옴표 안 한국어가 {ko}와 다릅니다"]
+
+
+def test_variants_mapping_is_read_only():
+    try:
+        sk.VARIANTS["full"] = "system-prompt"
+    except TypeError:
+        return
+    raise AssertionError("VARIANTS는 바꿀 수 없어야 합니다")

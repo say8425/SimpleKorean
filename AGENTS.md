@@ -11,7 +11,7 @@
 - `skills/simple-korean/`: 스킬 원문(`SKILL.md`)과 참고 파일
 - `src/hooks/`: 훅 세 개(Claude Code나 Codex가 정해진 때에 실행하는 스크립트)
 - `prompts/system-prompt.md`, `output-styles/simple-korean.md`: 규칙 블록(세션 시작 훅이 문맥에 넣는 규칙 요약)을 담은 두 파일
-- `prompts/sentence-rules.*.md`, `prompts/format-rules.*.md`: 봇에 넣는 답변 판본(답변의 문장 규칙과 서식 규칙). 한국어판과 영어판이 있습니다.
+- `prompts/sentence-rules.*.md`, `prompts/format-rules.*.md`: 봇에 넣는 답변 판본. 규칙 블록의 답변 절을 문장 규칙과 서식 규칙으로 나눴습니다. 한국어판과 영어판이 있습니다.
 - `src/simple_korean/`, `pyproject.toml`: 답변 판본을 읽는 Python 패키지
 - `.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/`: 플러그인 매니페스트와 마켓플레이스 목록
 - `evals/`: 린터(규칙 위반을 세는 스크립트), 측정 스크립트, 수치 확인 스크립트, 테스트
@@ -55,14 +55,15 @@ README 블록의 문장 틀은 `evals/readme_i18n.py`에 있습니다. 스크립
 
 ## 함께 고칠 파일
 
-`evals/check_numbers.py`는 공개한 수치, 버전, 규칙 블록 두 벌 같은 여러 파일의 일치를 확인합니다. 확인하는 항목은 그 파일 머리의 설명에 있습니다. 호출 문구(스킬을 부르는 말)와 핵심 문구의 목록은 그 파일의 `SKILL_TRIGGERS`와 `KEY_PHRASES`입니다. 답변 판본의 핵심 문구 목록은 `SENTENCE_PHRASES`와 `FORMAT_PHRASES`입니다. 이 문구를 바꾸면 그 상수도 고치세요.
+`evals/check_numbers.py`는 공개한 수치, 버전, 규칙 블록 두 벌 같은 여러 파일의 일치를 확인합니다. 확인하는 항목은 그 파일 머리의 설명에 있습니다. 호출 문구(스킬을 부르는 말)와 핵심 문구의 목록은 그 파일의 `SKILL_TRIGGERS`와 `KEY_PHRASES`입니다. 이 문구를 바꾸면 두 상수도 고치세요.
+
+규칙 블록의 답변 절을 바꾸면 `prompts/`의 답변 판본 네 개도 고치세요. 한국어판은 답변 절의 문장을 한 줄에 하나씩 그대로 담습니다. 영어판은 한국어판의 줄마다 같은 규칙을 영어로 적습니다. `check_numbers.py`는 한국어판이 답변 절을 빠짐없이 담는지 확인합니다. 영어판은 줄 구조와 따옴표 안의 한국어만 확인합니다. 그래서 영어판의 뜻은 직접 맞추세요. 판본 파일의 경로는 바꾸지 마세요. 봇이 태그마다 같은 경로로 판본을 읽습니다.
 
 다음은 어떤 검사도 확인하지 않습니다. 그래서 직접 맞추세요:
 
 - `SKILL.md`의 규칙을 바꾸면 `references/rule-catalog.md`의 규칙 번호와 원본 STE 번호를 고치세요.
 - 엄격 모드 규칙을 바꾸면 `references/strict-mode.md`를 고치세요.
 - 규칙을 바꾸면 README 다섯 언어판의 규칙 표를 고치세요.
-- 답변 규칙이나 문장 규칙을 바꾸면 `prompts/`의 답변 판본 네 개를 고치세요. 영어판은 한국어판과 같은 규칙을 담아야 합니다. 판본 파일의 경로는 바꾸지 마세요. 봇이 태그마다 같은 경로로 판본을 읽습니다.
 - `data/terms.json`을 바꾸면 단어를 옮겨 적은 곳도 고치세요. `SKILL.md`의 네 무리 단어, 규칙 블록의 지정형(쓰라고 정한 표기) 문장, README 다섯 언어판의 "표기 정책" 표입니다.
 - 규칙 블록의 길이를 바꾸면 `src/hooks/README.md`의 "약 2,500자"를 확인하세요.
 

@@ -107,7 +107,9 @@ En las herramientas que no admiten skills, pegue el bloque de reglas de [`prompt
 
 ### Bots y programas
 
-Ponga una variante de respuesta en el prompt del sistema de un bot. [`prompts/sentence-rules.ko.md`](../prompts/sentence-rules.ko.md) contiene solo las reglas de oraciones para respuestas. [`prompts/format-rules.ko.md`](../prompts/format-rules.ko.md) contiene solo las reglas de formato, como encabezados, negrita y tablas. Los dos archivos juntos forman las reglas completas de respuesta. Las variantes escritas en inglés terminan en `.en.md`. La primera línea de cada archivo es un comentario HTML con la variante, el idioma y la versión.
+Ponga una variante de respuesta en el prompt del sistema de un bot. Las variantes de respuesta dividen en dos archivos las reglas de respuesta del bloque de reglas. [`prompts/sentence-rules.ko.md`](../prompts/sentence-rules.ko.md) contiene las reglas de oraciones. [`prompts/format-rules.ko.md`](../prompts/format-rules.ko.md) contiene las reglas de formato, como encabezados, negrita y tablas. Los dos archivos juntos forman las reglas completas de respuesta. No contienen las reglas de documentos.
+
+Los archivos cuyo nombre termina en `.en.md` tienen las mismas reglas, escritas en inglés. La primera línea de cada archivo es un comentario HTML con la variante, el idioma y la versión.
 
 Para fijar una variante, descárguela de la URL raw de una etiqueta de versión, por ejemplo `https://raw.githubusercontent.com/say8425/SimpleKorean/<etiqueta>/prompts/sentence-rules.ko.md`. Los archivos de variantes tienen la misma ruta en todas las etiquetas.
 
@@ -123,7 +125,7 @@ from simple_korean import __version__, prompt_block
 prompt = prompt_block(variant="sentences", lang="en")
 ```
 
-`variant` es `sentences` o `format`. `lang` es `ko` o `en`.
+`variant` es `sentences` o `format`. `lang` es el idioma en que están escritas las reglas, `ko` o `en`. `lang` no fija el idioma de la respuesta.
 
 ### Después de instalar
 
