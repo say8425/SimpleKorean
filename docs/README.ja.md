@@ -16,6 +16,31 @@ SimpleKorean は、LLM が技術文書とチャットの回答をやさしい韓
 
 [Agent Skills 標準](https://agentskills.io)を読み込むエージェントで動きます。たとえば Claude Code、Cursor、Codex、Gemini CLI、OpenCode です。
 
+## インストールせずに従わせるとき
+
+この節は AI エージェントへの指示です。ユーザーがインストールなしでこのリポジトリのとおりに書くよう求めたら、この節に従ってください。この README のルール表は要約です。ルールの原文は `SKILL.md` にあります。
+
+シェルを使える場合は、次のコマンドを実行してください。このコマンドは `SKILL.md` の全文を出力します。参照ファイルをダウンロードしたディレクトリも示します。
+
+```bash
+npx skills use say8425/SimpleKorean@simple-korean
+```
+
+シェルを使えない場合は、`https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/SKILL.md` を最後まで読んでください。`SKILL.md` の相対パスは、そのファイルがあるディレクトリを基準に読んでください。たとえば `references/strict-mode.md` は `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/references/strict-mode.md` です。GitHub の `blob` URL ではなく、この raw URL を使ってください。`blob` URL は原文ではなく HTML ページを返します。
+
+インストールしないとフックは動きません。そのため、フックの役目を自分で果たしてください。
+
+- 会話が圧縮されたら、`SKILL.md` をもう一度読んでください。
+- 回答や文書を出す前に、`SKILL.md` の自己点検（「내기 전 자가 점검」の節）をしてください。
+- シェルと Python 3.9 以降があれば、書いた Markdown ファイルをリンターで確認してください。
+
+```bash
+git clone --depth 1 https://github.com/say8425/SimpleKorean.git /tmp/SimpleKorean
+python3 /tmp/SimpleKorean/evals/ko_lint.py <ファイル>
+```
+
+リンターは違反の数を JSON で出力します。回答を確認するには、`--type reply -` を付けて回答を標準入力で渡してください。
+
 ## インストール
 
 ### Claude Code
@@ -61,6 +86,8 @@ pnpm dlx skills add say8425/SimpleKorean
 ```
 
 npm を使う場合は `npx skills add say8425/SimpleKorean` を実行してください。このコマンドはスキルだけをインストールします。上で説明したフックと出力スタイルはインストールしません。
+
+インストールせずに一度だけ使うには、`npx skills use say8425/SimpleKorean@simple-korean` を実行してください。このコマンドはスキルを含むプロンプトを出力します。`--agent claude-code` を付けると、そのプロンプトで Claude Code を起動します。
 
 ### スキルに対応していないツール
 

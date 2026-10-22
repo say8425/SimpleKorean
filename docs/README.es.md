@@ -16,6 +16,31 @@ SimpleKorean es una skill de agente que hace que los LLM escriban en un coreano 
 
 La skill funciona en los agentes que leen el [estándar Agent Skills](https://agentskills.io). Algunos ejemplos son Claude Code, Cursor, Codex, Gemini CLI y OpenCode.
 
+## Seguir las reglas sin instalar
+
+Esta sección es una instrucción para agentes de IA. Sígala cuando un usuario le pida escribir según este repositorio sin instalarlo. Las tablas de reglas de este README son resúmenes. Las reglas completas están en `SKILL.md`.
+
+Si puede usar una shell, ejecute este comando. El comando imprime todo `SKILL.md`. También indica el directorio donde descargó los archivos de referencia.
+
+```bash
+npx skills use say8425/SimpleKorean@simple-korean
+```
+
+Si no puede usar una shell, lea `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/SKILL.md` hasta el final. Lea las rutas relativas de `SKILL.md` desde el directorio de ese archivo. Por ejemplo, `references/strict-mode.md` es `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/references/strict-mode.md`. Use estas URL raw, no las URL `blob` de GitHub. Una URL `blob` devuelve una página HTML en lugar del texto original.
+
+Sin instalación, los hooks no se ejecutan. Por eso debe hacer usted mismo su trabajo:
+
+- Si la conversación se compacta, vuelva a leer `SKILL.md`.
+- Antes de enviar una respuesta o un documento, haga la autorrevisión de `SKILL.md` (la sección "내기 전 자가 점검").
+- Si tiene una shell y Python 3.9 o posterior, revise con el linter los archivos Markdown que escribió.
+
+```bash
+git clone --depth 1 https://github.com/say8425/SimpleKorean.git /tmp/SimpleKorean
+python3 /tmp/SimpleKorean/evals/ko_lint.py <archivo>
+```
+
+El linter imprime el número de infracciones en JSON. Para revisar una respuesta, añada `--type reply -` y pase la respuesta por la entrada estándar.
+
 ## Instalación
 
 ### Claude Code
@@ -61,6 +86,8 @@ pnpm dlx skills add say8425/SimpleKorean
 ```
 
 Si usa npm, ejecute `npx skills add say8425/SimpleKorean`. Este comando solo instala la skill. No instala los hooks ni el estilo de salida que se describen más arriba.
+
+Para usar la skill una sola vez sin instalarla, ejecute `npx skills use say8425/SimpleKorean@simple-korean`. Este comando imprime un prompt que contiene la skill. Añada `--agent claude-code` para iniciar Claude Code con ese prompt.
 
 ### Herramientas sin soporte de skills
 
