@@ -70,3 +70,17 @@ def test_variants_mapping_is_read_only():
     except TypeError:
         return
     raise AssertionError("VARIANTS는 바꿀 수 없어야 합니다")
+
+
+def test_package_exports_the_linter():
+    assert sk.lint_detail("배포를 진행합니다.\n", config={})[0]["category"] == "light_verb"
+    assert sk.lint is sk.ko_lint.lint and sk.reader_check is sk.ko_lint.reader_check
+    reply = sk.lint_detail("**네** 됩니다.\n", "reply", config={}, formatting=False)
+    assert [h["category"] for h in reply] == []
+
+
+def test_old_evals_path_gives_the_package_module():
+    import ko_lint
+    import ko_rules
+    assert ko_lint is sk.ko_lint and ko_rules is sk.ko_rules
+    assert sk.ko_terms.TERMS_JSON.is_file() and sk.ko_rules.SLOP_TSV.is_file()

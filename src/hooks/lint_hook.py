@@ -19,7 +19,7 @@ import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
-sys.path.insert(0, str(ROOT / "evals"))
+sys.path.insert(0, str(ROOT / "src"))
 
 MAX_HOOK_HITS = 12
 MAX_LINE_CHARS = 300
@@ -30,7 +30,7 @@ REPLY_COUNTS = (("em_dash", "em-dash"), ("bold_spans", "굵은 글씨"), ("table
 
 def load_linter():
     try:
-        import ko_lint  # noqa: WPS433
+        from simple_korean import ko_lint  # noqa: WPS433
         return ko_lint
     except Exception:  # noqa: BLE001  린터를 못 읽으면 조용히 건너뛴다
         return None

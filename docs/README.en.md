@@ -127,6 +127,8 @@ prompt = prompt_block(variant="sentences", lang="en")
 
 `variant` is `sentences` or `format`. `lang` is the language of the rule text, `ko` or `en`. `lang` does not set the language of the reply.
 
+The package also has the linter. `lint_detail(text, "reply", formatting=False)` checks the reply rules without the formatting rules. To check against the document rules, use `"descriptive"` or `"procedural"` instead of `"reply"`. Each hit has `category`, `severity`, `line`, and `text`.
+
 ### After installing
 
 After you install, ask for a technical document. To fix existing text, say "simple-korean으로 고쳐 줘" (fix this with simple-korean).

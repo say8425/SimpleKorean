@@ -73,7 +73,7 @@ def test_html_entities_are_not_semicolons():
 
 def test_bad_text_type_fails_fast():
     try:
-        ko_lint.lint("본문입니다.", "reply")
+        ko_lint.lint("본문입니다.", "chat")
     except ValueError as err:
         assert "text_type" in str(err)
     else:
@@ -246,3 +246,61 @@ def test_haera_document_with_anida_is_not_a_register_mix():
     assert ko_lint.lint(text, config={})["violations"].get("register_mix", 0) == 0
     mixed = "이 보고서는 해라체로 쓴다. 결과는 표에 있습니다. 변화는 크다.\n"
     assert ko_lint.lint(mixed, config={})["violations"].get("register_mix", 0) == 1
+
+
+BOT_REPLY = """좋은 질문입니다! 배포는 **실패했습니다** — 디스크가 가득 찼습니다.
+
+| 서버 | 상태 |
+|---|---|
+| web-1 | 실패 |
+
+로그를 확인해 보시기 바랍니다. 원하시면 더 알려 드리겠습니다.
+"""
+
+
+def test_reply_detail_checks_reply_rules_only():
+    cats = Counter(h["category"] for h in ko_lint.lint_detail(BOT_REPLY, "reply", config={}))
+    assert cats == Counter({"opener": 1, "closer": 1, "em_dash": 1, "bold": 1, "table": 1}), cats
+    doc = Counter(h["category"] for h in ko_lint.lint_detail(BOT_REPLY, "descriptive", config={}))
+    assert doc["hedge"] == 1, doc
+
+
+def test_reply_detail_without_formatting_keeps_the_other_reply_rules():
+    detail = ko_lint.lint_detail(BOT_REPLY, "reply", config={}, formatting=False)
+    cats = Counter(h["category"] for h in detail)
+    assert cats == Counter({"opener": 1, "closer": 1, "em_dash": 1}), cats
+    mixed = "배포가 끝났습니다. 로그도 깨끗해요. 원활하게 동작합니다.\n"
+    cats = Counter(h["category"] for h in ko_lint.lint_detail(mixed, "reply", formatting=False))
+    assert cats == Counter({"register_mix": 1, "slop_word": 1}), cats
+
+
+def test_reply_detail_reports_lines_and_first_line_structure():
+    detail = ko_lint.lint_detail("- 첫 줄이 목록입니다.\n\n**굵게** 씁니다.\n", "reply", config={})
+    found = {(h["category"], h["line"]) for h in detail}
+    assert ("lead_structure", 1) in found and ("bold", 3) in found, found
+    assert ko_lint.lint_detail("```\n**코드**\n```\n- 목록\n", "reply", config={}) == [
+        {"category": "lead_structure", "severity": "error", "line": 4, "text": "- 목록"}]
+
+
+def test_clean_reply_has_no_hits_with_or_without_formatting():
+    clean = "디스크가 가득 차서 배포가 실패했습니다.\n\n- 로그를 지우세요.\n- 다시 배포하세요.\n"
+    assert ko_lint.lint_detail(clean, "reply", config={}) == []
+    assert ko_lint.lint(clean, "reply", config={})["violations_total"] == 0
+
+
+def test_formatting_flag_needs_reply_type():
+    try:
+        ko_lint.lint_detail("로그를 읽으세요.\n", "descriptive", formatting=False)
+    except ValueError as err:
+        assert "reply" in str(err)
+    else:
+        raise AssertionError("formatting=False는 reply에서만 받는다")
+
+
+def test_strict_mode_is_for_documents_only():
+    try:
+        ko_lint.lint_detail("로그를 읽으세요.\n", "reply", strict=True)
+    except ValueError as err:
+        assert "strict" in str(err)
+    else:
+        raise AssertionError("엄격 모드는 문서에만 쓴다")

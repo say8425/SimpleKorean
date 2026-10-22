@@ -127,6 +127,8 @@ prompt = prompt_block(variant="sentences", lang="en")
 
 `variant` は `sentences` または `format` です。`lang` はルールを書いた言語で、`ko` または `en` です。`lang` は返答の言語を決めません。
 
+パッケージにはリンターも入っています。`lint_detail(text, "reply", formatting=False)` は、返答ルールから書式ルールを除いて検査します。文書のルールで検査するには、`"reply"` の代わりに `"descriptive"` または `"procedural"` を使ってください。各違反は `category`、`severity`、`line`、`text` を持ちます。
+
 ### インストールした後
 
 インストールしたら、技術文書を依頼してください。すでにある文章を直すときは、「simple-korean으로 고쳐 줘」（simple-korean で直して）と伝えてください。
