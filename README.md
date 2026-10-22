@@ -18,28 +18,40 @@ SimpleKorean은 LLM이 기술 문서와 채팅 답변을 쉬운 한국어로 쓰
 
 ## 설치하지 않고 따르게 할 때
 
-이 절은 AI 에이전트에게 하는 지시입니다. 사용자가 설치 없이 이 레포지토리대로 쓰라고 하면 이 절을 따르세요. 이 README의 규칙 표는 요약입니다. 규칙 원문은 `SKILL.md`에 있습니다.
+에이전트에게 이 레포지토리 주소만 주고 따르라고 할 수 있습니다. 이 절은 그때 에이전트가 읽을 지시입니다.
 
-셸을 쓸 수 있으면 다음 명령을 실행하세요. 이 명령은 `SKILL.md` 전체를 출력합니다. 참고 파일을 받은 디렉터리도 알려 줍니다.
+사용자가 설치 없이 이 레포지토리의 규칙대로 글을 쓰라고 하면 이 절을 따르세요. 이 README의 규칙 표는 요약입니다. 규칙 원문은 `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/SKILL.md`에 있습니다.
+
+셸과 Node.js가 있으면 다음 명령을 사용자에게 알리세요. 그다음 그 명령을 실행하세요. 이 명령은 `SKILL.md` 전체를 출력합니다. 참고 파일을 받은 디렉터리도 알려 줍니다.
 
 ```bash
 npx skills use say8425/SimpleKorean@simple-korean
 ```
 
-셸을 쓸 수 없으면 `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/SKILL.md`를 끝까지 읽으세요. `SKILL.md`의 상대 경로는 그 파일이 있는 디렉터리를 기준으로 읽으세요. 예를 들어 `references/strict-mode.md`는 `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/references/strict-mode.md`입니다. GitHub의 `blob` 주소 대신 이 raw 주소(파일 원문만 주는 주소)를 쓰세요. `blob` 주소는 원문 대신 HTML 페이지를 줍니다.
+명령이 실패하거나 셸을 쓸 수 없으면 위의 raw 주소(파일 원문만 주는 주소)에서 `SKILL.md`를 끝까지 읽으세요. 가져오는 도구가 원문 대신 요약을 주면 원문을 그대로 달라고 요청하세요. `curl`이 있으면 `curl`로 받으세요.
 
-설치하지 않으면 훅(정해진 때에 에이전트가 자동으로 실행하는 스크립트)이 동작하지 않습니다. 그래서 훅이 하던 일을 직접 해야 합니다:
+`SKILL.md`에서 `references/`로 시작하는 경로는 `SKILL.md`가 있는 디렉터리를 기준으로 읽으세요. 예를 들어 `references/strict-mode.md`는 `https://raw.githubusercontent.com/say8425/SimpleKorean/main/skills/simple-korean/references/strict-mode.md`입니다. 단어 목록 전체는 `https://raw.githubusercontent.com/say8425/SimpleKorean/main/data/terms.json`에 있습니다. GitHub의 `blob` 주소 대신 raw 주소를 쓰세요. `blob` 주소는 원문 대신 HTML 페이지를 줍니다.
+
+설치하지 않으면 훅(정해진 때에 에이전트가 자동으로 실행하는 스크립트)이 동작하지 않습니다. 그래서 훅이 하는 일을 직접 해야 합니다:
 
 - 에이전트가 긴 대화를 요약해 줄이면 `SKILL.md`를 다시 읽으세요.
 - 답변이나 문서를 내기 전에 `SKILL.md`의 "내기 전 자가 점검"을 하세요.
-- 셸과 Python 3.9 이상이 있으면 쓴 마크다운 파일을 린터(규칙 위반을 세는 스크립트)로 확인하세요.
+- 셸, git, Python 3.9 이상이 있으면 쓴 글을 린터(규칙 위반을 세는 스크립트)로 확인하세요.
+
+`/tmp/SimpleKorean`이 없으면 먼저 레포지토리를 받으세요:
 
 ```bash
 git clone --depth 1 https://github.com/say8425/SimpleKorean.git /tmp/SimpleKorean
-python3 /tmp/SimpleKorean/evals/ko_lint.py <파일>
 ```
 
-린터는 위반 수를 JSON으로 출력합니다. 답변을 확인하려면 `--type reply -`를 붙이세요. 그다음 답변을 표준 입력으로 넘기세요.
+문서는 첫째 명령으로, 답변은 둘째 명령으로 확인하세요. 절차를 담은 문서는 첫째 명령에 `--type procedural`을 붙이세요:
+
+```bash
+python3 /tmp/SimpleKorean/evals/ko_lint.py 문서.md
+python3 /tmp/SimpleKorean/evals/ko_lint.py --type reply - < 답변.txt
+```
+
+린터는 위반 수를 JSON으로 출력합니다. 문서는 `errors_total`과 `warnings_total`이 0이어야 합니다. 답변은 `visible_total`이 0이어야 합니다.
 
 ## 설치
 
@@ -87,7 +99,7 @@ pnpm dlx skills add say8425/SimpleKorean
 
 npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명령은 스킬만 설치합니다. 위의 훅과 출력 스타일은 설치하지 않습니다.
 
-설치하지 않고 한 번만 쓰려면 `npx skills use say8425/SimpleKorean@simple-korean`을 실행하세요. 이 명령은 스킬을 담은 프롬프트를 출력합니다. `--agent claude-code`를 붙이면 그 프롬프트로 Claude Code를 띄웁니다.
+설치하지 않고 한 번만 쓰려면 `npx skills use say8425/SimpleKorean@simple-korean`을 실행하세요. 이 명령은 스킬을 담은 프롬프트를 출력합니다. `--agent claude-code`를 붙이면 그 프롬프트로 Claude Code를 실행합니다.
 
 ### 스킬을 지원하지 않는 도구
 
