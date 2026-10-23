@@ -1,4 +1,4 @@
-"""SimpleKorean 규칙 판본을 Python에서 읽는다. 표준 라이브러리만 쓴다.
+"""SimpleKorean 규칙 판본과 린터를 Python에서 쓴다. 표준 라이브러리만 쓴다.
 
     from simple_korean import prompt_block, __version__
     prompt = prompt_block(variant="sentences", lang="en")
@@ -7,15 +7,23 @@
 format은 서식 규칙을 담는다. 설계 문서 5장에 따라 sentences는 슬롭 어휘와 번역투를 지우라는 문장도 담는다. 두 판본을 이어 붙이면 답변 규칙 전체가 된다. 그 밖의 문서 규칙은 담지 않는다. lang은 규칙을
 적은 언어이고 답변의 언어를 정하지 않는다. 파일의 첫 줄은 판본, 언어, 버전을 적은 HTML 주석이다. 설치한
 패키지에서는 패키지 안의 사본을 읽고, 레포지토리에서는 prompts/의 원본을 읽는다.
+
+린터는 lint_detail(), lint(), reader_check()로 쓴다. 답변을 서식 검사 없이 검사하려면 다음처럼 부른다. em-dash는
+오류로, 슬롭 어휘, 인사말, 맺음말은 경고로 돌려준다.
+
+    from simple_korean import lint_detail
+    hits = lint_detail(reply, "reply", formatting=False)
 """
-from pathlib import Path
 from types import MappingProxyType
 
+from ._paths import resource
+from .ko_lint import lint, lint_detail, reader_check
+
 __version__ = "1.1.1"  # x-release-please-version
+__all__ = ("__version__", "VARIANTS", "LANGS", "prompt_path", "prompt_block", "lint", "lint_detail", "reader_check")
 
 VARIANTS = MappingProxyType({"sentences": "sentence-rules", "format": "format-rules"})
 LANGS = ("ko", "en")
-_HERE = Path(__file__).resolve().parent
 
 
 def prompt_path(variant="sentences", lang="ko"):
@@ -25,8 +33,7 @@ def prompt_path(variant="sentences", lang="ko"):
     if lang not in LANGS:
         raise ValueError(f"lang은 {LANGS} 가운데 하나여야 합니다: {lang!r}")
     name = f"{VARIANTS[variant]}.{lang}.md"
-    bundled = _HERE / "prompts" / name
-    return bundled if bundled.is_file() else _HERE.parent.parent / "prompts" / name
+    return resource(f"prompts/{name}", f"prompts/{name}")
 
 
 def prompt_block(variant="sentences", lang="ko"):

@@ -41,15 +41,15 @@
 - `src/hooks/`: 훅 세 개(Claude Code나 Codex가 정해진 때에 실행하는 스크립트)
 - `prompts/system-prompt.md`, `output-styles/simple-korean.md`: 규칙 블록(세션 시작 훅이 문맥에 넣는 규칙 요약)을 담은 두 파일
 - `prompts/sentence-rules.*.md`, `prompts/format-rules.*.md`: 봇에 넣는 답변 판본. 규칙 블록의 답변 절을 문장 규칙과 서식 규칙으로 나눴습니다. 한국어판과 영어판이 있습니다.
-- `src/simple_korean/`, `pyproject.toml`: 답변 판본을 읽는 Python 패키지
+- `src/simple_korean/`, `pyproject.toml`: 답변 판본과 린터를 담은 Python 패키지
 - `.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/`: 플러그인 매니페스트와 마켓플레이스 목록
-- `evals/`: 린터(규칙 위반을 세는 스크립트), 측정 스크립트, 수치 확인 스크립트, 테스트
+- `evals/`: 린터(규칙 위반을 세는 스크립트)를 부르는 명령, 측정 스크립트, 수치 확인 스크립트, 테스트
 - `evals/results/`, `evals/calibration/`: 측정 결과와 린터 보정 기록
 - `data/terms.json`: 외래어 단어 목록과 근거
 - `tools/`: 슬롭 어휘(AI 글에 흔한 빈말) 목록과 기초 어휘 목록을 만드는 스크립트
 - `docs/research/`, `docs/superpowers/`: 조사 보고서, 설계 문서, 구현 계획
 
-린터는 `evals/ko_lint.py`, `ko_rules.py`, `ko_terms.py`, `ko_text.py`입니다.
+린터는 `src/simple_korean/`의 `ko_lint.py`, `ko_rules.py`, `ko_terms.py`, `ko_text.py`입니다. `evals/`의 같은 이름 파일은 이 모듈을 옛 경로에서 부릅니다. 그래서 명령은 지금처럼 `python3 evals/ko_lint.py`로 실행하세요.
 
 ## 문체
 
@@ -119,9 +119,10 @@ release-please는 커밋 제목만 `CHANGELOG.md`로 옮깁니다. 그래서 릴
 - 린터와 `src/hooks/lint_hook.py`는 Python 3.9에서 동작해야 합니다.
 - 린터와 `lint_hook.py`에는 표준 라이브러리만 쓰세요. 사용자는 아무것도 설치하지 않고 훅을 실행합니다.
 - kiwipiepy(한국어 형태소 분석기)는 측정 코드인 `evals/metrics.py`에만 쓰세요.
+- 답변 규칙 위반은 `ko_lint.reply_hits()` 하나로 세세요. Stop 훅, `lint_detail(text, "reply")`, 보정 기록이 이 함수를 씁니다. `reader_check()`와 CLI의 `--type reply`는 답변 벤치마크의 지표입니다. 그래서 `reader_check()`를 바꾸면 공개 수치가 바뀝니다. 두 함수는 인사말, 맺음말, em-dash, 굵은 글씨, 표, 첫 줄의 헤더나 목록을 찾는 정규식을 함께 씁니다. 이 정규식을 바꾸면 벤치마크가 세는 것이 어떻게 바뀌는지 PR 본문에 적으세요.
 - `src/simple_korean/` 패키지도 Python 3.9에서 동작해야 하고 표준 라이브러리만 써야 합니다.
 - 세션 시작 훅(`src/hooks/simple-korean-activate.js`)은 의존성 없는 Node 스크립트로 두세요.
-- `.simple-korean.json`의 값 검사(지정형 20자, `skip` 100개)를 느슨하게 하지 마세요. `simple-korean-activate.js`와 `evals/ko_terms.py`는 같은 기준을 써야 합니다. 지정형은 세션 시작 훅을 거쳐 모델 문맥에 들어갑니다.
+- `.simple-korean.json`의 값 검사(지정형 20자, `skip` 100개)를 느슨하게 하지 마세요. `simple-korean-activate.js`와 `src/simple_korean/ko_terms.py`는 같은 기준을 써야 합니다. 지정형은 세션 시작 훅을 거쳐 모델 문맥에 들어갑니다.
 - 세션 시작 훅의 출력은 9,500자 이하여야 합니다. 더 길면 훅은 규칙 블록 대신 짧은 대체 규칙을 보냅니다.
 
 ## 확인

@@ -73,7 +73,7 @@ def test_html_entities_are_not_semicolons():
 
 def test_bad_text_type_fails_fast():
     try:
-        ko_lint.lint("본문입니다.", "reply")
+        ko_lint.lint("본문입니다.", "chat")
     except ValueError as err:
         assert "text_type" in str(err)
     else:
@@ -246,3 +246,178 @@ def test_haera_document_with_anida_is_not_a_register_mix():
     assert ko_lint.lint(text, config={})["violations"].get("register_mix", 0) == 0
     mixed = "이 보고서는 해라체로 쓴다. 결과는 표에 있습니다. 변화는 크다.\n"
     assert ko_lint.lint(mixed, config={})["violations"].get("register_mix", 0) == 1
+
+
+BOT_REPLY = """좋은 질문입니다! 배포는 **실패했습니다** — 디스크가 가득 찼습니다.
+
+| 서버 | 상태 |
+|---|---|
+| web-1 | 실패 |
+
+로그를 확인해 보시기 바랍니다. 원하시면 더 알려 드리겠습니다.
+"""
+
+
+def test_reply_detail_checks_reply_rules_only():
+    cats = Counter(h["category"] for h in ko_lint.lint_detail(BOT_REPLY, "reply", config={}))
+    assert cats == Counter({"opener": 1, "closer": 1, "em_dash": 1, "bold": 1, "table": 1}), cats
+    doc = Counter(h["category"] for h in ko_lint.lint_detail(BOT_REPLY, "descriptive", config={}))
+    assert doc["hedge"] == 1, doc
+
+
+def test_reply_detail_without_formatting_keeps_the_other_reply_rules():
+    detail = ko_lint.lint_detail(BOT_REPLY, "reply", config={}, formatting=False)
+    cats = Counter(h["category"] for h in detail)
+    assert cats == Counter({"opener": 1, "closer": 1, "em_dash": 1}), cats
+    mixed = "배포가 끝났습니다. 로그도 깨끗해요. 원활하게 동작합니다.\n"
+    cats = Counter(h["category"] for h in ko_lint.lint_detail(mixed, "reply", formatting=False))
+    assert cats == Counter({"slop_word": 1}), cats
+    severity = {h["category"]: h["severity"] for h in detail}
+    assert severity == {"opener": "warning", "closer": "warning", "em_dash": "error"}, severity
+
+
+def test_reply_detail_reports_lines_and_first_line_structure():
+    detail = ko_lint.lint_detail("- 첫 줄이 목록입니다.\n\n**굵게** 씁니다.\n", "reply", config={})
+    found = {(h["category"], h["line"]) for h in detail}
+    assert ("lead_structure", 1) in found and ("bold", 3) in found, found
+    assert ko_lint.lint_detail("```\n**코드**\n```\n- 목록\n", "reply", config={}) == [
+        {"category": "lead_structure", "severity": "error", "line": 4, "text": "- 목록"}]
+
+
+def test_clean_reply_has_no_hits_with_or_without_formatting():
+    clean = "디스크가 가득 차서 배포가 실패했습니다.\n\n- 로그를 지우세요.\n- 다시 배포하세요.\n"
+    assert ko_lint.lint_detail(clean, "reply", config={}) == []
+    assert ko_lint.lint_detail(clean, "reply", formatting=False) == []
+    report = ko_lint.lint(clean, "reply")
+    assert (report["type"], report["violations_total"], report["errors_total"]) == ("reply", 0, 0), report
+
+
+def test_formatting_flag_needs_reply_type():
+    try:
+        ko_lint.lint_detail("로그를 읽으세요.\n", "descriptive", formatting=False)
+    except ValueError as err:
+        assert "reply" in str(err)
+    else:
+        raise AssertionError("formatting=False는 reply에서만 받는다")
+
+
+def test_strict_mode_is_for_documents_only():
+    try:
+        ko_lint.lint_detail("로그를 읽으세요.\n", "reply", strict=True)
+    except ValueError as err:
+        assert "strict" in str(err)
+    else:
+        raise AssertionError("엄격 모드는 문서에만 쓴다")
+
+
+def test_reply_fillers_skip_code_and_quotes():
+    text = ('버튼 문구는 "도움이 되셨나요?"입니다. 그 문구를 바꾸세요.\n\n```python\n'
+            'print("도움이 되셨기를 바랍니다")\n```\n`원하시면 더 알려 드리겠습니다`는 예시입니다.\n')
+    assert ko_lint.lint_detail(text, "reply") == []
+    quoted = '"좋은 질문입니다"라는 말은 인사말입니다.\n'
+    assert ko_lint.lint_detail(quoted, "reply") == []
+    closer = "로그를 지우세요. 필요한 값을 알려 주세요.\n그러면 바로 정리해 드리겠습니다.\n"
+    [hit] = ko_lint.lint_detail(closer, "reply")
+    assert hit["category"] == "closer" and "\n" not in hit["text"], hit
+
+
+def test_options_after_text_type_are_keyword_only():
+    for call in (lambda: ko_lint.lint_detail("로그를 읽으세요.", "descriptive", True),
+                 lambda: ko_lint.lint("로그를 읽으세요.", "descriptive", {})):
+        try:
+            call()
+        except TypeError:
+            continue
+        raise AssertionError("strict와 config는 키워드로만 받는다")
+
+
+def test_reply_rejects_document_settings():
+    for kwargs in ({"config": {"terms": {"release": "릴리즈"}}}, {"path": "notes.md"}):
+        try:
+            ko_lint.lint_detail("로그를 읽으세요.\n", "reply", **kwargs)
+        except ValueError as err:
+            assert "문서에만" in str(err), err
+        else:
+            raise AssertionError(kwargs)
+    assert ko_lint.lint_detail("로그를 읽으세요.\n", "reply", config={}) == []
+
+
+def test_reply_hits_takes_formatting_as_a_keyword():
+    try:
+        ko_lint.reply_hits("**굵게** 씁니다.\n", {})
+    except TypeError:
+        return
+    raise AssertionError("formatting은 키워드로만 받는다")
+
+
+def test_reply_sees_bold_and_dashes_next_to_a_url():
+    bold = "저장소는 **https://github.com/say8425/SimpleKorean**에서 받으세요. 설치는 1분이면 끝납니다.\n"
+    assert [h["category"] for h in ko_lint.lint_detail(bold, "reply")] == ["bold"]
+    dash = "정규식 문법은 https://docs.python.org/3/library/re.html—특히 search 절—을 보세요. 예시가 있습니다.\n"
+    assert [h["category"] for h in ko_lint.lint_detail(dash, "reply")] == ["em_dash", "em_dash"]
+    chapter = "자세한 내용은 https://example.com/guide—3장을 보세요. 예시는 https://example.com/v2—API 절에 있습니다.\n"
+    assert [h["category"] for h in ko_lint.lint_detail(chapter, "reply")] == ["em_dash", "em_dash"]
+    lzw = "압축 방식은 https://en.wikipedia.org/wiki/Lempel–Ziv–Welch를 보세요.\n"
+    assert ko_lint.lint_detail(lzw, "reply") == [] and ko_lint.lint_detail(lzw, config={}) == []
+
+
+def test_reply_first_line_of_code_or_url_is_content():
+    for first in ("`make deploy`", "https://example.com/runbook"):
+        text = first + "\n- 빌드합니다.\n- 배포합니다.\n"
+        assert ko_lint.lint_detail(text, "reply") == [], first
+    assert ko_lint.reader_check("`make deploy`\n- 빌드합니다.\n")["counts"]["lead_structure"] == 0
+
+
+def test_reply_closer_does_not_cross_a_code_block():
+    text = "출력을 알려 주세요.\n\n```bash\nkubectl get pods -A\n```\n그 출력을 보고 원인을 좁히겠습니다.\n"
+    assert ko_lint.lint_detail(text, "reply") == []
+    inline = "포트를 바꿨습니다. 원하시면 `pg_hba.conf` 설정도 정리해 드리겠습니다.\n"
+    [hit] = ko_lint.lint_detail(inline, "reply")
+    assert hit["category"] == "closer" and "x" not in hit["text"], hit
+
+
+def test_reply_closer_takes_linear_time_after_a_long_code_block():
+    start = time.time()
+    text = "결과를 알려 주세요.\n\n```\n" + "a = 1 " * 40_000 + "\n```\n"
+    assert ko_lint.lint_detail(text, "reply") == []
+    elapsed = time.time() - start
+    assert elapsed < 0.5, elapsed
+
+
+def test_cli_reply_rejects_document_settings():
+    with tempfile.TemporaryDirectory() as d:
+        reply = Path(d, "reply.txt")
+        reply.write_text("답입니다.\n", encoding="utf-8")
+        for flags in (["--strict"], ["--config", str(Path(d, "none.json"))]):
+            r = run_cli("--type", "reply", *flags, str(reply))
+            assert r.returncode != 0 and "문서에만" in r.stderr, (flags, r.stderr)
+
+
+def test_dashes_and_asterisks_inside_a_url_are_part_of_it():
+    texts = ("TLS 키 교환은 https://en.wikipedia.org/wiki/Diffie–Hellman_key_exchange 문서를 보세요.\n",
+             "CORS 허용 목록에 https://*.example.com 주소를 넣으세요.\n")
+    for text in texts:
+        assert ko_lint.lint_detail(text, "descriptive", config={}) == [], text
+        assert ko_lint.lint_detail(text, "reply") == [], text
+        assert ko_lint.ko_text.hangul_ratio(text) > 0.7, text
+
+
+def test_reply_first_line_of_double_backtick_code_is_content():
+    for first in ("``make deploy``", "``echo `date` ``"):
+        text = first + "\n- 빌드합니다.\n- 배포합니다.\n"
+        assert ko_lint.lint_detail(text, "reply") == [], first
+
+
+def test_reply_bold_hit_shows_the_original_text():
+    text = "저장소는 **https://github.com/say8425/SimpleKorean**에서 받으세요. **`make deploy`**를 실행하세요.\n"
+    hits = [h["text"] for h in ko_lint.lint_detail(text, "reply")]
+    assert sorted(hits) == ["**`make deploy`**", "**https://github.com/say8425/SimpleKorean**"], hits
+
+
+def test_reply_table_and_closer_checks_take_linear_time():
+    start = time.time()
+    for cell in ("`" + "a" * 20_000 + "` 설명", " " * 20_000 + "x"):
+        assert [h["category"] for h in ko_lint.lint_detail("표를 봅니다.\n\n| - " + cell + " |\n", "reply")] == []
+    assert ko_lint.lint_detail("결과를 알려 주세요" + " " * 50_000 + "가", "reply") == []
+    elapsed = time.time() - start
+    assert elapsed < 0.5, elapsed

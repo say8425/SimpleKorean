@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "simple-korean"
 version = "1.1.1" # x-release-please-version
-description = "SimpleKorean 규칙 판본을 Python에서 읽는다"
+description = "SimpleKorean 규칙 판본과 린터를 Python에서 쓴다"
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
@@ -17,9 +17,12 @@ Homepage = "https://github.com/say8425/SimpleKorean"
 [tool.hatch.build.targets.wheel]
 packages = ["src/simple_korean"]
 
-# 판본 원본은 prompts/에 둔다. 태그마다 같은 경로로 읽게 하려고 옮기지 않고 패키지에 복사한다.
+# 판본은 prompts/에, 단어 목록과 슬롭 어휘는 data/와 evals/에 둔다. 태그마다 같은 경로로 읽게 하려고
+# 옮기지 않고 패키지에 복사한다.
 [tool.hatch.build.targets.wheel.force-include]
 "prompts/sentence-rules.ko.md" = "simple_korean/prompts/sentence-rules.ko.md"
 "prompts/sentence-rules.en.md" = "simple_korean/prompts/sentence-rules.en.md"
 "prompts/format-rules.ko.md" = "simple_korean/prompts/format-rules.ko.md"
 "prompts/format-rules.en.md" = "simple_korean/prompts/format-rules.en.md"
+"data/terms.json" = "simple_korean/data/terms.json"
+"evals/slop.tsv" = "simple_korean/data/slop.tsv"

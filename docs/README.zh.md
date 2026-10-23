@@ -127,6 +127,10 @@ prompt = prompt_block(variant="sentences", lang="en")
 
 `variant` 是 `sentences` 或 `format`。`lang` 是规则文字所用的语言，取 `ko` 或 `en`。`lang` 不决定回答的语言。
 
+软件包里也有检查器（linter）。`lint_detail(text, "reply")` 在回答中查找 em-dash、套话词汇、问候语、结束语、粗体、表格，以及第一行的标题或列表。传入 `formatting=False` 时，不查找粗体、表格和第一行。它不查找翻译腔和文体混用。
+
+要按文档规则检查，请把 `"reply"` 换成 `"descriptive"` 或 `"procedural"`。每条结果都有 `category`、`severity`、`line` 和 `text`。
+
 ### 安装之后
 
 安装后，请让模型写技术文档。如果要修改已有的文字，请说“simple-korean으로 고쳐 줘”（用 simple-korean 修改）。
