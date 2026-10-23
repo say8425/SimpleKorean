@@ -53,7 +53,15 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with: { python-version: "3.12" }
-      - run: python3 -m pip install --require-hashes -r .github/build-requirements.txt
+      # 빌드 도구는 태그에 든 목록으로 설치한다. 그래서 같은 태그를 다시 빌드하면 같은 파일이 나온다.
+      # 목록이 없는 태그는 이 워크플로를 실행한 커밋의 목록을 쓴다.
+      - run: |
+          requirements=.github/build-requirements.txt
+          if [ ! -f "$requirements" ]; then
+            requirements="$RUNNER_TEMP/build-requirements.txt"
+            git show "$GITHUB_SHA:.github/build-requirements.txt" > "$requirements"
+          fi
+          python3 -m pip install --require-hashes -r "$requirements"
       - run: python3 -m build --no-isolation
       - run: |
           ls dist
@@ -65,6 +73,8 @@ jobs:
           path: dist/
   publish:
     needs: build
+    # build의 앞 작업(release-please)을 건너뛰면 GitHub는 이 작업도 건너뛴다. 그래서 build의 결과만 본다.
+    if: ${{ !cancelled() && needs.build.result == 'success' }}
     runs-on: ubuntu-latest
     # PyPI의 trusted publisher에 이 워크플로(release.yml)와 환경 이름(pypi)을 등록해야 한다.
     environment:
