@@ -2,6 +2,26 @@
 
 항목마다 버전, 날짜, 바뀐 것을 적습니다. 측정 결과가 바뀌면 그 릴리스에 결과 경로를 적습니다.
 
+## [1.2.0](https://github.com/say8425/SimpleKorean/compare/v1.1.1...v1.2.0) (2026-10-23)
+
+
+### 기능
+
+* 린터를 패키지로 옮기고 답변 규칙 검사를 공개 함수로 낸다 ([#21](https://github.com/say8425/SimpleKorean/issues/21)) ([fa47499](https://github.com/say8425/SimpleKorean/commit/fa474993a8a96404f0ce3e7040f781cb8e292465))
+* 릴리스마다 Python 패키지를 PyPI에 올린다 ([#23](https://github.com/say8425/SimpleKorean/issues/23)) ([8148d2e](https://github.com/say8425/SimpleKorean/commit/8148d2e89cb1d78961ace53e8fc64644ed2f9275))
+* 봇에 넣는 답변 판본과 Python 패키지를 더한다 ([#19](https://github.com/say8425/SimpleKorean/issues/19)) ([ab3291d](https://github.com/say8425/SimpleKorean/commit/ab3291dd7e9f5d5bb9f881b4808754cfa3cd4e10))
+
+
+### 고친 것
+
+* 린터의 오탐과 놓침을 고치고 Edit 뒤에는 편집이 더한 위반만 알린다 ([#22](https://github.com/say8425/SimpleKorean/issues/22)) ([d8be582](https://github.com/say8425/SimpleKorean/commit/d8be5829e2e57790627cfc47f7b9f1a2a1265142))
+
+
+### 측정
+
+* 측정 결과는 [`evals/results/2026-10-21/RESULTS.md`](evals/results/2026-10-21/RESULTS.md)에 있습니다. 벤치마크 입력에 em-dash와 가운뎃점을 넣고 초안 다듬기 과제를 더한 뒤 잰 결과입니다([#16](https://github.com/say8425/SimpleKorean/issues/16)).
+* 이 릴리스의 린터 변경(#19, #21, #22) 뒤에는 벤치마크를 다시 재지 않았습니다. 린터 변경은 공개 수치를 바꾸지 않습니다. 커밋한 답변 514개의 `reader_check()` 값은 이 변경 앞뒤로 같습니다. `evals/check_numbers.py`도 공개 수치를 다시 계산해 같은 값을 얻었습니다.
+
 ## [1.1.1](https://github.com/say8425/SimpleKorean/compare/v1.1.0...v1.1.1) (2026-10-20)
 
 

@@ -1,4 +1,4 @@
-<!-- simple-korean format-rules en 1.1.1 x-release-please-version -->
+<!-- simple-korean format-rules en 1.2.0 x-release-please-version -->
 Replies (chat replies in every mode).
 You may use headers and lists.
 Decide by the content and the length of the reply.
