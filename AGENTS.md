@@ -119,7 +119,7 @@ release-please는 커밋 제목만 `CHANGELOG.md`로 옮깁니다. 그래서 릴
 - 린터와 `src/hooks/lint_hook.py`는 Python 3.9에서 동작해야 합니다.
 - 린터와 `lint_hook.py`에는 표준 라이브러리만 쓰세요. 사용자는 아무것도 설치하지 않고 훅을 실행합니다.
 - kiwipiepy(한국어 형태소 분석기)는 측정 코드인 `evals/metrics.py`에만 쓰세요.
-- 답변 규칙 위반은 `ko_lint.reply_hits()` 하나로 세세요. Stop 훅, `lint_detail(text, "reply")`, 보정 기록이 이 함수를 씁니다. `reader_check()`와 CLI의 `--type reply`는 답변 벤치마크의 지표입니다. 그래서 `reader_check()`를 바꾸면 공개 수치가 바뀝니다. 두 함수는 인사말, 맺음말, em-dash, 굵은 글씨, 표, 첫 줄 구조를 찾는 정규식을 함께 씁니다. 이 정규식을 바꾸면 벤치마크가 세는 것이 어떻게 바뀌는지 PR 본문에 적으세요.
+- 답변 규칙 위반은 `ko_lint.reply_hits()` 하나로 세세요. Stop 훅, `lint_detail(text, "reply")`, 보정 기록이 이 함수를 씁니다. `reader_check()`와 CLI의 `--type reply`는 답변 벤치마크의 지표입니다. 그래서 `reader_check()`를 바꾸면 공개 수치가 바뀝니다. 두 함수는 인사말, 맺음말, em-dash, 굵은 글씨, 표, 첫 줄의 헤더나 목록을 찾는 정규식을 함께 씁니다. 이 정규식을 바꾸면 벤치마크가 세는 것이 어떻게 바뀌는지 PR 본문에 적으세요.
 - `src/simple_korean/` 패키지도 Python 3.9에서 동작해야 하고 표준 라이브러리만 써야 합니다.
 - 세션 시작 훅(`src/hooks/simple-korean-activate.js`)은 의존성 없는 Node 스크립트로 두세요.
 - `.simple-korean.json`의 값 검사(지정형 20자, `skip` 100개)를 느슨하게 하지 마세요. `simple-korean-activate.js`와 `src/simple_korean/ko_terms.py`는 같은 기준을 써야 합니다. 지정형은 세션 시작 훅을 거쳐 모델 문맥에 들어갑니다.

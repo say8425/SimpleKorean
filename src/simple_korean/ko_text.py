@@ -20,8 +20,9 @@ OFF_REGION = re.compile(
 FENCE = re.compile(r"^[ \t]*(`{3,}(?!`)|~{3,}(?!~))[^\n]*\n.*?(?:^[ \t]*\1[ \t]*$|\Z)", re.S | re.M)
 INLINE_CODE = re.compile(r"`[^`\n]+`")
 # URL 바로 뒤의 굵은 글씨 표시(**)와 대시는 URL이 아니다. URL 안의 별표 하나(https://*.example.com)와
-# 영문이나 숫자 앞의 대시(Diffie–Hellman)는 URL로 본다. 한글은 IRI의 일부일 수 있어 그대로 둔다.
-URL = re.compile(r"https?://(?:[^\s)>\]*—–]|\*(?!\*)|[—–](?=[A-Za-z0-9%]))+")
+# 영문이나 숫자 앞의 대시(Diffie–Hellman)는 URL로 본다. 다만 대시 뒤의 영문이나 숫자에 한글이 붙으면('—3장')
+# 본문의 대시로 본다. 한글은 IRI의 일부일 수 있어 그대로 둔다.
+URL = re.compile(r"https?://(?:[^\s)>\]*—–]|\*(?!\*)|[—–](?=[A-Za-z0-9%])(?![A-Za-z0-9%]*[가-힣]))+")
 ENTITY = re.compile(r"&(?:[A-Za-z][A-Za-z0-9]{1,31}|#[0-9]{1,7}|#[xX][0-9A-Fa-f]{1,6});")
 QUOTES = (
     re.compile(r'"[^"\n]{1,200}"'),

@@ -355,6 +355,8 @@ def test_reply_sees_bold_and_dashes_next_to_a_url():
     assert [h["category"] for h in ko_lint.lint_detail(bold, "reply")] == ["bold"]
     dash = "정규식 문법은 https://docs.python.org/3/library/re.html—특히 search 절—을 보세요. 예시가 있습니다.\n"
     assert [h["category"] for h in ko_lint.lint_detail(dash, "reply")] == ["em_dash", "em_dash"]
+    chapter = "자세한 내용은 https://example.com/guide—3장을 보세요.\n"
+    assert [h["category"] for h in ko_lint.lint_detail(chapter, "reply")] == ["em_dash"]
 
 
 def test_reply_first_line_of_code_or_url_is_content():
