@@ -19,10 +19,10 @@ OFF_REGION = re.compile(
 # 줄바꿈 없이 끝나는 긴 백틱 줄에서 시간만 제곱으로 는다.
 FENCE = re.compile(r"^[ \t]*(`{3,}(?!`)|~{3,}(?!~))[^\n]*\n.*?(?:^[ \t]*\1[ \t]*$|\Z)", re.S | re.M)
 INLINE_CODE = re.compile(r"`[^`\n]+`")
-# URL 바로 뒤의 굵은 글씨 표시(**)와 대시는 URL이 아니다. URL 안의 별표 하나(https://*.example.com)와
+# URL 바로 뒤의 굵은 글씨 표시(**), 대시, 태그(<br>)는 URL이 아니다. URL 안의 별표 하나(https://*.example.com)와
 # 영문이나 숫자 앞의 en dash(Diffie–Hellman)는 URL로 본다. 위키백과 문서 이름은 en dash를 쓰고, 본문의 대시는
 # 보통 em dash다. 그래서 em dash는 늘 본문의 대시로 본다. 한글은 IRI의 일부일 수 있어 그대로 둔다.
-URL = re.compile(r"https?://(?:[^\s)>\]*—–]|\*(?!\*)|–(?=[A-Za-z0-9%]))+")
+URL = re.compile(r"https?://(?:[^\s)<>\]*—–]|\*(?!\*)|–(?=[A-Za-z0-9%]))+")
 ENTITY = re.compile(r"&(?:[A-Za-z][A-Za-z0-9]{1,31}|#[0-9]{1,7}|#[xX][0-9A-Fa-f]{1,6});")
 QUOTES = (
     re.compile(r'"[^"\n]{1,200}"'),
@@ -102,6 +102,11 @@ def mask(text, quotes=True):
     return t
 
 
+def filled(text, masked):
+    """mask()가 지운 자리를 공백 대신 x로 채운 보기. 정규식의 공백 반복이 지운 코드를 건너지 못한다."""
+    return "".join("x" if m == " " and not t.isspace() else m for t, m in zip(text, masked))
+
+
 @lru_cache(maxsize=8)
 def _newlines(text):
     """줄바꿈 위치의 튜플. 같은 글에 여러 번 물어도 한 번만 센다."""
@@ -129,6 +134,12 @@ LIST_ITEM = re.compile(r"^\s*(?:[-*+]|\d+[.)])\s+(.*)$")
 TABLE_ROW = re.compile(r"^\s*\|(.*)\|\s*$")
 TABLE_SEP = re.compile(r"^\s*\|[\s:|-]+\|\s*$")
 BLOCKQUOTE = re.compile(r"^\s*(?:>\s?)+")
+# 줄바꿈 태그(<br>, <br/>, <br class="x">). 속성은 영문자로 시작해야 하고, \<br>처럼 이스케이프한 글은 태그가 아니다.
+# 속성 하나는 공백 뒤의 영문자로 시작해 공백 앞에서 끝난다. 공백을 맞추는 반복이 서로 겹치지 않으므로, 닫히지 않은
+# "<br a" 뒤에 공백이 길게 이어져도 시간이 길이에 비례한다. 값의 공백 뒤가 영문자가 아니면(title="x 1") 놓친다.
+BR = re.compile(r"(?<!\\)<br(?:\s+[A-Za-z_:][^\s<>]*)*\s*(?:/\s*)?>", re.I)
+SENTENCE_END = re.compile(r"[.!?][\"')\]”’]*$")
+BR_TAIL = 200
 SPLIT = re.compile(r"(?<=[.!?])([\"'”’)\]]*)\s+")
 PAREN = re.compile(r"\([^()\n]*\)")
 # 숫자 덩어리([\d,.]의 연속)의 맨 앞에서만 맞추기 시작한다. 덩어리 가운데에서 다시 시작하면
@@ -200,11 +211,33 @@ def _paragraph_units(para):
             for sent, offset in split_sentences(joined)]
 
 
+def _br_parts(text):
+    """<br>로 나눈 조각. 앞 조각이 문장으로 끝나지 않으면 문장 가운데의 줄바꿈이라 <br>을 공백으로 보고 잇는다.
+
+    문장 끝은 이은 글의 끝 BR_TAIL자만 보고 가린다. 이은 글 전체를 다시 보면 <br>이 많은 줄에서 시간이 제곱으로 는다.
+    그래서 앞 조각이 BR_TAIL자보다 긴 괄호로 끝나면 괄호 앞의 문장 끝을 보지 못하고 두 조각을 잇는다.
+    """
+    parts, pieces, recent = [], [], ""
+    for piece in BR.split(text):
+        if pieces and _ends_sentence(recent):
+            parts.append(" ".join(pieces))
+            pieces = []
+        recent = (recent + " " + piece if pieces else piece)[-BR_TAIL:]
+        pieces.append(piece)
+    return parts + [" ".join(pieces)]
+
+
+def _ends_sentence(part):
+    part = part.strip()
+    return bool(SENTENCE_END.search(part)) or sentence_kind(part) is not None or register(part) is not None
+
+
 def units(text):
     """문장 단위 목록을 만든다.
 
     코드 블록, HTML 주석, 꺼짐 구역, 제목, 표 구분 줄은 건너뛴다. 표 칸과 목록 항목은 각각
-    나누고, 본문은 문단으로 이은 뒤 문장으로 나눈다. 어절이 둘 미만인 조각은 뺀다.
+    나누고, 본문은 문단으로 이은 뒤 문장으로 나눈다. <br> 태그는 앞 조각이 문장으로 끝날 때만 나누는 자리로 보고,
+    아니면 공백으로 본다(_br_parts()). 어절이 둘 미만인 조각은 뺀다.
     지역 목록만 고치고 입력은 바꾸지 않는다.
     """
     base = _blank_comments(FENCE.sub(_blank, OFF_REGION.sub(_blank, nfc(text))))
@@ -221,10 +254,15 @@ def units(text):
             para = []
             pieces = row.group(1).split("|") if row else [item.group(1)]
             kind = "table" if row else "list"
-            found.extend(Unit(sent, number, kind)
-                         for piece in pieces for sent, _ in split_sentences(piece.strip()))
+            found.extend(Unit(sent, number, kind) for piece in pieces
+                         for part in _br_parts(piece) for sent, _ in split_sentences(part.strip()))
             continue
-        para.append((number, line))
+        parts = _br_parts(line)
+        for part in parts[:-1]:
+            para.append((number, part))
+            found.extend(_paragraph_units(para))
+            para = []
+        para.append((number, parts[-1]))
     found.extend(_paragraph_units(para))
     return [u for u in found if len(u.text.split()) >= 2]
 

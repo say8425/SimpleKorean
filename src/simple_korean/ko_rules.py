@@ -12,11 +12,29 @@ from .ko_text import JONG_RIEUL, eojeol_count, jongseong, line_of, nfc, register
 ERROR, WARNING = "error", "warning"
 Hit = namedtuple("Hit", "category severity line text")
 
+# 받침이 ㄴ인 음절. 관형형 '-ㄴ/-은/-는'(지우는, 받은, 긴, 백업한)은 이 음절로 끝난다.
+NIEUN = "".join(chr(c) for c in range(0xAC00, 0xD7A4) if (c - 0xAC00) % 28 == 4)
+# '-는 것이/게 좋다'. 쓴이의 권고가 아닌 꼴은 뺀다: 물음표로 끝나는 절('좋나요?', '좋지 않을까요?'), 안긴 물음('좋은지',
+# '좋을지', '좋으냐'), 남의 말('좋대요', '좋다는 조언', '좋다고 들었습니다'), 조건('좋으면'), 지난 일('좋았습니다').
+# '좋다고'와 '좋다는'은 뒤에 짐작의 말이 지금 시제로 올 때만 잡는다('좋다고 생각합니다', '좋다고 볼 수 있습니다',
+# '좋다는 생각이 듭니다'). 그 밖의 꼴('좋으며', '좋을 수 있습니다', '좋을지도 모릅니다', '좋은 방법입니다')도 권고로 잡는다.
+# 아직 잘못 잡는 꼴: '좋은' 뒤에 명사가 오는 평가('켠 것이 좋은 결과를 냈습니다'), 남이 주어인 짐작('일부 팀은 …좋다고
+# 생각합니다').
+# 아직 놓치는 꼴: 위 목록에 없는 짐작과 남의 말을 옮길 때도 쓰는 꼴('좋다는 뜻입니다', '좋다는 것입니다').
+WRITER_GUESS = (r"(?:생각(?:합니다|해요|한다|됩니다)|판단(?:합니다|한다|됩니다)|봅니다|봐요|본다|여깁니다|여겨집니다"
+                r"|느낍니다|느껴집니다|믿습니다|(?:볼|할|말할)\s?수\s?있(?:겠)?(?:습니다|어요|다)|말씀드리고\s?싶(?:습니다|어요|다))"
+                r"(?![가-힣])")
+GOOD = (r"(?:(?:더|가장|제일|훨씬)\s)?좋(?![^.!?\n]{0,10}\?)"
+        r"(?!(?:은|을)지(?!도\s?(?:모[르릅른]|몰[라랐]))|으냐|냐|은가(?!\s?(?:봅|봐|보다|싶))|을까(?!\s?(?:합니다|해요|한다|싶))"
+        r"|습니까|았|으면|다면|대요|답니다|다며|다더"
+        r"|겠?다고(?!\s?(?:" + WRITER_GUESS + r"))"
+        r"|겠?다는(?!\s?(?:(?:생각|판단|결론)(?:입니다|이다|이에요|예요)|생각이\s?(?:듭니다|들어요|든다))(?![가-힣])))")
 DASH = re.compile(r"—|(?<!\d)–(?!\d)|(?<= )--(?= )|(?<=[^\s\d]{2}) - (?=[^\s\d]{2})")
 
 LEXICAL = (
     ("hedge", ERROR, re.compile(
-        r"\s수도\s?있|것\s?같(?:습니다|다|아요|은데|아서)|[는은]\s?것이\s?좋|기(?:를)?\s?바랍니다"
+        r"\s수도\s?있|것\s?같(?:습니다|다|아요|은데|아서)|[" + NIEUN + r"]\s?(?:것이|게)\s?" + GOOD
+        + r"|(?:기(?:를)?|길)\s?바랍니다"
         r"|것으로\s?(?:보입니다|보인다|판단됩니다|판단된다|예상됩니다|추정됩니다)"
         r"|(?<![가-힣])아마(?:도)?(?![가-힣])")),
     ("double_passive", ERROR, re.compile(
@@ -39,7 +57,7 @@ LEXICAL = (
     )))),
     ("light_verb", WARNING, re.compile(r"(?:진행|수행|실시)(?:하|합|했|해|한|할|함|됩|된|되|될|됨)")),
     ("colloquial", WARNING, re.compile(
-        r"(?<![가-힣])(?:근데|그치만|걍|겁니다|거예요|거에요|건데|거죠)(?![가-힣])")),
+        r"(?<![가-힣])(?:근데|그치만|걍|거예요|거에요|건데|거죠)(?![가-힣])")),
     ("latin_abbrev", WARNING, re.compile(
         r"\b(?:e\.g\.|i\.e\.|etc\.?)(?=[\s,)]|$)|(?<![가-힣])(?:기타\s?)?등등", re.I)),
     ("em_dash", ERROR, DASH),
@@ -96,6 +114,52 @@ def will_calque_hits(masked):
             for m in WILL.finditer(masked) if jongseong(m.group(1)) == JONG_RIEUL]
 
 
+# '겁니다'는 '것입니다'의 준말이다('멈춘 겁니다', '할 겁니다', '있을 겁니다', '어제 겁니다', 'API 겁니다').
+# 앞 어절이 '걸다'의 목적어나 부사어이면 '걸다'의 활용이라 뺀다('제약을 겁니다', '제한도 겁니다', '벽에 겁니다').
+# 조사 '을/를/은/는'은 관형형 어미 '-을/-를/-은/-는'과 모양이 같다. 그래서 이 조사 앞이 '걸다'와 함께 쓰는 명사일
+# 때만 뺀다. '을/를' 앞은 명사로 끝나기만 하면 되고('외래키를'), '은/는' 앞은 명사 그 자체여야 한다. '지키는',
+# '시키는', '기대는'은 동사의 관형형이기 때문이다. 코드나 따옴표 인용 뒤에는 '을/를'만 목적격 조사로 본다
+# ('`NOT NULL`을 겁니다'). '"…"는 겁니다'의 '는'은 인용의 어미다.
+# 아직 잘못 잡는 꼴: 목록에 없는 명사 뒤의 '걸다'('가드를 겁니다'), 부사 뒤의 '걸다'('다시 겁니다').
+# 아직 놓치는 꼴: 끝 글자가 조사와 같은 명사 뒤의 '겁니다'('전년도 겁니다', '경로 겁니다').
+GEOP = re.compile(r"(?<![가-힣])겁니다(?![가-힣])")
+EOJEOL_BEFORE = re.compile(r"(\S{1,40})\s+$")
+HANGUL_TAIL = re.compile(r"[가-힣]+$")
+GEOLDA_OBJECTS = ("제약", "락", "잠금", "조건", "필터", "제한", "트리거", "인덱스", "훅", "링크", "타임아웃", "키",
+                  "브레이크포인트", "중단점", "알람", "전화", "말", "기대", "희망", "목숨", "시동", "돈", "내기",
+                  "브레이크", "제동", "태클", "시비", "최면", "주문", "마법", "빗장", "자물쇠", "그림", "액자",
+                  "간판", "현수막", "커튼", "깃발", "옷", "모자")
+VERB_STEMS = frozenset({"기대"})  # '기대는'은 '기대다'의 관형형이기도 하다.
+TOPIC_OBJECTS = frozenset(GEOLDA_OBJECTS) - VERB_STEMS
+GEOLDA_PARTICLES = ("도", "만", "에", "에서", "에는", "에서는", "로", "로는", "까지", "부터", "마저", "조차")
+CONTRACTED_OBJECTS = frozenset({"이걸", "그걸", "저걸", "요걸", "뭘"})
+
+
+def _geolda(word):
+    """'겁니다' 앞 어절의 한글 부분이 '걸다'의 목적어나 부사어이면 참이다. 조사만 남았으면 앞은 코드나 인용이다."""
+    if word in CONTRACTED_OBJECTS or word in ("을", "를") or word.endswith(GEOLDA_PARTICLES):
+        return True
+    if word.endswith(("을", "를")):
+        return word[:-1].endswith(GEOLDA_OBJECTS)
+    return word.endswith(("은", "는")) and word[:-1] in TOPIC_OBJECTS
+
+
+def geop_hits(masked, text=None):
+    """구어 축약 '겁니다'(것입니다). '걸다'의 활용인 '겁니다'는 뺀다. 앞 어절은 40자까지만 본다.
+
+    '겁니다'는 지운 보기(masked)에서 찾는다. text(masked의 원문)를 주면 앞 어절은 원문에서 찾는다. 그래서
+    '`users` 겁니다'에서 지운 코드를 건너뛰어 그 앞 어절을 보지 않고, URL에 붙은 조사('…/a를 겁니다')도 본다.
+    """
+    hits = []
+    for m in GEOP.finditer(masked):
+        window = (masked if text is None else text)[max(0, m.start() - 64):m.start()]
+        before = EOJEOL_BEFORE.search(window)
+        word = HANGUL_TAIL.search(before.group(1)) if before else None
+        if not (word and _geolda(word.group(0))):
+            hits.append(Hit("colloquial", WARNING, line_of(masked, m.start()), "겁니다"))
+    return hits
+
+
 def rotation_hits(masked):
     """한 단어 한 뜻. 지정한 말(확인, 설정)이 있으면 그 말을, 없으면 처음 나온 말을 기준으로 다른 말을 잡는다."""
     hits = []
@@ -129,12 +193,13 @@ def connective_hits(masked):
     return hits
 
 
-def lexical_hits(masked, strict=False, slop_rx=None):
-    """어휘 규칙을 모두 돌린다. masked는 ko_text.mask()의 결과다."""
+def lexical_hits(masked, strict=False, slop_rx=None, text=None):
+    """어휘 규칙을 모두 돌린다. masked는 ko_text.mask()의 결과이고, text를 주면 masked의 원문이다."""
     hits = []
     for category, severity, rx in LEXICAL:
         hits += _hits_from(rx, masked, category, severity)
     hits += will_calque_hits(masked)
+    hits += geop_hits(masked, text)
     hits += _hits_from(slop_rx or SLOP_RX, masked, "slop_word", WARNING)
     hits += rotation_hits(masked)
     if strict:

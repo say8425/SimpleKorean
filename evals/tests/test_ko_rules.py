@@ -155,3 +155,99 @@ def test_noun_list_items_do_not_outvote_a_correct_sentence():
 def test_parenthetical_tail_is_not_a_noun_ending():
     text = "백업이 있는지 확인하세요(선택 사항임).\n"
     assert [h.category for h in ko_rules.sentence_hits(units(text), "procedural")] == []
+
+
+def test_contracted_recommendation_is_a_hedge():
+    for s in ("캐시를 지우는 게 좋아요.", "캐시를 지우는 게 좋습니다.", "다시 받은 게 좋겠습니다.",
+              "타임아웃은 긴 게 좋습니다.", "배포 전에 백업한 게 좋겠습니다.", "캐시를 지우는 게 더 좋습니다.",
+              "설정은 간단한 것이 좋습니다.", "재시작하지 않는 게 좋지 않습니다.", "설정을 확인하시길 바랍니다."):
+        assert cats(s) == ["hedge"], (s, cats(s))
+    assert cats("이 게임이 좋습니다.") == []
+
+
+def test_recommendation_inside_a_clause_is_not_a_hedge():
+    for s in ("어느 쪽을 쓰는 게 좋은지 비교합니다.", "어느 쪽을 쓰는 게 좋을지 팀과 정하세요.",
+              "캐시를 지우는 게 좋다는 조언은 틀렸습니다.", "어느 쪽을 쓰는 것이 좋은지 비교합니다."):
+        assert cats(s) == [], (s, cats(s))
+
+
+
+def test_recommendation_in_a_connective_or_a_modal_form_is_a_hedge():
+    for s in ("백업을 받는 것이 좋으며 작업은 밤에 하세요.", "이 옵션을 끄는 것이 좋고 개발 DB에서는 켜 두세요.",
+              "인덱스를 먼저 만드는 것이 좋지만 표가 작으면 생략해도 됩니다.", "캐시를 지우는 것이 좋은데 먼저 백업하세요.",
+              "로그를 지우는 것이 좋으므로 작업을 추가하세요.", "캐시를 지우는 것이 좋은 방법입니다.",
+              "먼저 캐시를 지우는 것이 좋을 수 있습니다.", "캐시를 끄는 게 좋지 않은 이유는 지연 시간입니다."):
+        assert cats(s) == ["hedge"], (s, cats(s))
+
+
+def test_questions_and_quoted_recommendations_are_not_hedges():
+    for s in ("캐시는 언제 지우는 게 좋아요?", "캐시는 언제 지우는 게 좋습니까?", "어떤 게 좋을까요?",
+              "캐시를 지우는 것이 좋겠다는 의견도 있습니다.", "지우는 게 좋다고 들었습니다.", "캐시는 언제 지우는 게 좋나요?",
+              "이 경우에는 롤백하는 게 좋죠?", "새 버전으로 올리는 게 좋으신가요?", "받는 게 좋겠습니까?",
+              "캐시를 지우는 게 좋지 않을까요?", "어제 바꾼 게 좋았는지 지표로 확인하세요.", "어떤 게 좋으냐에 따라 값이 다릅니다.",
+              "공식 문서는 캐시를 끄는 게 좋대요.", "팀은 배포하는 게 좋답니다.", "기본값을 쓰는 게 좋으면 건너뛰세요.",
+              "캐시를 켠 것이 좋았습니다.", "공식 문서는 끄는 것이 좋다고 합니다.", "어떤 게 좋을까 고민입니다.",
+              "장애가 길어져 롤백하는 게 좋다고 판단되면 즉시 롤백하세요.", "당시 팀은 롤백하는 게 좋다고 판단했습니다.",
+              "처음에는 캐시를 끄는 게 좋다고 생각했지만 차이가 없었습니다.", "캐시를 끄는 게 좋다고 생각하는 분도 있습니다.",
+              "어떤 방식을 쓰는 게 좋을까 하는 고민이 생깁니다.", "새 버전으로 올리는 게 좋을지도 함께 검토하세요.",
+              "롤백하는 게 좋다고 생각한다면 승인 요청을 올리세요.", "흔한 오해는 인덱스를 많이 만드는 게 좋다는 것입니다.",
+              "이 경고는 다시 할당하지 않는 변수에 const를 쓰는 것이 좋다는 뜻입니다.",
+              "어느 쪽을 쓰는 게 더 좋다고 말씀드리기는 어렵습니다.", "캐시를 끄는 게 좋다고 말씀드리면 지나친 단순화입니다."):
+        assert cats(s) == [], (s, cats(s))
+
+
+def test_writer_guess_about_a_recommendation_is_a_hedge():
+    for s in ("캐시를 먼저 지우는 것이 좋다고 생각합니다.", "로그를 남기는 것이 좋겠다고 생각합니다.",
+              "백업부터 받는 것이 좋다는 생각입니다.", "이 경우에는 롤백하는 것이 좋다고 판단합니다.",
+              "캐시를 지우는 것이 좋을지도 모릅니다.", "인덱스를 다시 만드는 것이 좋을까 합니다.", "새 버전으로 올리는 것이 좋은가 봅니다.",
+              "캐시를 먼저 지우는 것이 좋다고 볼 수 있습니다.", "이 경우에는 롤백하는 것이 좋다고 할 수 있습니다.",
+              "저는 롤백하는 것이 좋다고 봐요.", "롤백하는 것이 좋겠다는 판단입니다.",
+              "처음부터 다시 만드는 것이 좋은지도 모릅니다.", "캐시를 먼저 지우는 것이 좋다고 말씀드리고 싶습니다.",
+              "먼저 백업하는 것이 좋다는 생각이 듭니다.", "롤백하는 것이 좋다고 말할 수 있습니다.", "롤백하는 것이 좋다고 믿습니다."):
+        assert cats(s) == ["hedge"], (s, cats(s))
+
+def test_geop_from_geolda_is_not_colloquial():
+    for s in ("조건은 이 문장에만 겁니다.", "필터를 겁니다.", "전화를 겁니다."):
+        assert cats(s) == [], (s, cats(s))
+    for s in ("내일 배포할 겁니다.", "결과가 다를 겁니다.", "값이 있을 겁니다."):
+        assert cats(s) == ["colloquial"], (s, cats(s))
+
+
+def test_geop_after_a_modifier_or_a_possessor_is_colloquial():
+    for s in ("작업이 중간에 멈춘 겁니다.", "인증서를 찾지 못한 겁니다.", "마이그레이션을 두 번 한 겁니다.",
+              "캐시에서 찾은 겁니다.", "배포가 실패한 겁니다.", "이 정도면 운영 수준일 겁니다.", "값을 바꾸는 겁니다.",
+              "동작하지 않을 겁니다.", "이미 끝났을 겁니다.", "설정이 올바를 겁니다.", "응답이 API인 겁니다.",
+              "결과가 같을 겁니다.", "방화벽이 요청을 막을 겁니다.", "요청 수가 한도를 넘을 겁니다.",
+              "사용자는 바로 보고 싶을 겁니다.", "이 방법이 더 나을 겁니다.", "같은 결과를 얻을 겁니다.",
+              "파일을 내려받을 겁니다.", "결과가 똑같을 겁니다.", "앞 작업을 뒤따를 겁니다.", "그 사람이 들을 겁니다.",
+              "이 로그는 어제 겁니다.", "이 키는 운영 서버 겁니다.", "이 키는 API 겁니다.", "이 설정은 v2 겁니다."):
+        assert cats(s) == ["colloquial"], (s, cats(s))
+
+
+def test_geop_from_geolda_after_a_particle_is_not_colloquial():
+    for s in ("열에 제약을 겁니다.", "행에 락을 겁니다.", "칼럼에 NOT NULL을 겁니다.", "테이블에 잠금(LOCK)을 겁니다.",
+              "요청 수에 제한도 겁니다.", "트리거를 겁니다.", "조건을 겁니다.", "조건은 이 문장에만 겁니다.",
+              "읽기 락은 겁니다.", "제약은 부모 테이블에는 겁니다.", "조건으로 이걸 겁니다.", "문서에 링크를 겁니다.",
+              "외래 키 제약 조건을\n겁니다."):
+        assert cats(s) == [], (s, cats(s))
+
+
+
+def test_geop_after_a_verb_that_ends_like_a_listed_noun_is_colloquial():
+    for s in ("핵심은 규칙을 지키는 겁니다.", "이 옵션은 프로세스를 종료시키는 겁니다.", "외부 API에 기대는 겁니다.",
+              "이 포인터는 해제된 메모리를 가리키는 겁니다."):
+        assert cats(s) == ["colloquial"], (s, cats(s))
+    for s in ("외래 키는 겁니다.", "외래키를 겁니다.", "기대를 겁니다."):
+        assert cats(s) == [], (s, cats(s))
+
+def test_geop_reports_the_line_of_geopnida():
+    hits = [h for h in ko_rules.lexical_hits(mask("배포할\n겁니다.\n"), slop_rx=CORE) if h.category == "colloquial"]
+    assert [h.line for h in hits] == [2], hits
+
+
+def test_geop_takes_linear_time_on_long_hangul_runs():
+    import time
+    start = time.perf_counter()
+    ko_rules.lexical_hits(mask("가" * 20000 + " 입니다."), slop_rx=CORE)
+    ko_rules.lexical_hits(mask("가" * 20000 + " 겁니다." + " 겁니다" * 20000), slop_rx=CORE)
+    assert time.perf_counter() - start < 0.5

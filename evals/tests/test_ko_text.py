@@ -227,3 +227,48 @@ def test_noun_phrases_ending_in_ra_or_yo_have_no_register():
                             ("설정을 바꿔요", "haeyo"), ("서버가 멈춰요", "haeyo"), ("로그를 확인하라", "haera"),
                             ("값을 바꾼다", "haera"), ("두 값이 같은가", None)):
         assert ko_text.register(sentence) == style, (sentence, ko_text.register(sentence))
+
+
+def test_units_split_at_br_tags():
+    text = ("| 항목 | 설명 |\n|---|---|\n| 설치 | 패키지를 받으세요.<br>설정을 여세요.<br/>값을 넣으세요. |\n\n"
+            "- 첫 항목을 엽니다.<BR />둘째 항목을 닫습니다.\n\n첫 문장입니다.<br>둘째 문장입니다.\n")
+    got = [(u.text, u.line, u.kind) for u in ko_text.units(text)]
+    assert ("패키지를 받으세요.", 3, "table") in got and ("값을 넣으세요.", 3, "table") in got, got
+    assert ("둘째 항목을 닫습니다.", 5, "list") in got, got
+    assert ("첫 문장입니다.", 7, "prose") in got and ("둘째 문장입니다.", 7, "prose") in got, got
+
+
+def test_units_split_br_variants_and_br_after_a_url():
+    text = ("| 칸 | https://example.com<br>설정 파일을 엽니다.<br/ >값을 넣습니다.<br class=\"x\">파일을 저장합니다. |\n\n"
+            "첫째 줄 설명입니다<br>둘째 줄 설명입니다\n")
+    got = [u.text for u in ko_text.units(text)]
+    assert {"URL 설정 파일을 엽니다.", "값을 넣습니다.", "파일을 저장합니다."} <= set(got), got
+    assert "첫째 줄 설명입니다" in got and "둘째 줄 설명입니다" in got, got
+
+
+def test_units_join_br_in_the_middle_of_a_sentence():
+    long = ("세션 시작 훅은 사용자가 따로 설정하지 않아도 모든 세션의 처음에 같은 규칙 블록을<br>모델의 문맥에 넣어서 "
+            "스킬 이름을 말하지 않은 대화에서도 모델이 규칙을 따르게 만드는 장치입니다.")
+    for text in (long, "| 칸 | " + long + " |", "- " + long):
+        [unit] = ko_text.units(text + "\n")
+        assert ko_text.eojeol_count(unit.text) == 26, unit
+    [cell] = [u.text for u in ko_text.units("| 포트 | 이 설정은<br>필수다. |\n")]
+    assert cell == "이 설정은 필수다.", cell
+
+
+def test_units_keep_text_that_only_looks_like_br():
+    text = "HTML의 <br 태그는 줄을 바꾸는 태그입니다. 순서는 설치 -> 설정 -> 실행입니다.\n"
+    assert [u.text for u in ko_text.units(text)] == ["HTML의 <br 태그는 줄을 바꾸는 태그입니다.", "순서는 설치 -> 설정 -> 실행입니다."]
+    assert [u.text for u in ko_text.units("첫 문장입니다.\\<br\\>둘째 문장입니다.\n")] == ["첫 문장입니다.\\<br\\>둘째 문장입니다."]
+
+
+def test_units_br_split_takes_linear_time():
+    import time
+    start = time.perf_counter()
+    ko_text.units("# 제목\n\n" + "가<br " * 80000)
+    ko_text.units("| 칸 | " + "가<br a=b " * 40000 + " |")
+    ko_text.units("값<br a" + " " * 20000 + "끝입니다.")
+    ko_text.units("값<br a/" + " " * 20000 + "끝입니다.")
+    ko_text.units("가<br>" * 10000)
+    ko_text.units("| 칸 | " + "가<br>" * 10000 + " |")
+    assert time.perf_counter() - start < 0.5
