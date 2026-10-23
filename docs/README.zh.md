@@ -113,7 +113,13 @@ pnpm dlx skills add say8425/SimpleKorean
 
 要固定版本，请从发布标签的 raw 地址下载，例如 `https://raw.githubusercontent.com/say8425/SimpleKorean/<tag>/prompts/sentence-rules.ko.md`。这些文件的路径在每个标签中都相同。
 
-在 Python 中请安装软件包。软件包只使用标准库。请把 `<tag>` 换成发布标签：
+在 Python 中请从 PyPI 安装 `simple-korean` 软件包。软件包只使用标准库。请把 `<version>` 换成发布版本：
+
+```bash
+pip install "simple-korean==<version>"
+```
+
+如果无法访问 PyPI，请从 GitHub 的发布标签安装：
 
 ```bash
 pip install "git+https://github.com/say8425/SimpleKorean@<tag>"

@@ -113,7 +113,13 @@ npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명�
 
 판본을 고정하려면 릴리스 태그의 raw 주소에서 받으세요. 예를 들어 `https://raw.githubusercontent.com/say8425/SimpleKorean/<태그>/prompts/sentence-rules.ko.md`입니다. 판본 파일의 경로는 태그마다 같습니다.
 
-Python에서는 패키지를 설치하세요. 패키지는 표준 라이브러리만 씁니다. `<태그>` 자리에 릴리스 태그를 쓰세요:
+Python에서는 PyPI의 `simple-korean` 패키지를 설치하세요. 패키지는 표준 라이브러리만 씁니다. `<버전>` 자리에 릴리스 버전을 쓰세요:
+
+```bash
+pip install "simple-korean==<버전>"
+```
+
+PyPI에 접근할 수 없으면 GitHub의 릴리스 태그에서 설치하세요:
 
 ```bash
 pip install "git+https://github.com/say8425/SimpleKorean@<태그>"

@@ -113,7 +113,13 @@ Apart from the slop and translationese rule, the reply variants do not have the 
 
 To pin a variant, download it from the raw URL of a release tag, for example `https://raw.githubusercontent.com/say8425/SimpleKorean/<tag>/prompts/sentence-rules.ko.md`. The variant files keep the same path in every tag.
 
-In Python, install the package. The package uses only the standard library. Replace `<tag>` with a release tag:
+In Python, install the `simple-korean` package from PyPI. The package uses only the standard library. Replace `<version>` with a release version:
+
+```bash
+pip install "simple-korean==<version>"
+```
+
+If you cannot reach PyPI, install from a release tag on GitHub:
 
 ```bash
 pip install "git+https://github.com/say8425/SimpleKorean@<tag>"
