@@ -10,6 +10,10 @@
   python3 evals/ko_lint.py --type reply 답변.txt
   python3 evals/ko_lint.py --self-test
   python3 -m simple_korean --type reply 답변.txt   (패키지를 설치했을 때)
+
+--type reply는 답변 벤치마크의 지표인 reader_check()를 출력하고 visible_total이 0보다 크면 실패한다. 공개 수치가
+이 출력에 기댄다. 답변 규칙 위반을 모두 보려면 lint_detail(text, "reply")를 쓴다. 답변에는 --strict와 --config를
+쓰지 않는다.
 """
 import json
 import re
@@ -54,7 +58,8 @@ OPENER = re.compile(  # 공백도 \W이므로 앞부분은 \W* 하나로 쓴다.
     r"^\W*(?:좋은\s?질문|훌륭한\s?질문|물론(?:입니다|이죠|이에요|요)"
     r"|네[,.!]?\s*(?:알겠습니다|좋습니다|맞습니다)"
     r"|[^.!?\n]{0,40}에\s?대해\s?(?:설명|알아보|살펴보)[^.!?\n]{0,12}겠습니다)")
-# 아직 놓치는 맺음말: "주시면 … ㄹ 수 있습니다", "받으면/필요하면 … 쓰겠습니다", 문장 안 인라인 코드에 마침표가 있는 제안.
+# 아직 놓치는 맺음말: "주시면 … ㄹ 수 있습니다", "받으면/필요하면 … 쓰겠습니다". reader_check()는 원문에서 찾으므로
+# 문장 안 인라인 코드에 마침표가 있는 제안도 놓친다.
 CLOSER = re.compile(
     r"도움이\s?(?:되셨|되었으면|되길|됐으면|되었기를)"
     r"|궁금한\s?(?:점|사항)이\s?(?:있으시면|있다면|있으면)|언제든(?:지)?\s?(?:물어|말씀|문의|질문)"
@@ -88,7 +93,7 @@ def _analyze(text, text_type, strict, config, path, formatting=True):
         raise ValueError("strict, config, path는 문서에만 씁니다. 답변은 모든 모드에서 기본 모드 규칙을 따릅니다")
     masked, units = _prepare(text)
     if text_type == REPLY:
-        return _rows(reply_hits(text, formatting)), units, []
+        return _rows(reply_hits(text, formatting=formatting)), units, []
     cfg = _config(config, path)
     concepts, config_warnings = ko_terms.apply_config(ko_terms.load_terms(), cfg)
     hits = (ko_rules.lexical_hits(masked, strict=strict)
@@ -106,10 +111,11 @@ def _rows(hits):
 def lint_detail(text, text_type="descriptive", *, strict=False, config=None, path=None, formatting=True):
     """lint()가 세는 위반을 하나씩 돌려준다. 항목: category, severity, line, text.
 
-    text_type이 "reply"이면 채팅 답변으로 보고 SKILL.md의 답변 규칙만 검사한다(reply_hits()). 문서 규칙(문장 길이,
-    짐작 표현, 번역투, 표기)은 보지 않는다. 답변을 문서 규칙으로도 검사하려면 "descriptive"로 한 번 더 부른다.
-    답변에 strict, config, path를 주면 ValueError를 낸다(빈 설정 {}는 받는다). formatting=False는 답변의
-    서식 검사(굵은 글씨, 표, 첫 줄의 헤더나 목록)를 끈다. em-dash는 문장 규칙이라 끄지 않는다.
+    text_type이 "reply"이면 채팅 답변으로 보고 답변 점검 훅과 같은 항목을 검사한다(reply_hits()). em-dash, 슬롭
+    어휘, 인사말, 맺음말과 서식(굵은 글씨, 표, 첫 줄의 헤더나 목록)이다. 슬롭 어휘는 SKILL.md의 문서 규칙이지만
+    설계 문서 5장이 답변에도 적용한다. 번역투, 문체 혼용, 문장 길이, 짐작 표현, 표기는 보지 않는다. 답변을 문서
+    규칙으로도 검사하려면 "descriptive"로 한 번 더 부른다. 답변에 strict, config, path를 주면 ValueError를
+    낸다(빈 설정 {}는 받는다). formatting=False는 서식 검사를 끈다. em-dash는 문장 규칙이라 끄지 않는다.
     text_type 뒤의 인자는 키워드로만 받는다.
     """
     return _analyze(text, text_type, strict, config, path, formatting)[0]
@@ -124,13 +130,23 @@ def _hit(category, severity, text, pos, snippet):
     return ko_rules.Hit(category, severity, ko_text.line_of(text, pos), " ".join(snippet.split()))
 
 
-def reply_hits(text, formatting=True):
+def _keep(match):
+    return "x" * len(match.group(0))
+
+
+def _filled(text, masked):
+    """mask()가 지운 자리를 공백 대신 x로 채운 보기. 정규식의 공백 반복이 지운 코드를 건너지 못한다."""
+    return "".join("x" if m == " " and not t.isspace() else m for t, m in zip(text, masked))
+
+
+def reply_hits(text, *, formatting=True):
     """답변 규칙의 위반. Stop 훅과 lint_detail(text, "reply")가 이 함수 하나를 쓴다.
 
     em-dash, 슬롭 어휘(설계 문서 5장), 인사말, 맺음말을 늘 보고, formatting이 참이면 굵은 글씨, 표, 첫 줄의 헤더나
-    목록도 본다. 꺼짐 구역, 코드, HTML 주석, 따옴표 인용 안은 세지 않는다(서식은 따옴표 안도 센다). 표는 구분 줄
-    하나를 표 하나로 센다. 슬롭 어휘, 인사말, 맺음말은 보정 기록처럼 경고로 낸다. reader_check()는 벤치마크
-    지표라 따로 둔다. 바꾸면 공개 수치가 바뀐다.
+    목록도 본다. 꺼짐 구역, 코드, HTML 주석, URL, 따옴표 인용 안은 세지 않는다(서식은 따옴표 안도 센다). 첫 줄
+    검사는 코드 블록만 건너뛰고 인라인 코드와 URL은 내용으로 센다. 표는 구분 줄 하나를 표 하나로 센다. 슬롭
+    어휘, 인사말, 맺음말은 보정 기록처럼 경고로 낸다. reader_check()는 벤치마크 지표라 따로 둔다. 바꾸면 공개
+    수치가 바뀐다.
     """
     error, warning = ko_rules.ERROR, ko_rules.WARNING
     text = ko_text.nfc(text)
@@ -139,13 +155,18 @@ def reply_hits(text, formatting=True):
     hits += [_hit("slop_word", warning, masked, m.start(), m.group(0)) for m in ko_rules.SLOP_RX.finditer(masked)]
     opener = OPENER.search(masked)
     hits += [_hit("opener", warning, masked, opener.end() - 1, opener.group(0))] if opener else []
-    hits += [_hit("closer", warning, masked, m.end() - 1, m.group(0)) for m in CLOSER.finditer(masked)]
+    # 맺음말은 지운 자리를 채운 보기에서 찾는다. 공백으로 지운 코드 블록을 건너 두 문장을 잇지 않고, 긴 공백에서
+    # 느려지지 않는다. 문구는 지운 보기에서 가져온다.
+    closers = CLOSER.finditer(_filled(text, masked))
+    hits += [_hit("closer", warning, masked, m.end() - 1, masked[m.start():m.end()]) for m in closers]
     if not formatting:
         return hits
     shown = ko_text.mask(text, quotes=False)
     hits += [_hit("bold", error, shown, m.start(), m.group(0)) for m in BOLD.finditer(shown)]
     hits += [_hit("table", error, shown, m.start(), m.group(0)) for m in TABLE_RULE.finditer(shown)]
-    lead = LEAD_STRUCTURE.match(shown)
+    # 첫 줄 검사는 인라인 코드와 URL을 x로 바꿔 내용으로 센다. 코드 블록은 지운다(reader_check()와 같다).
+    kept = ko_text.URL.sub(_keep, ko_text.INLINE_CODE.sub(_keep, text))
+    lead = LEAD_STRUCTURE.match(ko_text.mask(kept, quotes=False))
     if lead:
         line = ko_text.line_of(shown, lead.end() - 1)
         hits.append(ko_rules.Hit("lead_structure", ko_rules.ERROR, line, text.split("\n")[line - 1].strip()))
@@ -365,6 +386,8 @@ def main(argv=None):
     opts, files = _parse(args)
     if opts["type"] not in TEXT_TYPES + ("reply",):
         sys.exit(f"알 수 없는 --type {opts['type']!r}\n{USAGE}")
+    if opts["type"] == REPLY and (opts["strict"] or opts["config"]):
+        sys.exit("--strict와 --config는 문서에만 씁니다. 답변은 모든 모드에서 기본 모드 규칙을 따릅니다")
     if not files:
         sys.exit(USAGE)
     reports, failed = [], False

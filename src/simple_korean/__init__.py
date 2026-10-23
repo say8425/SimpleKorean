@@ -8,10 +8,11 @@ format은 서식 규칙을 담는다. 설계 문서 5장에 따라 sentences는 
 적은 언어이고 답변의 언어를 정하지 않는다. 파일의 첫 줄은 판본, 언어, 버전을 적은 HTML 주석이다. 설치한
 패키지에서는 패키지 안의 사본을 읽고, 레포지토리에서는 prompts/의 원본을 읽는다.
 
-린터는 lint_detail(), lint(), reader_check()로 쓴다. 답변을 서식 규칙을 뺀 답변 규칙으로 검사하려면 다음처럼 부른다.
+린터는 lint_detail(), lint(), reader_check()로 쓴다. 답변을 서식 검사 없이 검사하려면 다음처럼 부른다. em-dash는
+오류로, 슬롭 어휘, 인사말, 맺음말은 경고로 돌려준다.
 
     from simple_korean import lint_detail
-    errors = [h for h in lint_detail(reply, "reply", formatting=False) if h["severity"] == "error"]
+    hits = lint_detail(reply, "reply", formatting=False)
 """
 from types import MappingProxyType
 

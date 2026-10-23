@@ -340,3 +340,50 @@ def test_reply_rejects_document_settings():
         else:
             raise AssertionError(kwargs)
     assert ko_lint.lint_detail("로그를 읽으세요.\n", "reply", config={}) == []
+
+
+def test_reply_hits_takes_formatting_as_a_keyword():
+    try:
+        ko_lint.reply_hits("**굵게** 씁니다.\n", {})
+    except TypeError:
+        return
+    raise AssertionError("formatting은 키워드로만 받는다")
+
+
+def test_reply_sees_bold_and_dashes_next_to_a_url():
+    bold = "저장소는 **https://github.com/say8425/SimpleKorean**에서 받으세요. 설치는 1분이면 끝납니다.\n"
+    assert [h["category"] for h in ko_lint.lint_detail(bold, "reply")] == ["bold"]
+    dash = "정규식 문법은 https://docs.python.org/3/library/re.html—특히 search 절—을 보세요. 예시가 있습니다.\n"
+    assert [h["category"] for h in ko_lint.lint_detail(dash, "reply")] == ["em_dash", "em_dash"]
+
+
+def test_reply_first_line_of_code_or_url_is_content():
+    for first in ("`make deploy`", "https://example.com/runbook"):
+        text = first + "\n- 빌드합니다.\n- 배포합니다.\n"
+        assert ko_lint.lint_detail(text, "reply") == [], first
+    assert ko_lint.reader_check("`make deploy`\n- 빌드합니다.\n")["counts"]["lead_structure"] == 0
+
+
+def test_reply_closer_does_not_cross_a_code_block():
+    text = "출력을 알려 주세요.\n\n```bash\nkubectl get pods -A\n```\n그 출력을 보고 원인을 좁히겠습니다.\n"
+    assert ko_lint.lint_detail(text, "reply") == []
+    inline = "포트를 바꿨습니다. 원하시면 `pg_hba.conf` 설정도 정리해 드리겠습니다.\n"
+    [hit] = ko_lint.lint_detail(inline, "reply")
+    assert hit["category"] == "closer" and "x" not in hit["text"], hit
+
+
+def test_reply_closer_takes_linear_time_after_a_long_code_block():
+    start = time.time()
+    text = "결과를 알려 주세요.\n\n```\n" + "a = 1 " * 40_000 + "\n```\n"
+    assert ko_lint.lint_detail(text, "reply") == []
+    elapsed = time.time() - start
+    assert elapsed < 0.5, elapsed
+
+
+def test_cli_reply_rejects_document_settings():
+    with tempfile.TemporaryDirectory() as d:
+        reply = Path(d, "reply.txt")
+        reply.write_text("답입니다.\n", encoding="utf-8")
+        for flags in (["--strict"], ["--config", str(Path(d, "none.json"))]):
+            r = run_cli("--type", "reply", *flags, str(reply))
+            assert r.returncode != 0 and "문서에만" in r.stderr, (flags, r.stderr)

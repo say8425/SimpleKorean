@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "simple-korean"
 version = "1.1.1" # x-release-please-version
-description = "SimpleKorean 규칙 판본을 Python에서 읽는다"
+description = "SimpleKorean 규칙 판본과 린터를 Python에서 쓴다"
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }

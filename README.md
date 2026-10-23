@@ -127,7 +127,9 @@ prompt = prompt_block(variant="sentences", lang="en")
 
 `variant`는 `sentences`나 `format`입니다. `lang`은 규칙을 적은 언어이고 `ko`나 `en`입니다. `lang`은 답변의 언어를 정하지 않습니다.
 
-패키지에는 린터도 들어 있습니다. `lint_detail(text, "reply", formatting=False)`는 답변 규칙에서 서식 규칙을 뺀 규칙으로 글을 확인합니다. 문서 규칙으로 확인하려면 `"reply"` 대신 `"descriptive"`나 `"procedural"`을 쓰세요. 위반마다 `category`, `severity`, `line`, `text`를 돌려줍니다.
+패키지에는 린터도 들어 있습니다. `lint_detail(text, "reply")`는 답변에서 em-dash, 슬롭 어휘, 인사말, 맺음말, 굵은 글씨, 표, 첫 줄의 헤더나 목록을 찾습니다. `formatting=False`를 주면 굵은 글씨, 표, 첫 줄은 찾지 않습니다. 번역투와 문체 혼용은 찾지 않습니다.
+
+문서 규칙으로 확인하려면 `"reply"` 대신 `"descriptive"`나 `"procedural"`을 쓰세요. 위반마다 `category`, `severity`, `line`, `text`를 돌려줍니다.
 
 ### 설치한 뒤
 

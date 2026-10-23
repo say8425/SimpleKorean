@@ -25,6 +25,7 @@ COLUMNS = ("file", "line", "mode", "category", "severity", "match", "context", "
 COMPLIANT = HERE / "compliant-ko.md"
 KIND_LABELS = {"procedural": "절차문", "descriptive": "설명문"}
 LABELS = {**ko_lint.LABELS, "opener": "인사말", "closer": "맺음말"}
+REPLY_CATEGORIES = ("opener", "closer", "slop_word")
 
 
 def _context(text, line):
@@ -55,17 +56,16 @@ def doc_rows(results_dir):
 
 
 def reply_rows(results_dir):
-    """답변 원본마다 답변 점검 훅이 세는 말(인사말, 맺음말, 슬롭 어휘)의 일치를 행으로 만든다."""
+    """답변 원본마다 답변 점검 훅이 세는 말(인사말, 맺음말, 슬롭 어휘)의 일치를 행으로 만든다.
+
+    훅과 같은 ko_lint.reply_hits()로 센다. 경고인 범주만 보정 대상이다.
+    """
     rows = []
     for path in sorted(Path(results_dir, "reply").glob("*.txt")):
         text = ko_text.nfc(path.read_text(encoding="utf-8"))
-        opener = ko_lint.OPENER.search(text)
-        found = ([("opener", opener)] if opener else []) + [("closer", m) for m in ko_lint.CLOSER.finditer(text)]
-        found += [("slop_word", m) for m in ko_rules.SLOP_RX.finditer(ko_text.mask(text))]
-        for category, m in found:
-            line = text.count("\n", 0, m.start()) + 1
-            rows.append(_row(f"reply/{path.name}", line, "답변", category, "warning", m.group(0).strip(),
-                             _context(text, line)))
+        hits = [h for h in ko_lint.reply_hits(text) if h.category in REPLY_CATEGORIES]
+        rows += [_row(f"reply/{path.name}", h.line, "답변", h.category, h.severity, h.text, _context(text, h.line))
+                 for h in hits]
     return rows
 
 

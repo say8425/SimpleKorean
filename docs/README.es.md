@@ -127,7 +127,9 @@ prompt = prompt_block(variant="sentences", lang="en")
 
 `variant` es `sentences` o `format`. `lang` es el idioma en que están escritas las reglas, `ko` o `en`. `lang` no fija el idioma de la respuesta.
 
-El paquete también incluye el linter. `lint_detail(text, "reply", formatting=False)` revisa las reglas de respuesta sin las reglas de formato. Para revisar con las reglas de documentos, use `"descriptive"` o `"procedural"` en lugar de `"reply"`. Cada resultado tiene `category`, `severity`, `line` y `text`.
+El paquete también incluye el linter. `lint_detail(text, "reply")` busca en una respuesta em-dash, palabras vacías, saludos, despedidas, negritas, tablas y un encabezado o una lista en la primera línea. Con `formatting=False`, no busca negritas, tablas ni la primera línea. No busca calcos de traducción ni mezcla de estilos.
+
+Para revisar con las reglas de documentos, use `"descriptive"` o `"procedural"` en lugar de `"reply"`. Cada resultado tiene `category`, `severity`, `line` y `text`.
 
 ### Después de instalar
 

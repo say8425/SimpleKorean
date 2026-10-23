@@ -127,7 +127,9 @@ prompt = prompt_block(variant="sentences", lang="en")
 
 `variant` is `sentences` or `format`. `lang` is the language of the rule text, `ko` or `en`. `lang` does not set the language of the reply.
 
-The package also has the linter. `lint_detail(text, "reply", formatting=False)` checks the reply rules without the formatting rules. To check against the document rules, use `"descriptive"` or `"procedural"` instead of `"reply"`. Each hit has `category`, `severity`, `line`, and `text`.
+The package also has the linter. `lint_detail(text, "reply")` finds em-dashes, slop words, greetings, sign-offs, bold text, tables, and a header or list on the first line of a reply. With `formatting=False`, it does not look for bold text, tables, or the first line. It does not look for translationese or a mix of writing styles.
+
+To check against the document rules, use `"descriptive"` or `"procedural"` instead of `"reply"`. Each hit has `category`, `severity`, `line`, and `text`.
 
 ### After installing
 
