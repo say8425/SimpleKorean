@@ -134,6 +134,7 @@ BLOCKQUOTE = re.compile(r"^\s*(?:>\s?)+")
 # "<br a" 뒤에 공백이 길게 이어져도 시간이 길이에 비례한다. 값의 공백 뒤가 영문자가 아니면(title="x 1") 놓친다.
 BR = re.compile(r"(?<!\\)<br(?:\s+[A-Za-z_:][^\s<>]*)*\s*(?:/\s*)?>", re.I)
 SENTENCE_END = re.compile(r"[.!?][\"')\]”’]*$")
+BR_TAIL = 200
 SPLIT = re.compile(r"(?<=[.!?])([\"'”’)\]]*)\s+")
 PAREN = re.compile(r"\([^()\n]*\)")
 # 숫자 덩어리([\d,.]의 연속)의 맨 앞에서만 맞추기 시작한다. 덩어리 가운데에서 다시 시작하면
@@ -206,14 +207,18 @@ def _paragraph_units(para):
 
 
 def _br_parts(text):
-    """<br>로 나눈 조각. 앞 조각이 문장으로 끝나지 않으면 문장 가운데의 줄바꿈이라 <br>을 공백으로 보고 잇는다."""
-    parts = []
-    for part in BR.split(text):
-        if parts and not _ends_sentence(parts[-1]):
-            parts[-1] += " " + part
-        else:
-            parts.append(part)
-    return parts
+    """<br>로 나눈 조각. 앞 조각이 문장으로 끝나지 않으면 문장 가운데의 줄바꿈이라 <br>을 공백으로 보고 잇는다.
+
+    문장 끝은 이은 글의 끝 BR_TAIL자만 보고 가린다. 이은 글 전체를 다시 보면 <br>이 많은 줄에서 시간이 제곱으로 는다.
+    """
+    parts, pieces, recent = [], [], ""
+    for piece in BR.split(text):
+        if pieces and _ends_sentence(recent):
+            parts.append(" ".join(pieces))
+            pieces = []
+        recent = (recent + " " + piece if pieces else piece)[-BR_TAIL:]
+        pieces.append(piece)
+    return parts + [" ".join(pieces)]
 
 
 def _ends_sentence(part):

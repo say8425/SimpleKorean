@@ -269,4 +269,6 @@ def test_units_br_split_takes_linear_time():
     ko_text.units("| 칸 | " + "가<br a=b " * 40000 + " |")
     ko_text.units("값<br a" + " " * 20000 + "끝입니다.")
     ko_text.units("값<br a/" + " " * 20000 + "끝입니다.")
+    ko_text.units("가<br>" * 10000)
+    ko_text.units("| 칸 | " + "가<br>" * 10000 + " |")
     assert time.perf_counter() - start < 0.5
