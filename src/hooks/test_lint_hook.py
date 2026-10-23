@@ -4,6 +4,7 @@ import pathlib
 import subprocess
 import sys
 import tempfile
+import time
 
 HERE = pathlib.Path(__file__).resolve().parent
 HOOK = HERE / "lint_hook.py"
@@ -356,6 +357,56 @@ def test_post_tool_use_reports_a_deeply_nested_config():
         code, out, err = run(post(str(path)))
     assert code == 2 and "설정 파일을 읽지 못해 기본 설정으로 점검했습니다" in err, (code, err)
 
+
+
+def test_edit_reports_the_new_step_when_it_renumbers_the_old_one():
+    before = "# 배포 절차\n\n1. 서버를 원활하게 켭니다.\n2. 로그를 확인합니다.\n"
+    old = "1. 서버를 원활하게 켭니다.\n2. 로그를 확인합니다."
+    new = "1. 설정 값을 원활하게 바꿉니다.\n2. 서버를 원활하게 켭니다.\n3. 로그를 확인합니다."
+    for original in (True, False):
+        code, out, err = run_edit(before, old, new, original=original)
+        assert code == 2 and "3번 줄, 슬롭 어휘(경고): 원활" in err and "4번 줄" not in err, (original, err)
+    table = "| 순서 | 할 일 |\n|---|---|\n| 1 | 강력한 도구로 바꿉니다 |\n"
+    code, out, err = run_edit(table, "| 1 | 강력한 도구로 바꿉니다 |",
+                              "| 1 | 강력한 설정으로 엽니다 |\n| 2 | 강력한 도구로 바꿉니다 |", original=True)
+    assert code == 2 and "3번 줄, 슬롭 어휘(경고): 강력한" in err and "4번 줄" not in err, err
+
+
+def test_edit_that_moves_a_line_reports_only_the_new_violation():
+    steps = "".join(f"{n}단계의 명령을 실행하세요.\n" for n in (1, 2, 3))
+    note = "참고: 이 단계는 원활하게 끝납니다."
+    before = f"# 절차\n\n{note}\n\n{steps}4단계의 결과를 기록하세요.\n"
+    old = f"{note}\n\n{steps}4단계의 결과를 기록하세요."
+    new = f"{steps}4단계의 결과를 원활하게 기록하세요.\n\n{note}"
+    code, out, err = run_edit(before, old, new, original=True)
+    assert code == 2 and "6번 줄, 슬롭 어휘(경고): 원활" in err and "8번 줄" not in err, err
+
+
+def test_edit_keeps_an_unchanged_line_that_repeats_in_a_long_file():
+    note = "참고: 이 단계는 원활하게 끝납니다."
+    sections = []
+    for n in range(1, 6):
+        filler = "".join(f"{n}단계 설명 {k}번 줄입니다.\n" for k in range(38))
+        sections.append(f"## {n}단계\n\n{filler}{n}단계의 명령을 실행하세요.\n{note}\n{n}단계의 결과를 기록하세요.\n")
+    before = "\n".join(sections)
+    old = f"3단계의 명령을 실행하세요.\n{note}\n3단계의 결과를 기록하세요."
+    new = f"3단계의 명령을 원활하게 실행하세요.\n{note}\n3단계의 결과를 적으세요."
+    line = before.split("\n").index("3단계의 명령을 실행하세요.") + 1
+    code, out, err = run_edit(before, old, new, original=True)
+    assert code == 2 and f"{line}번 줄, 슬롭 어휘(경고): 원활" in err and f"{line + 1}번 줄" not in err, err
+
+
+def test_edit_with_replace_all_in_a_long_regular_file_is_fast():
+    lines = []
+    for section in range(160):
+        lines.append(f"## 서비스 {section:04d} 점검표")
+        lines += [f"- [ ] {k:03d} 확인" for k in range(100)]
+    before = "\n".join(lines) + "\n"
+    start = time.time()
+    code, out, err = run_edit(before, "- [ ] 007 확인", "- [ ] 007 메세지를 확인", original=True, replace_all=True)
+    elapsed = time.time() - start
+    assert code == 2 and "이번 편집이 더한 위반은 오류 160건" in err, err
+    assert elapsed < 5, elapsed
 
 if __name__ == "__main__":
     for name, fn in list(globals().items()):

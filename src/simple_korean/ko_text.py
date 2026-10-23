@@ -102,6 +102,11 @@ def mask(text, quotes=True):
     return t
 
 
+def filled(text, masked):
+    """mask()가 지운 자리를 공백 대신 x로 채운 보기. 정규식의 공백 반복이 지운 코드를 건너지 못한다."""
+    return "".join("x" if m == " " and not t.isspace() else m for t, m in zip(text, masked))
+
+
 @lru_cache(maxsize=8)
 def _newlines(text):
     """줄바꿈 위치의 튜플. 같은 글에 여러 번 물어도 한 번만 센다."""
@@ -210,6 +215,7 @@ def _br_parts(text):
     """<br>로 나눈 조각. 앞 조각이 문장으로 끝나지 않으면 문장 가운데의 줄바꿈이라 <br>을 공백으로 보고 잇는다.
 
     문장 끝은 이은 글의 끝 BR_TAIL자만 보고 가린다. 이은 글 전체를 다시 보면 <br>이 많은 줄에서 시간이 제곱으로 는다.
+    그래서 앞 조각이 BR_TAIL자보다 긴 괄호로 끝나면 괄호 앞의 문장 끝을 보지 못하고 두 조각을 잇는다.
     """
     parts, pieces, recent = [], [], ""
     for piece in BR.split(text):

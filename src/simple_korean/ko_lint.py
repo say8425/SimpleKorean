@@ -56,11 +56,15 @@ TABLE_RULE = re.compile(r"^[^\S\n]*(?:\|[^\S\n]*:?-+:?(?:[^\S\n]*\|[^\S\n]*:?-+:
 # 빈 줄을 건너뛴 첫 줄이 헤더나 목록 항목인지 본다. 네 칸 이상 들여 쓴 줄은 코드로 보고 세지 않는다.
 # "요약\n---" 같은 밑줄 헤더는 놓치고, 첫 줄의 "* * *"는 목록으로 센다.
 LEAD_STRUCTURE = re.compile(r"\A(?:[^\S\n]*\n)*[^\S\n]{0,3}(?:#{1,6}\s|[-*+]\s|\d+[.)]\s)")
-# 첫 문장의 인사말. 앞에 붙는 "네, ", "아, "는 건너뛴다. "질문" 뒤에는 서술어가 와야 한다('좋은 질문 목록은'은 아니다).
+# 첫 문장의 인사말. 앞에 붙는 "네, ", "아, "는 건너뛴다. "질문" 뒤에는 서술어(이다, 감사하다, 주시다, 하시다)나 문장
+# 부호가 와야 한다. 그래서 '좋은 질문 목록은', '좋은 질문을 쓰려면'은 인사말이 아니다.
 # "네, 맞습니다", "네, 좋습니다"는 답을 쓴 첫 문장이라 그것만으로는 잡지 않고, 뒤에 "~에 대해 설명하겠습니다"가 올 때만 잡는다.
 OPENER = re.compile(  # 공백도 \W이므로 앞부분은 \W* 하나로 쓴다. \s*\W*는 같은 공백을 나눠 갖느라 느리다.
     r"^\W*(?:(?:네|넵|예|아)[,.!]?\s*)?"
-    r"(?:(?:(?:정말|아주)\s)?(?:좋은|훌륭한|흥미로운)\s?질문(?:입니다|이에요|이네요|이죠|이군요|[!.])"
+    r"(?:(?:(?:정말|아주)\s)?(?:좋은|훌륭한|흥미로운)\s?질문"
+    r"(?:입니다|이에요|이네요|이죠|이군요|이세요|이십니다|이라|[!.]"
+    r"|,?\s?(?:감사(?:합니다|드립니다|해요|드려요)|고맙습니다|고마워요)"
+    r"|(?:을|를)?\s?(?:(?:해\s?)?주(?:셨|셔서)|하셨|던지셨|던져\s?주))"
     r"|물론(?:입니다|이죠|이에요|요)|알겠습니다"
     r"|(?:(?:좋습니다|맞습니다)[.!]?\s+)?[^.!?\n]{0,40}에\s?대해\s?(?:설명|알아보|살펴보)[^.!?\n]{0,12}겠습니다)")
 # 아직 놓치는 맺음말: "주시면 … ㄹ 수 있습니다", "받으면/필요하면 … 쓰겠습니다". reader_check()는 원문에서 찾으므로
@@ -85,8 +89,9 @@ def _config(config, path):
 
 
 def _prepare(text):
+    """검사할 본문, 지운 보기, 문장 단위를 돌려준다."""
     body = ko_text.strip_frontmatter(ko_text.nfc(text))
-    return ko_text.mask(body), ko_text.units(body)
+    return body, ko_text.mask(body), ko_text.units(body)
 
 
 def _analyze(text, text_type, strict, config, path, formatting=True):
@@ -97,12 +102,12 @@ def _analyze(text, text_type, strict, config, path, formatting=True):
         raise ValueError(f"formatting=False는 text_type이 {REPLY!r}일 때만 씁니다: {text_type!r}")
     if text_type == REPLY and (strict or path is not None or config not in (None, {})):
         raise ValueError("strict, config, path는 문서에만 씁니다. 답변은 모든 모드에서 기본 모드 규칙을 따릅니다")
-    masked, units = _prepare(text)
+    body, masked, units = _prepare(text)
     if text_type == REPLY:
         return _rows(reply_hits(text, formatting=formatting)), units, []
     cfg = _config(config, path)
     concepts, config_warnings = ko_terms.apply_config(ko_terms.load_terms(), cfg)
-    hits = (ko_rules.lexical_hits(masked, strict=strict)
+    hits = (ko_rules.lexical_hits(masked, strict=strict, text=body)
             + ko_rules.sentence_hits(units, text_type)
             + ko_rules.register_hits(units)
             + ko_terms.term_hits(masked, concepts, strict=strict, extra_skip=cfg.get("skip", ())))
@@ -150,11 +155,6 @@ def _code_as_content(text):
     return ko_text.URL.sub(_keep, kept)
 
 
-def _filled(text, masked):
-    """mask()가 지운 자리를 공백 대신 x로 채운 보기. 정규식의 공백 반복이 지운 코드를 건너지 못한다."""
-    return "".join("x" if m == " " and not t.isspace() else m for t, m in zip(text, masked))
-
-
 def reply_hits(text, *, formatting=True):
     """답변 규칙의 위반. Stop 훅과 lint_detail(text, "reply")가 이 함수 하나를 쓴다.
 
@@ -175,7 +175,7 @@ def reply_hits(text, *, formatting=True):
     hits += [_hit("opener", warning, masked, opener.end() - 1, opener.group(0))] if opener else []
     # 맺음말은 지운 자리를 채운 보기에서 찾는다. 공백으로 지운 코드 블록을 건너 두 문장을 잇지 않고, 지운 코드의
     # 긴 공백에서 느려지지 않는다. 문구는 지운 보기에서 가져온다.
-    closers = CLOSER.finditer(_filled(text, masked))
+    closers = CLOSER.finditer(ko_text.filled(text, masked))
     hits += [_hit("closer", warning, masked, m.end() - 1, masked[m.start():m.end()]) for m in closers]
     if not formatting:
         return hits

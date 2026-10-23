@@ -171,6 +171,20 @@ def test_recommendation_inside_a_clause_is_not_a_hedge():
         assert cats(s) == [], (s, cats(s))
 
 
+
+def test_recommendation_in_a_connective_or_a_modal_form_is_a_hedge():
+    for s in ("백업을 받는 것이 좋으며 작업은 밤에 하세요.", "이 옵션을 끄는 것이 좋고 개발 DB에서는 켜 두세요.",
+              "인덱스를 먼저 만드는 것이 좋지만 표가 작으면 생략해도 됩니다.", "캐시를 지우는 것이 좋은데 먼저 백업하세요.",
+              "로그를 지우는 것이 좋으므로 작업을 추가하세요.", "캐시를 지우는 것이 좋은 방법입니다.",
+              "먼저 캐시를 지우는 것이 좋을 수 있습니다.", "캐시를 끄는 게 좋지 않은 이유는 지연 시간입니다."):
+        assert cats(s) == ["hedge"], (s, cats(s))
+
+
+def test_questions_and_quoted_recommendations_are_not_hedges():
+    for s in ("캐시는 언제 지우는 게 좋아요?", "캐시는 언제 지우는 게 좋습니까?", "어떤 게 좋을까요?",
+              "캐시를 지우는 것이 좋겠다는 의견도 있습니다.", "지우는 게 좋다고 들었습니다."):
+        assert cats(s) == [], (s, cats(s))
+
 def test_geop_from_geolda_is_not_colloquial():
     for s in ("조건은 이 문장에만 겁니다.", "필터를 겁니다.", "전화를 겁니다."):
         assert cats(s) == [], (s, cats(s))
@@ -196,6 +210,14 @@ def test_geop_from_geolda_after_a_particle_is_not_colloquial():
               "외래 키 제약 조건을\n겁니다."):
         assert cats(s) == [], (s, cats(s))
 
+
+
+def test_geop_after_a_verb_that_ends_like_a_listed_noun_is_colloquial():
+    for s in ("핵심은 규칙을 지키는 겁니다.", "이 옵션은 프로세스를 종료시키는 겁니다.", "외부 API에 기대는 겁니다.",
+              "이 포인터는 해제된 메모리를 가리키는 겁니다."):
+        assert cats(s) == ["colloquial"], (s, cats(s))
+    for s in ("외래 키는 겁니다.", "외래키를 겁니다.", "기대를 겁니다."):
+        assert cats(s) == [], (s, cats(s))
 
 def test_geop_reports_the_line_of_geopnida():
     hits = [h for h in ko_rules.lexical_hits(mask("배포할\n겁니다.\n"), slop_rx=CORE) if h.category == "colloquial"]
