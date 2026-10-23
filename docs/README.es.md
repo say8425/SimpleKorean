@@ -113,7 +113,7 @@ Aparte de la regla sobre palabras vacías y calcos de traducción, las variantes
 
 Para fijar una variante, descárguela de la URL raw de una etiqueta de versión, por ejemplo `https://raw.githubusercontent.com/say8425/SimpleKorean/<etiqueta>/prompts/sentence-rules.ko.md`. Los archivos de variantes tienen la misma ruta en todas las etiquetas.
 
-En Python, instale el paquete `simple-korean` desde PyPI. El paquete usa solo la biblioteca estándar. Para fijar una versión, cambie `<versión>` por una versión publicada:
+En Python, instale el paquete `simple-korean` desde PyPI. El paquete usa solo la biblioteca estándar. Cambie `<versión>` por una versión publicada:
 
 ```bash
 pip install "simple-korean==<versión>"

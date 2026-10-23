@@ -108,7 +108,9 @@ README와 `RESULTS.md`의 수치는 커밋한 원본 출력에서 다시 만듭�
 
 버전은 release-please(커밋 제목으로 릴리스 PR을 만드는 도구)가 올립니다. `release-please-config.json`의 `extra-files`에 적힌 파일의 버전을 손으로 고치지 마세요.
 
-릴리스 PR을 병합하면 `.github/workflows/release.yml`이 Python 패키지를 빌드해 PyPI에 올립니다. PyPI에는 같은 버전을 다시 올릴 수 없습니다. 업로드가 실패하면 GitHub Actions에서 release 워크플로를 직접 실행하고 `tag`에 릴리스 태그를 넣으세요.
+릴리스 PR을 병합하면 `.github/workflows/release.yml`이 Python 패키지를 빌드해 PyPI에 올립니다. PyPI에는 같은 버전을 다른 파일로 다시 올릴 수 없습니다. 빌드 도구는 `.github/build-requirements.txt`에 해시로 고정했습니다. 도구를 바꾸려면 그 파일 머리의 명령으로 파일을 다시 만드세요.
+
+업로드가 실패하면 GitHub Actions에서 그 실행의 실패한 작업만 다시 실행하세요(Re-run failed jobs). 같은 파일을 다시 올리므로 일부가 이미 올라갔어도 됩니다. 실행 전체를 다시 실행하면 아무것도 올리지 않습니다. release-please가 같은 릴리스를 다시 알리지 않기 때문입니다. 빌드부터 다시 해야 하면 main에서 release 워크플로를 직접 실행하세요. 실행할 때 `tag`에 릴리스 태그를 넣으세요.
 
 feat, fix, perf 커밋만 새 릴리스를 만듭니다. 사용자가 받는 것을 바꾸면 docs 대신 feat나 fix를 쓰세요. 규칙, 훅, 린터, 단어 목록, 슬롭 어휘가 사용자가 받는 것입니다.
 

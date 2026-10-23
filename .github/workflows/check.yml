@@ -14,7 +14,10 @@ jobs:
       - run: python3 evals/tests/run.py
       - run: node --test src/hooks/simple-korean-activate.test.js
       - run: python3 src/hooks/test_lint_hook.py
-      - run: python3 -m pip install .
+      # 릴리스와 같은 길로 빌드한다. sdist를 만들고 그 sdist에서 휠을 만든 뒤 휠을 설치한다.
+      - run: python3 -m pip install --require-hashes -r .github/build-requirements.txt
+      - run: python3 -m build --no-isolation --outdir "$RUNNER_TEMP/dist"
+      - run: python3 -m pip install "$RUNNER_TEMP"/dist/*.whl
       - run: python3 -I -c "import simple_korean as s; assert s.prompt_block('format', 'en').startswith('<!-- simple-korean format-rules en ' + s.__version__); assert s.ko_terms.TERMS_JSON.is_file() and s.ko_rules.SLOP_TSV.is_file(); assert s.lint_detail('배포를 진행합니다.', config={})[0]['category'] == 'light_verb'"
         working-directory: ${{ runner.temp }}
       - run: python3 evals/check_numbers.py

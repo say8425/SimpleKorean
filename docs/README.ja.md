@@ -113,7 +113,7 @@ npm を使う場合は `npx skills add say8425/SimpleKorean` を実行してく�
 
 版を固定するには、リリースタグの raw URL から取得してください。たとえば `https://raw.githubusercontent.com/say8425/SimpleKorean/<tag>/prompts/sentence-rules.ko.md` です。版のファイルのパスは、どのタグでも同じです。
 
-Python では PyPI の `simple-korean` パッケージをインストールしてください。パッケージは標準ライブラリだけを使います。バージョンを固定するには、`<version>` にリリースのバージョンを入れてください:
+Python では PyPI の `simple-korean` パッケージをインストールしてください。パッケージは標準ライブラリだけを使います。`<version>` にはリリースのバージョンを入れてください:
 
 ```bash
 pip install "simple-korean==<version>"
