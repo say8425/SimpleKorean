@@ -3,15 +3,65 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-permissions:
-  contents: write
-  issues: write
-  pull-requests: write
+    inputs:
+      tag:
+        description: PyPI에 다시 올릴 릴리스 태그(예 v1.2.0). 비우면 release-please만 실행한다.
+        required: false
+permissions: {}
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
-      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+      - id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+  # 빌드와 업로드를 나눈다. 빌드 중에 도는 코드는 PyPI에 올리는 권한(id-token)을 받지 않는다.
+  build:
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true' || (github.event_name == 'workflow_dispatch' && inputs.tag != '')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || needs.release-please.outputs.tag_name }}
+    steps:
+      # 손으로 넣은 태그는 vX.Y.Z 꼴일 때만 받는다.
+      - run: '[[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]'
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: refs/tags/${{ env.TAG }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with: { python-version: "3.12" }
+      - run: python3 -m pip install build==1.6.1
+      - run: python3 -m build
+      # 태그와 패키지의 버전이 다르면 올리지 않는다.
+      - run: test -f "dist/simple_korean-${TAG#v}.tar.gz" && test -f "dist/simple_korean-${TAG#v}-py3-none-any.whl"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dist
+          path: dist/
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    # PyPI의 trusted publisher에 이 워크플로(release.yml)와 환경 이름(pypi)을 등록해야 한다.
+    environment:
+      name: pypi
+      url: https://pypi.org/p/simple-korean
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2

@@ -108,6 +108,8 @@ README와 `RESULTS.md`의 수치는 커밋한 원본 출력에서 다시 만듭�
 
 버전은 release-please(커밋 제목으로 릴리스 PR을 만드는 도구)가 올립니다. `release-please-config.json`의 `extra-files`에 적힌 파일의 버전을 손으로 고치지 마세요.
 
+릴리스 PR을 병합하면 `.github/workflows/release.yml`이 Python 패키지를 빌드해 PyPI에 올립니다. PyPI에는 같은 버전을 다시 올릴 수 없습니다. 업로드가 실패하면 GitHub Actions에서 release 워크플로를 직접 실행하고 `tag`에 릴리스 태그를 넣으세요.
+
 feat, fix, perf 커밋만 새 릴리스를 만듭니다. 사용자가 받는 것을 바꾸면 docs 대신 feat나 fix를 쓰세요. 규칙, 훅, 린터, 단어 목록, 슬롭 어휘가 사용자가 받는 것입니다.
 
 release-please는 커밋 제목만 `CHANGELOG.md`로 옮깁니다. 그래서 릴리스 PR 브랜치의 `CHANGELOG.md` 항목에 "측정" 절을 손으로 더하세요. 이 절에는 README가 가리키는 결과 경로와 `evals/calibration/RECORD.md`의 "CHANGELOG에 옮길 줄"을 넣으세요. 다시 재지 않았으면 그 이유도 적으세요. `check_numbers.py`가 결과 경로와 보정 줄을 확인합니다.
