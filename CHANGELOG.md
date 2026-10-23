@@ -16,6 +16,12 @@
 
 * 린터의 오탐과 놓침을 고치고 Edit 뒤에는 편집이 더한 위반만 알린다 ([#22](https://github.com/say8425/SimpleKorean/issues/22)) ([d8be582](https://github.com/say8425/SimpleKorean/commit/d8be5829e2e57790627cfc47f7b9f1a2a1265142))
 
+
+### 측정
+
+* 측정 결과는 [`evals/results/2026-10-21/RESULTS.md`](evals/results/2026-10-21/RESULTS.md)에 있습니다. 벤치마크 입력에 em-dash와 가운뎃점을 넣고 초안 다듬기 과제를 더한 뒤 잰 결과입니다([#16](https://github.com/say8425/SimpleKorean/issues/16)).
+* 이 릴리스의 린터 변경(#19, #21, #22) 뒤에는 벤치마크를 다시 재지 않았습니다. 린터 변경은 공개 수치를 바꾸지 않습니다. 커밋한 답변 514개의 `reader_check()` 값은 이 변경 앞뒤로 같습니다. `evals/check_numbers.py`도 공개 수치를 다시 계산해 같은 값을 얻었습니다.
+
 ## [1.1.1](https://github.com/say8425/SimpleKorean/compare/v1.1.0...v1.1.1) (2026-10-20)
 
 
