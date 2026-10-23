@@ -1,4 +1,4 @@
-<!-- simple-korean sentence-rules en 1.1.1 x-release-please-version -->
+<!-- simple-korean sentence-rules en 1.2.0 x-release-please-version -->
 Replies (chat replies in every mode).
 In a reply, put the answer or the result in the first sentence.
 Do not repeat the question.

@@ -1,4 +1,4 @@
-<!-- simple-korean format-rules ko 1.1.1 x-release-please-version -->
+<!-- simple-korean format-rules ko 1.2.0 x-release-please-version -->
 답변(모든 모드의 채팅 답변).
 헤더와 목록을 써도 됩니다.
 쓸지는 답의 내용과 길이를 보고 정하세요.

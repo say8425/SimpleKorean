@@ -1,4 +1,4 @@
-<!-- simple-korean sentence-rules ko 1.1.1 x-release-please-version -->
+<!-- simple-korean sentence-rules ko 1.2.0 x-release-please-version -->
 답변(모든 모드의 채팅 답변).
 답변에서는 첫 문장에 답이나 결과를 쓰세요.
 질문을 되풀이하지 마세요.

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "simple-korean"
-version = "1.1.1" # x-release-please-version
+version = "1.2.0" # x-release-please-version
 description = "SimpleKorean 규칙 판본과 린터를 Python에서 쓴다"
 readme = "README.md"
 requires-python = ">=3.9"
