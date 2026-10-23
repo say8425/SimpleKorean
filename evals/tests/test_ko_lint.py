@@ -441,10 +441,12 @@ def test_openers_with_a_prefix_or_an_intensifier():
 def test_openers_with_a_thanks_or_an_honorific_predicate():
     for reply in ("좋은 질문 감사합니다! PUT은 멱등합니다.", "좋은 질문이세요. 답입니다.", "좋은 질문을 해 주셨네요. 답입니다.",
                   "좋은 질문 주셔서 감사합니다. 답입니다.", "좋은 질문이십니다. 답입니다.", "좋은 질문, 감사합니다. 답입니다.",
-                  "훌륭한 질문을 주셨네요. 답입니다."):
+                  "훌륭한 질문을 주셨네요. 답입니다.", "좋은 질문이라고 생각합니다. 답입니다.", "좋은 질문을 던져 주셨네요. 답입니다."):
         assert ko_lint.reply_fillers(reply) == (True, False), reply
     for reply in ("좋은 질문을 쓰려면 재현 방법을 적으세요.", "좋은 질문을 하는 법은 FAQ에 있습니다.",
-                  "좋은 질문, 나쁜 질문의 기준은 재현 가능성입니다.", "좋은 질문 감사 메일 템플릿은 docs에 있습니다."):
+                  "좋은 질문, 나쁜 질문의 기준은 재현 가능성입니다.", "좋은 질문 감사 메일 템플릿은 docs에 있습니다.",
+                  "좋은 질문이라면 재현 방법을 담습니다.", "좋은 질문이라는 건 답할 수 있는 질문입니다.",
+                  "좋은 질문을 던져 주면 모델이 더 정확히 답합니다.", "좋은 질문을 하셨는지 체크리스트로 확인하세요."):
         assert ko_lint.reply_fillers(reply) == (False, False), reply
 
 
@@ -453,5 +455,5 @@ def test_geop_after_code_or_a_quote_is_colloquial():
                  '요점은 "먼저 값을 채워야 한다"는 겁니다.', "오류의 뜻은 '권한이 없다'는 겁니다."):
         hits = [h["category"] for h in ko_lint.lint_detail(text + "\n", config={})]
         assert hits == ["colloquial"], (text, hits)
-    for text in ("칼럼에 `NOT NULL`을 겁니다.", "훅을 `pre-commit`에 겁니다."):
+    for text in ("칼럼에 `NOT NULL`을 겁니다.", "훅을 `pre-commit`에 겁니다.", "README에 https://example.com/docs를 겁니다."):
         assert ko_lint.lint_detail(text + "\n", config={}) == [], text

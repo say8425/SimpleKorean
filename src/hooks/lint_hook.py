@@ -21,6 +21,7 @@ import json
 from collections import Counter, defaultdict
 import os
 import pathlib
+import re
 import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -34,11 +35,13 @@ CLAUDE_DIR = ".claude"
 REPLY_COUNTS = (("em_dash", "em-dash"), ("bold", "굵은 글씨"), ("table", "표"))
 REPLY_FLAGS = (("lead_structure", "첫 줄의 헤더나 목록"),)
 REPLY_FILLERS = (("opener", "인사말"), ("closer", "맺음말"))
-# difflib으로 맞추는 가운데 줄 수의 상한. difflib은 반복이 많은 긴 글에서 시간이 세제곱으로 는다.
-MAX_DIFF_LINES = 4000
-# 줄 글의 비슷함을 재는 위반 쌍 수의 상한. 넘으면 남은 위반을 순서대로 짝짓는다.
-PAIR_BUDGET = 1000
-SIMILAR_CHARS = 300  # 줄 글의 비슷함은 줄 앞의 이만큼만 잰다.
+# difflib으로 맞추는 가운데 줄 수의 상한. 반복이 많은 글에서 difflib의 시간은 줄 수의 세제곱으로 는다(1,000줄에 0.1초).
+MAX_DIFF_LINES = 1000
+# 글자의 비슷함을 재는 위반 쌍 수의 상한. 넘으면 남은 위반을 순서대로 짝짓는다.
+PAIR_BUDGET = 10000
+SIMILAR_CHARS = 300  # 글자의 비슷함은 줄 앞의 이만큼만 잰다.
+NUMBER = re.compile(r"\d+")
+SPACES = re.compile(r"\s+")
 
 
 def load_linter():
@@ -143,32 +146,66 @@ def _line(lines, number):
     return lines[number - 1] if 0 < number <= len(lines) else ""
 
 
+def _same(line):
+    return line
+
+
+def _numberless(line):
+    """숫자를 빼고 공백을 하나로 줄인 줄 글. 번호만 고친 줄('1.'을 '2.'로, '| 9 |'를 '| 10 |'로)을 같은 줄로 본다."""
+    return SPACES.sub(" ", NUMBER.sub("", line)).strip()
+
+
+def _letters(line):
+    return Counter(line[:SIMILAR_CHARS])
+
+
 def _similarity(a, b):
-    return difflib.SequenceMatcher(None, a[:SIMILAR_CHARS], b[:SIMILAR_CHARS]).ratio()
+    """두 줄의 글자 Counter가 같은 글자를 얼마나 나눠 갖는지. 0부터 1까지다."""
+    total = sum(a.values()) + sum(b.values())
+    return 2 * sum((a & b).values()) / total if total else 1.0
+
+
+def _match(key, new_lines, rest_new, rest_old):
+    """key가 같은 새 줄과 옛 줄을 짝짓는다. (짝지은 새 줄 색인 집합, 남은 새 줄 색인, 남은 옛 줄)을 돌려준다."""
+    free = Counter(key(line) for line in rest_old)
+    matched, unmatched = set(), []
+    for i in rest_new:
+        if free[key(new_lines[i])]:
+            free[key(new_lines[i])] -= 1
+            matched.add(i)
+        else:
+            unmatched.append(i)
+    left = []
+    for line in rest_old:
+        if free[key(line)]:
+            free[key(line)] -= 1
+            left.append(line)
+    return matched, unmatched, left
 
 
 def _paired(new_lines, old_lines, budget):
     """새 위반의 줄 글(new_lines)과 남은 옛 위반의 줄 글(old_lines)을 짝짓는다. 짝지은 새 위반의 색인을 돌려준다.
 
-    줄 글이 같은 쌍(옮긴 줄)을 먼저 잇고, 남은 쌍은 줄 글이 비슷한 쌍부터 잇는다. 그래서 번호만 고친 옛 줄의 위반을
-    새 위반으로 알리지 않는다. 남은 쌍이 budget[0]보다 많으면 순서대로 잇는다.
+    줄 글이 같은 쌍(옮긴 줄), 숫자만 다른 쌍(번호를 고친 줄), 글자가 비슷한 쌍 순서로 짝짓는다. 그래서 옮기거나
+    번호만 고친 옛 줄의 위반을 새 위반으로 알리지 않는다. 글자의 비슷함을 잴 쌍이 budget[0]보다 많으면 남은 것을
+    순서대로 짝짓는다. 숫자만 다른 줄이 여럿이어도 순서대로 짝짓는다.
     """
-    free = Counter(old_lines)
-    paired = set()
-    for i, line in enumerate(new_lines):
-        if free[line]:
-            free[line] -= 1
-            paired.add(i)
-    rest_old = list(free.elements())
-    rest_new = [i for i in range(len(new_lines)) if i not in paired]
-    if not rest_old or not rest_new:
+    paired, rest_new, rest_old = set(), list(range(len(new_lines))), list(old_lines)
+    for key in (_same, _numberless):
+        if not rest_new or not rest_old:
+            return paired
+        matched, rest_new, rest_old = _match(key, new_lines, rest_new, rest_old)
+        paired |= matched
+    if not rest_new or not rest_old:
         return paired
-    cost = len(rest_old) * len(rest_new)
+    cost = len(rest_new) * len(rest_old)
     if cost > budget[0]:
         return paired | set(rest_new[:len(rest_old)])
     budget[0] -= cost
-    scored = sorted(((_similarity(old, new_lines[i]), -i, -j) for i in rest_new for j, old in enumerate(rest_old)),
-                    reverse=True)
+    new_letters = {i: _letters(new_lines[i]) for i in rest_new}
+    old_letters = [_letters(line) for line in rest_old]
+    scored = sorted(((_similarity(old_letters[j], new_letters[i]), -i, -j)
+                     for i in rest_new for j in range(len(rest_old))), reverse=True)
     used = set()
     for _, neg_i, neg_j in scored:
         if -neg_i not in paired and -neg_j not in used:

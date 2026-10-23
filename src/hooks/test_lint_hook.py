@@ -408,6 +408,37 @@ def test_edit_with_replace_all_in_a_long_regular_file_is_fast():
     assert code == 2 and "이번 편집이 더한 위반은 오류 160건" in err, err
     assert elapsed < 5, elapsed
 
+
+def test_edit_reports_the_inserted_step_when_it_is_a_near_copy_of_the_old_one():
+    before = "# 절차\n\n1. 서버 A를 원활하게 재시작합니다.\n2. 로그를 확인합니다.\n"
+    old = "1. 서버 A를 원활하게 재시작합니다.\n2. 로그를 확인합니다."
+    new = "1. 서버 B를 원활하게 재시작합니다.\n2. 서버 A를 원활하게 재시작합니다.\n3. 로그를 확인합니다."
+    code, out, err = run_edit(before, old, new, original=True)
+    assert code == 2 and "3번 줄, 슬롭 어휘(경고): 원활" in err and "4번 줄" not in err, err
+
+
+def test_edit_reports_the_inserted_step_in_a_long_renumbered_list():
+    for count, tail in ((40, ""), (20, " 이를 통해 원활하게 동작합니다.")):
+        steps = [f"서버 {n:02d}의 재시작을 진행합니다.{tail}" for n in range(count)]
+        old = "\n".join(f"{k}. {step}" for k, step in enumerate(steps, 1))
+        new = "\n".join(f"{k}. {step}" for k, step in enumerate([f"백업 작업을 진행합니다.{tail}"] + steps, 1))
+        code, out, err = run_edit("# 재시작 절차\n\n" + old + "\n", old, new, original=True)
+        reported = [line.split("번 줄")[0].strip() for line in err.splitlines() if "번 줄" in line]
+        assert code == 2 and reported and set(reported) == {"3"}, (count, err)
+
+
+def test_edit_with_replace_all_in_a_long_report_is_fast():
+    columns = " | ".join("확인" if (day * 7) % 3 else "미확인" for day in range(32))
+    rows = [f"| 서버 {k:02d} | 원활 | {columns} |" for k in range(31)]
+    checks = [line for k in range(1982) for line in (f"### 서버 {k % 50:02d}", "- [ ] 백업 확인")][:3964]
+    before = "\n".join(["# 서버 점검 보고", "", "| 서버 | 상태 |" + " 일 |" * 32, "|---|---|" + "---|" * 32]
+                       + rows + ["", "## 날마다 할 일", ""] + checks) + "\n"
+    start = time.time()
+    code, out, err = run_edit(before, "확인", "점검", original=True, replace_all=True)
+    elapsed = time.time() - start
+    assert code == 0 and err == "", err
+    assert elapsed < 3, elapsed
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):

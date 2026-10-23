@@ -7,16 +7,20 @@ from collections import Counter, namedtuple
 from pathlib import Path
 
 from ._paths import resource
-from .ko_text import JONG_RIEUL, eojeol_count, filled, jongseong, line_of, nfc, register, sentence_kind, tail
+from .ko_text import JONG_RIEUL, eojeol_count, jongseong, line_of, nfc, register, sentence_kind, tail
 
 ERROR, WARNING = "error", "warning"
 Hit = namedtuple("Hit", "category severity line text")
 
 # 받침이 ㄴ인 음절. 관형형 '-ㄴ/-은/-는'(지우는, 받은, 긴, 백업한)은 이 음절로 끝난다.
 NIEUN = "".join(chr(c) for c in range(0xAC00, 0xD7A4) if (c - 0xAC00) % 28 == 4)
-# '-는 것이/게 좋다'. 안긴 물음('좋은지', '좋을지')과 따온 말('좋다는', '좋겠다고'), 묻는 문장('좋아요?', '좋습니까',
-# '좋을까요')은 쓴이의 권고가 아니라 뺀다. 그 밖의 꼴('좋으며', '좋을 수 있습니다', '좋은 방법입니다')은 권고로 잡는다.
-GOOD = r"(?:(?:더|가장|제일|훨씬)\s)?좋(?!은지|을지|을까|은가|다는|다고|겠다는|겠다고|습니까|아(?:요)?\?)"
+# '-는 것이/게 좋다'. 쓴이의 권고가 아닌 꼴은 뺀다: 물음표로 끝나는 절('좋나요?', '좋지 않을까요?'), 안긴 물음
+# ('좋은지', '좋을지', '좋으냐'), 남의 말('좋다는 조언', '좋다고 들었습니다', '좋대요'), 조건('좋으면'), 지난 일('좋았습니다').
+# 쓴이의 짐작은 잡는다('좋다고 생각합니다', '좋을지도 모릅니다', '좋을까 합니다'). 그 밖의 꼴('좋으며', '좋을 수 있습니다',
+# '좋은 방법입니다')도 권고로 잡는다. 아직 잘못 잡는 꼴: '좋은' 뒤에 명사가 오는 평가('켠 것이 좋은 결과를 냈습니다').
+GOOD = (r"(?:(?:더|가장|제일|훨씬)\s)?좋(?![^.!?\n]{0,10}\?)"
+        r"(?!은지|을지(?!도)|으냐|냐|은가(?!\s?(?:봅|보|싶))|을까(?!\s?(?:합|하|싶))|습니까|았|으면|다면"
+        r"|겠?다는(?!\s?생각)|겠?다고(?!\s?(?:생각|판단|봅|본다|여깁))|대요|답니다|다며|다더)")
 DASH = re.compile(r"—|(?<!\d)–(?!\d)|(?<= )--(?= )|(?<=[^\s\d]{2}) - (?=[^\s\d]{2})")
 
 LEXICAL = (
@@ -135,15 +139,12 @@ def _geolda(word):
 def geop_hits(masked, text=None):
     """구어 축약 '겁니다'(것입니다). '걸다'의 활용인 '겁니다'는 뺀다. 앞 어절은 40자까지만 본다.
 
-    text(masked의 원문)를 주면 지운 자리를 x로 채운 보기에서 앞 어절을 찾는다. 그래서 '`users` 겁니다'에서 지운
-    코드를 건너뛰어 그 앞 어절을 보지 않는다.
+    '겁니다'는 지운 보기(masked)에서 찾는다. text(masked의 원문)를 주면 앞 어절은 원문에서 찾는다. 그래서
+    '`users` 겁니다'에서 지운 코드를 건너뛰어 그 앞 어절을 보지 않고, URL에 붙은 조사('…/a를 겁니다')도 본다.
     """
     hits = []
     for m in GEOP.finditer(masked):
-        start = max(0, m.start() - 64)
-        window = masked[start:m.start()]
-        if text is not None:
-            window = filled(text[start:m.start()], window)
+        window = (masked if text is None else text)[max(0, m.start() - 64):m.start()]
         before = EOJEOL_BEFORE.search(window)
         word = HANGUL_TAIL.search(before.group(1)) if before else None
         if not (word and _geolda(word.group(0))):
