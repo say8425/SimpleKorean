@@ -448,6 +448,13 @@ def test_edit_of_one_long_line_with_many_hits_is_fast():
     elapsed = time.time() - start
     assert code == 2 and "이번 편집이 더한 위반은 오류 0건, 경고 1건입니다." in err, err
     assert elapsed < 3, elapsed
+    mixed = " ".join(f"{k}번 서버의 디스크를 점검합니다. {k}번 서버의 로그를 확인한다." for k in range(2000))
+    old = "0번 서버의 디스크를 점검합니다."
+    start = time.time()
+    code, out, err = run_edit("# 점검 기록\n\n" + mixed + "\n", old, old + " 백업 서버의 점검도 진행합니다.", original=True)
+    elapsed = time.time() - start
+    assert code == 2 and "3번 줄, 기능동사(경고): 진행합" in err, err
+    assert elapsed < 3, elapsed
 
 if __name__ == "__main__":
     for name, fn in list(globals().items()):

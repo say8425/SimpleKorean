@@ -19,6 +19,7 @@ import difflib
 import fnmatch
 import json
 from collections import Counter, defaultdict
+from functools import lru_cache
 import os
 import pathlib
 import re
@@ -150,8 +151,12 @@ def _same(line):
     return line
 
 
+@lru_cache(maxsize=None)
 def _numberless(line):
-    """숫자를 빼고 공백을 하나로 줄인 줄 글. 번호만 고친 줄('1.'을 '2.'로, '| 9 |'를 '| 10 |'로)을 같은 줄로 본다."""
+    """숫자를 빼고 공백을 하나로 줄인 줄 글. 번호만 고친 줄('1.'을 '2.'로, '| 9 |'를 '| 10 |'로)을 같은 줄로 본다.
+
+    줄마다 한 번만 구한다(lru_cache). 긴 줄 하나에 위반이 많으면 위반의 무리마다 줄 전체를 다시 훑게 되기 때문이다.
+    """
     return SPACES.sub(" ", NUMBER.sub("", line)).strip()
 
 
@@ -166,10 +171,7 @@ def _similarity(a, b):
 
 
 def _match(key, new_lines, rest_new, rest_old):
-    """key가 같은 새 줄과 옛 줄을 짝짓는다. (짝지은 새 줄 색인 집합, 남은 새 줄 색인, 남은 옛 줄)을 돌려준다.
-
-    key는 줄마다 한 번만 구한다. 긴 줄 하나에 위반이 많으면 위반마다 줄 전체를 다시 훑게 되기 때문이다.
-    """
+    """key가 같은 새 줄과 옛 줄을 짝짓는다. (짝지은 새 줄 색인 집합, 남은 새 줄 색인, 남은 옛 줄)을 돌려준다."""
     keys = {}
     for line in rest_old + [new_lines[i] for i in rest_new]:
         if line not in keys:
