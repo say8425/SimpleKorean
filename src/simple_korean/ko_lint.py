@@ -11,9 +11,9 @@
   python3 evals/ko_lint.py --self-test
   python3 -m simple_korean --type reply 답변.txt   (패키지를 설치했을 때)
 
---type reply는 답변 벤치마크의 지표인 reader_check()를 출력하고 visible_total이 0보다 크면 실패한다. 공개 수치가
-이 출력에 기댄다. 답변 규칙 위반을 모두 보려면 lint_detail(text, "reply")를 쓴다. 답변에는 --strict와 --config를
-쓰지 않는다.
+--type reply는 답변 벤치마크의 지표인 reader_check()를 출력한다. --gate를 주면 visible_total이 0보다 클 때 1로
+끝난다. 공개 수치가 이 출력에 기댄다. reply_hits()가 세는 답변 위반을 하나씩 보려면 lint_detail(text, "reply")를
+쓴다. 답변에는 --strict와 --config를 쓰지 않는다.
 """
 import json
 import re
@@ -48,9 +48,10 @@ HEADER = re.compile(r"^#{1,6}\s", re.M)
 # 줄 앞 공백은 [^\S\n]*로 센다. re.M에서 \s*는 빈 줄을 넘어가서, 빈 줄이 많으면 시간이 제곱으로 는다.
 BULLET = re.compile(r"^[^\S\n]*([-*+]|\d+[.)])\s", re.M)
 # 표의 구분 줄(|---|:-:|)을 센다. 보통 표 하나에 한 줄이다. 인용 블록 안의 표와 한 열짜리 "---|" 표는
-# 세지 않는다. 모든 칸이 "-"인 데이터 행과 "--|--" 줄은 표로 센다.
-TABLE_RULE = re.compile(r"^[^\S\n]*(?:\|[^\S\n]*:?-+:?[^\S\n]*(?:\|[^\S\n]*:?-+:?[^\S\n]*)*\|?"
-                        r"|:?-+:?[^\S\n]*(?:\|[^\S\n]*:?-+:?[^\S\n]*)+\|?)[^\S\n]*$", re.M)
+# 세지 않는다. 모든 칸이 "-"인 데이터 행과 "--|--" 줄은 표로 센다. 칸 사이의 공백은 "|" 앞에서만 센다.
+# 대시 뒤의 공백을 반복 두 개가 나눠 가지면 "| - " 뒤에 긴 공백(지운 코드)이 올 때 시간이 제곱으로 는다.
+TABLE_RULE = re.compile(r"^[^\S\n]*(?:\|[^\S\n]*:?-+:?(?:[^\S\n]*\|[^\S\n]*:?-+:?)*(?:[^\S\n]*\|)?"
+                        r"|:?-+:?(?:[^\S\n]*\|[^\S\n]*:?-+:?)+(?:[^\S\n]*\|)?)[^\S\n]*$", re.M)
 # 빈 줄을 건너뛴 첫 줄이 헤더나 목록 항목인지 본다. 네 칸 이상 들여 쓴 줄은 코드로 보고 세지 않는다.
 # "요약\n---" 같은 밑줄 헤더는 놓치고, 첫 줄의 "* * *"는 목록으로 센다.
 LEAD_STRUCTURE = re.compile(r"\A(?:[^\S\n]*\n)*[^\S\n]{0,3}(?:#{1,6}\s|[-*+]\s|\d+[.)]\s)")
@@ -59,12 +60,13 @@ OPENER = re.compile(  # 공백도 \W이므로 앞부분은 \W* 하나로 쓴다.
     r"|네[,.!]?\s*(?:알겠습니다|좋습니다|맞습니다)"
     r"|[^.!?\n]{0,40}에\s?대해\s?(?:설명|알아보|살펴보)[^.!?\n]{0,12}겠습니다)")
 # 아직 놓치는 맺음말: "주시면 … ㄹ 수 있습니다", "받으면/필요하면 … 쓰겠습니다". reader_check()는 원문에서 찾으므로
-# 문장 안 인라인 코드에 마침표가 있는 제안도 놓친다.
+# 문장 안 인라인 코드에 마침표가 있는 제안도 놓친다. "알려 주세요" 뒤의 공백은 \s+ 하나만 먹는다((?=...)). 뒤의 두
+# 반복이 공백을 나눠 가지면 긴 공백에서 공백 한 칸마다 수천 번 되짚는다.
 CLOSER = re.compile(
     r"도움이\s?(?:되셨|되었으면|되길|됐으면|되었기를)"
     r"|궁금한\s?(?:점|사항)이\s?(?:있으시면|있다면|있으면)|언제든(?:지)?\s?(?:물어|말씀|문의|질문)"
-    r"|(?:원하시면|필요하시면|(?:[^\s.!?]{1,20}\s?)?주시면|알려\s?주세요[.!]?\s+[^.!?\n]{0,40})[^.!?\n]{0,60}"
-    r"(?:겠습니다|드릴게요|할게요|드릴\s수\s있습니다)")
+    r"|(?:원하시면|필요하시면|(?:[^\s.!?]{1,20}\s?)?주시면|알려\s?주세요[.!]?\s+(?=[^\s.!?])[^.!?\n]{0,40})"
+    r"[^.!?\n]{0,60}(?:겠습니다|드릴게요|할게요|드릴\s수\s있습니다)")
 
 
 def _config(config, path):
@@ -134,6 +136,16 @@ def _keep(match):
     return "x" * len(match.group(0))
 
 
+def _code_as_content(text):
+    """인라인 코드와 URL을 x로 바꾼 보기. 세 번까지 되풀이해 ``a`` 같은 겹 백틱도 x로 바꾼다."""
+    kept = text
+    for _ in range(3):
+        kept, before = ko_text.INLINE_CODE.sub(_keep, kept), kept
+        if kept == before:
+            break
+    return ko_text.URL.sub(_keep, kept)
+
+
 def _filled(text, masked):
     """mask()가 지운 자리를 공백 대신 x로 채운 보기. 정규식의 공백 반복이 지운 코드를 건너지 못한다."""
     return "".join("x" if m == " " and not t.isspace() else m for t, m in zip(text, masked))
@@ -144,9 +156,11 @@ def reply_hits(text, *, formatting=True):
 
     em-dash, 슬롭 어휘(설계 문서 5장), 인사말, 맺음말을 늘 보고, formatting이 참이면 굵은 글씨, 표, 첫 줄의 헤더나
     목록도 본다. 꺼짐 구역, 코드, HTML 주석, URL, 따옴표 인용 안은 세지 않는다(서식은 따옴표 안도 센다). 첫 줄
-    검사는 코드 블록만 건너뛰고 인라인 코드와 URL은 내용으로 센다. 표는 구분 줄 하나를 표 하나로 센다. 슬롭
-    어휘, 인사말, 맺음말은 보정 기록처럼 경고로 낸다. reader_check()는 벤치마크 지표라 따로 둔다. 바꾸면 공개
-    수치가 바뀐다.
+    검사는 꺼짐 구역, 코드 블록, HTML 주석, HTML 엔티티만 있는 줄을 건너뛰고 인라인 코드와 URL은 내용으로 센다.
+    표는 구분 줄 하나를 표 하나로 센다. 슬롭 어휘, 인사말, 맺음말은 보정 기록처럼 경고로 낸다.
+
+    reader_check()는 벤치마크 지표라 따로 둔다. 바꾸면 공개 수치가 바뀐다. 두 함수는 OPENER, CLOSER, DASH, BOLD,
+    TABLE_RULE, LEAD_STRUCTURE를 함께 쓴다. 그래서 이 정규식을 바꾸면 벤치마크가 세는 것도 바뀐다.
     """
     error, warning = ko_rules.ERROR, ko_rules.WARNING
     text = ko_text.nfc(text)
@@ -155,18 +169,19 @@ def reply_hits(text, *, formatting=True):
     hits += [_hit("slop_word", warning, masked, m.start(), m.group(0)) for m in ko_rules.SLOP_RX.finditer(masked)]
     opener = OPENER.search(masked)
     hits += [_hit("opener", warning, masked, opener.end() - 1, opener.group(0))] if opener else []
-    # 맺음말은 지운 자리를 채운 보기에서 찾는다. 공백으로 지운 코드 블록을 건너 두 문장을 잇지 않고, 긴 공백에서
-    # 느려지지 않는다. 문구는 지운 보기에서 가져온다.
+    # 맺음말은 지운 자리를 채운 보기에서 찾는다. 공백으로 지운 코드 블록을 건너 두 문장을 잇지 않고, 지운 코드의
+    # 긴 공백에서 느려지지 않는다. 문구는 지운 보기에서 가져온다.
     closers = CLOSER.finditer(_filled(text, masked))
     hits += [_hit("closer", warning, masked, m.end() - 1, masked[m.start():m.end()]) for m in closers]
     if not formatting:
         return hits
     shown = ko_text.mask(text, quotes=False)
-    hits += [_hit("bold", error, shown, m.start(), m.group(0)) for m in BOLD.finditer(shown)]
+    # 굵은 글씨의 문구는 원문에서 가져온다. 지운 보기에서는 URL이나 코드를 감싼 굵은 글씨가 "** **"로 보인다.
+    hits += [_hit("bold", error, shown, m.start(), text[m.start():m.end()]) for m in BOLD.finditer(shown)]
     hits += [_hit("table", error, shown, m.start(), m.group(0)) for m in TABLE_RULE.finditer(shown)]
-    # 첫 줄 검사는 인라인 코드와 URL을 x로 바꿔 내용으로 센다. 코드 블록은 지운다(reader_check()와 같다).
-    kept = ko_text.URL.sub(_keep, ko_text.INLINE_CODE.sub(_keep, text))
-    lead = LEAD_STRUCTURE.match(ko_text.mask(kept, quotes=False))
+    # 첫 줄 검사는 인라인 코드와 URL을 x로 바꿔 내용으로 센다. 꺼짐 구역, 코드 블록, HTML 주석, 엔티티는 지운다.
+    # reader_check()는 ``` 코드 블록만 지운다.
+    lead = LEAD_STRUCTURE.match(ko_text.mask(_code_as_content(text), quotes=False))
     if lead:
         line = ko_text.line_of(shown, lead.end() - 1)
         hits.append(ko_rules.Hit("lead_structure", ko_rules.ERROR, line, text.split("\n")[line - 1].strip()))

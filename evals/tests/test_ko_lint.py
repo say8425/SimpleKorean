@@ -387,3 +387,33 @@ def test_cli_reply_rejects_document_settings():
         for flags in (["--strict"], ["--config", str(Path(d, "none.json"))]):
             r = run_cli("--type", "reply", *flags, str(reply))
             assert r.returncode != 0 and "문서에만" in r.stderr, (flags, r.stderr)
+
+
+def test_dashes_and_asterisks_inside_a_url_are_part_of_it():
+    texts = ("TLS 키 교환은 https://en.wikipedia.org/wiki/Diffie–Hellman_key_exchange 문서를 보세요.\n",
+             "CORS 허용 목록에 https://*.example.com 주소를 넣으세요.\n")
+    for text in texts:
+        assert ko_lint.lint_detail(text, "descriptive", config={}) == [], text
+        assert ko_lint.lint_detail(text, "reply") == [], text
+        assert ko_lint.ko_text.hangul_ratio(text) > 0.7, text
+
+
+def test_reply_first_line_of_double_backtick_code_is_content():
+    for first in ("``make deploy``", "``echo `date` ``"):
+        text = first + "\n- 빌드합니다.\n- 배포합니다.\n"
+        assert ko_lint.lint_detail(text, "reply") == [], first
+
+
+def test_reply_bold_hit_shows_the_original_text():
+    text = "저장소는 **https://github.com/say8425/SimpleKorean**에서 받으세요. **`make deploy`**를 실행하세요.\n"
+    hits = [h["text"] for h in ko_lint.lint_detail(text, "reply")]
+    assert sorted(hits) == ["**`make deploy`**", "**https://github.com/say8425/SimpleKorean**"], hits
+
+
+def test_reply_table_and_closer_checks_take_linear_time():
+    start = time.time()
+    for cell in ("`" + "a" * 20_000 + "` 설명", " " * 20_000 + "x"):
+        assert [h["category"] for h in ko_lint.lint_detail("표를 봅니다.\n\n| - " + cell + " |\n", "reply")] == []
+    assert ko_lint.lint_detail("결과를 알려 주세요" + " " * 50_000 + "가", "reply") == []
+    elapsed = time.time() - start
+    assert elapsed < 0.5, elapsed
