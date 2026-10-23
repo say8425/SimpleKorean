@@ -107,9 +107,9 @@ npm을 쓰면 `npx skills add say8425/SimpleKorean`을 실행하세요. 이 명�
 
 ### 봇과 프로그램
 
-봇의 시스템 프롬프트에는 답변 판본을 넣으세요. 답변 판본은 규칙 블록의 답변 규칙을 둘로 나눈 파일입니다. [`prompts/sentence-rules.ko.md`](prompts/sentence-rules.ko.md)는 문장 규칙을 담습니다. 슬롭 어휘와 번역투를 지우라는 문장도 여기에 있습니다. [`prompts/format-rules.ko.md`](prompts/format-rules.ko.md)는 헤더, 굵은 글씨, 표 같은 서식 규칙을 담습니다. 두 파일을 이어 붙이면 답변 규칙 전체가 됩니다.
+봇의 시스템 프롬프트에는 답변 판본을 넣으세요. 답변 판본은 규칙 블록의 답변 규칙을 둘로 나눈 파일입니다. [`prompts/sentence-rules.ko.md`](prompts/sentence-rules.ko.md)는 문장 규칙을 담습니다. 슬롭 어휘(AI 글에 흔한 빈말)와 번역투를 지우라는 문장도 여기에 있습니다. [`prompts/format-rules.ko.md`](prompts/format-rules.ko.md)는 헤더, 굵은 글씨, 표 같은 서식 규칙을 담습니다. 두 파일을 이어 붙이면 답변 규칙 전체가 됩니다.
 
-답변 판본은 문서 규칙을 담지 않습니다. 이름이 `.en.md`로 끝나는 파일은 같은 규칙을 영어로 적은 판본입니다. 파일의 첫 줄은 판본, 언어, 버전을 적은 HTML 주석입니다.
+답변 판본은 슬롭 어휘와 번역투 문장 말고는 문서 규칙을 담지 않습니다. 이름이 `.en.md`로 끝나는 파일은 같은 규칙을 영어로 적은 판본입니다. 파일의 첫 줄은 판본, 언어, 버전을 적은 HTML 주석입니다.
 
 판본을 고정하려면 릴리스 태그의 raw 주소에서 받으세요. 예를 들어 `https://raw.githubusercontent.com/say8425/SimpleKorean/<태그>/prompts/sentence-rules.ko.md`입니다. 판본 파일의 경로는 태그마다 같습니다.
 

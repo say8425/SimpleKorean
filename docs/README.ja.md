@@ -107,9 +107,9 @@ npm を使う場合は `npx skills add say8425/SimpleKorean` を実行してく�
 
 ### ボットとプログラム
 
-ボットのシステムプロンプトには、返答用の版を入れてください。返答用の版は、ルールブロックの返答ルールを二つのファイルに分けたものです。[`prompts/sentence-rules.ko.md`](../prompts/sentence-rules.ko.md) は文のルールを含みます。スロップ語彙と翻訳調を消すルールもここにあります。[`prompts/format-rules.ko.md`](../prompts/format-rules.ko.md) は見出し、太字、表などの書式ルールを含みます。二つのファイルをつなげると、返答ルールの全体になります。
+ボットのシステムプロンプトには、返答用の版を入れてください。返答用の版は、ルールブロックの返答ルールを二つのファイルに分けたものです。[`prompts/sentence-rules.ko.md`](../prompts/sentence-rules.ko.md) は文のルールを含みます。スロップ語彙（AI の文章によくある空疎な言葉）と翻訳調を消すルールもここにあります。[`prompts/format-rules.ko.md`](../prompts/format-rules.ko.md) は見出し、太字、表などの書式ルールを含みます。二つのファイルをつなげると、返答ルールの全体になります。
 
-返答用の版は文書のルールを含みません。名前が `.en.md` で終わるファイルは、同じルールを英語で書いた版です。各ファイルの最初の行は、版、言語、バージョンを書いた HTML コメントです。
+返答用の版は、スロップ語彙と翻訳調のルールのほかは、文書のルールを含みません。名前が `.en.md` で終わるファイルは、同じルールを英語で書いた版です。各ファイルの最初の行は、版、言語、バージョンを書いた HTML コメントです。
 
 版を固定するには、リリースタグの raw URL から取得してください。たとえば `https://raw.githubusercontent.com/say8425/SimpleKorean/<tag>/prompts/sentence-rules.ko.md` です。版のファイルのパスは、どのタグでも同じです。
 
