@@ -439,6 +439,16 @@ def test_edit_with_replace_all_in_a_long_report_is_fast():
     assert code == 0 and err == "", err
     assert elapsed < 3, elapsed
 
+
+def test_edit_of_one_long_line_with_many_hits_is_fast():
+    before = "# 점검 기록\n\n" + " ".join(f"{k}번 서버의 점검을 진행합니다." for k in range(2000)) + "\n"
+    old = "0번 서버의 점검을 진행합니다."
+    start = time.time()
+    code, out, err = run_edit(before, old, old + " 백업 서버의 점검도 진행합니다.", original=True)
+    elapsed = time.time() - start
+    assert code == 2 and "이번 편집이 더한 위반은 오류 0건, 경고 1건입니다." in err, err
+    assert elapsed < 3, elapsed
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):

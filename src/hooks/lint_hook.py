@@ -166,19 +166,26 @@ def _similarity(a, b):
 
 
 def _match(key, new_lines, rest_new, rest_old):
-    """key가 같은 새 줄과 옛 줄을 짝짓는다. (짝지은 새 줄 색인 집합, 남은 새 줄 색인, 남은 옛 줄)을 돌려준다."""
-    free = Counter(key(line) for line in rest_old)
+    """key가 같은 새 줄과 옛 줄을 짝짓는다. (짝지은 새 줄 색인 집합, 남은 새 줄 색인, 남은 옛 줄)을 돌려준다.
+
+    key는 줄마다 한 번만 구한다. 긴 줄 하나에 위반이 많으면 위반마다 줄 전체를 다시 훑게 되기 때문이다.
+    """
+    keys = {}
+    for line in rest_old + [new_lines[i] for i in rest_new]:
+        if line not in keys:
+            keys[line] = key(line)
+    free = Counter(keys[line] for line in rest_old)
     matched, unmatched = set(), []
     for i in rest_new:
-        if free[key(new_lines[i])]:
-            free[key(new_lines[i])] -= 1
+        if free[keys[new_lines[i]]]:
+            free[keys[new_lines[i]]] -= 1
             matched.add(i)
         else:
             unmatched.append(i)
     left = []
     for line in rest_old:
-        if free[key(line)]:
-            free[key(line)] -= 1
+        if free[keys[line]]:
+            free[keys[line]] -= 1
             left.append(line)
     return matched, unmatched, left
 
