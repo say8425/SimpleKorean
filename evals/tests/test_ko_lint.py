@@ -271,7 +271,9 @@ def test_reply_detail_without_formatting_keeps_the_other_reply_rules():
     assert cats == Counter({"opener": 1, "closer": 1, "em_dash": 1}), cats
     mixed = "배포가 끝났습니다. 로그도 깨끗해요. 원활하게 동작합니다.\n"
     cats = Counter(h["category"] for h in ko_lint.lint_detail(mixed, "reply", formatting=False))
-    assert cats == Counter({"register_mix": 1, "slop_word": 1}), cats
+    assert cats == Counter({"slop_word": 1}), cats
+    severity = {h["category"]: h["severity"] for h in detail}
+    assert severity == {"opener": "warning", "closer": "warning", "em_dash": "error"}, severity
 
 
 def test_reply_detail_reports_lines_and_first_line_structure():
@@ -285,7 +287,9 @@ def test_reply_detail_reports_lines_and_first_line_structure():
 def test_clean_reply_has_no_hits_with_or_without_formatting():
     clean = "디스크가 가득 차서 배포가 실패했습니다.\n\n- 로그를 지우세요.\n- 다시 배포하세요.\n"
     assert ko_lint.lint_detail(clean, "reply", config={}) == []
-    assert ko_lint.lint(clean, "reply", config={})["violations_total"] == 0
+    assert ko_lint.lint_detail(clean, "reply", formatting=False) == []
+    report = ko_lint.lint(clean, "reply")
+    assert (report["type"], report["violations_total"], report["errors_total"]) == ("reply", 0, 0), report
 
 
 def test_formatting_flag_needs_reply_type():
@@ -304,3 +308,35 @@ def test_strict_mode_is_for_documents_only():
         assert "strict" in str(err)
     else:
         raise AssertionError("엄격 모드는 문서에만 쓴다")
+
+
+def test_reply_fillers_skip_code_and_quotes():
+    text = ('버튼 문구는 "도움이 되셨나요?"입니다. 그 문구를 바꾸세요.\n\n```python\n'
+            'print("도움이 되셨기를 바랍니다")\n```\n`원하시면 더 알려 드리겠습니다`는 예시입니다.\n')
+    assert ko_lint.lint_detail(text, "reply") == []
+    quoted = '"좋은 질문입니다"라는 말은 인사말입니다.\n'
+    assert ko_lint.lint_detail(quoted, "reply") == []
+    closer = "로그를 지우세요. 필요한 값을 알려 주세요.\n그러면 바로 정리해 드리겠습니다.\n"
+    [hit] = ko_lint.lint_detail(closer, "reply")
+    assert hit["category"] == "closer" and "\n" not in hit["text"], hit
+
+
+def test_options_after_text_type_are_keyword_only():
+    for call in (lambda: ko_lint.lint_detail("로그를 읽으세요.", "descriptive", True),
+                 lambda: ko_lint.lint("로그를 읽으세요.", "descriptive", {})):
+        try:
+            call()
+        except TypeError:
+            continue
+        raise AssertionError("strict와 config는 키워드로만 받는다")
+
+
+def test_reply_rejects_document_settings():
+    for kwargs in ({"config": {"terms": {"release": "릴리즈"}}}, {"path": "notes.md"}):
+        try:
+            ko_lint.lint_detail("로그를 읽으세요.\n", "reply", **kwargs)
+        except ValueError as err:
+            assert "문서에만" in str(err), err
+        else:
+            raise AssertionError(kwargs)
+    assert ko_lint.lint_detail("로그를 읽으세요.\n", "reply", config={}) == []

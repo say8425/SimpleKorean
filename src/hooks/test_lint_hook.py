@@ -214,6 +214,12 @@ def test_post_tool_use_shows_config_text_on_one_line():
         assert leaked == [], err
 
 
+def test_stop_uses_the_same_reply_check_as_the_linter():
+    reply = '오류 문구는 "connection reset — retrying"입니다. 로그를 지우세요.\n\n```\n도움이 되셨기를 바랍니다\n```\n'
+    code, out, err = run({"hook_event_name": "Stop", "last_assistant_message": reply})
+    assert code == 0 and out.strip() == "", (code, out)
+
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):

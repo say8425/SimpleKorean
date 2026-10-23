@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """SimpleKorean 린터. 정규식으로 셀 수 있는 위반을 센다.
 
 알려진 한계: 정규식 검사이고 형태소 분석을 하지 않는다. 거짓 일치와 놓침이 있다. 숫자는 같은
@@ -10,6 +9,7 @@
   python3 evals/ko_lint.py --strict --gate 파일1.md 파일2.md
   python3 evals/ko_lint.py --type reply 답변.txt
   python3 evals/ko_lint.py --self-test
+  python3 -m simple_korean --type reply 답변.txt   (패키지를 설치했을 때)
 """
 import json
 import re
@@ -84,8 +84,8 @@ def _analyze(text, text_type, strict, config, path, formatting=True):
         raise ValueError(f"text_type은 {TEXT_TYPES + (REPLY,)} 가운데 하나여야 합니다: {text_type!r}")
     if not formatting and text_type != REPLY:
         raise ValueError(f"formatting=False는 text_type이 {REPLY!r}일 때만 씁니다: {text_type!r}")
-    if strict and text_type == REPLY:
-        raise ValueError("strict는 문서에만 씁니다. 답변은 모든 모드에서 기본 모드 규칙을 따릅니다")
+    if text_type == REPLY and (strict or path is not None or config not in (None, {})):
+        raise ValueError("strict, config, path는 문서에만 씁니다. 답변은 모든 모드에서 기본 모드 규칙을 따릅니다")
     masked, units = _prepare(text)
     if text_type == REPLY:
         return _rows(reply_hits(text, formatting)), units, []
@@ -103,45 +103,48 @@ def _rows(hits):
     return sorted(rows, key=lambda r: (r["line"], r["category"], r["text"]))
 
 
-def lint_detail(text, text_type="descriptive", strict=False, config=None, path=None, formatting=True):
+def lint_detail(text, text_type="descriptive", *, strict=False, config=None, path=None, formatting=True):
     """lint()가 세는 위반을 하나씩 돌려준다. 항목: category, severity, line, text.
 
     text_type이 "reply"이면 채팅 답변으로 보고 SKILL.md의 답변 규칙만 검사한다(reply_hits()). 문서 규칙(문장 길이,
     짐작 표현, 번역투, 표기)은 보지 않는다. 답변을 문서 규칙으로도 검사하려면 "descriptive"로 한 번 더 부른다.
-    답변에는 config, path, strict를 쓰지 않는다. strict를 켜면 ValueError를 낸다. formatting=False는 답변의
+    답변에 strict, config, path를 주면 ValueError를 낸다(빈 설정 {}는 받는다). formatting=False는 답변의
     서식 검사(굵은 글씨, 표, 첫 줄의 헤더나 목록)를 끈다. em-dash는 문장 규칙이라 끄지 않는다.
+    text_type 뒤의 인자는 키워드로만 받는다.
     """
     return _analyze(text, text_type, strict, config, path, formatting)[0]
 
 
-def lint(text, text_type="descriptive", strict=False, config=None, path=None, formatting=True):
+def lint(text, text_type="descriptive", *, strict=False, config=None, path=None, formatting=True):
     """위반 수를 범주별로 센 보고서를 돌려준다. 인자는 lint_detail()과 같다."""
     return _summary(*_analyze(text, text_type, strict, config, path, formatting), text_type, strict)
 
 
-def _hit(category, text, pos, snippet):
-    return ko_rules.Hit(category, ko_rules.ERROR, ko_text.line_of(text, pos), snippet)
+def _hit(category, severity, text, pos, snippet):
+    return ko_rules.Hit(category, severity, ko_text.line_of(text, pos), " ".join(snippet.split()))
 
 
 def reply_hits(text, formatting=True):
-    """답변 규칙의 위반. Stop 훅이 보는 항목과 같다.
+    """답변 규칙의 위반. Stop 훅과 lint_detail(text, "reply")가 이 함수 하나를 쓴다.
 
-    em-dash, 슬롭 어휘, 문체 혼용, 인사말, 맺음말을 늘 보고, formatting이 참이면 굵은 글씨, 표, 첫 줄의 헤더나
-    목록도 본다. 코드 블록과 인라인 코드 안은 세지 않는다. 표는 구분 줄 하나를 표 하나로 센다.
+    em-dash, 슬롭 어휘(설계 문서 5장), 인사말, 맺음말을 늘 보고, formatting이 참이면 굵은 글씨, 표, 첫 줄의 헤더나
+    목록도 본다. 꺼짐 구역, 코드, HTML 주석, 따옴표 인용 안은 세지 않는다(서식은 따옴표 안도 센다). 표는 구분 줄
+    하나를 표 하나로 센다. 슬롭 어휘, 인사말, 맺음말은 보정 기록처럼 경고로 낸다. reader_check()는 벤치마크
+    지표라 따로 둔다. 바꾸면 공개 수치가 바뀐다.
     """
+    error, warning = ko_rules.ERROR, ko_rules.WARNING
     text = ko_text.nfc(text)
     masked = ko_text.mask(text)
-    hits = [_hit("em_dash", masked, m.start(), m.group(0).strip()) for m in ko_rules.DASH.finditer(masked)]
-    hits += [ko_rules.Hit("slop_word", ko_rules.WARNING, ko_text.line_of(masked, m.start()), m.group(0).strip())
-             for m in ko_rules.SLOP_RX.finditer(masked)]
-    hits += ko_rules.register_hits(ko_text.units(text))
-    hits += [_hit(category, text, m.end() - 1, m.group(0).strip())
-             for category, rx in (("opener", OPENER), ("closer", CLOSER)) for m in [rx.search(text)] if m]
+    hits = [_hit("em_dash", error, masked, m.start(), m.group(0)) for m in ko_rules.DASH.finditer(masked)]
+    hits += [_hit("slop_word", warning, masked, m.start(), m.group(0)) for m in ko_rules.SLOP_RX.finditer(masked)]
+    opener = OPENER.search(masked)
+    hits += [_hit("opener", warning, masked, opener.end() - 1, opener.group(0))] if opener else []
+    hits += [_hit("closer", warning, masked, m.end() - 1, m.group(0)) for m in CLOSER.finditer(masked)]
     if not formatting:
         return hits
     shown = ko_text.mask(text, quotes=False)
-    hits += [_hit("bold", shown, m.start(), m.group(0)) for m in BOLD.finditer(shown)]
-    hits += [_hit("table", shown, m.start(), m.group(0).strip()) for m in TABLE_RULE.finditer(shown)]
+    hits += [_hit("bold", error, shown, m.start(), m.group(0)) for m in BOLD.finditer(shown)]
+    hits += [_hit("table", error, shown, m.start(), m.group(0)) for m in TABLE_RULE.finditer(shown)]
     lead = LEAD_STRUCTURE.match(shown)
     if lead:
         line = ko_text.line_of(shown, lead.end() - 1)
@@ -374,7 +377,3 @@ def main(argv=None):
         failed = failed or bad
     print(json.dumps(reports[0] if len(reports) == 1 else reports, ensure_ascii=False, indent=2))
     return 1 if opts["gate"] and failed else 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())

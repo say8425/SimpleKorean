@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 """Claude Code 훅의 글쓰기 점검. 알리기만 하고 막지 않는다.
 
-PostToolUse(.md 파일의 Write|Edit): evals/ko_lint.py로 파일을 검사한다. 위반이 있으면 오류부터
+PostToolUse(.md 파일의 Write|Edit): 린터(simple_korean.ko_lint)로 파일을 검사한다. 위반이 있으면 오류부터
 MAX_HOOK_HITS개까지 줄 번호, 범주, 강도, 문구를 stderr로 보내고 2로 끝낸다. PostToolUse의 종료
 코드 2는 알림이다. 도구는 이미 실행되었다. 한글 비율이 MIN_HANGUL_RATIO보다 낮은 파일, Claude
 설정 디렉터리와 .claude 경로의 파일, SIMPLE_KOREAN_LINT_EXCLUDE 글롭에 맞는 파일은 건너뛴다.
 프로젝트의 .simple-korean.json이 깨져 있으면 기본 설정으로 검사하고 그 사실을 한 줄 알린다.
 
-Stop: last_assistant_message가 한국어이면 답변 규칙(굵은 글씨, em-dash, 표, 첫 줄의 헤더나 목록, 슬롭 어휘,
-인사말, 맺음말)을 점검하고, 어긴 것이 있을 때만 systemMessage를 낸다. 첫 줄이 아닌 헤더와 목록 항목은
+Stop: last_assistant_message가 한국어이면 ko_lint.reply_hits로 답변 규칙(굵은 글씨, em-dash, 표, 첫 줄의 헤더나
+목록, 슬롭 어휘, 인사말, 맺음말)을 점검하고, 어긴 것이 있을 때만 systemMessage를 낸다. 코드와 따옴표 인용 안은
+세지 않는다. 첫 줄이 아닌 헤더와 목록 항목은
 답의 내용과 길이를 보고 쓸 수 있으므로 알리지 않는다. 항상 0으로 끝내므로 세션이 되풀이되지 않는다.
 """
 import fnmatch
 import json
+from collections import Counter
 import os
 import pathlib
 import sys
@@ -25,7 +27,9 @@ MAX_HOOK_HITS = 12
 MAX_LINE_CHARS = 300
 MIN_HANGUL_RATIO = 0.3
 CLAUDE_DIR = ".claude"
-REPLY_COUNTS = (("em_dash", "em-dash"), ("bold_spans", "굵은 글씨"), ("tables", "표"))
+REPLY_COUNTS = (("em_dash", "em-dash"), ("bold", "굵은 글씨"), ("table", "표"))
+REPLY_FLAGS = (("lead_structure", "첫 줄의 헤더나 목록"),)
+REPLY_FILLERS = (("opener", "인사말"), ("closer", "맺음말"))
 
 
 def load_linter():
@@ -117,17 +121,11 @@ def stop(event):
     lint = load_linter()
     if lint is None or lint.ko_text.hangul_ratio(reply) < MIN_HANGUL_RATIO:
         return 0
-    counts = lint.reader_check(reply)["counts"]
+    counts = Counter(h.category for h in lint.reply_hits(reply))
     problems = [f"{label} {counts[key]}개" for key, label in REPLY_COUNTS if counts[key]]
-    if counts["lead_structure"]:
-        problems.append("첫 줄의 헤더나 목록")
-    slop = len(lint.ko_rules.SLOP_RX.findall(lint.ko_text.mask(lint.ko_text.nfc(reply))))
-    if slop:
-        problems.append(f"슬롭 어휘 {slop}개")
-    if counts["opener"]:
-        problems.append("인사말")
-    if counts["closer"]:
-        problems.append("맺음말")
+    problems += [label for key, label in REPLY_FLAGS if counts[key]]
+    problems += [f"슬롭 어휘 {counts['slop_word']}개"] if counts["slop_word"] else []
+    problems += [label for key, label in REPLY_FILLERS if counts[key]]
     if problems:
         message = "simple-korean 답변 점검: " + ", ".join(problems) + ". 다음 답변에서는 이 항목을 고치세요."
         print(json.dumps({"systemMessage": message}, ensure_ascii=False))

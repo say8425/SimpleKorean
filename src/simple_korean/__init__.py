@@ -19,6 +19,7 @@ from ._paths import resource
 from .ko_lint import lint, lint_detail, reader_check
 
 __version__ = "1.1.1"  # x-release-please-version
+__all__ = ("__version__", "VARIANTS", "LANGS", "prompt_path", "prompt_block", "lint", "lint_detail", "reader_check")
 
 VARIANTS = MappingProxyType({"sentences": "sentence-rules", "format": "format-rules"})
 LANGS = ("ko", "en")

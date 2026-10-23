@@ -44,7 +44,7 @@ function skillPath(pluginRoot, hookDirectory) {
 }
 
 const CONFIG_NAME = '.simple-korean.json';
-// 설정 값은 저장소가 정하고, 이 훅을 거쳐 모델의 문맥에 들어간다. 그래서 evals/ko_terms.py의
+// 설정 값은 저장소가 정하고, 이 훅을 거쳐 모델의 문맥에 들어간다. 그래서 src/simple_korean/ko_terms.py의
 // load_config, form_ok와 같은 기준으로 검사하고, 단어 목록에 있는 개념 id와 한 줄짜리 짧은 지정형만 적는다.
 const CONFIG_KEYS = new Set(['terms', 'skip', 'spacing']);
 const MAX_FORM_CHARS = 20;
@@ -103,7 +103,7 @@ function conceptIds(pluginRoot, hookDirectory) {
   }
 }
 
-// 작업 디렉터리에서 위로 올라가며 프로젝트 설정을 찾는다(evals/ko_terms.py의 find_config와 같다).
+// 작업 디렉터리에서 위로 올라가며 프로젝트 설정을 찾는다(src/simple_korean/ko_terms.py의 find_config와 같다).
 function findConfig(start) {
   let dir = path.resolve(start || '.');
   for (;;) {

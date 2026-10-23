@@ -84,3 +84,13 @@ def test_old_evals_path_gives_the_package_module():
     import ko_rules
     assert ko_lint is sk.ko_lint and ko_rules is sk.ko_rules
     assert sk.ko_terms.TERMS_JSON.is_file() and sk.ko_rules.SLOP_TSV.is_file()
+
+
+def test_package_runs_the_linter_as_a_module():
+    import os
+    import subprocess
+    env = {**os.environ, "PYTHONPATH": str(HERE.parent.parent / "src")}
+    r = subprocess.run([sys.executable, "-m", "simple_korean", "--type", "reply", "-"], input="**네** — 됩니다.\n",
+                       capture_output=True, text=True, env=env)
+    assert r.returncode == 0 and '"visible_total": 2' in r.stdout and "Warning" not in r.stderr, (r.stdout, r.stderr)
+    assert set(sk.__all__) >= {"prompt_block", "lint_detail", "lint", "__version__"}
