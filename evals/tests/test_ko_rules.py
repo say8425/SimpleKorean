@@ -155,3 +155,56 @@ def test_noun_list_items_do_not_outvote_a_correct_sentence():
 def test_parenthetical_tail_is_not_a_noun_ending():
     text = "백업이 있는지 확인하세요(선택 사항임).\n"
     assert [h.category for h in ko_rules.sentence_hits(units(text), "procedural")] == []
+
+
+def test_contracted_recommendation_is_a_hedge():
+    for s in ("캐시를 지우는 게 좋아요.", "캐시를 지우는 게 좋습니다.", "다시 받은 게 좋겠습니다.",
+              "타임아웃은 긴 게 좋습니다.", "배포 전에 백업한 게 좋겠습니다.", "캐시를 지우는 게 더 좋습니다.",
+              "설정은 간단한 것이 좋습니다.", "재시작하지 않는 게 좋지 않습니다.", "설정을 확인하시길 바랍니다."):
+        assert cats(s) == ["hedge"], (s, cats(s))
+    assert cats("이 게임이 좋습니다.") == []
+
+
+def test_recommendation_inside_a_clause_is_not_a_hedge():
+    for s in ("어느 쪽을 쓰는 게 좋은지 비교합니다.", "어느 쪽을 쓰는 게 좋을지 팀과 정하세요.",
+              "캐시를 지우는 게 좋다는 조언은 틀렸습니다.", "어느 쪽을 쓰는 것이 좋은지 비교합니다."):
+        assert cats(s) == [], (s, cats(s))
+
+
+def test_geop_from_geolda_is_not_colloquial():
+    for s in ("조건은 이 문장에만 겁니다.", "필터를 겁니다.", "전화를 겁니다."):
+        assert cats(s) == [], (s, cats(s))
+    for s in ("내일 배포할 겁니다.", "결과가 다를 겁니다.", "값이 있을 겁니다."):
+        assert cats(s) == ["colloquial"], (s, cats(s))
+
+
+def test_geop_after_a_modifier_or_a_possessor_is_colloquial():
+    for s in ("작업이 중간에 멈춘 겁니다.", "인증서를 찾지 못한 겁니다.", "마이그레이션을 두 번 한 겁니다.",
+              "캐시에서 찾은 겁니다.", "배포가 실패한 겁니다.", "이 정도면 운영 수준일 겁니다.", "값을 바꾸는 겁니다.",
+              "동작하지 않을 겁니다.", "이미 끝났을 겁니다.", "설정이 올바를 겁니다.", "응답이 API인 겁니다.",
+              "결과가 같을 겁니다.", "방화벽이 요청을 막을 겁니다.", "요청 수가 한도를 넘을 겁니다.",
+              "사용자는 바로 보고 싶을 겁니다.", "이 방법이 더 나을 겁니다.", "같은 결과를 얻을 겁니다.",
+              "파일을 내려받을 겁니다.", "결과가 똑같을 겁니다.", "앞 작업을 뒤따를 겁니다.", "그 사람이 들을 겁니다.",
+              "이 로그는 어제 겁니다.", "이 키는 운영 서버 겁니다.", "이 키는 API 겁니다.", "이 설정은 v2 겁니다."):
+        assert cats(s) == ["colloquial"], (s, cats(s))
+
+
+def test_geop_from_geolda_after_a_particle_is_not_colloquial():
+    for s in ("열에 제약을 겁니다.", "행에 락을 겁니다.", "칼럼에 NOT NULL을 겁니다.", "테이블에 잠금(LOCK)을 겁니다.",
+              "요청 수에 제한도 겁니다.", "트리거를 겁니다.", "조건을 겁니다.", "조건은 이 문장에만 겁니다.",
+              "읽기 락은 겁니다.", "제약은 부모 테이블에는 겁니다.", "조건으로 이걸 겁니다.", "문서에 링크를 겁니다.",
+              "외래 키 제약 조건을\n겁니다."):
+        assert cats(s) == [], (s, cats(s))
+
+
+def test_geop_reports_the_line_of_geopnida():
+    hits = [h for h in ko_rules.lexical_hits(mask("배포할\n겁니다.\n"), slop_rx=CORE) if h.category == "colloquial"]
+    assert [h.line for h in hits] == [2], hits
+
+
+def test_geop_takes_linear_time_on_long_hangul_runs():
+    import time
+    start = time.perf_counter()
+    ko_rules.lexical_hits(mask("가" * 20000 + " 입니다."), slop_rx=CORE)
+    ko_rules.lexical_hits(mask("가" * 20000 + " 겁니다." + " 겁니다" * 20000), slop_rx=CORE)
+    assert time.perf_counter() - start < 0.5

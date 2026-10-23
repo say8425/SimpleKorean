@@ -66,7 +66,7 @@ def load_config(path):
         return {}
     try:
         data = json.loads(Path(path).read_text(encoding="utf-8"))
-    except (OSError, ValueError) as err:
+    except (OSError, ValueError, RecursionError) as err:  # Python 3.11까지는 깊이 1000쯤에서 RecursionError가 난다
         raise ValueError(f"{path}: 설정을 읽지 못했습니다: {err}") from err
     if not isinstance(data, dict):
         raise ValueError(f"{path}: 설정은 JSON 객체여야 합니다")

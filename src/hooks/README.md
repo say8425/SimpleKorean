@@ -51,7 +51,11 @@ python3 src/hooks/test_lint_hook.py
 
 Claude Code에서는 알림용 훅 두 개가 더 동작합니다. 두 훅 모두 작업을 막지 않습니다.
 
-`PostToolUse` 훅은 `Write`와 `Edit` 뒤에 동작합니다. 쓴 파일이 마크다운이면 `src/hooks/lint_hook.py`가 린터(`src/simple_korean/ko_lint.py`)로 검사합니다. 그다음 위반의 줄 번호와 문구를 오류부터 12개까지 모델에 보여 줍니다.
+`PostToolUse` 훅은 `Write`와 `Edit` 뒤에 동작합니다. 쓴 파일의 이름이 `.md`로 끝나면 `src/hooks/lint_hook.py`가 린터(`src/simple_korean/ko_lint.py`)로 검사합니다. 그다음 위반의 줄 번호와 문구를 오류부터 12개까지 모델에 보여 줍니다.
+
+`Edit` 뒤에는 이번 편집이 더한 위반만 보여 줍니다. 훅은 편집 전의 글도 검사해 전에 없던 위반만 고릅니다. 편집 전의 글은 Claude Code가 훅에 넘기는 `originalFile`에서 얻습니다. 그래서 기존 문서에 몇 줄을 더해도 새 줄의 위반이 기존 위반에 묻히지 않습니다. 편집이 다른 줄에 만든 위반(문체 혼용 같은 것)도 알립니다. 편집 전부터 있던 위반은 새 위반을 알릴 때 건수만 덧붙입니다.
+
+`originalFile`이 없으면 훅은 `new_string`을 `old_string`으로 되돌려 편집 전의 글을 만듭니다. `new_string`이 비었거나, 파일에 없거나, 두 번 이상 나오면 되돌릴 자리를 하나로 정하지 못합니다. `replace_all` 편집도 같습니다. 이때는 파일 전체의 위반을 보여 줍니다.
 
 `Stop` 훅에서는 같은 스크립트가 마지막 답변을 읽습니다. 답변에 em-dash, 굵은 글씨, 표, 슬롭 어휘, 인사말, 맺음말이 있으면 시스템 메시지를 더합니다. 답변이 헤더나 목록으로 시작해도 알립니다. 그 밖의 헤더와 목록 항목은 알리지 않습니다. 답변은 내용과 길이를 보고 헤더와 목록을 쓸 수 있기 때문입니다.
 
@@ -67,6 +71,7 @@ Codex에서는 세션 시작 훅만 동작합니다.
 - Claude 설정 디렉터리 아래의 모든 경로(`CLAUDE_CONFIG_DIR`, 없으면 `~/.claude`)
 - `.claude` 디렉터리가 들어간 모든 경로(예: `my-project/.claude/agent-memory/reviewer/MEMORY.md`)
 - `SIMPLE_KOREAN_LINT_EXCLUDE`의 글롭에 맞는 경로
+- UTF-8로 읽지 못한 파일(CP949나 UTF-16으로 저장한 파일)
 
 심볼릭 링크로는 건너뛰기를 피할 수 없습니다. 점검은 적힌 그대로의 절대 경로와 링크를 푼 경로를 모두 대조합니다. 둘 중 하나만 맞아도 건너뜁니다.
 

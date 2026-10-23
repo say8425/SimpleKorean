@@ -421,3 +421,18 @@ def test_reply_table_and_closer_checks_take_linear_time():
     assert ko_lint.lint_detail("결과를 알려 주세요" + " " * 50_000 + "가", "reply") == []
     elapsed = time.time() - start
     assert elapsed < 0.5, elapsed
+
+
+def test_yes_answers_are_not_openers():
+    for reply in ("네, 맞습니다. PUT은 멱등합니다.\n", "네, 좋습니다. 그 값으로 배포하세요.\n"):
+        assert ko_lint.lint_detail(reply, "reply") == [], reply
+    assert [h["category"] for h in ko_lint.lint_detail("네, 알겠습니다. 로그를 봅니다.\n", "reply")] == ["opener"]
+
+
+def test_openers_with_a_prefix_or_an_intensifier():
+    for reply in ("네, 좋은 질문입니다. PUT은 멱등합니다.", "아, 좋은 질문입니다. 답입니다.", "흥미로운 질문입니다. 답입니다.",
+                  "아주 좋은 질문이네요. 답입니다.", "네, 물론입니다. 답입니다.", "넵, 알겠습니다. 답입니다.",
+                  "알겠습니다. 설정을 바꿉니다.", "네, 좋습니다! 캐시에 대해 설명드리겠습니다. 캐시는 응답을 저장합니다."):
+        assert ko_lint.reply_fillers(reply) == (True, False), reply
+    for reply in ("좋은 질문 목록은 FAQ 문서에 있습니다.", "아파치 서버는 80번 포트를 씁니다.", "예를 들어 포트를 바꾸세요."):
+        assert ko_lint.reply_fillers(reply) == (False, False), reply

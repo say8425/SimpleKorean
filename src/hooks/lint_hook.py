@@ -2,7 +2,10 @@
 """Claude Code 훅의 글쓰기 점검. 알리기만 하고 막지 않는다.
 
 PostToolUse(.md 파일의 Write|Edit): 린터(simple_korean.ko_lint)로 파일을 검사한다. 위반이 있으면 오류부터
-MAX_HOOK_HITS개까지 줄 번호, 범주, 강도, 문구를 stderr로 보내고 2로 끝낸다. PostToolUse의 종료
+MAX_HOOK_HITS개까지 줄 번호, 범주, 강도, 문구를 stderr로 보내고 2로 끝낸다. Edit이면 편집 전의 글도 검사하고,
+편집이 더한 위반만 알린다. 편집 전부터 있던 위반은 건수만 덧붙인다. 편집 전의 글은 tool_response의 originalFile에서
+얻는다. originalFile이 없으면 new_string을 old_string으로 되돌린다. 되돌릴 자리가 하나로 정해지지 않으면(new_string이
+비었거나, 파일에 없거나, 두 번 이상 나오거나, replace_all이면) 파일 전체의 위반을 알린다. PostToolUse의 종료
 코드 2는 알림이다. 도구는 이미 실행되었다. 한글 비율이 MIN_HANGUL_RATIO보다 낮은 파일, Claude
 설정 디렉터리와 .claude 경로의 파일, SIMPLE_KOREAN_LINT_EXCLUDE 글롭에 맞는 파일은 건너뛴다.
 프로젝트의 .simple-korean.json이 깨져 있으면 기본 설정으로 검사하고 그 사실을 한 줄 알린다.
@@ -12,6 +15,7 @@ Stop: last_assistant_message가 한국어이면 ko_lint.reply_hits로 답변 규
 em-dash, 슬롭 어휘, 인사말, 맺음말은 따옴표 인용 안도 세지 않고, 서식은 따옴표 안도 센다. 첫 줄이 아닌 헤더와
 목록 항목은 답의 내용과 길이를 보고 쓸 수 있으므로 알리지 않는다. 항상 0으로 끝내므로 세션이 되풀이되지 않는다.
 """
+import difflib
 import fnmatch
 import json
 from collections import Counter
@@ -85,6 +89,60 @@ def _detail(lint, text, target):
     return lint.lint_detail(text, "descriptive", config=config), note
 
 
+def _before_edit(event, text, nfc):
+    """Edit 전의 글(NFC). Edit이 아니거나 하나로 정하지 못하면 None이다.
+
+    tool_response의 originalFile을 먼저 쓴다. 없으면 text에 한 번만 나오는 new_string을 old_string으로 되돌린다.
+    new_string이 두 번 이상 나오면 어느 것이 편집한 자리인지 알 수 없다.
+    """
+    if event.get("tool_name") != "Edit":
+        return None
+    response = event.get("tool_response")
+    original = response.get("originalFile") if isinstance(response, dict) else None
+    if isinstance(original, str):
+        return nfc(original)
+    tool_input = event.get("tool_input") or {}
+    old, new = tool_input.get("old_string"), tool_input.get("new_string")
+    if not isinstance(old, str) or not isinstance(new, str) or tool_input.get("replace_all") is True:
+        return None
+    old, new = nfc(old), nfc(new)
+    first = text.find(new) if new else -1
+    if first < 0 or text.find(new, first + 1) >= 0:
+        return None
+    return text[:first] + old + text[first + len(new):]
+
+
+def added_hits(before, after, before_hits, after_hits):
+    """after에만 있는 위반. 편집하지 않은 줄의 위반은 편집 전의 같은 줄에 같은 위반이 있으면 뺀다.
+
+    줄은 difflib으로 맞춘다. 편집한 줄의 위반은 편집 전에 남은 (범주, 문구)가 같은 위반이 있으면 그 수만큼 뺀다.
+    문체 혼용처럼 편집이 다른 줄에 만든 위반은 새 위반으로 남는다.
+    """
+    matcher = difflib.SequenceMatcher(None, before.split("\n"), after.split("\n"))
+    same = {}
+    for a, b, size in matcher.get_matching_blocks():
+        same.update((b + k + 1, a + k + 1) for k in range(size))
+    left = Counter((h["line"], h["category"], h["text"]) for h in before_hits)
+    rest = []
+    for h in after_hits:
+        key = (same.get(h["line"]), h["category"], h["text"])
+        if left[key]:
+            left[key] -= 1
+        else:
+            rest.append(h)
+    pool = Counter()
+    for (_, category, text), n in left.items():
+        pool[(category, text)] += n
+    added = []
+    for h in rest:
+        key = (h["category"], h["text"])
+        if pool[key]:
+            pool[key] -= 1
+        else:
+            added.append(h)
+    return added
+
+
 def post_tool_use(event):
     path = (event.get("tool_input") or {}).get("file_path") or ""
     if not path.endswith(".md"):
@@ -99,21 +157,36 @@ def post_tool_use(event):
         return 0
     if lint.ko_text.hangul_ratio(text) < MIN_HANGUL_RATIO:
         return 0
+    text = lint.ko_text.nfc(text)
     detail, note = _detail(lint, text, target)
+    total, before = len(detail), _before_edit(event, text, lint.ko_text.nfc)
+    if before is not None:
+        detail = added_hits(before, text, _detail(lint, before, target)[0], detail)
     if not detail and not note:
         return 0
+    sys.stderr.write(_message(lint, one_line(target.name), detail, note, before is not None, total - len(detail)))
+    return 2
+
+
+def _message(lint, name, detail, note, edited, kept):
+    """PostToolUse 알림 글. edited는 Edit의 차이만 본 경우이고, kept는 편집 전부터 있던 위반 수다."""
     detail = sorted(detail, key=lambda h: (h["severity"] != "error", h["line"]))
     errors = sum(1 for h in detail if h["severity"] == "error")
-    lines = [f"simple-korean: {one_line(target.name)}에 오류 {errors}건, 경고 {len(detail) - errors}건이 있습니다."]
-    lines += [f"  {one_line(note)}"] if note else []
+    counts = f"오류 {errors}건, 경고 {len(detail) - errors}건"
+    if edited:
+        head = f"{name}에서 이번 편집이 더한 위반은 " + (f"{counts}입니다." if detail else "없습니다.")
+    else:
+        head = f"{name}에 {counts}이 있습니다." if detail else f"{name}에 위반이 없습니다."
+    lines = [f"simple-korean: {head}"] + ([f"  {one_line(note)}"] if note else [])
     for h in detail[:MAX_HOOK_HITS]:
         label = lint.LABELS.get(h["category"], h["category"])
         lines.append(f"  {h['line']}번 줄, {label}({lint.SEVERITY_LABELS[h['severity']]}): {one_line(h['text'])}")
     if len(detail) > MAX_HOOK_HITS:
         lines.append(f"  그 밖에 {len(detail) - MAX_HOOK_HITS}건이 더 있습니다.")
-    lines.append("방금 쓴 파일에서 이 항목을 고친 뒤 계속하세요.")
-    sys.stderr.write("\n".join(lines) + "\n")
-    return 2
+    if detail and kept:
+        lines.append(f"  편집 전부터 있던 위반 {kept}건은 알리지 않았습니다.")
+    lines.append("방금 쓴 파일에서 이 항목을 고친 뒤 계속하세요." if detail else "설정 파일을 고친 뒤 계속하세요.")
+    return "\n".join(lines) + "\n"
 
 
 def stop(event):
