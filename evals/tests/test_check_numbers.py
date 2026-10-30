@@ -68,6 +68,7 @@ def test_check_versions_requires_one_value_everywhere():
         "src/simple_korean/__init__.py": '__version__ = "1.0.0"  # x-release-please-version\n',
         **{f"prompts/{name}.{lang}.md": f"<!-- simple-korean {name} {lang} 1.0.0 x-release-please-version -->\n본문\n"
            for name in ("sentence-rules", "format-rules") for lang in ("ko", "en")},
+        "site/index.html": '<pre><code>pip install "simple-korean==1.0.0"</code></pre><!-- x-release-please-version -->\n',
     }
     assert "README.md" not in cn.VERSION_PATTERNS
     assert cn.check_versions(texts) == []
@@ -410,6 +411,13 @@ def test_diff_files_hold_one_stage_and_edits_are_caught():
         problems = mx.check_diffs(root, repo, **picks)
         assert "examples/diffs/reply-oom.md: 파일이 없습니다" in problems
         assert "examples/diffs/old.md: 고른 예시에 없는 파일입니다" in problems
+
+
+def test_site_source_link_must_match_the_readme_results():
+    site = '<a href="https://github.com/say8425/SimpleKorean/tree/main/evals/results/2026-10-21">원본</a>'
+    assert cn.site_problems(site, "evals/results/2026-10-21") == []
+    assert cn.site_problems(site, "evals/results/2026-10-21/") == []
+    assert "site/index.html" in cn.site_problems(site, "evals/results/2099-01-01")[0]
 
 
 def test_diff_url_must_come_from_the_readme_results():

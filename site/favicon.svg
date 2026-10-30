@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+<style>.g{fill:#FBFAF6;stroke:#B5381F}.d{fill:#B5381F}@media (prefers-color-scheme:dark){.g{fill:#161513;stroke:#F08A6E}.d{fill:#F08A6E}}</style>
+<rect class="g" x="2" y="2" width="28" height="28" stroke-width="2.5"/>
+<circle class="d" cx="12" cy="20" r="4.5"/>
+</svg>

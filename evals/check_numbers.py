@@ -9,6 +9,7 @@
 - README 다섯 개의 벤치마크 블록과 RESULTS.md를 원본 출력에서 다시 만든 글과 비교한다(report.py, readme_i18n.py).
 - README 다섯 개의 보기 블록과 examples/before-after.md의 인용 블록을 원본 출력과 비교한다(make_examples.py).
 - examples/diffs/의 파일마다 원본 출력의 전이나 후와 같은지 보고, diff 링크가 README의 결과 디렉터리로 만든 것인지 본다(make_examples.py).
+- 소개 페이지(site/index.html)의 원본 링크가 README의 결과 디렉터리를 가리키는지 본다. 페이지의 수치는 손으로 옮겼다.
 - 번역판의 제목, 레포 링크, 언어 선택 줄, 블록 표시가 한국어판과 맞는지 본다.
 - 보정 기록 RECORD.md를 hits.tsv와 보정 출력에서 다시 만들어 비교한다.
 - 측정 결과 경로와 보정 줄이 CHANGELOG에 있는지 본다. 마지막 릴리스보다 늦은 측정과 보정은 건너뛴다.
@@ -17,7 +18,7 @@
 - 답변 판본(prompts/의 sentence-rules, format-rules)의 한국어판이 규칙 블록의 답변 절과 슬롭 어휘, 번역투 문장을
   빠짐없이 그대로 나눠 담는지, 영어판이 한국어판과 줄마다 맞는지 본다.
 - 버전 문자열이 SKILL.md, 플러그인 매니페스트 세 개, .release-please-manifest.json, CHANGELOG 첫 항목, pyproject.toml,
-  패키지의 __version__, 답변 판본 네 개의 첫 줄에서 같은지 본다.
+  패키지의 __version__, 답변 판본 네 개의 첫 줄, 소개 페이지의 pip 명령에서 같은지 본다.
 """
 import difflib
 import json
@@ -61,7 +62,9 @@ VERSION_PATTERNS = {
     "pyproject.toml": r'(?m)^version = "([^"]+)" # x-release-please-version$',
     "src/simple_korean/__init__.py": r'__version__ = "([^"]+)"  # x-release-please-version',
     **{f"prompts/{name}.{lang}.md": PROMPT_VERSION for name in ("sentence-rules", "format-rules") for lang in ("ko", "en")},
+    "site/index.html": r'simple-korean==([0-9][^"]*)"</code></pre><!-- x-release-please-version -->',
 }
+SITE = "site/index.html"
 CHANGELOG_ENTRY = re.compile(r"(?m)^## \[?[0-9]+\.[0-9]+\.[0-9]+\]?.*?([0-9]{4}-[0-9]{2}-[0-9]{2})")
 RECORD_DATE = re.compile(r"\A# 보정 기록 \(([0-9]{4}-[0-9]{2}-[0-9]{2})\)")
 
@@ -140,7 +143,20 @@ def check_examples(readme, examples):
             problems += make_examples.diff_url_problems(bench.group(1))
         except (OSError, ValueError, KeyError) as err:
             problems.append(f"examples/diffs/를 원본과 대조하지 못했습니다({err})")
+        try:
+            problems += site_problems((ROOT / SITE).read_text(encoding="utf-8"), bench.group(1))
+        except OSError as err:
+            problems.append(f"{SITE}를 읽지 못했습니다({err})")
     return problems
+
+
+def site_problems(site, results_rel):
+    """소개 페이지의 전후 비교와 측정 수치가 README와 같은 결과 디렉터리에서 왔는지 본다."""
+    link = "https://github.com/say8425/SimpleKorean/tree/main/" + Path(results_rel).as_posix().rstrip("/")
+    if f'href="{link}"' in site:
+        return []
+    return [f"{SITE}의 원본 링크가 README의 결과({results_rel})를 가리키지 않습니다. "
+            "소개 페이지의 전후 비교와 측정 수치를 그 결과로 고치세요"]
 
 
 def check_example_block(text, lang, results_dir):
