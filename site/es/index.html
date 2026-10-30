@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SimpleKorean: coreano breve y claro escrito por IA</title>
+<meta name="description" content="SimpleKorean es una skill de agente que hace que la IA escriba documentos y respuestas en coreano sencillo. Divide las oraciones largas, reduce los calcos de traducción y unifica la escritura de los términos. Funciona en Claude Code, Codex y Python.">
+<link rel="canonical" href="https://say8425.github.io/SimpleKorean/es/">
+<link rel="alternate" hreflang="ko" href="https://say8425.github.io/SimpleKorean/">
+<link rel="alternate" hreflang="en" href="https://say8425.github.io/SimpleKorean/en/">
+<link rel="alternate" hreflang="ja" href="https://say8425.github.io/SimpleKorean/ja/">
+<link rel="alternate" hreflang="zh" href="https://say8425.github.io/SimpleKorean/zh/">
+<link rel="alternate" hreflang="es" href="https://say8425.github.io/SimpleKorean/es/">
+<link rel="alternate" hreflang="x-default" href="https://say8425.github.io/SimpleKorean/">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#FBFAF6" data-system="#FBFAF6">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#161513" data-system="#161513">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SimpleKorean">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ko_KR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="ja_JP">
+<meta property="og:locale:alternate" content="zh_CN">
+<meta property="og:url" content="https://say8425.github.io/SimpleKorean/es/">
+<meta property="og:title" content="SimpleKorean: coreano breve y claro escrito por IA">
+<meta property="og:description" content="Una skill de agente que hace que la IA escriba documentos y respuestas en coreano sencillo. Divide las oraciones largas, reduce los calcos de traducción y unifica la escritura de los términos.">
+<meta property="og:image" content="https://say8425.github.io/SimpleKorean/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Las palabras «쉬운 한국어.» (coreano sencillo.) escritas en casillas de papel de manuscrito, y la frase «AI가 쓰는 한국어를 짧고 분명하게.»">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SimpleKorean: coreano breve y claro escrito por IA">
+<meta name="twitter:description" content="Una skill de agente que hace que la IA escriba documentos y respuestas en coreano sencillo.">
+<meta name="twitter:image" content="https://say8425.github.io/SimpleKorean/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "SimpleKorean",
+  "description": "Una skill de agente que hace que la IA escriba documentos y respuestas en coreano sencillo",
+  "url": "https://say8425.github.io/SimpleKorean/es/",
+  "codeRepository": "https://github.com/say8425/SimpleKorean",
+  "license": "https://opensource.org/licenses/MIT",
+  "inLanguage": "es",
+  "programmingLanguage": "Python"
+}
+</script>
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../style.css">
+<script>
+// 기본은 시스템 테마다. 테마 메뉴에서 고른 값이 있으면 그리기 전에 적용한다. site.js의 applyTheme와 같은 일을 한다.
+(function () {
+  var root = document.documentElement, t = null;
+  root.classList.add('js');
+  try { t = localStorage.getItem('simple-korean-theme'); } catch (e) {}
+  if (t !== 'light' && t !== 'dark') return;
+  root.dataset.theme = t;
+  var color = t === 'dark' ? '#161513' : '#FBFAF6';
+  document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.content = color; });
+})();
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Ir al contenido principal</a>
+
+<header class="top wrap">
+<a class="brand" href="#top">SimpleKorean</a>
+<nav aria-label="Menú principal">
+<a href="#example">Antes y después</a>
+<a href="#bench">Resultados</a>
+<a href="#rules">Reglas</a>
+<a href="#install">Instalación</a>
+<a href="https://github.com/say8425/SimpleKorean">GitHub</a>
+<div class="theme-wrap">
+<button type="button" class="theme" id="theme" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="Tema de color. Ahora: Sistema" data-label="Tema de color. Ahora:">
+<svg class="i-sun" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+<svg class="i-moon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+<span id="theme-label">Sistema</span>
+<svg class="chevron" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+</button>
+<div class="theme-menu" id="theme-menu" role="menu" aria-label="Tema de color" hidden>
+<button type="button" role="menuitemradio" aria-checked="true" data-theme-value="system" tabindex="-1"><span><span class="name">Sistema</span><small>Sigue el ajuste del dispositivo</small></span><svg class="check" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+<button type="button" role="menuitemradio" aria-checked="false" data-theme-value="light" tabindex="-1"><span><span class="name">Claro</span></span><svg class="check" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+<button type="button" role="menuitemradio" aria-checked="false" data-theme-value="dark" tabindex="-1"><span><span class="name">Oscuro</span></span><svg class="check" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+</div>
+</div>
+</nav>
+</header>
+
+<main id="main">
+<section id="top" class="hero wrap">
+<div class="wongoji w12" lang="ko" role="img" aria-label="쉬운 한국어. (coreano sencillo.)">
+<span>쉬</span><span>운</span><span></span><span>한</span><span>국</span><span>어</span><span class="dot">.</span><span></span><span></span><span></span><span></span><span></span>
+</div>
+<div class="wongoji w6" lang="ko" role="img" aria-label="쉬운 한국어. (coreano sencillo.)">
+<span>쉬</span><span>운</span><span></span><span></span><span></span><span></span><span>한</span><span>국</span><span>어</span><span class="dot">.</span><span></span><span></span>
+</div>
+<h1>Coreano escrito por IA,<br>breve y claro.</h1>
+<p class="lead">SimpleKorean es una skill de agente. Hace que la IA escriba documentos y respuestas en coreano sencillo.<br>Divide las oraciones largas, reduce los calcos de traducción y unifica la escritura de los términos.<br>Se inspira en <a href="https://github.com/AminBlg/SimpleEnglish">SimpleEnglish</a> y <a href="https://www.asd-ste100.org/">ASD-STE100</a>.</p>
+<div class="cta">
+<a class="btn primary" href="#install">Instalar</a>
+<a class="btn" href="https://github.com/say8425/SimpleKorean"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>Ver en GitHub</a>
+</div>
+</section>
+
+<section id="example" class="band diff-band" aria-labelledby="example-title">
+<div class="wrap">
+<p class="eyebrow">01 Antes y después</p>
+<h2 id="example-title">Vea cómo cambia el mismo borrador</h2>
+<p class="sub">A la izquierda está el borrador original. A la derecha está el documento con SimpleKorean. Debajo de cada oración cambiada se indica la regla aplicada. El texto del ejemplo queda en coreano.</p>
+
+<ul class="stats" aria-label="Recuentos antes y después">
+<li>em-dash <span>2 → 0</span></li>
+<li>Negrita <span>2 → 0</span></li>
+<li>Punto medio <span>3 → 0</span></li>
+<li>Terminaciones de consejo <span>2 → 0</span></li>
+<li>Oración más larga <span>12 eojeol → 11 eojeol</span></li>
+</ul>
+
+<div class="diff" lang="ko">
+<div class="pair head" aria-hidden="true">
+<div class="side old">− Borrador</div>
+<div class="side new">+ Documento con SimpleKorean</div>
+</div>
+<div class="drow ctx">
+<div class="pair">
+<div class="side old"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr">Borrador: </span>## 문제 해결</p><span class="count"></span></div>
+<div class="side new"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr">Revisado: </span>## 문제 해결</p><span class="count"></span></div>
+</div>
+</div>
+<div class="drow hdr">
+<div class="pair">
+<div class="side old"><span class="ln">2</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">Borrador: </span><del>**</del>Postgres 연결 타임아웃<del>** —</del></p><span class="count"></span></div>
+<div class="side new"><span class="ln">2</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">Revisado: </span><ins>### </ins>Postgres 연결 타임아웃</p><span class="count"></span></div>
+</div>
+<p class="note">Regla: <span>Use un encabezado en lugar de negrita y em-dash</span></p>
+</div>
+<div class="drow chg">
+<div class="pair">
+<div class="side old"><span class="ln">3</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">Borrador: </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<del>·</del>보안 그룹이 5432 포트를 <del>막고 있는 것입니다</del>.</p><span class="count">12 eojeol</span></div>
+<div class="side new"><span class="ln">3</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">Revisado: </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<ins>이나 </ins>보안 그룹이 5432 포트를 <ins>막습니다</ins>.</p><span class="count">11 eojeol</span></div>
+</div>
+<p class="note">Regla: <span>Una las palabras con una partícula, no con un punto medio. Use el presente simple</span></p>
+</div>
+<div class="drow chg">
+<div class="pair">
+<div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">Borrador: </span><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count">5 eojeol</span></div>
+<div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">Revisado: </span><ins>sqlpipe를 실행하는 호스트에서 </ins><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <ins>확인하세요</ins>.</p><span class="count">6 eojeol</span></div>
+</div>
+<p class="note">Regla: <span>Indique el host que ejecuta el comando. Cambie la terminación de consejo por la forma de orden «-하세요»</span></p>
+</div>
+<div class="drow hdr">
+<div class="pair">
+<div class="side old"><span class="ln">5</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">Borrador: </span><del>**</del>S3 권한 오류<del>** —</del></p><span class="count"></span></div>
+<div class="side new"><span class="ln">5</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">Revisado: </span><ins>### </ins>S3 권한 오류</p><span class="count"></span></div>
+</div>
+</div>
+<div class="drow add">
+<div class="pair">
+<div class="side old empty"></div>
+<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">Oración añadida en la revisión: </span>sqlpipe가 <code>AccessDenied</code> 오류를 내면 먼저 <code>aws sts get-caller-identity</code>로 현재 쓰는 자격 증명을 확인하세요.</p><span class="count">11 eojeol</span></div>
+</div>
+<p class="note">Regla: <span>Ponga primero lo que se hace primero</span></p>
+</div>
+<div class="drow chg">
+<div class="pair">
+<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">Borrador: </span><del><code>AccessDenied</code>가 나면 </del>IAM 정책<del>·</del>버킷 정책에 읽기<del>·</del>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count">10 eojeol</span></div>
+<div class="side new"><span class="ln">7</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">Revisado: </span><ins>그다음 </ins>IAM 정책<ins>과 </ins>버킷 정책에 읽기<ins>와 </ins>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count">11 eojeol</span></div>
+</div>
+<p class="note">Regla: <span>Una las palabras con «과» y «와» (y), no con un punto medio</span></p>
+</div>
+<div class="drow del">
+<div class="pair">
+<div class="side old"><span class="ln">7</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">Oración quitada del borrador: </span>먼저 <code>aws sts get-caller-identity</code>로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.</p><span class="count">9 eojeol</span></div>
+<div class="side new empty"></div>
+</div>
+<p class="note">Regla: <span>Se movió a la oración 6 de la derecha, sin la terminación de consejo</span></p>
+</div>
+</div>
+
+<p class="foot">Fuente: <a href="https://github.com/say8425/SimpleKorean/tree/main/evals/results/2026-10-21">evals/results/2026-10-21</a>. Una persona emparejó las oraciones e indicó las reglas. Para ver más comparaciones, consulte los <a href="https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a">ejemplos de antes y después</a>.</p>
+</div>
+</section>
+
+<section id="bench" class="band" aria-labelledby="bench-title">
+<div class="wrap">
+<p class="eyebrow">02 Resultados</p>
+<h2 id="bench-title">Qué cambia al activar la skill</h2>
+<p class="sub">Publicamos las salidas originales que medimos. Puede volver a calcular las cifras de abajo a partir de esas salidas.</p>
+<dl class="metrics">
+<div>
+<dt>Defectos de formato en respuestas</dt>
+<dd class="num">162 → <em>0</em></dd>
+<dd>Defectos visibles para el lector en 32 respuestas. Contamos em-dash, negrita, tablas y un encabezado o lista en la primera línea.</dd>
+</div>
+<div>
+<dt>Evaluación a ciegas</dt>
+<dd class="num"><em>12</em> de 16</dd>
+<dd>Pares, de 16, en los que el juez eligió la respuesta de SimpleKorean sin saber cuál era. 3 pares empataron y 1 par perdió.</dd>
+</div>
+<div>
+<dt>Avisos del linter en documentos</dt>
+<dd class="num">0.71 → <em>0.17</em></dd>
+<dd>Avisos del linter por cada 100 eojeol. Un eojeol es una unidad de texto coreano entre dos espacios.</dd>
+</div>
+<div>
+<dt>Oración más larga</dt>
+<dd class="num">18 → <em>15</em><span class="unit"> eojeol</span></dd>
+<dd>La oración más larga en 16 documentos. En el modo estricto es de 13 eojeol.</dd>
+</div>
+</dl>
+<p class="foot">claude-sonnet-5-5 escribió los documentos y las respuestas. claude-opus-5-5 hizo de juez.<br>El juez también es Claude, así que puede favorecer a modelos de la misma familia.</p>
+</div>
+</section>
+
+<section id="rules" class="band surface" aria-labelledby="rules-title">
+<div class="wrap">
+<p class="eyebrow">03 Reglas</p>
+<h2 id="rules-title">Oraciones cortas. La respuesta primero.</h2>
+<p class="sub">Las reglas dividen las oraciones largas, quitan el formato innecesario y corrigen los calcos de traducción.</p>
+<ul class="rules">
+<li><span class="tag">Respuesta</span><div><p class="rule">Ponga la respuesta en la primera oración</p><p class="before">Evita: Una introducción que repite la pregunta</p></div></li>
+<li><span class="tag">Respuesta</span><div><p class="rule">No use negrita ni tablas</p><p class="before">Evita: Formato alrededor de una respuesta de una línea</p></div></li>
+<li><span class="tag">Respuesta</span><div><p class="rule">No use em-dash</p><p class="before">Evita: Ideas unidas solo a medias</p></div></li>
+<li><span class="tag">Documento</span><div><p class="rule">Escriba los procedimientos en 15 eojeol o menos, y las descripciones en 20 eojeol o menos</p><p class="before">Evita: Oraciones largas que no terminan</p></div></li>
+<li><span class="tag">Documento</span><div><p class="rule">Ponga las condiciones antes de la orden con «-면» (si)</p><p class="before">Evita: «단, ~경우» (sin embargo, en caso de ~) después de la orden, que el lector ve demasiado tarde</p></div></li>
+<li><span class="tag">Documento</span><div><p class="rule">Use la voz activa y tiempos simples</p><p class="before">Evita: «되어지다» (doble pasiva), «~에 의해» (por ~), «-고 있습니다» (está haciendo)</p></div></li>
+<li><span class="tag">Documento</span><div><p class="rule">No use terminaciones de suposición ni de consejo</p><p class="before">Evita: «-ㄹ 수도 있습니다» (puede que), «-것 같습니다» (parece)</p></div></li>
+<li><span class="tag">Documento</span><div><p class="rule">Dé a cada palabra un solo significado</p><p class="before">Evita: Alternar «확인», «검증» y «점검» (todas significan «comprobar»)</p></div></li>
+</ul>
+<p class="foot">Las reglas vienen de ASD-STE100, el inglés controlado de los documentos de mantenimiento aeronáutico. Las reglas completas están en <a href="https://github.com/say8425/SimpleKorean/blob/main/skills/simple-korean/SKILL.md">SKILL.md</a>.</p>
+</div>
+</section>
+
+<section id="spelling" class="band" aria-labelledby="spelling-title">
+<div class="wrap">
+<p class="eyebrow">04 Escritura</p>
+<h2 id="spelling-title">Un término, una escritura</h2>
+<p class="sub">La skill sigue las normas coreanas de transcripción de préstamos y los ejemplos del Instituto Nacional de la Lengua Coreana. Si no hay una escritura oficial, el proyecto elige una.</p>
+<ul class="terms" lang="ko">
+<li>디렉터리<span>no 디렉토리</span></li>
+<li>메시지<span>forma normativa</span></li>
+<li>애플리케이션<span>forma normativa</span></li>
+<li>릴리스<span>forma normativa</span></li>
+<li>셸<span>forma normativa</span></li>
+<li>레포지토리<span>forma habitual</span></li>
+<li>바디<span>forma habitual</span></li>
+<li>칼럼<span>forma habitual</span></li>
+<li>리팩터링<span>sin escritura oficial</span></li>
+<li>반환값<span>sin espacio</span></li>
+</ul>
+<p class="foot">Si su empresa usa otra escritura, cámbiela en <code>.simple-korean.json</code>, en la raíz de su repositorio.</p>
+</div>
+</section>
+
+<section id="install" class="band inverse" aria-labelledby="install-title">
+<div class="wrap">
+<p class="eyebrow">05 Instalación</p>
+<h2 id="install-title">Instálela según su herramienta</h2>
+<ul class="installs">
+<li>
+<div><h3>Claude Code</h3><p>Instala la skill, tres hooks y el estilo de salida.</p></div>
+<div class="cmd"><pre><code>claude plugin marketplace add say8425/SimpleKorean
+claude plugin install simple-korean@simple-korean</code></pre><button type="button" class="copy" aria-label="Copiar los comandos de instalación de Claude Code" hidden><svg class="i-copy" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="i-done" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button></div>
+</li>
+<li>
+<div><h3>Codex</h3><p>Instala la skill y el hook de inicio de sesión.</p></div>
+<div class="cmd"><pre><code>codex plugin marketplace add say8425/SimpleKorean
+codex plugin add simple-korean@simple-korean</code></pre><button type="button" class="copy" aria-label="Copiar los comandos de instalación de Codex" hidden><svg class="i-copy" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="i-done" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button></div>
+</li>
+<li>
+<div><h3>Otros agentes</h3><p>Instala solo la skill con la CLI de skills.</p></div>
+<div class="cmd"><pre><code>npx skills add say8425/SimpleKorean</code></pre><button type="button" class="copy" aria-label="Copiar el comando de instalación para otros agentes" hidden><svg class="i-copy" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="i-done" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button></div>
+</li>
+<li>
+<div><h3>Python</h3><p>Use las reglas de respuesta y el linter desde código Python.</p></div>
+<div class="cmd"><pre><code>pip install "simple-korean==1.2.0"</code></pre><!-- x-release-please-version --><button type="button" class="copy" aria-label="Copiar el comando de instalación de Python" hidden><svg class="i-copy" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="i-done" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button></div>
+</li>
+</ul>
+<p class="foot">Para usarla sin instalar, dé a su agente la URL del repositorio y pídale que siga el README.</p>
+<p class="sr" id="copy-status" role="status" aria-live="polite" data-done="Copiado" data-fail="No se pudo copiar. Seleccione el comando y cópielo usted"></p>
+</div>
+</section>
+</main>
+
+<footer class="wrap bottom">
+<p>Licencia MIT. Hecho por <a href="https://github.com/say8425">Ivory Penguin</a> <span aria-hidden="true">🐧</span></p>
+<nav aria-label="Idioma">
+<a href="../" hreflang="ko" lang="ko">한국어</a>
+<a href="../en/" hreflang="en" lang="en">English</a>
+<a href="../ja/" hreflang="ja" lang="ja">日本語</a>
+<a href="../zh/" hreflang="zh" lang="zh">中文</a>
+<a href="./" aria-current="page" lang="es">Español</a>
+</nav>
+</footer>
+<script src="../site.js" defer></script>
+</body>
+</html>

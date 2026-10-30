@@ -1,5 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-<style>.g{fill:#FBFAF6;stroke:#B5381F}.d{fill:#B5381F}@media (prefers-color-scheme:dark){.g{fill:#161513;stroke:#F08A6E}.d{fill:#F08A6E}}</style>
-<rect class="g" x="2" y="2" width="28" height="28" stroke-width="2.5"/>
-<circle class="d" cx="12" cy="20" r="4.5"/>
+<style>.g{fill:#FBFAF6;stroke:#B5381F}.l{stroke:#1B1B1A}.d{fill:#B5381F}@media (prefers-color-scheme:dark){.g{fill:#161513;stroke:#F08A6E}.l{stroke:#EDEAE2}.d{fill:#F08A6E}}</style>
+<rect class="g" x="2" y="2" width="28" height="28" stroke-width="2"/>
+<path class="l" d="M8 11h16M8 17h9" stroke-width="3" stroke-linecap="round"/>
+<circle class="d" cx="22" cy="21" r="3.2"/>
 </svg>
