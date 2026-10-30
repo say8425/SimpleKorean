@@ -42,9 +42,18 @@ html { scroll-behavior: smooth; }
 body {
   margin: 0; background: var(--bg); color: var(--ink);
   font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-  line-height: 1.75; letter-spacing: -0.01em; word-break: keep-all; overflow-wrap: break-word;
+}
+/* Pretendard는 한글과 라틴 문자를 그린다. 일본어와 중국어 페이지는 가나와 한자를 그 언어 글꼴로 그린다. */
+html:lang(ja) body {
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic', sans-serif;
+}
+html:lang(zh) body {
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  line-height: 1.75; letter-spacing: -0.01em; overflow-wrap: break-word; line-break: strict;
   -webkit-text-size-adjust: 100%;
 }
+/* 한국어는 어절 단위로 줄을 바꾼다. 일본어와 중국어 페이지는 글자 단위로 바꾸되, 그 안의 한국어 예시는 lang="ko"로 어절을 지킨다. */
+:lang(ko) { word-break: keep-all; }
 a { color: var(--accent); }
 a:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 code { font-family: var(--mono); }
@@ -59,10 +68,34 @@ code { font-family: var(--mono); }
 .top nav { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; font-size: 15px; }
 .top nav a { color: var(--ink); text-decoration: none; padding: 10px 0; }
 .top nav a:hover { text-decoration: underline; }
+.theme-wrap { position: relative; display: none; }
+.theme-ready .theme-wrap { display: block; }
 .theme {
-  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px;
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px 0 14px;
   border: 1px solid var(--rule2); border-radius: 999px; background: transparent; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer;
 }
+.theme[aria-expanded="true"] { background: var(--code-bg); }
+.theme .chevron { transition: transform 0.15s; }
+.theme[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) { .theme .chevron { transition: none; } }
+.theme-menu {
+  position: absolute; right: 0; top: calc(100% + 8px); z-index: 5; min-width: 196px; padding: 6px;
+  background: var(--surface); border: 1px solid var(--rule2); border-radius: 12px; box-shadow: 0 12px 32px rgba(27, 27, 26, 0.12);
+}
+:root[data-theme="dark"] .theme-menu { box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .theme-menu { box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5); } }
+@media (max-width: 640px) { .theme-menu { right: auto; left: 0; } }
+.theme-menu button {
+  display: flex; width: 100%; align-items: center; gap: 10px; min-height: 44px; padding: 6px 12px; border: 0; border-radius: 8px;
+  background: transparent; color: var(--ink); font: inherit; font-size: 14px; line-height: 1.4; text-align: left; cursor: pointer;
+}
+.theme-menu button > span { flex: 1; }
+.theme-menu small { display: block; font-size: 12px; color: var(--muted); }
+.theme-menu button:hover, .theme-menu button:focus-visible { background: var(--code-bg); }
+.theme-menu button:focus-visible { outline-offset: -3px; }
+.theme-menu [aria-checked="true"] { background: var(--del-bg); }
+.theme-menu .check { visibility: hidden; color: var(--accent); }
+.theme-menu [aria-checked="true"] .check { visibility: visible; }
 .theme .i-moon { display: none; }
 :root[data-theme="dark"] .theme .i-sun { display: none; }
 :root[data-theme="dark"] .theme .i-moon { display: inline; }
@@ -89,7 +122,7 @@ h1 { margin: 40px 0 0; max-width: 760px; font-weight: 700; font-size: clamp(26px
 .lead { margin: 20px 0 0; max-width: 680px; font-size: 18px; color: var(--ink2); }
 .cta { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 12px; }
 .btn {
-  display: inline-flex; align-items: center; min-height: 48px; padding: 0 24px; border: 1.5px solid var(--ink);
+  display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 24px; border: 1.5px solid var(--ink);
   color: var(--ink); text-decoration: none; font-weight: 600; font-size: 16px;
 }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
@@ -119,13 +152,14 @@ h2 { margin: 12px 0 0; font-weight: 800; font-size: clamp(26px, 3vw, 36px); line
 .drow:last-child { border-bottom: 0; }
 .side { flex: 1 1 320px; min-width: 0; }
 .drow .side {
-  display: grid; grid-template-columns: 36px 16px minmax(0, 1fr) 48px; gap: 0 4px; padding: 10px 12px 10px 0;
+  display: grid; grid-template-columns: 36px 16px minmax(0, 1fr) minmax(48px, auto); gap: 0 4px; padding: 10px 12px 10px 0;
 }
 .drow .side.new { border-left: 1px solid var(--d-rule); }
 .drow .old { background: var(--del-bg); }
 .drow .new { background: var(--add-bg); }
 .drow.ctx .side { background: transparent; }
 .drow .side.empty { background: var(--empty-bg); }
+.count { white-space: nowrap; }
 .ln, .count { text-align: right; font-family: var(--mono); font-size: 12px; color: var(--d-muted); padding-top: 3px; }
 .mark { font-family: var(--mono); font-size: 14px; }
 .old .mark { color: var(--del-mark); }
@@ -147,14 +181,15 @@ del code, ins code { background: transparent; padding: 0; }
 .metrics dt { margin: 0 0 4px; font-size: 14px; font-weight: 600; color: var(--ink2); }
 .metrics dd { margin: 8px 0 0; font-size: 15px; color: var(--ink2); }
 .metrics dd.num {
-  margin: 0; font-family: var(--mono); font-size: clamp(30px, 3.4vw, 40px); font-weight: 500; letter-spacing: -0.03em;
+  margin: 0; font-family: var(--mono); font-size: clamp(30px, 2.8vw, 36px); font-weight: 500; letter-spacing: -0.03em;
   white-space: nowrap; color: var(--ink);
 }
 .num em { font-style: normal; color: var(--accent); }
+.num .unit { font-size: 0.6em; }
 
 /* 규칙 */
 .rules { margin: 40px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 0 48px; }
-.rules li { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--rule); }
+.rules li { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--rule); }
 .tag { font-family: var(--mono); font-size: 14px; color: var(--accent); padding-top: 3px; }
 .rule { margin: 0; font-size: 16px; font-weight: 600; }
 .before { margin: 4px 0 0; font-size: 15px; color: var(--muted); }

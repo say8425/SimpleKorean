@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SimpleKorean：让 AI 写的韩语简短清楚</title>
+<meta name="description" content="SimpleKorean 是一个智能体技能，让 AI 用简单的韩语写文档和回答。它拆分长句，减少翻译腔，并统一术语的写法。可在 Claude Code、Codex 和 Python 中使用。">
+<link rel="canonical" href="https://say8425.github.io/SimpleKorean/zh/">
+<link rel="alternate" hreflang="ko" href="https://say8425.github.io/SimpleKorean/">
+<link rel="alternate" hreflang="en" href="https://say8425.github.io/SimpleKorean/en/">
+<link rel="alternate" hreflang="ja" href="https://say8425.github.io/SimpleKorean/ja/">
+<link rel="alternate" hreflang="zh-Hans" href="https://say8425.github.io/SimpleKorean/zh/">
+<link rel="alternate" hreflang="es" href="https://say8425.github.io/SimpleKorean/es/">
+<link rel="alternate" hreflang="x-default" href="https://say8425.github.io/SimpleKorean/">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#FBFAF6" data-system="#FBFAF6">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#161513" data-system="#161513">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SimpleKorean">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:locale:alternate" content="ko_KR">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="ja_JP">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:url" content="https://say8425.github.io/SimpleKorean/zh/">
+<meta property="og:title" content="SimpleKorean：让 AI 写的韩语简短清楚">
+<meta property="og:description" content="让 AI 用简单的韩语写文档和回答的智能体技能。它拆分长句，减少翻译腔，并统一术语的写法。">
+<meta property="og:image" content="https://say8425.github.io/SimpleKorean/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="写在稿纸格子里的“쉬운 한국어.”（简单的韩语。）和“AI가 쓰는 한국어를 짧고 분명하게.”">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SimpleKorean：让 AI 写的韩语简短清楚">
+<meta name="twitter:description" content="让 AI 用简单的韩语写文档和回答的智能体技能。">
+<meta name="twitter:image" content="https://say8425.github.io/SimpleKorean/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "SimpleKorean",
+  "description": "让 AI 用简单的韩语写文档和回答的智能体技能",
+  "url": "https://say8425.github.io/SimpleKorean/zh/",
+  "codeRepository": "https://github.com/say8425/SimpleKorean",
+  "license": "https://opensource.org/licenses/MIT",
+  "inLanguage": "zh-Hans",
+  "programmingLanguage": "Python"
+}
+</script>
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../style.css">
+<script>
+// 기본은 시스템 테마다. 테마 메뉴에서 고른 값이 있으면 그리기 전에 적용한다. site.js의 applyTheme와 같은 일을 한다.
+(function () {
+  var root = document.documentElement, t = null;
+  try { t = localStorage.getItem('simple-korean-theme'); } catch (e) {}
+  if (t !== 'light' && t !== 'dark') return;
+  root.dataset.theme = t;
+  var color = t === 'dark' ? '#161513' : '#FBFAF6';
+  document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.content = color; });
+})();
+</script>
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+
+<header class="top wrap">
+<a class="brand" href="#top">SimpleKorean</a>
+<nav aria-label="主菜单">
+<a href="#example">前后对比</a>
+<a href="#bench">测量结果</a>
+<a href="#rules">规则</a>
+<a href="#install">安装</a>
+<a href="https://github.com/say8425/SimpleKorean">GitHub</a>
+<div class="theme-wrap">
+<button type="button" class="theme" id="theme" aria-haspopup="menu" aria-expanded="false" aria-controls="theme-menu" aria-label="页面主题。当前为 系统" data-label="页面主题。当前为">
+<svg class="i-sun" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+<svg class="i-moon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+<span id="theme-label">系统</span>
+<svg class="chevron" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+</button>
+<div class="theme-menu" id="theme-menu" role="menu" aria-label="页面主题" hidden>
+<button type="button" role="menuitemradio" aria-checked="true" data-theme-value="system" tabindex="-1"><span><span class="name">系统</span><small>跟随设备设置</small></span><svg class="check" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+<button type="button" role="menuitemradio" aria-checked="false" data-theme-value="light" tabindex="-1"><span><span class="name">浅色</span></span><svg class="check" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+<button type="button" role="menuitemradio" aria-checked="false" data-theme-value="dark" tabindex="-1"><span><span class="name">深色</span></span><svg class="check" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+</div>
+</div>
+</nav>
+</header>
+
+<main id="main">
+<section id="top" class="hero wrap">
+<div class="wongoji w12" role="img" aria-label="쉬운 한국어.（简单的韩语。）">
+<span>쉬</span><span>운</span><span></span><span>한</span><span>국</span><span>어</span><span class="dot">.</span><span></span><span></span><span></span><span></span><span></span>
+</div>
+<div class="wongoji w6" role="img" aria-label="쉬운 한국어.（简单的韩语。）">
+<span>쉬</span><span>운</span><span></span><span></span><span></span><span></span><span>한</span><span>국</span><span>어</span><span class="dot">.</span><span></span><span></span>
+</div>
+<h1>让 AI 写的韩语<br>简短清楚。</h1>
+<p class="lead">SimpleKorean 是一个智能体技能，让 AI 用简单的韩语写文档和回答。<br>它拆分长句，减少翻译腔，并统一术语的写法。<br>它的灵感来自 <a href="https://github.com/AminBlg/SimpleEnglish">SimpleEnglish</a> 和 <a href="https://www.asd-ste100.org/">ASD-STE100</a>。</p>
+<div class="cta">
+<a class="btn primary" href="#install">安装</a>
+<a class="btn" href="https://github.com/say8425/SimpleKorean"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>在 GitHub 上查看</a>
+</div>
+</section>
+
+<section id="example" class="band diff-band" aria-labelledby="example-title">
+<div class="wrap">
+<p class="eyebrow">01 前后对比</p>
+<h2 id="example-title">看看同一份草稿怎样变化</h2>
+<p class="sub">左边是原始草稿，右边是应用 SimpleKorean 后的文档。每个改动的句子下面写了所用的规则。示例文本保留韩语原文。</p>
+
+<ul class="stats" aria-label="修改前后的数量">
+<li>em-dash <span>2 → 0</span></li>
+<li>粗体 <span>2 → 0</span></li>
+<li>间隔号 <span>3 → 0</span></li>
+<li>建议语尾 <span>2 → 0</span></li>
+<li>最长句子 <span>12 个语节 → 11 个语节</span></li>
+</ul>
+
+<div class="diff" lang="ko">
+<div class="pair head" aria-hidden="true" lang="zh-Hans">
+<div class="side old">− 草稿</div>
+<div class="side new">+ 应用 SimpleKorean 后的文档</div>
+</div>
+<div class="drow ctx">
+<div class="pair">
+<div class="side old"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr" lang="zh-Hans">草稿： </span>## 문제 해결</p><span class="count"></span></div>
+<div class="side new"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr" lang="zh-Hans">修改后： </span>## 문제 해결</p><span class="count"></span></div>
+</div>
+</div>
+<div class="drow hdr">
+<div class="pair">
+<div class="side old"><span class="ln">2</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span><del>**</del>Postgres 연결 타임아웃<del>** —</del></p><span class="count"></span></div>
+<div class="side new"><span class="ln">2</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span><ins>### </ins>Postgres 연결 타임아웃</p><span class="count"></span></div>
+</div>
+<p class="note" lang="zh-Hans">所用规则： <span>用标题代替粗体和 em-dash</span></p>
+</div>
+<div class="drow chg">
+<div class="pair">
+<div class="side old"><span class="ln">3</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<del>·</del>보안 그룹이 5432 포트를 <del>막고 있는 것입니다</del>.</p><span class="count" lang="zh-Hans">12 个语节</span></div>
+<div class="side new"><span class="ln">3</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<ins>이나 </ins>보안 그룹이 5432 포트를 <ins>막습니다</ins>.</p><span class="count" lang="zh-Hans">11 个语节</span></div>
+</div>
+<p class="note" lang="zh-Hans">所用规则： <span>用助词代替间隔号连接，并用一般现在时</span></p>
+</div>
+<div class="drow chg">
+<div class="pair">
+<div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count" lang="zh-Hans">5 个语节</span></div>
+<div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span><ins>sqlpipe를 실행하는 호스트에서 </ins><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <ins>확인하세요</ins>.</p><span class="count" lang="zh-Hans">6 个语节</span></div>
+</div>
+<p class="note" lang="zh-Hans">所用规则： <span>写明运行命令的主机，并把建议语尾改为命令形“-하세요”</span></p>
+</div>
+<div class="drow hdr">
+<div class="pair">
+<div class="side old"><span class="ln">5</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span><del>**</del>S3 권한 오류<del>** —</del></p><span class="count"></span></div>
+<div class="side new"><span class="ln">5</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span><ins>### </ins>S3 권한 오류</p><span class="count"></span></div>
+</div>
+</div>
+<div class="drow add">
+<div class="pair">
+<div class="side old empty"></div>
+<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后新增的句子： </span>sqlpipe가 <code>AccessDenied</code> 오류를 내면 먼저 <code>aws sts get-caller-identity</code>로 현재 쓰는 자격 증명을 확인하세요.</p><span class="count" lang="zh-Hans">11 个语节</span></div>
+</div>
+<p class="note" lang="zh-Hans">所用规则： <span>把先做的事放在前面</span></p>
+</div>
+<div class="drow chg">
+<div class="pair">
+<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span><del><code>AccessDenied</code>가 나면 </del>IAM 정책<del>·</del>버킷 정책에 읽기<del>·</del>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count" lang="zh-Hans">10 个语节</span></div>
+<div class="side new"><span class="ln">7</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span><ins>그다음 </ins>IAM 정책<ins>과 </ins>버킷 정책에 읽기<ins>와 </ins>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count" lang="zh-Hans">11 个语节</span></div>
+</div>
+<p class="note" lang="zh-Hans">所用规则： <span>用“과”“와”（和）代替间隔号连接</span></p>
+</div>
+<div class="drow del">
+<div class="pair">
+<div class="side old"><span class="ln">7</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">从草稿中删除的句子： </span>먼저 <code>aws sts get-caller-identity</code>로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.</p><span class="count" lang="zh-Hans">9 个语节</span></div>
+<div class="side new empty"></div>
+</div>
+<p class="note" lang="zh-Hans">所用规则： <span>移到右边第 6 句，并删除建议语尾</span></p>
+</div>
+</div>
+
+<p class="foot">来源：<a href="https://github.com/say8425/SimpleKorean/tree/main/evals/results/2026-10-21">evals/results/2026-10-21</a>。句子之间的对应和所用规则由人工标注。更多对比请参阅<a href="https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a">前后示例</a>。</p>
+</div>
+</section>
+
+<section id="bench" class="band" aria-labelledby="bench-title">
+<div class="wrap">
+<p class="eyebrow">02 测量结果</p>
+<h2 id="bench-title">开启技能后的变化</h2>
+<p class="sub">我们公开测量所用的原始输出。下面的数字都可以从这些输出重新计算。</p>
+<dl class="metrics">
+<div>
+<dt>回答中的格式缺陷</dt>
+<dd class="num">162 → <em>0</em></dd>
+<dd>32 个回答中读者能看到的缺陷数。统计 em-dash、粗体、表格，以及第一行的标题或列表。</dd>
+</div>
+<div>
+<dt>盲评</dt>
+<dd class="num"><em>12</em> / 16</dd>
+<dd>在不知道哪个是技能回答的评判中，16 组里 SimpleKorean 回答胜出的组数。3 组打平，1 组落败。</dd>
+</div>
+<div>
+<dt>文档的检查器警告</dt>
+<dd class="num">0.71 → <em>0.17</em></dd>
+<dd>每 100 个语节的检查器警告数。语节是韩语中按空格分开的单位。</dd>
+</div>
+<div>
+<dt>最长句子</dt>
+<dd class="num">18 → <em>15</em><span class="unit"> 个语节</span></dd>
+<dd>16 份文档中最长的句子。严格模式下为 13 个语节。</dd>
+</div>
+</dl>
+<p class="foot">文档和回答由 claude-sonnet-5-5 编写，由 claude-opus-5-5 评判。<br>评判模型也是 Claude，所以可能偏向同一系列的模型。</p>
+</div>
+</section>
+
+<section id="rules" class="band surface" aria-labelledby="rules-title">
+<div class="wrap">
+<p class="eyebrow">03 规则</p>
+<h2 id="rules-title">句子要短，先写答案</h2>
+<p class="sub">拆分长句，减少不必要的格式，修正翻译腔。</p>
+<ul class="rules">
+<li><span class="tag">回答</span><div><p class="rule">在第一句写出答案</p><p class="before">防止： 重复问题的开场白</p></div></li>
+<li><span class="tag">回答</span><div><p class="rule">不用粗体和表格</p><p class="before">防止： 包在一行答案外面的格式</p></div></li>
+<li><span class="tag">回答</span><div><p class="rule">不用 em-dash</p><p class="before">防止： 只连了一半的想法</p></div></li>
+<li><span class="tag">文档</span><div><p class="rule">操作句不超过 15 个语节，说明句不超过 20 个语节</p><p class="before">防止： 没完没了的长句</p></div></li>
+<li><span class="tag">文档</span><div><p class="rule">用“-면”（如果）把条件放在命令前面</p><p class="before">防止： 放在命令后面、读者读到时已太晚的“단, ~경우”（但是，在~的情况下）</p></div></li>
+<li><span class="tag">文档</span><div><p class="rule">使用主动语态和简单时态</p><p class="before">防止： “되어지다”（双重被动）、“~에 의해”（由~）、“-고 있습니다”（正在~）</p></div></li>
+<li><span class="tag">文档</span><div><p class="rule">不用猜测和建议语尾</p><p class="before">防止： “-ㄹ 수도 있습니다”（可能）、“-것 같습니다”（好像）</p></div></li>
+<li><span class="tag">文档</span><div><p class="rule">一个词只表示一个意思</p><p class="before">防止： 交替使用“확인”“검증”“점검”（都表示“检查”）</p></div></li>
+</ul>
+<p class="foot">这些规则来自航空维修文档使用的受控英语 ASD-STE100。完整规则见 <a href="https://github.com/say8425/SimpleKorean/blob/main/skills/simple-korean/SKILL.md">SKILL.md</a>。</p>
+</div>
+</section>
+
+<section id="spelling" class="band" aria-labelledby="spelling-title">
+<div class="wrap">
+<p class="eyebrow">04 写法</p>
+<h2 id="spelling-title">同一个术语用同一种写法</h2>
+<p class="sub">遵循韩语外来语标记法和国立国语院的用例。没有规定写法的词，由项目决定使用的写法。</p>
+<ul class="terms" lang="ko">
+<li>디렉터리<span lang="zh-Hans">不写作 디렉토리</span></li>
+<li>메시지<span lang="zh-Hans">规范形式</span></li>
+<li>애플리케이션<span lang="zh-Hans">规范形式</span></li>
+<li>릴리스<span lang="zh-Hans">规范形式</span></li>
+<li>셸<span lang="zh-Hans">规范形式</span></li>
+<li>레포지토리<span lang="zh-Hans">惯用形式</span></li>
+<li>바디<span lang="zh-Hans">惯用形式</span></li>
+<li>칼럼<span lang="zh-Hans">惯用形式</span></li>
+<li>리팩터링<span lang="zh-Hans">没有官方写法</span></li>
+<li>반환값<span lang="zh-Hans">连写</span></li>
+</ul>
+<p class="foot">如果公司的写法不同，可以在仓库根目录的 <code>.simple-korean.json</code> 中修改。</p>
+</div>
+</section>
+
+<section id="install" class="band inverse" aria-labelledby="install-title">
+<div class="wrap">
+<p class="eyebrow">05 安装</p>
+<h2 id="install-title">按你使用的工具安装</h2>
+<ul class="installs">
+<li>
+<div><h3>Claude Code</h3><p>一起安装技能、三个钩子和输出样式。</p></div>
+<div class="cmd"><pre><code>claude plugin marketplace add say8425/SimpleKorean
+claude plugin install simple-korean@simple-korean</code></pre><button type="button" class="copy" aria-label="复制 Claude Code 安装命令" hidden><svg class="i-copy" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="i-done" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button></div>
+</li>
+<li>
+<div><h3>Codex</h3><p>安装技能和会话启动钩子。</p></div>
+<div class="cmd"><pre><code>codex plugin marketplace add say8425/SimpleKorean
+codex plugin add simple-korean@simple-korean</code></pre><button type="button" class="copy" aria-label="复制 Codex 安装命令" hidden><svg class="i-copy" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="i-done" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button></div>
+</li>
+<li>
+<div><h3>其他智能体</h3><p>用 skills CLI 只安装技能。</p></div>
+<div class="cmd"><pre><code>npx skills add say8425/SimpleKorean</code></pre><button type="button" class="copy" aria-label="复制其他智能体的安装命令" hidden><svg class="i-copy" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="i-done" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button></div>
+</li>
+<li>
+<div><h3>Python</h3><p>在 Python 代码中使用回答规则和检查器。</p></div>
+<div class="cmd"><pre><code>pip install "simple-korean==1.2.0"</code></pre><!-- x-release-please-version --><button type="button" class="copy" aria-label="复制 Python 安装命令" hidden><svg class="i-copy" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><svg class="i-done" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button></div>
+</li>
+</ul>
+<p class="foot">如果不安装就使用，请把仓库地址交给智能体，并让它按照 README 操作。</p>
+<p class="sr" id="copy-status" role="status" aria-live="polite" data-done="已复制" data-fail="无法复制。请选中命令后自行复制"></p>
+</div>
+</section>
+</main>
+
+<footer class="wrap bottom">
+<p>MIT 许可证。由 <a href="https://github.com/say8425">Ivory Penguin</a> 制作 <span aria-hidden="true">🐧</span></p>
+<nav aria-label="语言">
+<a href="../" hreflang="ko" lang="ko">한국어</a>
+<a href="../en/" hreflang="en" lang="en">English</a>
+<a href="../ja/" hreflang="ja" lang="ja">日本語</a>
+<a href="./" aria-current="page" lang="zh-Hans">中文</a>
+<a href="../es/" hreflang="es" lang="es">Español</a>
+</nav>
+</footer>
+<script src="../site.js" defer></script>
+</body>
+</html>

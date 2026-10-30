@@ -68,7 +68,9 @@ def test_check_versions_requires_one_value_everywhere():
         "src/simple_korean/__init__.py": '__version__ = "1.0.0"  # x-release-please-version\n',
         **{f"prompts/{name}.{lang}.md": f"<!-- simple-korean {name} {lang} 1.0.0 x-release-please-version -->\n본문\n"
            for name in ("sentence-rules", "format-rules") for lang in ("ko", "en")},
-        "site/index.html": '<pre><code>pip install "simple-korean==1.0.0"</code></pre><!-- x-release-please-version -->\n',
+        **{page: '<pre><code>pip install "simple-korean==1.0.0"</code></pre><!-- x-release-please-version -->\n'
+           for page in ("tools/site/template.html", "site/index.html",
+                        *(f"site/{lang}/index.html" for lang in ("en", "ja", "zh", "es")))},
     }
     assert "README.md" not in cn.VERSION_PATTERNS
     assert cn.check_versions(texts) == []

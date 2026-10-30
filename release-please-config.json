@@ -25,7 +25,12 @@
         "prompts/sentence-rules.en.md",
         "prompts/format-rules.ko.md",
         "prompts/format-rules.en.md",
-        "site/index.html"
+        "tools/site/template.html",
+        "site/index.html",
+        "site/en/index.html",
+        "site/ja/index.html",
+        "site/zh/index.html",
+        "site/es/index.html"
       ]
     }
   }
