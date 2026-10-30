@@ -141,9 +141,12 @@ def check_examples(readme, examples):
         try:
             problems += make_examples.check_diffs(ROOT / bench.group(1))
             problems += make_examples.diff_url_problems(bench.group(1))
-            problems += site_problems((ROOT / SITE).read_text(encoding="utf-8"), bench.group(1))
         except (OSError, ValueError, KeyError) as err:
             problems.append(f"examples/diffs/를 원본과 대조하지 못했습니다({err})")
+        try:
+            problems += site_problems((ROOT / SITE).read_text(encoding="utf-8"), bench.group(1))
+        except OSError as err:
+            problems.append(f"{SITE}를 읽지 못했습니다({err})")
     return problems
 
 

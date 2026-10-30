@@ -182,8 +182,11 @@ del code, ins code { background: transparent; padding: 0; }
   flex: none; display: inline-grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0;
   background: transparent; color: var(--inv-muted); cursor: pointer;
 }
+.copy[hidden] { display: none; }
 .copy:hover { color: var(--inv-ink); }
 .copy.done { color: var(--inv-accent); }
+.copy .i-done, .copy.done .i-copy { display: none; }
+.copy.done .i-done { display: block; }
 
 /* 꼬리 */
 .bottom { padding-top: 40px; padding-bottom: 56px; display: flex; flex-wrap: wrap; gap: 16px 32px; justify-content: space-between; font-size: 14px; color: var(--muted); }

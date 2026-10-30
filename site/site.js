@@ -1,5 +1,6 @@
-// 테마 버튼과 설치 명령 복사 버튼. 스크립트가 없어도 페이지는 시스템 테마로 읽힌다.
+// 테마 버튼과 설치 명령 복사 버튼. 스크립트가 없으면 페이지는 시스템 테마로 보이고 복사 버튼은 숨는다.
 (function () {
+  var KEY = 'simple-korean-theme';
   var root = document.documentElement;
   var button = document.getElementById('theme');
   var label = document.getElementById('theme-label');
@@ -19,18 +20,20 @@
     if (pref === 'system') delete root.dataset.theme;
     else root.dataset.theme = pref;
     try {
-      if (pref === 'system') localStorage.removeItem('theme');
-      else localStorage.setItem('theme', pref);
+      if (pref === 'system') localStorage.removeItem(KEY);
+      else localStorage.setItem(KEY, pref);
     } catch (e) {}
     show(pref);
   });
   show(current());
 
-  var COPY = '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
-  var DONE = '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
   var status = document.getElementById('copy-status');
-
-  function fallback(text) {
+  function announce(text) {
+    // 같은 글을 다시 넣으면 화면 낭독기가 읽지 않는다. 그래서 비운 뒤에 넣는다.
+    status.textContent = '';
+    setTimeout(function () { status.textContent = text; }, 50);
+  }
+  function legacyCopy(text) {
     var ta = document.createElement('textarea');
     ta.value = text;
     ta.setAttribute('readonly', '');
@@ -47,24 +50,24 @@
   Array.prototype.forEach.call(document.querySelectorAll('.copy'), function (btn) {
     var text = btn.parentNode.querySelector('code').textContent;
     var timer;
-    btn.innerHTML = COPY;
+    btn.hidden = false;
     btn.title = btn.getAttribute('aria-label');
     function done() {
-      btn.innerHTML = DONE;
       btn.classList.add('done');
-      status.textContent = '복사했습니다';
+      announce('복사했습니다');
       clearTimeout(timer);
-      timer = setTimeout(function () {
-        btn.innerHTML = COPY;
-        btn.classList.remove('done');
-        status.textContent = '';
-      }, 1600);
+      timer = setTimeout(function () { btn.classList.remove('done'); }, 1600);
+    }
+    function failed() {
+      announce('복사하지 못했습니다. 명령을 직접 선택해 복사하세요');
     }
     btn.addEventListener('click', function () {
       if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(done, function () { if (fallback(text)) done(); });
-      } else if (fallback(text)) {
+        navigator.clipboard.writeText(text).then(done, failed);
+      } else if (legacyCopy(text)) {
         done();
+      } else {
+        failed();
       }
     });
   });

@@ -1,7 +1,8 @@
 #!/bin/sh
-# site/의 그림 파일을 다시 만든다. 레포지토리 최상위에서 실행한다. macOS의 Chrome과 sips를 쓴다.
+# site/의 그림 파일을 다시 만든다. 어느 디렉터리에서 실행해도 된다. macOS의 Chrome과 sips를 쓴다.
 #   tools/site/render.sh
 set -eu
+cd "$(dirname "$0")/../.."
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 shot() { "$CHROME" --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=1 --blink-settings=preferredColorScheme=1 \
   --virtual-time-budget=5000 --window-size="$2" --screenshot="$3" "file://$PWD/$1" 2>/dev/null; }
