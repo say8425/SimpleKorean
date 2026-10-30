@@ -387,7 +387,7 @@ def test_check_example_block_reports_a_missing_pick_without_crashing():
         assert any("원본을 읽지 못했습니다" in p for p in cn.check_example_block(readme, "ko", root))
 
 
-def test_diff_files_hold_one_stage_and_edits_are_caught():
+def test_diff_files_must_hold_the_after_text():
     picks = dict(doc_picks=((PICK, "plain", "t"), ("readme-intro", "plain", "t")), reply_picks=(("oom", "t"),))
     with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d, tempfile.TemporaryDirectory() as repo:
         root = _results(d)
@@ -398,12 +398,13 @@ def test_diff_files_hold_one_stage_and_edits_are_caught():
         diffs = Path(repo) / "examples" / "diffs"
         assert (diffs / f"{PICK}.md").read_text(encoding="utf-8") == DRAFT + "\n"
         assert (diffs / "reply-oom.md").read_text(encoding="utf-8").startswith("**네** — 메모리가 부족합니다.")
-        assert mx.check_diffs(root, repo, **picks) == []
+        # '전'은 diff 커밋을 만들 때만 쓰므로 검사를 통과하지 않는다
+        assert f"examples/diffs/{PICK}.md: 원본의 후와 다릅니다" in mx.check_diffs(root, repo, **picks)
         mx.write_diffs(root, "after", repo, **picks)
         assert (diffs / "reply-oom.md").read_text(encoding="utf-8") == "메모리 한도를 넘어서 파드가 끝났습니다.\n"
         assert mx.check_diffs(root, repo, **picks) == []
         (diffs / "readme-intro.md").write_text("고친 글\n", encoding="utf-8")
-        assert mx.check_diffs(root, repo, **picks) == ["examples/diffs/readme-intro.md: 원본의 전과 후 어느 쪽과도 다릅니다"]
+        assert mx.check_diffs(root, repo, **picks) == ["examples/diffs/readme-intro.md: 원본의 후와 다릅니다"]
         (diffs / "readme-intro.md").write_text("고친 글\n", encoding="utf-8")
         (diffs / "reply-oom.md").unlink()
         (diffs / "old.md").write_text("옛 예시\n", encoding="utf-8")

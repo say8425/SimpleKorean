@@ -200,7 +200,7 @@ Los archivos originales de los documentos pulidos son `evals/results/2026-10-21/
 
 El borrador es la tarea `polish` de [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
 
-Los ejemplos de respuestas y más ejemplos de documentos están en [`examples/before-after.md`](../examples/before-after.md).
+Los ejemplos de respuestas y más ejemplos de documentos están en [`examples/before-after.md`](../examples/before-after.md). Los cambios de cada ejemplo se ven en el [diff de este commit](https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a).
 <!-- example:end -->
 
 ## Benchmark

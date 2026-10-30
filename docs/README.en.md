@@ -200,7 +200,7 @@ The raw files of the polished documents are `evals/results/2026-10-21/docs/basel
 
 The draft is the `polish` task in [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
 
-Reply examples and more document examples are in [`examples/before-after.md`](../examples/before-after.md).
+Reply examples and more document examples are in [`examples/before-after.md`](../examples/before-after.md). The [diff of this commit](https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a) shows what changed in each example.
 <!-- example:end -->
 
 ## Benchmark

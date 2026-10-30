@@ -200,7 +200,7 @@ prompt = prompt_block(variant="sentences", lang="en")
 
 초안은 [`evals/results/2026-10-21/inputs/scenarios.json`](evals/results/2026-10-21/inputs/scenarios.json)의 `polish` 과제에 있습니다.
 
-답변 예시와 나머지 문서 예시는 [`examples/before-after.md`](examples/before-after.md)에 있습니다.
+답변 예시와 나머지 문서 예시는 [`examples/before-after.md`](examples/before-after.md)에 있습니다. 예시마다 두 글의 차이는 [이 커밋의 diff](https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a)에서 볼 수 있습니다.
 <!-- example:end -->
 
 ## 벤치마크

@@ -2,6 +2,8 @@
 
 '전'은 스킬 없이 만든 원본 출력입니다. '후'는 같은 과제를 스킬을 켜고 만든 원본 출력입니다. 두 글 모두 고치지 않고 옮겼습니다. 다듬기 과제에는 두 조건에 준 초안도 싣습니다. 과제와 질문은 측정 전에 정했습니다(`evals/make_examples.py`의 PICKS). `python3 evals/check_numbers.py`가 이 파일의 글을 원본 파일과 글자 하나까지 대조합니다.
 
+`examples/diffs/`에는 같은 예시의 원문만 과제마다 파일 하나로 나눠 두었습니다. 예시마다 두 글의 차이는 [이 커밋의 diff](https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a)에서 볼 수 있습니다.
+
 ## 초안 다듬기(절차문)
 
 초안: `evals/results/2026-10-21/inputs/scenarios.json`의 `polish` 과제
