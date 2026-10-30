@@ -32,7 +32,7 @@ def test_korean_templates_keep_the_current_sentences():
     assert ko["longest"].format(n=18) == "18어절"
     assert ko["example_docs"].format(href="examples/before-after.md", diff="URL") == \
         "답변 예시와 나머지 문서 예시는 [`examples/before-after.md`](examples/before-after.md)에 있습니다. " \
-        "예시마다 두 글의 차이는 [이 커밋의 diff](URL)에서 볼 수 있습니다."
+        "예시마다 바뀐 곳은 [이 커밋의 diff](URL)에서 볼 수 있습니다."
 
 
 def test_numbers_follow_each_language():

@@ -200,7 +200,7 @@ prompt = prompt_block(variant="sentences", lang="en")
 
 草稿见 [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json) 中的 `polish` 任务。
 
-回答示例和更多文档示例见 [`examples/before-after.md`](../examples/before-after.md)。每个示例的差异见[这个提交的 diff](https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a)。
+回答示例和更多文档示例见 [`examples/before-after.md`](../examples/before-after.md)。每个示例的改动见[此提交的 diff](https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a)。
 <!-- example:end -->
 
 ## 基准测试

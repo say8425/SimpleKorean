@@ -41,7 +41,7 @@ TEXT = {
         "example_after": "SimpleKorean을 켜고 다듬은 문서",
         "example_draft": "초안은 [`{src}`]({href})의 `{id}` 과제에 있습니다.",
         "example_files": "다듬은 문서의 원본 파일은 가운데가 `{before}`, 오른쪽이 `{after}`입니다.",
-        "example_docs": "답변 예시와 나머지 문서 예시는 [`examples/before-after.md`]({href})에 있습니다. 예시마다 두 글의 차이는 [이 커밋의 diff]({diff})에서 볼 수 있습니다.",
+        "example_docs": "답변 예시와 나머지 문서 예시는 [`examples/before-after.md`]({href})에 있습니다. 예시마다 바뀐 곳은 [이 커밋의 diff]({diff})에서 볼 수 있습니다.",
         "block_size": "규칙 블록 {n}자",
     },
     "en": {
@@ -82,7 +82,7 @@ TEXT = {
         "example_after": "Polished with SimpleKorean on",
         "example_draft": "The draft is the `{id}` task in [`{src}`]({href}).",
         "example_files": "The raw files of the polished documents are `{before}` (middle) and `{after}` (right).",
-        "example_docs": "Reply examples and more document examples are in [`examples/before-after.md`]({href}). The [diff of this commit]({diff}) shows what changed in each example.",
+        "example_docs": "Reply examples and more document examples are in [`examples/before-after.md`]({href}). [This commit's diff]({diff}) shows what changed in each example.",
         "block_size": "rule block of {n} characters",
     },
     "ja": {
@@ -117,7 +117,7 @@ TEXT = {
         "example_after": "SimpleKorean を有効にして整えた文書",
         "example_draft": "下書きは [`{src}`]({href}) の `{id}` 課題にあります。",
         "example_files": "整えた文書の元のファイルは、中央が `{before}`、右が `{after}` です。",
-        "example_docs": "回答の例とほかの文書の例は [`examples/before-after.md`]({href}) にあります。例ごとの差分は[このコミットの diff]({diff})で見られます。",
+        "example_docs": "回答の例とほかの文書の例は [`examples/before-after.md`]({href}) にあります。例ごとの変更点は[このコミットの diff]({diff})で確認できます。",
         "block_size": "{n}文字のルールブロック",
     },
     "zh": {
@@ -148,7 +148,7 @@ TEXT = {
         "example_after": "启用 SimpleKorean 后润色的文档",
         "example_draft": "草稿见 [`{src}`]({href}) 中的 `{id}` 任务。",
         "example_files": "润色后文档的原始文件：中间是 `{before}`，右边是 `{after}`。",
-        "example_docs": "回答示例和更多文档示例见 [`examples/before-after.md`]({href})。每个示例的差异见[这个提交的 diff]({diff})。",
+        "example_docs": "回答示例和更多文档示例见 [`examples/before-after.md`]({href})。每个示例的改动见[此提交的 diff]({diff})。",
         "block_size": "{n} 个字符的规则块",
     },
     "es": {

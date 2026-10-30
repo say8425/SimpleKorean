@@ -200,7 +200,7 @@ prompt = prompt_block(variant="sentences", lang="en")
 
 下書きは [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json) の `polish` 課題にあります。
 
-回答の例とほかの文書の例は [`examples/before-after.md`](../examples/before-after.md) にあります。例ごとの差分は[このコミットの diff](https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a)で見られます。
+回答の例とほかの文書の例は [`examples/before-after.md`](../examples/before-after.md) にあります。例ごとの変更点は[このコミットの diff](https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a)で確認できます。
 <!-- example:end -->
 
 ## ベンチマーク
