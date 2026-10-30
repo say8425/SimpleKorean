@@ -262,13 +262,30 @@ def test_units_keep_text_that_only_looks_like_br():
     assert [u.text for u in ko_text.units("첫 문장입니다.\\<br\\>둘째 문장입니다.\n")] == ["첫 문장입니다.\\<br\\>둘째 문장입니다."]
 
 
-def test_units_br_split_takes_linear_time():
+def _best_time(fn, arg, runs=3):
+    """runs번 잰 시간 가운데 가장 짧은 값. 다른 작업이 끼어든 측정을 버린다."""
     import time
-    start = time.perf_counter()
-    ko_text.units("# 제목\n\n" + "가<br " * 80000)
-    ko_text.units("| 칸 | " + "가<br a=b " * 40000 + " |")
-    ko_text.units("값<br a" + " " * 20000 + "끝입니다.")
-    ko_text.units("값<br a/" + " " * 20000 + "끝입니다.")
-    ko_text.units("가<br>" * 10000)
-    ko_text.units("| 칸 | " + "가<br>" * 10000 + " |")
-    assert time.perf_counter() - start < 0.5
+    best = float("inf")
+    for _ in range(runs):
+        start = time.perf_counter()
+        fn(arg)
+        best = min(best, time.perf_counter() - start)
+    return best
+
+
+def test_units_br_split_takes_linear_time():
+    # 절대 시간 대신 입력을 4배로 늘렸을 때 걸리는 시간의 비율을 본다. CI 러너가 느려도 비율은 그대로다.
+    # 선형이면 약 4배, 제곱이면 약 16배가 된다. 그래서 10배를 넘으면 실패한다.
+    # 아주 짧은 측정은 잡음이 크므로 작은 입력의 시간을 2ms보다 짧게 보지 않는다.
+    cases = (
+        lambda n: "# 제목\n\n" + "가<br " * (20000 * n),
+        lambda n: "| 칸 | " + "가<br a=b " * (10000 * n) + " |",
+        lambda n: "값<br a" + " " * (5000 * n) + "끝입니다.",
+        lambda n: "값<br a/" + " " * (5000 * n) + "끝입니다.",
+        lambda n: "가<br>" * (2500 * n),
+        lambda n: "| 칸 | " + "가<br>" * (2500 * n) + " |",
+    )
+    for i, make in enumerate(cases):
+        small = max(_best_time(ko_text.units, make(1)), 0.002)
+        large = _best_time(ko_text.units, make(4))
+        assert large < 10 * small, (i, small, large)
