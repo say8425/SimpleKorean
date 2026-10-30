@@ -3,6 +3,11 @@
 
     python3 evals/make_examples.py evals/results/<날짜>            # examples/before-after.md를 쓴다
     python3 evals/make_examples.py evals/results/<날짜> --readme   # README 다섯 개의 보기 블록도 바꾼다
+    python3 evals/make_examples.py evals/results/<날짜> --diffs before   # examples/diffs/에 '전' 글을 쓴다
+    python3 evals/make_examples.py evals/results/<날짜> --diffs after    # examples/diffs/에 '후' 글을 쓴다
+
+examples/diffs/에는 예시마다 원문만 담은 파일이 하나씩 있다. '전'으로 커밋한 뒤 '후'로 바꿔 커밋하면 GitHub가 그
+커밋에서 두 글의 차이를 보인다. 초안이 있는 다듬기 과제의 '전'은 초안이고, 나머지는 스킬 없이 만든 출력이다.
 """
 import json
 import re
@@ -15,6 +20,8 @@ import readme_i18n as i18n
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 EXAMPLES = ROOT / "examples" / "before-after.md"
+DIFFS = Path("examples", "diffs")
+STAGES = ("before", "after")
 RUN = 1
 DOC_PICKS = (
     ("polish", "plain", "초안 다듬기(절차문)"),
@@ -108,6 +115,49 @@ def examples_md(results_dir):
         before, after = _pair(results_dir, "reply", question, "plain", "txt")
         parts.append(_section(f"답변: {title}", before, after, "SimpleKorean"))
     return "\n\n".join(parts) + "\n"
+
+
+def diff_texts(results_dir, doc_picks=DOC_PICKS, reply_picks=REPLY_PICKS):
+    """examples/diffs/의 (파일 이름, 전 글, 후 글) 목록."""
+    rel, items = inputs_rel(results_dir), []
+    for scenario, cond, _ in doc_picks:
+        before, after = _pair(results_dir, "docs", scenario, cond, "json")
+        items.append((f"{scenario}.md", draft_text(rel, scenario) or raw_text(before), raw_text(after)))
+    for question, _ in reply_picks:
+        before, after = _pair(results_dir, "reply", question, "plain", "txt")
+        items.append((f"reply-{question}.md", raw_text(before), raw_text(after)))
+    return items
+
+
+def _diff_file(text):
+    """examples/diffs/의 파일 하나에 쓰는 글. 원문 끝의 줄바꿈을 하나로 맞춘다."""
+    return text.rstrip("\n") + "\n"
+
+
+def write_diffs(results_dir, stage, root=ROOT, **picks):
+    """examples/diffs/에 stage('before' 또는 'after')의 글을 쓴다."""
+    if stage not in STAGES:
+        raise SystemExit(f"--diffs에는 {' 또는 '.join(STAGES)}를 쓰세요")
+    out = Path(root) / DIFFS
+    out.mkdir(parents=True, exist_ok=True)
+    for name, before, after in diff_texts(results_dir, **picks):
+        (out / name).write_text(_diff_file(before if stage == "before" else after), encoding="utf-8")
+
+
+def check_diffs(results_dir, root=ROOT, **picks):
+    """examples/diffs/의 파일마다 원본의 전이나 후와 같은지 확인해 문제 목록을 돌려준다."""
+    problems, names = [], set()
+    for name, before, after in diff_texts(results_dir, **picks):
+        names.add(name)
+        rel = (DIFFS / name).as_posix()
+        path = Path(root) / DIFFS / name
+        if not path.is_file():
+            problems.append(f"{rel}: 파일이 없습니다")
+        elif path.read_text(encoding="utf-8") not in (_diff_file(before), _diff_file(after)):
+            problems.append(f"{rel}: 원본의 전과 후 어느 쪽과도 다릅니다")
+    extra = sorted(p.name for p in (Path(root) / DIFFS).glob("*.md") if p.name not in names)
+    problems += [f"{(DIFFS / name).as_posix()}: 고른 예시에 없는 파일입니다" for name in extra]
+    return problems
 
 
 def _cell(rel):
@@ -225,7 +275,14 @@ def check_sources(markdown):
 def main(argv=None):
     args = sys.argv[1:] if argv is None else argv
     if not args:
-        raise SystemExit("사용법: make_examples.py <결과 디렉터리> [--readme]")
+        raise SystemExit("사용법: make_examples.py <결과 디렉터리> [--readme] [--diffs before|after]")
+    stage = None
+    if "--diffs" in args:
+        i = args.index("--diffs")
+        stage = args[i + 1] if i + 1 < len(args) else ""
+        # 다른 파일을 쓰기 전에 멈춘다
+        if stage not in STAGES:
+            raise SystemExit(f"--diffs에는 {' 또는 '.join(STAGES)}를 쓰세요")
     try:
         text = examples_md(args[0])
     except (OSError, ValueError, KeyError) as err:
@@ -234,6 +291,8 @@ def main(argv=None):
     EXAMPLES.write_text(text, encoding="utf-8")
     if "--readme" in args:
         update_readmes(args[0])
+    if stage:
+        write_diffs(args[0], stage)
     return 0
 
 
