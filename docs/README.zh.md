@@ -16,7 +16,7 @@ SimpleKorean 是一个智能体技能，让 LLM 用简单的韩语写技术文�
 
 它可以在读取 [Agent Skills 标准](https://agentskills.io) 的智能体中运行，例如 Claude Code、Cursor、Codex、Gemini CLI、OpenCode。
 
-## 不安装就让它照做
+## 不安装直接使用
 
 你可以只把这个仓库的地址交给智能体，让它照做。本节就是智能体这时要读的指示。
 

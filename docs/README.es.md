@@ -16,7 +16,7 @@ SimpleKorean es una skill de agente que hace que los LLM escriban en un coreano 
 
 La skill funciona en los agentes que leen el [estándar Agent Skills](https://agentskills.io). Algunos ejemplos son Claude Code, Cursor, Codex, Gemini CLI y OpenCode.
 
-## Hacer que un agente lo siga sin instalar
+## Usar sin instalar
 
 Puede dar a un agente solo la dirección de este repositorio y pedirle que lo siga. Esta sección es la instrucción que el agente lee en ese caso.
 

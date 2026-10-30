@@ -16,7 +16,7 @@ SimpleKorean은 LLM이 기술 문서와 채팅 답변을 쉬운 한국어로 쓰
 
 [Agent Skills 표준](https://agentskills.io)을 읽는 에이전트에서 동작합니다. Claude Code, Cursor, Codex, Gemini CLI, OpenCode가 그 예입니다.
 
-## 설치하지 않고 따르게 할 때
+## 설치 없이 사용하기
 
 에이전트에게 이 레포지토리 주소만 주고 따르라고 할 수 있습니다. 이 절은 그때 에이전트가 읽을 지시입니다.
 
