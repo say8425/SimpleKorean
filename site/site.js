@@ -15,10 +15,18 @@
     label.textContent = names[pref];
     button.setAttribute('aria-label', '화면 테마 바꾸기. 지금은 ' + names[pref]);
   }
-  button.addEventListener('click', function () {
-    var pref = next[current()];
+  var BAR = { light: '#FBFAF6', dark: '#161513' };
+  // 브라우저 상단 막대 색도 고른 테마를 따른다. 시스템이면 메타 태그마다 원래 색으로 돌린다.
+  function applyTheme(pref) {
     if (pref === 'system') delete root.dataset.theme;
     else root.dataset.theme = pref;
+    Array.prototype.forEach.call(document.querySelectorAll('meta[name="theme-color"]'), function (m) {
+      m.content = pref === 'system' ? m.getAttribute('data-system') : BAR[pref];
+    });
+  }
+  button.addEventListener('click', function () {
+    var pref = next[current()];
+    applyTheme(pref);
     try {
       if (pref === 'system') localStorage.removeItem(KEY);
       else localStorage.setItem(KEY, pref);

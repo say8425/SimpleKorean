@@ -7,8 +7,8 @@
 <meta name="description" content="SimpleKorean은 AI가 문서와 답변을 쉬운 한국어로 쓰도록 돕는 에이전트 스킬입니다. 긴 문장을 나누고, 번역투를 줄이고, 용어 표기를 맞춥니다. Claude Code, Codex, Python에서 씁니다.">
 <link rel="canonical" href="https://say8425.github.io/SimpleKorean/">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#FBFAF6">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#161513">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#FBFAF6" data-system="#FBFAF6">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#161513" data-system="#161513">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -48,7 +48,15 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
 <link rel="stylesheet" href="style.css">
 <script>
-try { var t = localStorage.getItem('simple-korean-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+// 기본은 시스템 테마다. 테마 버튼으로 고른 값이 있으면 그리기 전에 적용한다. site.js의 applyTheme와 같은 일을 한다.
+(function () {
+  var t = null;
+  try { t = localStorage.getItem('simple-korean-theme'); } catch (e) {}
+  if (t !== 'light' && t !== 'dark') return;
+  document.documentElement.dataset.theme = t;
+  var color = t === 'dark' ? '#161513' : '#FBFAF6';
+  document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.content = color; });
+})();
 </script>
 </head>
 <body>
@@ -267,7 +275,7 @@ codex plugin add simple-korean@simple-korean</code></pre><button type="button" c
 </main>
 
 <footer class="wrap bottom">
-<p>MIT 라이선스. <a href="https://github.com/say8425">Ivory Penguin</a> 만듬 <span aria-hidden="true">🐧</span></p>
+<p>MIT 라이선스. <a href="https://github.com/say8425">Ivory Penguin</a> 만듦 <span aria-hidden="true">🐧</span></p>
 <nav aria-label="README 언어">
 <a href="#top" aria-current="page">한국어</a>
 <a href="https://github.com/say8425/SimpleKorean/blob/main/docs/README.en.md" hreflang="en" lang="en">English</a>
