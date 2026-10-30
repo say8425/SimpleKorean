@@ -262,14 +262,18 @@ def test_units_keep_text_that_only_looks_like_br():
     assert [u.text for u in ko_text.units("첫 문장입니다.\\<br\\>둘째 문장입니다.\n")] == ["첫 문장입니다.\\<br\\>둘째 문장입니다."]
 
 
-def _best_time(fn, arg, runs=3):
-    """runs번 잰 시간 가운데 가장 짧은 값. 다른 작업이 끼어든 측정을 버린다."""
-    import time
+def _best_time(fn, arg, runs=3, limit=1.0):
+    """runs번 잰 시간 가운데 가장 짧은 값. 다른 작업이 끼어든 측정을 버린다.
+
+    한 번이라도 limit초를 넘으면 더 재지 않고 실패한다. 역추적이 폭주하면 세 번 재는 데 몇 시간이 걸리기 때문이다.
+    """
     best = float("inf")
     for _ in range(runs):
         start = time.perf_counter()
         fn(arg)
-        best = min(best, time.perf_counter() - start)
+        elapsed = time.perf_counter() - start
+        assert elapsed < limit, f"한 번에 {elapsed:.2f}초가 걸렸습니다"
+        best = min(best, elapsed)
     return best
 
 
@@ -280,8 +284,8 @@ def test_units_br_split_takes_linear_time():
     cases = (
         lambda n: "# 제목\n\n" + "가<br " * (20000 * n),
         lambda n: "| 칸 | " + "가<br a=b " * (10000 * n) + " |",
-        lambda n: "값<br a" + " " * (5000 * n) + "끝입니다.",
-        lambda n: "값<br a/" + " " * (5000 * n) + "끝입니다.",
+        lambda n: "값<br a" + " " * (50000 * n) + "끝입니다.",
+        lambda n: "값<br a/" + " " * (50000 * n) + "끝입니다.",
         lambda n: "가<br>" * (2500 * n),
         lambda n: "| 칸 | " + "가<br>" * (2500 * n) + " |",
     )
