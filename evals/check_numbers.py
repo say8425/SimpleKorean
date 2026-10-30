@@ -8,7 +8,7 @@
 검사하는 것:
 - README 다섯 개의 벤치마크 블록과 RESULTS.md를 원본 출력에서 다시 만든 글과 비교한다(report.py, readme_i18n.py).
 - README 다섯 개의 보기 블록과 examples/before-after.md의 인용 블록을 원본 출력과 비교한다(make_examples.py).
-- examples/diffs/의 파일마다 원본 출력의 전이나 후와 같은지 본다(make_examples.py).
+- examples/diffs/의 파일마다 원본 출력의 전이나 후와 같은지 보고, diff 링크가 README의 결과 디렉터리로 만든 것인지 본다(make_examples.py).
 - 번역판의 제목, 레포 링크, 언어 선택 줄, 블록 표시가 한국어판과 맞는지 본다.
 - 보정 기록 RECORD.md를 hits.tsv와 보정 출력에서 다시 만들어 비교한다.
 - 측정 결과 경로와 보정 줄이 CHANGELOG에 있는지 본다. 마지막 릴리스보다 늦은 측정과 보정은 건너뛴다.
@@ -137,6 +137,7 @@ def check_examples(readme, examples):
         problems += check_example_block(readme, "ko", ROOT / bench.group(1))
         try:
             problems += make_examples.check_diffs(ROOT / bench.group(1))
+            problems += make_examples.diff_url_problems(bench.group(1))
         except (OSError, ValueError, KeyError) as err:
             problems.append(f"examples/diffs/를 원본과 대조하지 못했습니다({err})")
     return problems

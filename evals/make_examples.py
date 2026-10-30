@@ -8,6 +8,8 @@
 
 examples/diffs/에는 예시마다 원문만 담은 파일이 하나씩 있다. '전'으로 커밋한 뒤 '후'로 바꿔 커밋하면 GitHub가 그
 커밋에서 두 글의 차이를 보인다. 초안이 있는 다듬기 과제의 '전'은 초안이고, 나머지는 스킬 없이 만든 출력이다.
+main은 squash 병합만 받으므로 두 단계를 PR 두 개로 차례로 병합한다(#25, #26). 그래서 검사는 두 단계를 모두 받는다.
+새 결과 디렉터리로 바꾸면 이렇게 diff 커밋을 새로 만들고 DIFF_URL과 DIFF_RESULTS를 고친다.
 """
 import json
 import re
@@ -21,6 +23,10 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 EXAMPLES = ROOT / "examples" / "before-after.md"
 DIFFS = Path("examples", "diffs")
+# examples/diffs/를 '전'에서 '후'로 바꾼 커밋(#26). 이 커밋의 diff가 예시마다 두 글의 차이를 보인다.
+DIFF_URL = "https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a"
+# DIFF_URL의 커밋을 만든 결과 디렉터리. README가 다른 결과를 가리키면 check_numbers.py가 알린다.
+DIFF_RESULTS = "evals/results/2026-10-21"
 STAGES = ("before", "after")
 RUN = 1
 DOC_PICKS = (
@@ -105,7 +111,10 @@ def examples_md(results_dir):
              "'전'은 스킬 없이 만든 원본 출력입니다. '후'는 같은 과제를 스킬을 켜고 만든 원본 출력입니다. "
              "두 글 모두 고치지 않고 옮겼습니다. 다듬기 과제에는 두 조건에 준 초안도 싣습니다. "
              "과제와 질문은 측정 전에 정했습니다(`evals/make_examples.py`의 PICKS). "
-             "`python3 evals/check_numbers.py`가 이 파일의 글을 원본 파일과 글자 하나까지 대조합니다."]
+             "`python3 evals/check_numbers.py`가 이 파일의 글을 원본 파일과 글자 하나까지 대조합니다.",
+             "`examples/diffs/`에는 같은 예시의 '후' 글만 과제마다 파일 하나로 나눠 두었습니다. "
+             f"예시마다 바뀐 곳은 [이 커밋의 diff]({DIFF_URL})에서 볼 수 있습니다. "
+             "다듬기 과제의 diff는 초안과 '후' 글의 차이를 보입니다."]
     rel = inputs_rel(results_dir)
     for scenario, cond, title in DOC_PICKS:
         before, after = _pair(results_dir, "docs", scenario, cond, "json")
@@ -160,6 +169,14 @@ def check_diffs(results_dir, root=ROOT, **picks):
     return problems
 
 
+def diff_url_problems(results_rel):
+    """README가 가리키는 결과 디렉터리와 DIFF_URL을 만든 결과 디렉터리가 다르면 문제 목록을 돌려준다."""
+    if Path(results_rel).as_posix().rstrip("/") == DIFF_RESULTS:
+        return []
+    return [f"DIFF_URL은 {DIFF_RESULTS}로 만든 diff입니다. README는 {results_rel}을 가리킵니다. "
+            "make_examples.py 머리의 순서대로 diff 커밋을 새로 만들고 DIFF_URL과 DIFF_RESULTS를 고치세요"]
+
+
 def _cell(rel):
     """표 칸 하나. GitHub는 HTML 칸 안의 마크다운을 앞뒤 빈 줄이 있어야 그린다."""
     return f'<td valign="top">\n\n{source_block(rel)}\n\n</td>'
@@ -185,7 +202,7 @@ def readme_example(results_dir, lang="ko"):
     ])
     return "\n\n".join([table, text["example_files"].format(before=before, after=after),
                          text["example_draft"].format(src=rel, href=i18n.link(lang, rel), id=scenario),
-                         text["example_docs"].format(href=i18n.link(lang, "examples/before-after.md"))])
+                         text["example_docs"].format(href=i18n.link(lang, "examples/before-after.md"), diff=DIFF_URL)])
 
 
 def wide_code_lines(text):

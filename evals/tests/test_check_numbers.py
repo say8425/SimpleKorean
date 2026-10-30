@@ -412,6 +412,12 @@ def test_diff_files_hold_one_stage_and_edits_are_caught():
         assert "examples/diffs/old.md: 고른 예시에 없는 파일입니다" in problems
 
 
+def test_diff_url_must_come_from_the_readme_results():
+    assert mx.diff_url_problems(mx.DIFF_RESULTS) == []
+    assert mx.diff_url_problems(mx.DIFF_RESULTS + "/") == []
+    assert "DIFF_URL" in mx.diff_url_problems("evals/results/2099-01-01")[0]
+
+
 def test_bad_diffs_stage_stops_before_writing_anything():
     before = mx.EXAMPLES.read_text(encoding="utf-8")
     for argv in (["evals/results/x", "--diffs"], ["evals/results/x", "--diffs", "--readme"]):
