@@ -16,7 +16,7 @@ SimpleKorean は、LLM が技術文書とチャットの回答をやさしい韓
 
 [Agent Skills 標準](https://agentskills.io)を読み込むエージェントで動きます。たとえば Claude Code、Cursor、Codex、Gemini CLI、OpenCode です。
 
-## インストールせずに従わせるとき
+## インストールせずに使う
 
 エージェントにこのリポジトリの URL だけを渡して、従うように指示できます。この節は、そのときエージェントが読む指示です。
 
