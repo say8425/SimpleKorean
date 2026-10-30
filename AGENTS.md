@@ -68,7 +68,7 @@
 다음 파일과 블록은 스크립트가 만듭니다. 손으로 고치지 말고 그 스크립트를 다시 실행하세요:
 
 - README의 `benchmark` 블록과 `RESULTS.md`: `evals/report.py`
-- README의 `example` 블록과 `examples/before-after.md`: `evals/make_examples.py`
+- README의 `example` 블록, `examples/before-after.md`, `examples/diffs/`: `evals/make_examples.py`
 - `evals/calibration/RECORD.md`: `evals/calibration/hits.py`
 - `evals/slop.tsv`: `tools/slop-lexicon/build_slop.py`
 

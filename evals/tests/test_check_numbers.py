@@ -385,3 +385,24 @@ def test_check_example_block_reports_a_missing_pick_without_crashing():
         found = cn.check_example_block(readme, "en", root)
         assert len(found) == 1 and "보기 블록을 다시 만들지 못했습니다" in found[0], found
         assert any("원본을 읽지 못했습니다" in p for p in cn.check_example_block(readme, "ko", root))
+
+
+def test_diff_files_hold_one_stage_and_edits_are_caught():
+    picks = dict(doc_picks=((PICK, "plain", "t"), ("readme-intro", "plain", "t")), reply_picks=(("oom", "t"),))
+    with tempfile.TemporaryDirectory(dir=str(cn.ROOT / "evals")) as d, tempfile.TemporaryDirectory() as repo:
+        root = _results(d)
+        names = [name for name, _, _ in mx.diff_texts(root, **picks)]
+        assert names == [f"{PICK}.md", "readme-intro.md", "reply-oom.md"]
+        # 초안이 있는 과제의 '전'은 초안이고, 없는 과제는 스킬 없이 만든 출력이다
+        mx.write_diffs(root, "before", repo, **picks)
+        diffs = Path(repo) / "examples" / "diffs"
+        assert (diffs / f"{PICK}.md").read_text(encoding="utf-8") == DRAFT + "\n"
+        assert (diffs / "reply-oom.md").read_text(encoding="utf-8").startswith("**네** — 메모리가 부족합니다.")
+        assert mx.check_diffs(root, repo, **picks) == []
+        mx.write_diffs(root, "after", repo, **picks)
+        assert (diffs / "reply-oom.md").read_text(encoding="utf-8") == "메모리 한도를 넘어서 파드가 끝났습니다.\n"
+        assert mx.check_diffs(root, repo, **picks) == []
+        (diffs / "readme-intro.md").write_text("고친 글\n", encoding="utf-8")
+        assert mx.check_diffs(root, repo, **picks) == ["examples/diffs/readme-intro.md: 원본의 전과 후 어느 쪽과도 다릅니다"]
+        (diffs / "reply-oom.md").unlink()
+        assert "examples/diffs/reply-oom.md: 파일이 없습니다" in mx.check_diffs(root, repo, **picks)
