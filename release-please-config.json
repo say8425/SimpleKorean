@@ -24,7 +24,8 @@
         "prompts/sentence-rules.ko.md",
         "prompts/sentence-rules.en.md",
         "prompts/format-rules.ko.md",
-        "prompts/format-rules.en.md"
+        "prompts/format-rules.en.md",
+        "site/index.html"
       ]
     }
   }

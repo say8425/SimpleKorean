@@ -47,6 +47,7 @@
 - `evals/results/`, `evals/calibration/`: 측정 결과와 린터 보정 기록
 - `data/terms.json`: 외래어 단어 목록과 근거
 - `tools/`: 슬롭 어휘(AI 글에 흔한 빈말) 목록과 기초 어휘 목록을 만드는 스크립트
+- `site/`: GitHub Pages에 올리는 소개 페이지. `main`에 병합하면 `.github/workflows/pages.yml`이 올립니다.
 - `docs/research/`, `docs/superpowers/`: 조사 보고서, 설계 문서, 구현 계획
 
 린터는 `src/simple_korean/`의 `ko_lint.py`, `ko_rules.py`, `ko_terms.py`, `ko_text.py`입니다. `evals/`의 같은 이름 파일은 이 모듈을 옛 경로에서 부릅니다. 그래서 명령은 지금처럼 `python3 evals/ko_lint.py`로 실행하세요.
@@ -71,6 +72,7 @@
 - README의 `example` 블록, `examples/before-after.md`, `examples/diffs/`: `evals/make_examples.py`
 - `evals/calibration/RECORD.md`: `evals/calibration/hits.py`
 - `evals/slop.tsv`: `tools/slop-lexicon/build_slop.py`
+- `site/`의 PNG 그림: `tools/site/render.sh`
 
 README 블록의 문장 틀은 `evals/readme_i18n.py`에 있습니다. 스크립트마다 사용법은 파일 머리의 설명에 있습니다.
 
@@ -95,6 +97,7 @@ README 블록의 문장 틀은 `evals/readme_i18n.py`에 있습니다. 스크립
 - 규칙을 바꾸면 README 다섯 언어판의 규칙 표를 고치세요.
 - `data/terms.json`을 바꾸면 단어를 옮겨 적은 곳도 고치세요. `SKILL.md`의 네 무리 단어, 규칙 블록의 지정형(쓰라고 정한 표기) 문장, README 다섯 언어판의 "표기 정책" 표입니다.
 - 규칙 블록의 길이를 바꾸면 `src/hooks/README.md`의 "약 2,500자"를 확인하세요.
+- README의 측정 수치, 규칙 표, 표기 정책, 설치 명령을 바꾸면 소개 페이지 `site/index.html`도 고치세요. `check_numbers.py`는 그 페이지의 원본 링크와 버전만 확인합니다.
 
 ## 측정과 수치
 
