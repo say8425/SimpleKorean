@@ -19,6 +19,7 @@ STRINGS = HERE / "strings"
 SITE_URL = "https://say8425.github.io/SimpleKorean/"
 LANGS = ("ko", "en", "ja", "zh", "es")
 NAMES = {"ko": "한국어", "en": "English", "ja": "日本語", "zh": "中文", "es": "Español"}
+TAG = {"ko": "ko", "en": "en", "ja": "ja", "zh": "zh-Hans", "es": "es"}  # lang과 hreflang에 쓰는 언어 태그. 경로는 LANGS를 쓴다.
 OG_LOCALE = {"ko": "ko_KR", "en": "en_US", "ja": "ja_JP", "zh": "zh_CN", "es": "es_ES"}
 HOLE = re.compile(r"\{\{(\w+)\}\}")
 
@@ -52,17 +53,17 @@ def load_strings():
 
 def render(template, strings, lang):
     """한 언어의 페이지 글. 빠진 문구나 쓰지 않은 문구가 있으면 ValueError를 낸다."""
-    alternates = [f'<link rel="alternate" hreflang="{other}" href="{page_url(other)}">' for other in LANGS]
+    alternates = [f'<link rel="alternate" hreflang="{TAG[other]}" href="{page_url(other)}">' for other in LANGS]
     alternates.append(f'<link rel="alternate" hreflang="x-default" href="{page_url("ko")}">')
     og_alternates = [f'<meta property="og:locale:alternate" content="{OG_LOCALE[o]}">' for o in LANGS if o != lang]
     langnav = [
-        f'<a href="{link(lang, o)}" aria-current="page" lang="{o}">{NAMES[o]}</a>' if o == lang
-        else f'<a href="{link(lang, o)}" hreflang="{o}" lang="{o}">{NAMES[o]}</a>'
+        f'<a href="{link(lang, o)}" aria-current="page" lang="{TAG[o]}">{NAMES[o]}</a>' if o == lang
+        else f'<a href="{link(lang, o)}" hreflang="{TAG[o]}" lang="{TAG[o]}">{NAMES[o]}</a>'
         for o in LANGS
     ]
     values = {
         **strings[lang],
-        "lang": lang,
+        "lang_tag": TAG[lang],
         "base": "" if lang == "ko" else "../",
         "url": page_url(lang),
         "og_locale": OG_LOCALE[lang],
@@ -96,7 +97,12 @@ def build():
 def check(root=ROOT):
     """다시 만든 페이지와 커밋한 페이지가 다르면 문제 목록을 돌려준다."""
     problems = []
-    for rel, text in build().items():
+    pages = build()
+    for path in sorted((Path(root) / "site").glob("*/index.html")):
+        rel = path.relative_to(root)
+        if rel not in pages:
+            problems.append(f"{rel.as_posix()}: LANGS에 없는 언어의 페이지입니다. 지우거나 LANGS에 더하세요")
+    for rel, text in pages.items():
         path = Path(root) / rel
         if not path.is_file() or path.read_text(encoding="utf-8") != text:
             problems.append(f"{rel.as_posix()}: tools/site/build_site.py로 다시 만든 글과 다릅니다")

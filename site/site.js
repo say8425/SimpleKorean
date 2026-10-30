@@ -8,6 +8,8 @@
   var menu = document.getElementById('theme-menu');
   var label = document.getElementById('theme-label');
   var items = Array.prototype.slice.call(menu.querySelectorAll('[role="menuitemradio"]'));
+  // 이 스크립트가 실행되어야 테마 메뉴를 보인다. 스크립트를 받지 못하면 누를 수 없는 버튼이 남지 않는다.
+  root.classList.add('theme-ready');
 
   function current() {
     var t = root.dataset.theme;
@@ -76,6 +78,11 @@
     else if (e.key === 'Escape') { e.preventDefault(); close(true); return; }
     else if (e.key === 'Tab') { close(false); return; }
     if (next) { e.preventDefault(); next.focus(); }
+  });
+  // 화면 낭독기 커서처럼 Tab 말고 다른 방법으로 초점이 메뉴 밖으로 나가도 닫는다.
+  menu.addEventListener('focusout', function (e) {
+    var to = e.relatedTarget;
+    if (to && !menu.contains(to) && to !== button) close(false);
   });
   document.addEventListener('click', function (e) {
     if (isOpen() && !menu.contains(e.target) && !button.contains(e.target)) close(false);

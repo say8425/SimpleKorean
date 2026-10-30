@@ -9,7 +9,7 @@
 <link rel="alternate" hreflang="ko" href="https://say8425.github.io/SimpleKorean/">
 <link rel="alternate" hreflang="en" href="https://say8425.github.io/SimpleKorean/en/">
 <link rel="alternate" hreflang="ja" href="https://say8425.github.io/SimpleKorean/ja/">
-<link rel="alternate" hreflang="zh" href="https://say8425.github.io/SimpleKorean/zh/">
+<link rel="alternate" hreflang="zh-Hans" href="https://say8425.github.io/SimpleKorean/zh/">
 <link rel="alternate" hreflang="es" href="https://say8425.github.io/SimpleKorean/es/">
 <link rel="alternate" hreflang="x-default" href="https://say8425.github.io/SimpleKorean/">
 <meta name="color-scheme" content="light dark">
@@ -61,7 +61,6 @@
 // 기본은 시스템 테마다. 테마 메뉴에서 고른 값이 있으면 그리기 전에 적용한다. site.js의 applyTheme와 같은 일을 한다.
 (function () {
   var root = document.documentElement, t = null;
-  root.classList.add('js');
   try { t = localStorage.getItem('simple-korean-theme'); } catch (e) {}
   if (t !== 'light' && t !== 'dark') return;
   root.dataset.theme = t;
@@ -99,10 +98,10 @@
 
 <main id="main">
 <section id="top" class="hero wrap">
-<div class="wongoji w12" lang="ko" role="img" aria-label="쉬운 한국어.（やさしい韓国語。）">
+<div class="wongoji w12" role="img" aria-label="쉬운 한국어.（やさしい韓国語。）">
 <span>쉬</span><span>운</span><span></span><span>한</span><span>국</span><span>어</span><span class="dot">.</span><span></span><span></span><span></span><span></span><span></span>
 </div>
-<div class="wongoji w6" lang="ko" role="img" aria-label="쉬운 한국어.（やさしい韓国語。）">
+<div class="wongoji w6" role="img" aria-label="쉬운 한국어.（やさしい韓国語。）">
 <span>쉬</span><span>운</span><span></span><span></span><span></span><span></span><span>한</span><span>국</span><span>어</span><span class="dot">.</span><span></span><span></span>
 </div>
 <h1>AIが書く韓国語を、<br>短く明確に。</h1>
@@ -128,63 +127,63 @@
 </ul>
 
 <div class="diff" lang="ko">
-<div class="pair head" aria-hidden="true">
+<div class="pair head" aria-hidden="true" lang="ja">
 <div class="side old">− 下書き</div>
 <div class="side new">+ SimpleKorean を適用した文書</div>
 </div>
 <div class="drow ctx">
 <div class="pair">
-<div class="side old"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr">下書き： </span>## 문제 해결</p><span class="count"></span></div>
-<div class="side new"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr">修正後： </span>## 문제 해결</p><span class="count"></span></div>
+<div class="side old"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr" lang="ja">下書き： </span>## 문제 해결</p><span class="count"></span></div>
+<div class="side new"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr" lang="ja">修正後： </span>## 문제 해결</p><span class="count"></span></div>
 </div>
 </div>
 <div class="drow hdr">
 <div class="pair">
-<div class="side old"><span class="ln">2</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">下書き： </span><del>**</del>Postgres 연결 타임아웃<del>** —</del></p><span class="count"></span></div>
-<div class="side new"><span class="ln">2</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">修正後： </span><ins>### </ins>Postgres 연결 타임아웃</p><span class="count"></span></div>
+<div class="side old"><span class="ln">2</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="ja">下書き： </span><del>**</del>Postgres 연결 타임아웃<del>** —</del></p><span class="count"></span></div>
+<div class="side new"><span class="ln">2</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="ja">修正後： </span><ins>### </ins>Postgres 연결 타임아웃</p><span class="count"></span></div>
 </div>
-<p class="note">適用したルール： <span>太字と em-dash の代わりに見出しを使います</span></p>
-</div>
-<div class="drow chg">
-<div class="pair">
-<div class="side old"><span class="ln">3</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">下書き： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<del>·</del>보안 그룹이 5432 포트를 <del>막고 있는 것입니다</del>.</p><span class="count">12語節</span></div>
-<div class="side new"><span class="ln">3</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">修正後： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<ins>이나 </ins>보안 그룹이 5432 포트를 <ins>막습니다</ins>.</p><span class="count">11語節</span></div>
-</div>
-<p class="note">適用したルール： <span>中点の代わりに助詞でつなぎ、単純な現在形で書きます</span></p>
+<p class="note" lang="ja">適用したルール： <span>太字と em-dash の代わりに見出しを使います</span></p>
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">下書き： </span><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count">5語節</span></div>
-<div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">修正後： </span><ins>sqlpipe를 실행하는 호스트에서 </ins><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <ins>확인하세요</ins>.</p><span class="count">6語節</span></div>
+<div class="side old"><span class="ln">3</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="ja">下書き： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<del>·</del>보안 그룹이 5432 포트를 <del>막고 있는 것입니다</del>.</p><span class="count" lang="ja">12語節</span></div>
+<div class="side new"><span class="ln">3</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="ja">修正後： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<ins>이나 </ins>보안 그룹이 5432 포트를 <ins>막습니다</ins>.</p><span class="count" lang="ja">11語節</span></div>
 </div>
-<p class="note">適用したルール： <span>コマンドを実行するホストを明示し、勧めの語尾を命令形「-하세요」に変えます</span></p>
+<p class="note" lang="ja">適用したルール： <span>中点の代わりに助詞でつなぎ、単純な現在形で書きます</span></p>
+</div>
+<div class="drow chg">
+<div class="pair">
+<div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="ja">下書き： </span><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count" lang="ja">5語節</span></div>
+<div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="ja">修正後： </span><ins>sqlpipe를 실행하는 호스트에서 </ins><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <ins>확인하세요</ins>.</p><span class="count" lang="ja">6語節</span></div>
+</div>
+<p class="note" lang="ja">適用したルール： <span>コマンドを実行するホストを明示し、勧めの語尾を命令形「-하세요」に変えます</span></p>
 </div>
 <div class="drow hdr">
 <div class="pair">
-<div class="side old"><span class="ln">5</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">下書き： </span><del>**</del>S3 권한 오류<del>** —</del></p><span class="count"></span></div>
-<div class="side new"><span class="ln">5</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">修正後： </span><ins>### </ins>S3 권한 오류</p><span class="count"></span></div>
+<div class="side old"><span class="ln">5</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="ja">下書き： </span><del>**</del>S3 권한 오류<del>** —</del></p><span class="count"></span></div>
+<div class="side new"><span class="ln">5</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="ja">修正後： </span><ins>### </ins>S3 권한 오류</p><span class="count"></span></div>
 </div>
 </div>
 <div class="drow add">
 <div class="pair">
 <div class="side old empty"></div>
-<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">修正後に加えた文： </span>sqlpipe가 <code>AccessDenied</code> 오류를 내면 먼저 <code>aws sts get-caller-identity</code>로 현재 쓰는 자격 증명을 확인하세요.</p><span class="count">11語節</span></div>
+<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="ja">修正後に加えた文： </span>sqlpipe가 <code>AccessDenied</code> 오류를 내면 먼저 <code>aws sts get-caller-identity</code>로 현재 쓰는 자격 증명을 확인하세요.</p><span class="count" lang="ja">11語節</span></div>
 </div>
-<p class="note">適用したルール： <span>最初にすることを前に置きます</span></p>
+<p class="note" lang="ja">適用したルール： <span>最初にすることを前に置きます</span></p>
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">下書き： </span><del><code>AccessDenied</code>가 나면 </del>IAM 정책<del>·</del>버킷 정책에 읽기<del>·</del>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count">10語節</span></div>
-<div class="side new"><span class="ln">7</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">修正後： </span><ins>그다음 </ins>IAM 정책<ins>과 </ins>버킷 정책에 읽기<ins>와 </ins>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count">11語節</span></div>
+<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="ja">下書き： </span><del><code>AccessDenied</code>가 나면 </del>IAM 정책<del>·</del>버킷 정책에 읽기<del>·</del>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count" lang="ja">10語節</span></div>
+<div class="side new"><span class="ln">7</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="ja">修正後： </span><ins>그다음 </ins>IAM 정책<ins>과 </ins>버킷 정책에 읽기<ins>와 </ins>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count" lang="ja">11語節</span></div>
 </div>
-<p class="note">適用したルール： <span>中点の代わりに「과」「와」（と）でつなぎます</span></p>
+<p class="note" lang="ja">適用したルール： <span>中点の代わりに「과」「와」（と）でつなぎます</span></p>
 </div>
 <div class="drow del">
 <div class="pair">
-<div class="side old"><span class="ln">7</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">下書きから消した文： </span>먼저 <code>aws sts get-caller-identity</code>로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.</p><span class="count">9語節</span></div>
+<div class="side old"><span class="ln">7</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="ja">下書きから消した文： </span>먼저 <code>aws sts get-caller-identity</code>로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.</p><span class="count" lang="ja">9語節</span></div>
 <div class="side new empty"></div>
 </div>
-<p class="note">適用したルール： <span>右の6番の文に移し、勧めの語尾を消しました</span></p>
+<p class="note" lang="ja">適用したルール： <span>右の6番の文に移し、勧めの語尾を消しました</span></p>
 </div>
 </div>
 
@@ -248,16 +247,16 @@
 <h2 id="spelling-title">同じ用語は同じ表記で書きます</h2>
 <p class="sub">外来語表記法と国立国語院の用例に従います。決まった表記がない語は、プロジェクトで使う表記を決めます。</p>
 <ul class="terms" lang="ko">
-<li>디렉터리<span>디렉토리ではない</span></li>
-<li>메시지<span>規範形</span></li>
-<li>애플리케이션<span>規範形</span></li>
-<li>릴리스<span>規範形</span></li>
-<li>셸<span>規範形</span></li>
-<li>레포지토리<span>慣用形</span></li>
-<li>바디<span>慣用形</span></li>
-<li>칼럼<span>慣用形</span></li>
-<li>리팩터링<span>公式の表記なし</span></li>
-<li>반환값<span>続けて書く</span></li>
+<li>디렉터리<span lang="ja">디렉토리ではない</span></li>
+<li>메시지<span lang="ja">規範形</span></li>
+<li>애플리케이션<span lang="ja">規範形</span></li>
+<li>릴리스<span lang="ja">規範形</span></li>
+<li>셸<span lang="ja">規範形</span></li>
+<li>레포지토리<span lang="ja">慣用形</span></li>
+<li>바디<span lang="ja">慣用形</span></li>
+<li>칼럼<span lang="ja">慣用形</span></li>
+<li>리팩터링<span lang="ja">公式の表記なし</span></li>
+<li>반환값<span lang="ja">続けて書く</span></li>
 </ul>
 <p class="foot">会社の表記が違う場合は、リポジトリ最上位の <code>.simple-korean.json</code> で変えられます。</p>
 </div>
@@ -299,7 +298,7 @@ codex plugin add simple-korean@simple-korean</code></pre><button type="button" c
 <a href="../" hreflang="ko" lang="ko">한국어</a>
 <a href="../en/" hreflang="en" lang="en">English</a>
 <a href="./" aria-current="page" lang="ja">日本語</a>
-<a href="../zh/" hreflang="zh" lang="zh">中文</a>
+<a href="../zh/" hreflang="zh-Hans" lang="zh-Hans">中文</a>
 <a href="../es/" hreflang="es" lang="es">Español</a>
 </nav>
 </footer>

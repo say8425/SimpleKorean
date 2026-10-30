@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh">
+<html lang="zh-Hans">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,7 +9,7 @@
 <link rel="alternate" hreflang="ko" href="https://say8425.github.io/SimpleKorean/">
 <link rel="alternate" hreflang="en" href="https://say8425.github.io/SimpleKorean/en/">
 <link rel="alternate" hreflang="ja" href="https://say8425.github.io/SimpleKorean/ja/">
-<link rel="alternate" hreflang="zh" href="https://say8425.github.io/SimpleKorean/zh/">
+<link rel="alternate" hreflang="zh-Hans" href="https://say8425.github.io/SimpleKorean/zh/">
 <link rel="alternate" hreflang="es" href="https://say8425.github.io/SimpleKorean/es/">
 <link rel="alternate" hreflang="x-default" href="https://say8425.github.io/SimpleKorean/">
 <meta name="color-scheme" content="light dark">
@@ -46,7 +46,7 @@
   "url": "https://say8425.github.io/SimpleKorean/zh/",
   "codeRepository": "https://github.com/say8425/SimpleKorean",
   "license": "https://opensource.org/licenses/MIT",
-  "inLanguage": "zh",
+  "inLanguage": "zh-Hans",
   "programmingLanguage": "Python"
 }
 </script>
@@ -61,7 +61,6 @@
 // 기본은 시스템 테마다. 테마 메뉴에서 고른 값이 있으면 그리기 전에 적용한다. site.js의 applyTheme와 같은 일을 한다.
 (function () {
   var root = document.documentElement, t = null;
-  root.classList.add('js');
   try { t = localStorage.getItem('simple-korean-theme'); } catch (e) {}
   if (t !== 'light' && t !== 'dark') return;
   root.dataset.theme = t;
@@ -99,10 +98,10 @@
 
 <main id="main">
 <section id="top" class="hero wrap">
-<div class="wongoji w12" lang="ko" role="img" aria-label="쉬운 한국어.（简单的韩语。）">
+<div class="wongoji w12" role="img" aria-label="쉬운 한국어.（简单的韩语。）">
 <span>쉬</span><span>운</span><span></span><span>한</span><span>국</span><span>어</span><span class="dot">.</span><span></span><span></span><span></span><span></span><span></span>
 </div>
-<div class="wongoji w6" lang="ko" role="img" aria-label="쉬운 한국어.（简单的韩语。）">
+<div class="wongoji w6" role="img" aria-label="쉬운 한국어.（简单的韩语。）">
 <span>쉬</span><span>운</span><span></span><span></span><span></span><span></span><span>한</span><span>국</span><span>어</span><span class="dot">.</span><span></span><span></span>
 </div>
 <h1>让 AI 写的韩语<br>简短清楚。</h1>
@@ -128,63 +127,63 @@
 </ul>
 
 <div class="diff" lang="ko">
-<div class="pair head" aria-hidden="true">
+<div class="pair head" aria-hidden="true" lang="zh-Hans">
 <div class="side old">− 草稿</div>
 <div class="side new">+ 应用 SimpleKorean 后的文档</div>
 </div>
 <div class="drow ctx">
 <div class="pair">
-<div class="side old"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr">草稿： </span>## 문제 해결</p><span class="count"></span></div>
-<div class="side new"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr">修改后： </span>## 문제 해결</p><span class="count"></span></div>
+<div class="side old"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr" lang="zh-Hans">草稿： </span>## 문제 해결</p><span class="count"></span></div>
+<div class="side new"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr" lang="zh-Hans">修改后： </span>## 문제 해결</p><span class="count"></span></div>
 </div>
 </div>
 <div class="drow hdr">
 <div class="pair">
-<div class="side old"><span class="ln">2</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">草稿： </span><del>**</del>Postgres 연결 타임아웃<del>** —</del></p><span class="count"></span></div>
-<div class="side new"><span class="ln">2</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">修改后： </span><ins>### </ins>Postgres 연결 타임아웃</p><span class="count"></span></div>
+<div class="side old"><span class="ln">2</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span><del>**</del>Postgres 연결 타임아웃<del>** —</del></p><span class="count"></span></div>
+<div class="side new"><span class="ln">2</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span><ins>### </ins>Postgres 연결 타임아웃</p><span class="count"></span></div>
 </div>
-<p class="note">所用规则： <span>用标题代替粗体和 em-dash</span></p>
-</div>
-<div class="drow chg">
-<div class="pair">
-<div class="side old"><span class="ln">3</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">草稿： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<del>·</del>보안 그룹이 5432 포트를 <del>막고 있는 것입니다</del>.</p><span class="count">12 个语节</span></div>
-<div class="side new"><span class="ln">3</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">修改后： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<ins>이나 </ins>보안 그룹이 5432 포트를 <ins>막습니다</ins>.</p><span class="count">11 个语节</span></div>
-</div>
-<p class="note">所用规则： <span>用助词代替间隔号连接，并用一般现在时</span></p>
+<p class="note" lang="zh-Hans">所用规则： <span>用标题代替粗体和 em-dash</span></p>
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">草稿： </span><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count">5 个语节</span></div>
-<div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">修改后： </span><ins>sqlpipe를 실행하는 호스트에서 </ins><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <ins>확인하세요</ins>.</p><span class="count">6 个语节</span></div>
+<div class="side old"><span class="ln">3</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<del>·</del>보안 그룹이 5432 포트를 <del>막고 있는 것입니다</del>.</p><span class="count" lang="zh-Hans">12 个语节</span></div>
+<div class="side new"><span class="ln">3</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<ins>이나 </ins>보안 그룹이 5432 포트를 <ins>막습니다</ins>.</p><span class="count" lang="zh-Hans">11 个语节</span></div>
 </div>
-<p class="note">所用规则： <span>写明运行命令的主机，并把建议语尾改为命令形“-하세요”</span></p>
+<p class="note" lang="zh-Hans">所用规则： <span>用助词代替间隔号连接，并用一般现在时</span></p>
+</div>
+<div class="drow chg">
+<div class="pair">
+<div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count" lang="zh-Hans">5 个语节</span></div>
+<div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span><ins>sqlpipe를 실행하는 호스트에서 </ins><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <ins>확인하세요</ins>.</p><span class="count" lang="zh-Hans">6 个语节</span></div>
+</div>
+<p class="note" lang="zh-Hans">所用规则： <span>写明运行命令的主机，并把建议语尾改为命令形“-하세요”</span></p>
 </div>
 <div class="drow hdr">
 <div class="pair">
-<div class="side old"><span class="ln">5</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">草稿： </span><del>**</del>S3 권한 오류<del>** —</del></p><span class="count"></span></div>
-<div class="side new"><span class="ln">5</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">修改后： </span><ins>### </ins>S3 권한 오류</p><span class="count"></span></div>
+<div class="side old"><span class="ln">5</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span><del>**</del>S3 권한 오류<del>** —</del></p><span class="count"></span></div>
+<div class="side new"><span class="ln">5</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span><ins>### </ins>S3 권한 오류</p><span class="count"></span></div>
 </div>
 </div>
 <div class="drow add">
 <div class="pair">
 <div class="side old empty"></div>
-<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">修改后新增的句子： </span>sqlpipe가 <code>AccessDenied</code> 오류를 내면 먼저 <code>aws sts get-caller-identity</code>로 현재 쓰는 자격 증명을 확인하세요.</p><span class="count">11 个语节</span></div>
+<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后新增的句子： </span>sqlpipe가 <code>AccessDenied</code> 오류를 내면 먼저 <code>aws sts get-caller-identity</code>로 현재 쓰는 자격 증명을 확인하세요.</p><span class="count" lang="zh-Hans">11 个语节</span></div>
 </div>
-<p class="note">所用规则： <span>把先做的事放在前面</span></p>
+<p class="note" lang="zh-Hans">所用规则： <span>把先做的事放在前面</span></p>
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">草稿： </span><del><code>AccessDenied</code>가 나면 </del>IAM 정책<del>·</del>버킷 정책에 읽기<del>·</del>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count">10 个语节</span></div>
-<div class="side new"><span class="ln">7</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">修改后： </span><ins>그다음 </ins>IAM 정책<ins>과 </ins>버킷 정책에 읽기<ins>와 </ins>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count">11 个语节</span></div>
+<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span><del><code>AccessDenied</code>가 나면 </del>IAM 정책<del>·</del>버킷 정책에 읽기<del>·</del>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count" lang="zh-Hans">10 个语节</span></div>
+<div class="side new"><span class="ln">7</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span><ins>그다음 </ins>IAM 정책<ins>과 </ins>버킷 정책에 읽기<ins>와 </ins>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count" lang="zh-Hans">11 个语节</span></div>
 </div>
-<p class="note">所用规则： <span>用“과”“와”（和）代替间隔号连接</span></p>
+<p class="note" lang="zh-Hans">所用规则： <span>用“과”“와”（和）代替间隔号连接</span></p>
 </div>
 <div class="drow del">
 <div class="pair">
-<div class="side old"><span class="ln">7</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">从草稿中删除的句子： </span>먼저 <code>aws sts get-caller-identity</code>로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.</p><span class="count">9 个语节</span></div>
+<div class="side old"><span class="ln">7</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">从草稿中删除的句子： </span>먼저 <code>aws sts get-caller-identity</code>로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.</p><span class="count" lang="zh-Hans">9 个语节</span></div>
 <div class="side new empty"></div>
 </div>
-<p class="note">所用规则： <span>移到右边第 6 句，并删除建议语尾</span></p>
+<p class="note" lang="zh-Hans">所用规则： <span>移到右边第 6 句，并删除建议语尾</span></p>
 </div>
 </div>
 
@@ -248,16 +247,16 @@
 <h2 id="spelling-title">同一个术语用同一种写法</h2>
 <p class="sub">遵循韩语外来语标记法和国立国语院的用例。没有规定写法的词，由项目决定使用的写法。</p>
 <ul class="terms" lang="ko">
-<li>디렉터리<span>不写作 디렉토리</span></li>
-<li>메시지<span>规范形式</span></li>
-<li>애플리케이션<span>规范形式</span></li>
-<li>릴리스<span>规范形式</span></li>
-<li>셸<span>规范形式</span></li>
-<li>레포지토리<span>惯用形式</span></li>
-<li>바디<span>惯用形式</span></li>
-<li>칼럼<span>惯用形式</span></li>
-<li>리팩터링<span>没有官方写法</span></li>
-<li>반환값<span>连写</span></li>
+<li>디렉터리<span lang="zh-Hans">不写作 디렉토리</span></li>
+<li>메시지<span lang="zh-Hans">规范形式</span></li>
+<li>애플리케이션<span lang="zh-Hans">规范形式</span></li>
+<li>릴리스<span lang="zh-Hans">规范形式</span></li>
+<li>셸<span lang="zh-Hans">规范形式</span></li>
+<li>레포지토리<span lang="zh-Hans">惯用形式</span></li>
+<li>바디<span lang="zh-Hans">惯用形式</span></li>
+<li>칼럼<span lang="zh-Hans">惯用形式</span></li>
+<li>리팩터링<span lang="zh-Hans">没有官方写法</span></li>
+<li>반환값<span lang="zh-Hans">连写</span></li>
 </ul>
 <p class="foot">如果公司的写法不同，可以在仓库根目录的 <code>.simple-korean.json</code> 中修改。</p>
 </div>
@@ -299,7 +298,7 @@ codex plugin add simple-korean@simple-korean</code></pre><button type="button" c
 <a href="../" hreflang="ko" lang="ko">한국어</a>
 <a href="../en/" hreflang="en" lang="en">English</a>
 <a href="../ja/" hreflang="ja" lang="ja">日本語</a>
-<a href="./" aria-current="page" lang="zh">中文</a>
+<a href="./" aria-current="page" lang="zh-Hans">中文</a>
 <a href="../es/" hreflang="es" lang="es">Español</a>
 </nav>
 </footer>

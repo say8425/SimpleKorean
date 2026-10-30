@@ -15,7 +15,7 @@ def test_every_language_page_fills_every_hole():
     for path, text in pages.items():
         assert not re.search(r"\{\{\w+\}\}", text), path
         lang = "ko" if path.parent.name == "site" else path.parent.name
-        assert f'<html lang="{lang}">' in text
+        assert f'<html lang="{bs.TAG[lang]}">' in text
         assert f'<link rel="canonical" href="{bs.page_url(lang)}">' in text
         assert text.count('rel="alternate" hreflang=') == len(bs.LANGS) + 1
         assert 'aria-current="page"' in text
@@ -31,7 +31,7 @@ def test_links_between_pages_are_relative():
 
 def test_render_rejects_missing_and_unused_strings():
     strings = {"ko": {"title": "제목"}}
-    for template, word in (("{{title}} {{lead}}", "lead"), ("{{lang}}", "title")):
+    for template, word in (("{{title}} {{lead}}", "lead"), ("{{lang_tag}}", "title")):
         try:
             bs.render(template, strings, "ko")
         except ValueError as err:
@@ -47,4 +47,6 @@ def test_check_reports_a_page_that_differs_from_the_build():
             (Path(tmp) / rel).write_text(text, encoding="utf-8")
         assert bs.check(tmp) == []
         (Path(tmp) / "site/ja/index.html").write_text("손으로 고친 글", encoding="utf-8")
-        assert [p.split(":")[0] for p in bs.check(tmp)] == ["site/ja/index.html"]
+        (Path(tmp) / "site/fr").mkdir()
+        (Path(tmp) / "site/fr/index.html").write_text("지운 언어", encoding="utf-8")
+        assert [p.split(":")[0] for p in bs.check(tmp)] == ["site/fr/index.html", "site/ja/index.html"]

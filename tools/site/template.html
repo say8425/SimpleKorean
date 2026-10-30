@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{lang}}">
+<html lang="{{lang_tag}}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -38,7 +38,7 @@
   "url": "{{url}}",
   "codeRepository": "https://github.com/say8425/SimpleKorean",
   "license": "https://opensource.org/licenses/MIT",
-  "inLanguage": "{{lang}}",
+  "inLanguage": "{{lang_tag}}",
   "programmingLanguage": "Python"
 }
 </script>
@@ -53,7 +53,6 @@
 // 기본은 시스템 테마다. 테마 메뉴에서 고른 값이 있으면 그리기 전에 적용한다. site.js의 applyTheme와 같은 일을 한다.
 (function () {
   var root = document.documentElement, t = null;
-  root.classList.add('js');
   try { t = localStorage.getItem('simple-korean-theme'); } catch (e) {}
   if (t !== 'light' && t !== 'dark') return;
   root.dataset.theme = t;
@@ -91,10 +90,10 @@
 
 <main id="main">
 <section id="top" class="hero wrap">
-<div class="wongoji w12" lang="ko" role="img" aria-label="{{wongoji_label}}">
+<div class="wongoji w12" role="img" aria-label="{{wongoji_label}}">
 <span>쉬</span><span>운</span><span></span><span>한</span><span>국</span><span>어</span><span class="dot">.</span><span></span><span></span><span></span><span></span><span></span>
 </div>
-<div class="wongoji w6" lang="ko" role="img" aria-label="{{wongoji_label}}">
+<div class="wongoji w6" role="img" aria-label="{{wongoji_label}}">
 <span>쉬</span><span>운</span><span></span><span></span><span></span><span></span><span>한</span><span>국</span><span>어</span><span class="dot">.</span><span></span><span></span>
 </div>
 <h1>{{h1}}</h1>
@@ -120,63 +119,63 @@
 </ul>
 
 <div class="diff" lang="ko">
-<div class="pair head" aria-hidden="true">
+<div class="pair head" aria-hidden="true" lang="{{lang_tag}}">
 <div class="side old">− {{diff_old}}</div>
 <div class="side new">+ {{diff_new}}</div>
 </div>
 <div class="drow ctx">
 <div class="pair">
-<div class="side old"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr">{{sr_old}} </span>## 문제 해결</p><span class="count"></span></div>
-<div class="side new"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr">{{sr_new}} </span>## 문제 해결</p><span class="count"></span></div>
+<div class="side old"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr" lang="{{lang_tag}}">{{sr_old}} </span>## 문제 해결</p><span class="count"></span></div>
+<div class="side new"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr" lang="{{lang_tag}}">{{sr_new}} </span>## 문제 해결</p><span class="count"></span></div>
 </div>
 </div>
 <div class="drow hdr">
 <div class="pair">
-<div class="side old"><span class="ln">2</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">{{sr_old}} </span><del>**</del>Postgres 연결 타임아웃<del>** —</del></p><span class="count"></span></div>
-<div class="side new"><span class="ln">2</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">{{sr_new}} </span><ins>### </ins>Postgres 연결 타임아웃</p><span class="count"></span></div>
+<div class="side old"><span class="ln">2</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="{{lang_tag}}">{{sr_old}} </span><del>**</del>Postgres 연결 타임아웃<del>** —</del></p><span class="count"></span></div>
+<div class="side new"><span class="ln">2</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="{{lang_tag}}">{{sr_new}} </span><ins>### </ins>Postgres 연결 타임아웃</p><span class="count"></span></div>
 </div>
-<p class="note">{{note_prefix}} <span>{{note_heading}}</span></p>
-</div>
-<div class="drow chg">
-<div class="pair">
-<div class="side old"><span class="ln">3</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">{{sr_old}} </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<del>·</del>보안 그룹이 5432 포트를 <del>막고 있는 것입니다</del>.</p><span class="count">12{{eojeol}}</span></div>
-<div class="side new"><span class="ln">3</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">{{sr_new}} </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<ins>이나 </ins>보안 그룹이 5432 포트를 <ins>막습니다</ins>.</p><span class="count">11{{eojeol}}</span></div>
-</div>
-<p class="note">{{note_prefix}} <span>{{note_firewall}}</span></p>
+<p class="note" lang="{{lang_tag}}">{{note_prefix}} <span>{{note_heading}}</span></p>
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">{{sr_old}} </span><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count">5{{eojeol}}</span></div>
-<div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">{{sr_new}} </span><ins>sqlpipe를 실행하는 호스트에서 </ins><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <ins>확인하세요</ins>.</p><span class="count">6{{eojeol}}</span></div>
+<div class="side old"><span class="ln">3</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="{{lang_tag}}">{{sr_old}} </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<del>·</del>보안 그룹이 5432 포트를 <del>막고 있는 것입니다</del>.</p><span class="count" lang="{{lang_tag}}">12{{eojeol}}</span></div>
+<div class="side new"><span class="ln">3</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="{{lang_tag}}">{{sr_new}} </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<ins>이나 </ins>보안 그룹이 5432 포트를 <ins>막습니다</ins>.</p><span class="count" lang="{{lang_tag}}">11{{eojeol}}</span></div>
 </div>
-<p class="note">{{note_prefix}} <span>{{note_host}}</span></p>
+<p class="note" lang="{{lang_tag}}">{{note_prefix}} <span>{{note_firewall}}</span></p>
+</div>
+<div class="drow chg">
+<div class="pair">
+<div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="{{lang_tag}}">{{sr_old}} </span><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count" lang="{{lang_tag}}">5{{eojeol}}</span></div>
+<div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="{{lang_tag}}">{{sr_new}} </span><ins>sqlpipe를 실행하는 호스트에서 </ins><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <ins>확인하세요</ins>.</p><span class="count" lang="{{lang_tag}}">6{{eojeol}}</span></div>
+</div>
+<p class="note" lang="{{lang_tag}}">{{note_prefix}} <span>{{note_host}}</span></p>
 </div>
 <div class="drow hdr">
 <div class="pair">
-<div class="side old"><span class="ln">5</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">{{sr_old}} </span><del>**</del>S3 권한 오류<del>** —</del></p><span class="count"></span></div>
-<div class="side new"><span class="ln">5</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">{{sr_new}} </span><ins>### </ins>S3 권한 오류</p><span class="count"></span></div>
+<div class="side old"><span class="ln">5</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="{{lang_tag}}">{{sr_old}} </span><del>**</del>S3 권한 오류<del>** —</del></p><span class="count"></span></div>
+<div class="side new"><span class="ln">5</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="{{lang_tag}}">{{sr_new}} </span><ins>### </ins>S3 권한 오류</p><span class="count"></span></div>
 </div>
 </div>
 <div class="drow add">
 <div class="pair">
 <div class="side old empty"></div>
-<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">{{sr_added}} </span>sqlpipe가 <code>AccessDenied</code> 오류를 내면 먼저 <code>aws sts get-caller-identity</code>로 현재 쓰는 자격 증명을 확인하세요.</p><span class="count">11{{eojeol}}</span></div>
+<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="{{lang_tag}}">{{sr_added}} </span>sqlpipe가 <code>AccessDenied</code> 오류를 내면 먼저 <code>aws sts get-caller-identity</code>로 현재 쓰는 자격 증명을 확인하세요.</p><span class="count" lang="{{lang_tag}}">11{{eojeol}}</span></div>
 </div>
-<p class="note">{{note_prefix}} <span>{{note_first}}</span></p>
+<p class="note" lang="{{lang_tag}}">{{note_prefix}} <span>{{note_first}}</span></p>
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">{{sr_old}} </span><del><code>AccessDenied</code>가 나면 </del>IAM 정책<del>·</del>버킷 정책에 읽기<del>·</del>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count">10{{eojeol}}</span></div>
-<div class="side new"><span class="ln">7</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">{{sr_new}} </span><ins>그다음 </ins>IAM 정책<ins>과 </ins>버킷 정책에 읽기<ins>와 </ins>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count">11{{eojeol}}</span></div>
+<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="{{lang_tag}}">{{sr_old}} </span><del><code>AccessDenied</code>가 나면 </del>IAM 정책<del>·</del>버킷 정책에 읽기<del>·</del>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count" lang="{{lang_tag}}">10{{eojeol}}</span></div>
+<div class="side new"><span class="ln">7</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="{{lang_tag}}">{{sr_new}} </span><ins>그다음 </ins>IAM 정책<ins>과 </ins>버킷 정책에 읽기<ins>와 </ins>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count" lang="{{lang_tag}}">11{{eojeol}}</span></div>
 </div>
-<p class="note">{{note_prefix}} <span>{{note_particle}}</span></p>
+<p class="note" lang="{{lang_tag}}">{{note_prefix}} <span>{{note_particle}}</span></p>
 </div>
 <div class="drow del">
 <div class="pair">
-<div class="side old"><span class="ln">7</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">{{sr_removed}} </span>먼저 <code>aws sts get-caller-identity</code>로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.</p><span class="count">9{{eojeol}}</span></div>
+<div class="side old"><span class="ln">7</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="{{lang_tag}}">{{sr_removed}} </span>먼저 <code>aws sts get-caller-identity</code>로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.</p><span class="count" lang="{{lang_tag}}">9{{eojeol}}</span></div>
 <div class="side new empty"></div>
 </div>
-<p class="note">{{note_prefix}} <span>{{note_moved}}</span></p>
+<p class="note" lang="{{lang_tag}}">{{note_prefix}} <span>{{note_moved}}</span></p>
 </div>
 </div>
 
@@ -240,16 +239,16 @@
 <h2 id="spelling-title">{{s_title}}</h2>
 <p class="sub">{{s_sub}}</p>
 <ul class="terms" lang="ko">
-<li>디렉터리<span>{{t_directory}}</span></li>
-<li>메시지<span>{{t_standard}}</span></li>
-<li>애플리케이션<span>{{t_standard}}</span></li>
-<li>릴리스<span>{{t_standard}}</span></li>
-<li>셸<span>{{t_standard}}</span></li>
-<li>레포지토리<span>{{t_common}}</span></li>
-<li>바디<span>{{t_common}}</span></li>
-<li>칼럼<span>{{t_common}}</span></li>
-<li>리팩터링<span>{{t_none}}</span></li>
-<li>반환값<span>{{t_nospace}}</span></li>
+<li>디렉터리<span lang="{{lang_tag}}">{{t_directory}}</span></li>
+<li>메시지<span lang="{{lang_tag}}">{{t_standard}}</span></li>
+<li>애플리케이션<span lang="{{lang_tag}}">{{t_standard}}</span></li>
+<li>릴리스<span lang="{{lang_tag}}">{{t_standard}}</span></li>
+<li>셸<span lang="{{lang_tag}}">{{t_standard}}</span></li>
+<li>레포지토리<span lang="{{lang_tag}}">{{t_common}}</span></li>
+<li>바디<span lang="{{lang_tag}}">{{t_common}}</span></li>
+<li>칼럼<span lang="{{lang_tag}}">{{t_common}}</span></li>
+<li>리팩터링<span lang="{{lang_tag}}">{{t_none}}</span></li>
+<li>반환값<span lang="{{lang_tag}}">{{t_nospace}}</span></li>
 </ul>
 <p class="foot">{{s_foot}}</p>
 </div>

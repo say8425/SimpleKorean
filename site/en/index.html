@@ -9,7 +9,7 @@
 <link rel="alternate" hreflang="ko" href="https://say8425.github.io/SimpleKorean/">
 <link rel="alternate" hreflang="en" href="https://say8425.github.io/SimpleKorean/en/">
 <link rel="alternate" hreflang="ja" href="https://say8425.github.io/SimpleKorean/ja/">
-<link rel="alternate" hreflang="zh" href="https://say8425.github.io/SimpleKorean/zh/">
+<link rel="alternate" hreflang="zh-Hans" href="https://say8425.github.io/SimpleKorean/zh/">
 <link rel="alternate" hreflang="es" href="https://say8425.github.io/SimpleKorean/es/">
 <link rel="alternate" hreflang="x-default" href="https://say8425.github.io/SimpleKorean/">
 <meta name="color-scheme" content="light dark">
@@ -61,7 +61,6 @@
 // 기본은 시스템 테마다. 테마 메뉴에서 고른 값이 있으면 그리기 전에 적용한다. site.js의 applyTheme와 같은 일을 한다.
 (function () {
   var root = document.documentElement, t = null;
-  root.classList.add('js');
   try { t = localStorage.getItem('simple-korean-theme'); } catch (e) {}
   if (t !== 'light' && t !== 'dark') return;
   root.dataset.theme = t;
@@ -99,10 +98,10 @@
 
 <main id="main">
 <section id="top" class="hero wrap">
-<div class="wongoji w12" lang="ko" role="img" aria-label="쉬운 한국어. (Simple Korean.)">
+<div class="wongoji w12" role="img" aria-label="쉬운 한국어. (Simple Korean.)">
 <span>쉬</span><span>운</span><span></span><span>한</span><span>국</span><span>어</span><span class="dot">.</span><span></span><span></span><span></span><span></span><span></span>
 </div>
-<div class="wongoji w6" lang="ko" role="img" aria-label="쉬운 한국어. (Simple Korean.)">
+<div class="wongoji w6" role="img" aria-label="쉬운 한국어. (Simple Korean.)">
 <span>쉬</span><span>운</span><span></span><span></span><span></span><span></span><span>한</span><span>국</span><span>어</span><span class="dot">.</span><span></span><span></span>
 </div>
 <h1>Korean from AI,<br>short and clear.</h1>
@@ -128,63 +127,63 @@
 </ul>
 
 <div class="diff" lang="ko">
-<div class="pair head" aria-hidden="true">
+<div class="pair head" aria-hidden="true" lang="en">
 <div class="side old">− Draft</div>
 <div class="side new">+ Document with SimpleKorean</div>
 </div>
 <div class="drow ctx">
 <div class="pair">
-<div class="side old"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr">Draft: </span>## 문제 해결</p><span class="count"></span></div>
-<div class="side new"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr">Revised: </span>## 문제 해결</p><span class="count"></span></div>
+<div class="side old"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr" lang="en">Draft: </span>## 문제 해결</p><span class="count"></span></div>
+<div class="side new"><span class="ln">1</span><span class="mark" aria-hidden="true"></span><p><span class="sr" lang="en">Revised: </span>## 문제 해결</p><span class="count"></span></div>
 </div>
 </div>
 <div class="drow hdr">
 <div class="pair">
-<div class="side old"><span class="ln">2</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">Draft: </span><del>**</del>Postgres 연결 타임아웃<del>** —</del></p><span class="count"></span></div>
-<div class="side new"><span class="ln">2</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">Revised: </span><ins>### </ins>Postgres 연결 타임아웃</p><span class="count"></span></div>
+<div class="side old"><span class="ln">2</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="en">Draft: </span><del>**</del>Postgres 연결 타임아웃<del>** —</del></p><span class="count"></span></div>
+<div class="side new"><span class="ln">2</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="en">Revised: </span><ins>### </ins>Postgres 연결 타임아웃</p><span class="count"></span></div>
 </div>
-<p class="note">Rule: <span>Use a heading, not bold text and an em-dash</span></p>
-</div>
-<div class="drow chg">
-<div class="pair">
-<div class="side old"><span class="ln">3</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">Draft: </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<del>·</del>보안 그룹이 5432 포트를 <del>막고 있는 것입니다</del>.</p><span class="count">12 eojeol</span></div>
-<div class="side new"><span class="ln">3</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">Revised: </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<ins>이나 </ins>보안 그룹이 5432 포트를 <ins>막습니다</ins>.</p><span class="count">11 eojeol</span></div>
-</div>
-<p class="note">Rule: <span>Join words with a particle, not a middle dot. Use the simple present</span></p>
+<p class="note" lang="en">Rule: <span>Use a heading, not bold text and an em-dash</span></p>
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">Draft: </span><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count">5 eojeol</span></div>
-<div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">Revised: </span><ins>sqlpipe를 실행하는 호스트에서 </ins><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <ins>확인하세요</ins>.</p><span class="count">6 eojeol</span></div>
+<div class="side old"><span class="ln">3</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="en">Draft: </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<del>·</del>보안 그룹이 5432 포트를 <del>막고 있는 것입니다</del>.</p><span class="count" lang="en">12 eojeol</span></div>
+<div class="side new"><span class="ln">3</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="en">Revised: </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<ins>이나 </ins>보안 그룹이 5432 포트를 <ins>막습니다</ins>.</p><span class="count" lang="en">11 eojeol</span></div>
 </div>
-<p class="note">Rule: <span>Name the host that runs the command. Change the advice ending to the command form "-하세요"</span></p>
+<p class="note" lang="en">Rule: <span>Join words with a particle, not a middle dot. Use the simple present</span></p>
+</div>
+<div class="drow chg">
+<div class="pair">
+<div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="en">Draft: </span><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count" lang="en">5 eojeol</span></div>
+<div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="en">Revised: </span><ins>sqlpipe를 실행하는 호스트에서 </ins><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <ins>확인하세요</ins>.</p><span class="count" lang="en">6 eojeol</span></div>
+</div>
+<p class="note" lang="en">Rule: <span>Name the host that runs the command. Change the advice ending to the command form "-하세요"</span></p>
 </div>
 <div class="drow hdr">
 <div class="pair">
-<div class="side old"><span class="ln">5</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">Draft: </span><del>**</del>S3 권한 오류<del>** —</del></p><span class="count"></span></div>
-<div class="side new"><span class="ln">5</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">Revised: </span><ins>### </ins>S3 권한 오류</p><span class="count"></span></div>
+<div class="side old"><span class="ln">5</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="en">Draft: </span><del>**</del>S3 권한 오류<del>** —</del></p><span class="count"></span></div>
+<div class="side new"><span class="ln">5</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="en">Revised: </span><ins>### </ins>S3 권한 오류</p><span class="count"></span></div>
 </div>
 </div>
 <div class="drow add">
 <div class="pair">
 <div class="side old empty"></div>
-<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">Sentence added in the revision: </span>sqlpipe가 <code>AccessDenied</code> 오류를 내면 먼저 <code>aws sts get-caller-identity</code>로 현재 쓰는 자격 증명을 확인하세요.</p><span class="count">11 eojeol</span></div>
+<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="en">Sentence added in the revision: </span>sqlpipe가 <code>AccessDenied</code> 오류를 내면 먼저 <code>aws sts get-caller-identity</code>로 현재 쓰는 자격 증명을 확인하세요.</p><span class="count" lang="en">11 eojeol</span></div>
 </div>
-<p class="note">Rule: <span>Put the first step first</span></p>
+<p class="note" lang="en">Rule: <span>Put the first step first</span></p>
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">Draft: </span><del><code>AccessDenied</code>가 나면 </del>IAM 정책<del>·</del>버킷 정책에 읽기<del>·</del>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count">10 eojeol</span></div>
-<div class="side new"><span class="ln">7</span><span class="mark" aria-hidden="true">+</span><p><span class="sr">Revised: </span><ins>그다음 </ins>IAM 정책<ins>과 </ins>버킷 정책에 읽기<ins>와 </ins>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count">11 eojeol</span></div>
+<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="en">Draft: </span><del><code>AccessDenied</code>가 나면 </del>IAM 정책<del>·</del>버킷 정책에 읽기<del>·</del>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count" lang="en">10 eojeol</span></div>
+<div class="side new"><span class="ln">7</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="en">Revised: </span><ins>그다음 </ins>IAM 정책<ins>과 </ins>버킷 정책에 읽기<ins>와 </ins>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count" lang="en">11 eojeol</span></div>
 </div>
-<p class="note">Rule: <span>Join words with "과" and "와" (and), not a middle dot</span></p>
+<p class="note" lang="en">Rule: <span>Join words with "과" and "와" (and), not a middle dot</span></p>
 </div>
 <div class="drow del">
 <div class="pair">
-<div class="side old"><span class="ln">7</span><span class="mark" aria-hidden="true">−</span><p><span class="sr">Sentence removed from the draft: </span>먼저 <code>aws sts get-caller-identity</code>로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.</p><span class="count">9 eojeol</span></div>
+<div class="side old"><span class="ln">7</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="en">Sentence removed from the draft: </span>먼저 <code>aws sts get-caller-identity</code>로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.</p><span class="count" lang="en">9 eojeol</span></div>
 <div class="side new empty"></div>
 </div>
-<p class="note">Rule: <span>Moved to sentence 6 on the right, without the advice ending</span></p>
+<p class="note" lang="en">Rule: <span>Moved to sentence 6 on the right, without the advice ending</span></p>
 </div>
 </div>
 
@@ -248,16 +247,16 @@
 <h2 id="spelling-title">One term, one spelling</h2>
 <p class="sub">The skill follows the Korean loanword spelling rules and the examples of the National Institute of Korean Language. When no official spelling exists, the project chooses one.</p>
 <ul class="terms" lang="ko">
-<li>디렉터리<span>not 디렉토리</span></li>
-<li>메시지<span>standard form</span></li>
-<li>애플리케이션<span>standard form</span></li>
-<li>릴리스<span>standard form</span></li>
-<li>셸<span>standard form</span></li>
-<li>레포지토리<span>common form</span></li>
-<li>바디<span>common form</span></li>
-<li>칼럼<span>common form</span></li>
-<li>리팩터링<span>no official spelling</span></li>
-<li>반환값<span>written without a space</span></li>
+<li>디렉터리<span lang="en">not 디렉토리</span></li>
+<li>메시지<span lang="en">standard form</span></li>
+<li>애플리케이션<span lang="en">standard form</span></li>
+<li>릴리스<span lang="en">standard form</span></li>
+<li>셸<span lang="en">standard form</span></li>
+<li>레포지토리<span lang="en">common form</span></li>
+<li>바디<span lang="en">common form</span></li>
+<li>칼럼<span lang="en">common form</span></li>
+<li>리팩터링<span lang="en">no official spelling</span></li>
+<li>반환값<span lang="en">written without a space</span></li>
 </ul>
 <p class="foot">If your company uses a different spelling, change it in <code>.simple-korean.json</code> at the top of your repository.</p>
 </div>
@@ -299,7 +298,7 @@ codex plugin add simple-korean@simple-korean</code></pre><button type="button" c
 <a href="../" hreflang="ko" lang="ko">한국어</a>
 <a href="./" aria-current="page" lang="en">English</a>
 <a href="../ja/" hreflang="ja" lang="ja">日本語</a>
-<a href="../zh/" hreflang="zh" lang="zh">中文</a>
+<a href="../zh/" hreflang="zh-Hans" lang="zh-Hans">中文</a>
 <a href="../es/" hreflang="es" lang="es">Español</a>
 </nav>
 </footer>

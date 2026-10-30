@@ -9,7 +9,7 @@
 - README 다섯 개의 벤치마크 블록과 RESULTS.md를 원본 출력에서 다시 만든 글과 비교한다(report.py, readme_i18n.py).
 - README 다섯 개의 보기 블록과 examples/before-after.md의 인용 블록을 원본 출력과 비교한다(make_examples.py).
 - examples/diffs/의 파일마다 원본 출력의 전이나 후와 같은지 보고, diff 링크가 README의 결과 디렉터리로 만든 것인지 본다(make_examples.py).
-- 소개 페이지(site/index.html)의 원본 링크가 README의 결과 디렉터리를 가리키는지 본다. 페이지의 수치는 손으로 옮겼다.
+- 소개 페이지(site/의 언어별 index.html)마다 원본 링크가 README의 결과 디렉터리를 가리키는지 본다. 페이지의 수치는 손으로 옮겼다.
 - site/의 언어별 페이지가 tools/site/build_site.py로 다시 만든 글과 같은지 본다.
 - 번역판의 제목, 레포 링크, 언어 선택 줄, 블록 표시가 한국어판과 맞는지 본다.
 - 보정 기록 RECORD.md를 hits.tsv와 보정 출력에서 다시 만들어 비교한다.
@@ -148,10 +148,12 @@ def check_examples(readme, examples):
             problems += make_examples.diff_url_problems(bench.group(1))
         except (OSError, ValueError, KeyError) as err:
             problems.append(f"examples/diffs/를 원본과 대조하지 못했습니다({err})")
-        try:
-            problems += site_problems((ROOT / SITE).read_text(encoding="utf-8"), bench.group(1))
-        except OSError as err:
-            problems.append(f"{SITE}를 읽지 못했습니다({err})")
+        for lang in build_site.LANGS:
+            page = build_site.page_path(lang)
+            try:
+                problems += site_problems((ROOT / page).read_text(encoding="utf-8"), bench.group(1), page.as_posix())
+            except OSError as err:
+                problems.append(f"{page.as_posix()}를 읽지 못했습니다({err})")
     try:
         problems += build_site.check(ROOT)
     except (OSError, ValueError) as err:
@@ -159,12 +161,12 @@ def check_examples(readme, examples):
     return problems
 
 
-def site_problems(site, results_rel):
+def site_problems(site, results_rel, name=SITE):
     """소개 페이지의 전후 비교와 측정 수치가 README와 같은 결과 디렉터리에서 왔는지 본다."""
     link = "https://github.com/say8425/SimpleKorean/tree/main/" + Path(results_rel).as_posix().rstrip("/")
     if f'href="{link}"' in site:
         return []
-    return [f"{SITE}의 원본 링크가 README의 결과({results_rel})를 가리키지 않습니다. "
+    return [f"{name}의 원본 링크가 README의 결과({results_rel})를 가리키지 않습니다. "
             "소개 페이지의 전후 비교와 측정 수치를 그 결과로 고치세요"]
 
 
