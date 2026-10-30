@@ -129,6 +129,11 @@ def diff_texts(results_dir, doc_picks=DOC_PICKS, reply_picks=REPLY_PICKS):
     return items
 
 
+def _diff_file(text):
+    """examples/diffs/의 파일 하나에 쓰는 글. 원문 끝의 줄바꿈을 하나로 맞춘다."""
+    return text.rstrip("\n") + "\n"
+
+
 def write_diffs(results_dir, stage, root=ROOT, **picks):
     """examples/diffs/에 stage('before' 또는 'after')의 글을 쓴다."""
     if stage not in STAGES:
@@ -136,19 +141,22 @@ def write_diffs(results_dir, stage, root=ROOT, **picks):
     out = Path(root) / DIFFS
     out.mkdir(parents=True, exist_ok=True)
     for name, before, after in diff_texts(results_dir, **picks):
-        (out / name).write_text((before if stage == "before" else after).rstrip("\n") + "\n", encoding="utf-8")
+        (out / name).write_text(_diff_file(before if stage == "before" else after), encoding="utf-8")
 
 
 def check_diffs(results_dir, root=ROOT, **picks):
     """examples/diffs/의 파일마다 원본의 전이나 후와 같은지 확인해 문제 목록을 돌려준다."""
-    problems = []
+    problems, names = [], set()
     for name, before, after in diff_texts(results_dir, **picks):
+        names.add(name)
         rel = (DIFFS / name).as_posix()
         path = Path(root) / DIFFS / name
         if not path.is_file():
             problems.append(f"{rel}: 파일이 없습니다")
-        elif path.read_text(encoding="utf-8").rstrip("\n") not in (before.rstrip("\n"), after.rstrip("\n")):
+        elif path.read_text(encoding="utf-8") not in (_diff_file(before), _diff_file(after)):
             problems.append(f"{rel}: 원본의 전과 후 어느 쪽과도 다릅니다")
+    extra = sorted(p.name for p in (Path(root) / DIFFS).glob("*.md") if p.name not in names)
+    problems += [f"{(DIFFS / name).as_posix()}: 고른 예시에 없는 파일입니다" for name in extra]
     return problems
 
 
@@ -268,6 +276,13 @@ def main(argv=None):
     args = sys.argv[1:] if argv is None else argv
     if not args:
         raise SystemExit("사용법: make_examples.py <결과 디렉터리> [--readme] [--diffs before|after]")
+    stage = None
+    if "--diffs" in args:
+        i = args.index("--diffs")
+        stage = args[i + 1] if i + 1 < len(args) else ""
+        # 다른 파일을 쓰기 전에 멈춘다
+        if stage not in STAGES:
+            raise SystemExit(f"--diffs에는 {' 또는 '.join(STAGES)}를 쓰세요")
     try:
         text = examples_md(args[0])
     except (OSError, ValueError, KeyError) as err:
@@ -276,9 +291,8 @@ def main(argv=None):
     EXAMPLES.write_text(text, encoding="utf-8")
     if "--readme" in args:
         update_readmes(args[0])
-    if "--diffs" in args:
-        i = args.index("--diffs")
-        write_diffs(args[0], args[i + 1] if i + 1 < len(args) else "")
+    if stage:
+        write_diffs(args[0], stage)
     return 0
 
 

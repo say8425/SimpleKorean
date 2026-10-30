@@ -404,5 +404,21 @@ def test_diff_files_hold_one_stage_and_edits_are_caught():
         assert mx.check_diffs(root, repo, **picks) == []
         (diffs / "readme-intro.md").write_text("고친 글\n", encoding="utf-8")
         assert mx.check_diffs(root, repo, **picks) == ["examples/diffs/readme-intro.md: 원본의 전과 후 어느 쪽과도 다릅니다"]
+        (diffs / "readme-intro.md").write_text("고친 글\n", encoding="utf-8")
         (diffs / "reply-oom.md").unlink()
-        assert "examples/diffs/reply-oom.md: 파일이 없습니다" in mx.check_diffs(root, repo, **picks)
+        (diffs / "old.md").write_text("옛 예시\n", encoding="utf-8")
+        problems = mx.check_diffs(root, repo, **picks)
+        assert "examples/diffs/reply-oom.md: 파일이 없습니다" in problems
+        assert "examples/diffs/old.md: 고른 예시에 없는 파일입니다" in problems
+
+
+def test_bad_diffs_stage_stops_before_writing_anything():
+    before = mx.EXAMPLES.read_text(encoding="utf-8")
+    for argv in (["evals/results/x", "--diffs"], ["evals/results/x", "--diffs", "--readme"]):
+        try:
+            mx.main(argv)
+        except SystemExit as err:
+            assert "--diffs" in str(err)
+        else:
+            raise AssertionError(argv)
+    assert mx.EXAMPLES.read_text(encoding="utf-8") == before
