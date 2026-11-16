@@ -74,6 +74,12 @@ def test_target_is_not_mixed_with_generic_word():
     assert term_cats("적용 대상을 고르고 빌드 타깃을 정합니다.") == []
 
 
+def test_fixed_target_compounds_are_kept_in_strict_mode():
+    text = "빌드 타깃은 x86_64입니다. Makefile의 타깃을 실행하세요. 타깃 트리플을 고르세요."
+    assert term_cats(text, strict=True) == []
+    assert term_cats("배포 타깃을 고르세요.", strict=True) == [("term_choice", "warning", "타깃 → 대상")]
+
+
 def test_config_overrides_designated_form():
     cfg = {"terms": {"release": "릴리즈"}}
     assert term_cats("릴리즈 노트를 봅니다.", config=cfg) == []

@@ -38,6 +38,13 @@ MD_FENCE = re.compile(r"^[^\S\n]*(`{3,}|~{3,})[^\S\n]*(?:markdown|md)[^\S\n]*\n(
 # 마크다운 링크의 대상. RESULTS.md에 실을 때 결과 디렉터리 기준으로 바꾼다.
 LINK_TARGET = re.compile(r"\]\(([^)\s]+)\)")
 README_BLOCK = re.compile(r"<!-- benchmark:start (\S+) -->\n(.*?)\n<!-- benchmark:end -->", re.S)
+# 원문(source)을 다시 쓰는 과제에서 세는 기술 명사와 일상어. DB의 table을 "표"로, column을 "칸"으로 바꾸는지 본다.
+# 한 글자 말은 낱말 전체만 센다. 뒤에 조사나 서술격 조사 하나만 붙을 수 있다. 그래서 '표기', '열어', '실행'은 세지 않는다.
+_PARTICLE = r"(?:입니다|이다|이고|이며|에서|으로|마다|까지|처럼|[은는이가을를의에도로와과만])?(?![가-힣])"
+TERM_WORDS = (("테이블", r"테이블"), ("표", r"(?<![가-힣])표" + _PARTICLE), ("칼럼", r"[칼컬]럼"),
+              ("열", r"(?<![가-힣])열" + _PARTICLE), ("칸", r"(?<![가-힣])칸" + _PARTICLE),
+              ("행", r"(?<![가-힣])행" + _PARTICLE), ("로우", r"(?<![가-힣])로우"))
+TERM_RX = tuple((name, re.compile(rx)) for name, rx in TERM_WORDS)
 
 
 def reply_stats(results_dir):
@@ -140,6 +147,46 @@ def polish_stats(results_dir, scenarios):
             acc["n"] += 1
             acc.update(marks(record["text"]))
     return {key: dict(value) for key, value in stats.items()}
+
+
+def source_ids(scenarios):
+    """원문(source)을 주고 다시 쓰게 한 과제의 id."""
+    return {s["id"] for s in scenarios if s.get("source")}
+
+
+def term_counts(text):
+    """글에 든 기술 명사와 일상어의 수. 글 전체를 감싼 울타리는 벗기고, 코드 안의 말은 세지 않는다."""
+    masked = ko_text.mask(ko_text.nfc(unfenced(text)))
+    return Counter({name: n for name, rx in TERM_RX if (n := len(rx.findall(masked)))})
+
+
+def term_stats(results_dir, scenarios):
+    """다시 쓰기 과제의 기술 명사 수. source는 원문의 합이고, 조건마다 다시 쓴 문서 수 n과 낱말 수의 합이다."""
+    sources = {s["id"]: s["source"] for s in scenarios if s.get("source")}
+    stats = {"source": Counter(), **{c: Counter() for c in DOC_CONDS}}
+    for source in sources.values():
+        stats["source"]["n"] += 1
+        stats["source"].update(term_counts(source))
+    for path in sorted(Path(results_dir, "docs").glob("*.json")):
+        record = json.loads(path.read_text(encoding="utf-8"))
+        if record["scenario"] in sources:
+            acc = stats[record["condition"]]
+            acc["n"] += 1
+            acc.update(term_counts(record["text"]))
+    return {key: dict(value) for key, value in stats.items()}
+
+
+def render_term_table(stats):
+    """다시 쓰기 과제의 기술 명사 표. 다시 쓴 문서가 없으면 빈 문자열이다."""
+    if not any((stats or {}).get(cond, {}).get("n") for cond in DOC_CONDS):
+        return ""
+    names = [name for name, _ in TERM_WORDS]
+    labels = {"source": "원문", **_t("ko", "labels")}
+    lines = ["| 조건 | 문서 수 | " + " | ".join(names) + " |", "|---|" + "---:|" * (len(names) + 1)]
+    for key in ("source", *DOC_CONDS):
+        s = Counter(stats[key])
+        lines.append(f"| {labels[key]} | {s['n']} | " + " | ".join(str(s[name]) for name in names) + " |")
+    return "\n".join(lines)
 
 
 def spelling_distribution(results_dir):
@@ -297,6 +344,20 @@ def from_results(text, results_dir):
     return LINK_TARGET.sub(fix, text)
 
 
+def term_section(results_dir, scenarios):
+    """RESULTS.md의 기술 명사 절. 다시 쓰기 과제를 다시 쓴 문서가 없으면 빈 목록이다."""
+    scenarios = saved_inputs(results_dir, "scenarios.json") or scenarios
+    table = render_term_table(term_stats(results_dir, scenarios))
+    if not table:
+        return []
+    ids = ", ".join(f"`{i}`" for i in sorted(source_ids(scenarios)))
+    return ["## 기술 명사",
+            f"DB 설계 문서 원문을 다시 쓰는 과제({ids})에서 기술 명사와 일상어를 센 수입니다. "
+            "원문의 \"표\"는 문서 안의 표를 가리킵니다. 원문의 테이블, 칼럼, 행은 DB의 대상입니다. "
+            "조건 행은 다시 쓴 문서들의 합입니다. 한 글자 말은 낱말 전체만 세지만, \"열 개\"처럼 뜻이 다른 같은 낱말도 섞일 수 있습니다.",
+            table]
+
+
 def results_md(results_dir, scenarios):
     """RESULTS.md 전체. meta.json의 격리 확인 결과를 함께 싣는다."""
     meta = json.loads(Path(results_dir, "meta.json").read_text(encoding="utf-8"))
@@ -312,6 +373,7 @@ def results_md(results_dir, scenarios):
         "## 표기 분포",
         "기본 단어 목록으로 센 개념별 표기 수입니다. 스킬이 만든 표기 변화를 사람의 관행과 따로 보려고 싣습니다.",
         "<!-- simple-korean: off -->\n" + render_spelling_table(spelling_distribution(results_dir)) + "\n<!-- simple-korean: on -->",
+        *term_section(results_dir, scenarios),
         "## 수치를 읽을 때 주의할 점",
         "- 린터는 정규식으로 표현을 찾습니다. 형태소 분석을 하지 않아 거짓 일치와 놓침이 있습니다. 모든 조건을 같은 린터로 쟀습니다.\n"
         "- 쉬운 단어 비율은 kiwipiepy 0.24.0으로 뽑은 내용어 가운데 국어 기초 어휘 1등급 표제어의 비율입니다.\n"

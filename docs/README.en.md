@@ -76,7 +76,7 @@ The plugin contains the five parts below. The skill and the three hooks work aut
 
 The rules apply without the output style, because the session-start hook already adds the same rule block. If the session-start hook does not run because Node.js is missing, apply the output style. To apply the output style, select it under Output style in `/config`. Or put `{"outputStyle": "simple-korean:simple-korean"}` in `~/.claude/settings.json`.
 
-The session-start hook adds a rule block of 2,476 characters to each session. For details, see [`src/hooks/README.md`](../src/hooks/README.md).
+The session-start hook adds a rule block of 2,638 characters to each session. For details, see [`src/hooks/README.md`](../src/hooks/README.md).
 
 ### Codex
 
@@ -268,6 +268,7 @@ Documents use these rules. Documents include READMEs, runbooks, error messages, 
 | Do not drop particles, and do not end with a noun form | Telegram style such as "백업 확인 필요" (backup check needed) |
 | Write facts, not importance | "강력한" (powerful), "원활한" (seamless), "단순히 X가 아니라 Y" (not just X but Y) |
 | Use the designated spelling of loanwords | "디렉토리" and "디렉터리" (directory) mixed in one document |
+| Do not replace the field's technical nouns with everyday words | Calling a DB "테이블" (table) "표" (a table in a document), or a "칼럼" (column) "칸" (box) |
 
 ## Modes
 

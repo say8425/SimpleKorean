@@ -80,6 +80,8 @@
   "r7_before": "\"-ㄹ 수도 있습니다\" (may), \"-것 같습니다\" (seems)",
   "r8": "Give one word only one meaning",
   "r8_before": "Switching between \"확인\", \"검증\", and \"점검\" (all mean \"check\")",
+  "r9": "Do not replace technical nouns with everyday words",
+  "r9_before": "Calling a DB \"테이블\" (table) \"표\" (a table in a document)",
   "r_foot": "The rules come from ASD-STE100, the controlled English for aircraft maintenance documents. The full rules are in <a href=\"https://github.com/say8425/SimpleKorean/blob/main/skills/simple-korean/SKILL.md\">SKILL.md</a>.",
   "s_eyebrow": "04 Spelling",
   "s_title": "One term, one spelling",

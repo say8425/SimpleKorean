@@ -76,7 +76,7 @@ claude plugin install simple-korean@simple-korean
 
 不用输出样式，规则也会生效，因为会话启动钩子已经加入了同一个规则块。如果没有 Node.js，会话启动钩子无法运行，这时请应用输出样式。要应用输出样式，请在 `/config` 的 Output style 中选择。或者在 `~/.claude/settings.json` 中写入 `{"outputStyle": "simple-korean:simple-korean"}`。
 
-会话启动钩子会在每个会话中加入 2,476 个字符的规则块。详情见 [`src/hooks/README.md`](../src/hooks/README.md)。
+会话启动钩子会在每个会话中加入 2,638 个字符的规则块。详情见 [`src/hooks/README.md`](../src/hooks/README.md)。
 
 ### Codex
 
@@ -268,6 +268,7 @@ sqlpipe 的 8 个文档任务在每个条件下各写了 2 次。比率是检查
 | 不省略助词，不用名词形结尾 | “백업 확인 필요”（备份确认需要）这样的电报体 |
 | 写事实，不写重要性 | “강력한”（强大的）、“원활한”（顺畅的）、“단순히 X가 아니라 Y”（不仅仅是 X，而是 Y） |
 | 使用规定的外来语写法 | 同一篇文档里混用“디렉토리”和“디렉터리”（都指“目录”） |
+| 不把行业技术名词换成日常用语 | 把数据库的“테이블”（数据表）叫成“표”（文档里的表格），把“칼럼”（列）叫成“칸”（格子） |
 
 ## 模式
 

@@ -76,7 +76,7 @@ El plugin incluye las cinco partes de abajo. La skill y los tres hooks funcionan
 
 Las reglas se aplican sin el estilo de salida, porque el hook de inicio de sesión ya añade el mismo bloque de reglas. Si el hook de inicio de sesión no se ejecuta porque falta Node.js, aplique el estilo de salida. Para aplicarlo, elíjalo en Output style de `/config`. O bien, añada `{"outputStyle": "simple-korean:simple-korean"}` a `~/.claude/settings.json`.
 
-El hook de inicio de sesión añade un bloque de reglas de 2476 caracteres en cada sesión. Los detalles están en [`src/hooks/README.md`](../src/hooks/README.md).
+El hook de inicio de sesión añade un bloque de reglas de 2638 caracteres en cada sesión. Los detalles están en [`src/hooks/README.md`](../src/hooks/README.md).
 
 ### Codex
 
@@ -268,6 +268,7 @@ Los documentos usan estas reglas. Aquí entran los README, los runbooks, los men
 | No omita partículas ni termine con una forma nominal | Estilo telegráfico como "백업 확인 필요" (comprobación de copia de seguridad necesaria) |
 | Escriba hechos, no importancia | "강력한" (potente), "원활한" (fluido), "단순히 X가 아니라 Y" (no solo X, sino Y) |
 | Use la grafía designada de los préstamos | "디렉토리" y "디렉터리" (directorio) mezclados en un mismo documento |
+| No cambie los sustantivos técnicos del campo por palabras cotidianas | Llamar "표" (tabla dentro de un documento) a una "테이블" (tabla de base de datos), o "칸" (casilla) a una "칼럼" (columna) |
 
 ## Modos
 

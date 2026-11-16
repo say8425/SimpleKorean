@@ -75,6 +75,12 @@ NA_STOP = frozenset({"하나", "그러나", "아무나", "누구나", "언제나
 # 나열의 '(이)나' 뒤에는 명사가 온다. 보조 용언이 바로 오면 '어긋나 있다' 같은 '-나다' 동사다.
 NA_AUX = ("있", "버리", "버렸", "버린", "버려", "버립")
 CHECK_VERB = re.compile(r"(?<![가-힣])(확인|검증|점검|체크|검사)(?=하|합|했|해|한|할|됩|된|되|될)")
+# "입력값 검증", "서명 검증", "헬스 체크"처럼 굳은 기술 용어의 동사는 '확인'으로 바꾸지 않는다(K1.4). 바로 앞 말로 가린다.
+FIXED_CHECK = {
+    "검증": re.compile(r"(?<![가-힣])(?:입력값?|서명|인증서|토큰|체크섬|무결성|유효성|스키마)(?:을|를)?\s?\Z"),
+    "검사": re.compile(r"(?<![가-힣])(?:유효성|무결성|타입|정적|문법)(?:을|를)?\s?\Z"),
+    "체크": re.compile(r"(?<![가-힣])(?:헬스|타입)\s?\Z"),
+}
 CONFIG_NOUN = re.compile(r"(?<![가-힣])(설정\s?파일|구성\s?파일|컨피그(?:\s?파일)?|컨피규레이션)")
 SLOP_CORE = ("원활", "효율적", "강력한", "혁신적", "획기적", "손쉽게", "간편하게", "매끄럽게", "포괄적",
              "견고한", "극대화", "시너지", "패러다임", "결론적으로", "요약하자면", "정리하자면",
@@ -166,6 +172,9 @@ def rotation_hits(masked):
     for base_name, rx in (("확인", CHECK_VERB), ("설정", CONFIG_NOUN)):
         first_by_stem = {}
         for m in rx.finditer(masked):
+            fixed = FIXED_CHECK.get(m.group(1)) if rx is CHECK_VERB else None
+            if fixed and fixed.search(masked, max(0, m.start() - 12), m.start()):
+                continue
             first_by_stem.setdefault(re.sub(r"\s|파일", "", m.group(1)), m)
         if not first_by_stem:
             continue

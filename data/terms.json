@@ -540,13 +540,21 @@
       "accept": [
         "타깃"
       ],
+      "skip": [
+        "빌드 타깃",
+        "컴파일 타깃",
+        "타깃 트리플",
+        "Makefile 타깃",
+        "Makefile의 타깃",
+        "make 타깃"
+      ],
       "mix": false,
       "basis": {
         "kind": "외래어 표기 용례",
         "url": "https://korean.go.kr/kornorms/example/exampleList.do?regltn_code=0003&pageUnit=100&pageIndex=1&example_search_list%5B0%5D.searchCondition=srclang_mark&example_search_list%5B0%5D.searchEquals=equal&example_search_list%5B0%5D.searchKeyword=target"
       },
       "practice": "규범형 타깃: 현지화 37.0%(2:4), 벤더 문서 4.6%(0:2), JetBrains 822:2, 블로그 22.6%(2:7), README 14%. Microsoft 용어집과 Android는 '대상'",
-      "decision": "2026-10-08 사용자 결정: 우리말 대응어 대상을 지정. 대상은 일반어라 일관성 검사에서 뺌"
+      "decision": "2026-10-08 사용자 결정: 우리말 대응어 대상을 지정. 대상은 일반어라 일관성 검사에서 뺌. 2026-11-16 사용자 결정: 빌드 타깃처럼 이름이 굳은 합성어는 skip으로 뺌"
     },
     {
       "id": "redirect",

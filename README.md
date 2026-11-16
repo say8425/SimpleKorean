@@ -76,7 +76,7 @@ claude plugin install simple-korean@simple-korean
 
 출력 스타일 없이도 규칙은 적용됩니다. 세션 시작 훅이 같은 규칙 블록을 이미 넣기 때문입니다. Node.js가 없어 세션 시작 훅이 동작하지 않으면 출력 스타일을 적용하세요. 출력 스타일을 적용하려면 `/config`의 Output style에서 고르세요. 또는 `~/.claude/settings.json`에 `{"outputStyle": "simple-korean:simple-korean"}`을 넣으세요.
 
-세션 시작 훅은 세션마다 규칙 블록 2,476자를 넣습니다. 자세한 내용은 [`src/hooks/README.md`](src/hooks/README.md)에 있습니다.
+세션 시작 훅은 세션마다 규칙 블록 2,638자를 넣습니다. 자세한 내용은 [`src/hooks/README.md`](src/hooks/README.md)에 있습니다.
 
 ### Codex
 
@@ -272,6 +272,7 @@ em-dash, 굵은 글씨, 가운뎃점을 일부러 넣은 초안을 다듬는 과
 | 조사와 문장 끝 어미를 빼지 않습니다 | "백업 확인 필요" 같은 전보문 |
 | 중요성 말고 사실을 씁니다 | "강력한", "원활한", "단순히 X가 아니라 Y" |
 | 정해진 외래어 표기를 씁니다 | 한 문서 안에 섞인 "디렉토리"와 "디렉터리" |
+| 업계의 기술 명사를 일상어로 바꾸지 않습니다 | DB의 "테이블"을 "표"로, "칼럼"을 "칸"으로 바꿔 부르기 |
 
 ## 모드
 
