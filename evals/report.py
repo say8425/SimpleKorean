@@ -39,8 +39,8 @@ MD_FENCE = re.compile(r"^[^\S\n]*(`{3,}|~{3,})[^\S\n]*(?:markdown|md)[^\S\n]*\n(
 LINK_TARGET = re.compile(r"\]\(([^)\s]+)\)")
 README_BLOCK = re.compile(r"<!-- benchmark:start (\S+) -->\n(.*?)\n<!-- benchmark:end -->", re.S)
 # 원문(source)을 다시 쓰는 과제에서 세는 기술 명사와 일상어. DB의 table을 "표"로, column을 "칸"으로 바꾸는지 본다.
-# 한 글자 말은 낱말 전체만 센다. 뒤에 조사나 서술격 조사 하나만 붙을 수 있다. 그래서 '표기', '열어', '실행'은 세지 않는다.
-_PARTICLE = r"(?:입니다|이다|이고|이며|에서|으로|마다|까지|처럼|[은는이가을를의에도로와과만])?(?![가-힣])"
+# 한 글자 말은 낱말 전체만 센다. 뒤에는 조사와 서술격 조사만 붙을 수 있다. 그래서 '표기', '열어', '실행'은 세지 않는다.
+_PARTICLE = r"(?:들)?(?:이라는|입니다|이다|이고|이며|이나|에서|에게|으로|부터|마다|까지|처럼|씩|[은는이가을를의에도로와과만])*(?![가-힣])"
 TERM_WORDS = (("테이블", r"테이블"), ("표", r"(?<![가-힣])표" + _PARTICLE), ("칼럼", r"[칼컬]럼"),
               ("열", r"(?<![가-힣])열" + _PARTICLE), ("칸", r"(?<![가-힣])칸" + _PARTICLE),
               ("행", r"(?<![가-힣])행" + _PARTICLE), ("로우", r"(?<![가-힣])로우"))
@@ -79,9 +79,10 @@ def draft_ids(scenarios):
 def doc_stats(results_dir, scenarios):
     """조건별 문서 합계. 모든 조건을 같은 기준(기본 모드 린터, 기본 단어 목록)으로 잰다.
 
-    다듬기 과제는 빼고 센다. 초안에 일부러 넣은 표시가 오류 수에 섞이기 때문이다. 이 과제는 polish_stats가 센다.
+    다듬기 과제와 다시 쓰기 과제는 빼고 센다. 초안과 원문에 든 표시와 위반이 오류 수에 섞이기 때문이다.
+    두 과제는 polish_stats와 term_stats가 센다.
     """
-    types, drafts = {s["id"]: s["type"] for s in scenarios}, draft_ids(scenarios)
+    types, drafts = {s["id"]: s["type"] for s in scenarios}, draft_ids(scenarios) | source_ids(scenarios)
     concepts = ko_terms.load_terms()
     stats = {c: Counter() for c in DOC_CONDS}
     for path in sorted(Path(results_dir, "docs").glob("*.json")):
@@ -156,7 +157,7 @@ def source_ids(scenarios):
 
 def term_counts(text):
     """글에 든 기술 명사와 일상어의 수. 글 전체를 감싼 울타리는 벗기고, 코드 안의 말은 세지 않는다."""
-    masked = ko_text.mask(ko_text.nfc(unfenced(text)))
+    masked = ko_text.mask(ko_text.nfc(unfenced(text)), quotes=False)
     return Counter({name: n for name, rx in TERM_RX if (n := len(rx.findall(masked)))})
 
 
@@ -304,7 +305,7 @@ def benchmark_stats(results_dir, scenarios):
         "polish": polish_stats(results_dir, scenarios),
         "n_reply": replies["plain"].get("n", 0) + replies["baseline"].get("n", 0),
         "reply_shape": _shape(results_dir, "reply", "*.txt"),
-        "doc_shape": _shape(results_dir, "docs", "*.json", draft_ids(scenarios)),
+        "doc_shape": _shape(results_dir, "docs", "*.json", draft_ids(scenarios) | source_ids(scenarios)),
     }
 
 

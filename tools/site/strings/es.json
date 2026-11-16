@@ -80,7 +80,7 @@
   "r7_before": "«-ㄹ 수도 있습니다» (puede que), «-것 같습니다» (parece)",
   "r8": "Dé a cada palabra un solo significado",
   "r8_before": "Alternar «확인», «검증» y «점검» (todas significan «comprobar»)",
-  "r9": "No cambie los sustantivos técnicos por palabras cotidianas",
+  "r9": "No cambie los sustantivos técnicos del campo por palabras cotidianas",
   "r9_before": "Llamar «표» (tabla de un documento) a una «테이블» (tabla de base de datos)",
   "r_foot": "Las reglas vienen de ASD-STE100, el inglés controlado de los documentos de mantenimiento aeronáutico. Las reglas completas están en <a href=\"https://github.com/say8425/SimpleKorean/blob/main/skills/simple-korean/SKILL.md\">SKILL.md</a>.",
   "s_eyebrow": "04 Escritura",

@@ -42,7 +42,7 @@ import metrics  # noqa: E402
 import readme_i18n as i18n  # noqa: E402
 import report  # noqa: E402
 
-KEY_PHRASES = ("헤더와 목록을 써도 됩니다", "em-dash를 쓰지 마세요", "첫 문장에 답", "바꾸지 마세요", "확인하다", "레포지토리", "굵은 글씨와 표", "첫 문장 뒤에 두세요",
+KEY_PHRASES = ("헤더와 목록을 써도 됩니다", "em-dash를 쓰지 마세요", "첫 문장에 답", "바꾸지 마세요", "확인하다", "레포지토리", "굵은 글씨와 표", "첫 문장 뒤에 두세요", "일상어로 바꾸지 마세요",
                "사용자가 엄격 모드, 통제 언어, KS A 0001, STE, ASD-STE100을 말하면")
 # 답변 판본은 규칙 블록의 답변 절을 문장 규칙과 서식 규칙으로 나눈 파일이다. 한 줄에 한 문장씩 두고 둘째 줄에 절 이름을 둔다.
 PROMPT_VARIANTS = ("sentence-rules", "format-rules")

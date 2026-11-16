@@ -115,6 +115,9 @@ def test_term_stats_count_technical_and_everyday_nouns():
         assert "| 원문 | 1 | 1 | 1 | 1 | 0 | 0 | 1 | 0 |" in table
         assert "| 기본 모드 | 1 | 0 | 1 | 0 | 0 | 1 | 1 | 0 |" in table
         assert report.render_term_table(report.term_stats(root, scenarios[:1])) == ""
+        # 조사가 이어 붙어도, 복수 '들'이 붙어도 센다. 다른 낱말 안의 글자는 세지 않는다
+        counts = report.term_counts('표에는 칸에서는 한 행씩 행이나 행들을 "칸"이라는 열부터 둡니다. 대표, 빈칸, 문자열, 열심히, 열면')
+        assert counts == {"표": 1, "칸": 2, "행": 3, "열": 1}
 
 
 def test_benchmark_inputs_carry_the_marks_the_readme_describes():
