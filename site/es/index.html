@@ -149,14 +149,14 @@
 <div class="side old"><span class="ln">3</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="es">Borrador: </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<del>·</del>보안 그룹이 5432 포트를 막고 <del>있는 것입니다</del>.</p><span class="count" lang="es">12 eojeol</span></div>
 <div class="side new"><span class="ln">3</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="es">Revisado: </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<ins>이나 </ins>보안 그룹이 5432 포트를 막고 <ins>있습니다</ins>.</p><span class="count" lang="es">12 eojeol</span></div>
 </div>
-<p class="note" lang="es">Regla: <span>Una las palabras con una partícula, no con un punto medio. El progresivo «-고 있습니다» se quedó (aviso del linter)</span></p>
+<p class="note" lang="es">Regla: <span>Una las palabras con una partícula, no con un punto medio. La terminación «-고 있습니다» se quedó (aviso del linter)</span></p>
 </div>
 <div class="drow chg">
 <div class="pair">
 <div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="es">Borrador: </span><code>nc -zv &lt;호스트&gt; 5432</code><del>로</del> 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count" lang="es">5 eojeol</span></div>
 <div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="es">Revisado: </span><code>nc -zv &lt;호스트&gt; 5432</code><ins>를 실행해</ins> 연결되는지 <ins>확인하세요</ins>.</p><span class="count" lang="es">4 eojeol</span></div>
 </div>
-<p class="note" lang="es">Regla: <span>Cambie la terminación de consejo por la forma de orden «-하세요» e indique la acción (ejecutar)</span></p>
+<p class="note" lang="es">Regla: <span>Cambie la terminación de consejo por la forma de orden «-하세요»</span></p>
 </div>
 <div class="drow hdr">
 <div class="pair">
@@ -166,8 +166,8 @@
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="es">Borrador: </span><code>AccessDenied</code><del>가 나면</del> IAM 정책<del>·</del>버킷 정책에 읽기<del>·</del>쓰기 권한<del>(</del><code>s3:GetObject</code><del>, </del><code>s3:PutObject</code><del>)이</del> 있는지 확인하세요.</p><span class="count" lang="es">9 eojeol</span></div>
-<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="es">Revisado: </span><ins>sqlpipe가 </ins><code>AccessDenied</code><ins> 오류를 내면</ins> IAM 정책<ins>과 </ins>버킷 정책에 읽기<ins> 권한 </ins><code>s3:GetObject</code><ins>와 쓰기 권한 </ins><code>s3:PutObject</code><ins>가</ins> 있는지 확인하세요.</p><span class="count" lang="es">16 eojeol</span></div>
+<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="es">Borrador: </span><code>AccessDenied</code><del>가 나면</del> IAM 정책<del>·</del>버킷 정책에 읽기<del>·쓰기</del> 권한<del>(</del><code>s3:GetObject</code><del>, </del><code>s3:PutObject</code><del>)이</del> 있는지 확인하세요.</p><span class="count" lang="es">9 eojeol</span></div>
+<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="es">Revisado: </span><ins>sqlpipe가 </ins><code>AccessDenied</code><ins> 오류를 내면</ins> IAM 정책<ins>과 </ins>버킷 정책에 읽기 권한<ins> </ins><code>s3:GetObject</code><ins>와 쓰기 권한 </ins><code>s3:PutObject</code><ins>가</ins> 있는지 확인하세요.</p><span class="count" lang="es">16 eojeol</span></div>
 </div>
 <p class="note" lang="es">Regla: <span>Una las palabras con «과» y «와» (y), no con un punto medio. Esta oración tiene 16 eojeol y supera el límite de 15 para los procedimientos (aviso del linter)</span></p>
 </div>
@@ -203,12 +203,12 @@
 <div>
 <dt>Avisos del linter en documentos</dt>
 <dd class="num">1.31 → <em>0.00</em></dd>
-<dd>Avisos del linter por cada 100 eojeol. Un eojeol es una unidad de texto coreano entre dos espacios.</dd>
+<dd>Avisos del linter por cada 100 eojeol. Un eojeol es una unidad de texto coreano entre dos espacios. No se cuentan las tareas de pulir y de reescribir.</dd>
 </div>
 <div>
 <dt>Oración más larga</dt>
 <dd class="num">16 → <em>12</em><span class="unit"> eojeol</span></dd>
-<dd>La oración más larga en 16 documentos. En el modo estricto es de 13 eojeol.</dd>
+<dd>La oración más larga en 16 documentos. En el modo estricto es de 13 eojeol. No se cuentan las tareas de pulir y de reescribir.</dd>
 </div>
 </dl>
 <p class="foot">claude-sonnet-5-5 escribió los documentos y las respuestas. claude-opus-5-5 hizo de juez.<br>El juez también es Claude, así que puede favorecer a modelos de la misma familia.</p>

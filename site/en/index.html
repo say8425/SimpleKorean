@@ -156,7 +156,7 @@
 <div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="en">Draft: </span><code>nc -zv &lt;호스트&gt; 5432</code><del>로</del> 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count" lang="en">5 eojeol</span></div>
 <div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="en">Revised: </span><code>nc -zv &lt;호스트&gt; 5432</code><ins>를 실행해</ins> 연결되는지 <ins>확인하세요</ins>.</p><span class="count" lang="en">4 eojeol</span></div>
 </div>
-<p class="note" lang="en">Rule: <span>Change the advice ending to the command form "-하세요", and name the action (run)</span></p>
+<p class="note" lang="en">Rule: <span>Change the advice ending to the command form "-하세요"</span></p>
 </div>
 <div class="drow hdr">
 <div class="pair">
@@ -166,8 +166,8 @@
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="en">Draft: </span><code>AccessDenied</code><del>가 나면</del> IAM 정책<del>·</del>버킷 정책에 읽기<del>·</del>쓰기 권한<del>(</del><code>s3:GetObject</code><del>, </del><code>s3:PutObject</code><del>)이</del> 있는지 확인하세요.</p><span class="count" lang="en">9 eojeol</span></div>
-<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="en">Revised: </span><ins>sqlpipe가 </ins><code>AccessDenied</code><ins> 오류를 내면</ins> IAM 정책<ins>과 </ins>버킷 정책에 읽기<ins> 권한 </ins><code>s3:GetObject</code><ins>와 쓰기 권한 </ins><code>s3:PutObject</code><ins>가</ins> 있는지 확인하세요.</p><span class="count" lang="en">16 eojeol</span></div>
+<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="en">Draft: </span><code>AccessDenied</code><del>가 나면</del> IAM 정책<del>·</del>버킷 정책에 읽기<del>·쓰기</del> 권한<del>(</del><code>s3:GetObject</code><del>, </del><code>s3:PutObject</code><del>)이</del> 있는지 확인하세요.</p><span class="count" lang="en">9 eojeol</span></div>
+<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="en">Revised: </span><ins>sqlpipe가 </ins><code>AccessDenied</code><ins> 오류를 내면</ins> IAM 정책<ins>과 </ins>버킷 정책에 읽기 권한<ins> </ins><code>s3:GetObject</code><ins>와 쓰기 권한 </ins><code>s3:PutObject</code><ins>가</ins> 있는지 확인하세요.</p><span class="count" lang="en">16 eojeol</span></div>
 </div>
 <p class="note" lang="en">Rule: <span>Join words with "과" and "와" (and), not a middle dot. This sentence has 16 eojeol, over the 15-eojeol limit for procedures (a linter warning)</span></p>
 </div>
@@ -203,12 +203,12 @@
 <div>
 <dt>Linter warnings in documents</dt>
 <dd class="num">1.31 → <em>0.00</em></dd>
-<dd>Linter warnings per 100 eojeol. An eojeol is a unit of Korean text between two spaces.</dd>
+<dd>Linter warnings per 100 eojeol. An eojeol is a unit of Korean text between two spaces. The polishing and rewriting tasks are not counted.</dd>
 </div>
 <div>
 <dt>Longest sentence</dt>
 <dd class="num">16 → <em>12</em><span class="unit"> eojeol</span></dd>
-<dd>The longest sentence in 16 documents. In strict mode, it is 13 eojeol.</dd>
+<dd>The longest sentence in 16 documents. In strict mode, it is 13 eojeol. The polishing and rewriting tasks are not counted.</dd>
 </div>
 </dl>
 <p class="foot">claude-sonnet-5-5 wrote the documents and replies. claude-opus-5-5 was the judge.<br>The judge is also Claude, so it can favor models of the same family.</p>

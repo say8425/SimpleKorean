@@ -149,14 +149,14 @@
 <div class="side old"><span class="ln">3</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<del>·</del>보안 그룹이 5432 포트를 막고 <del>있는 것입니다</del>.</p><span class="count" lang="zh-Hans">12 个语节</span></div>
 <div class="side new"><span class="ln">3</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<ins>이나 </ins>보안 그룹이 5432 포트를 막고 <ins>있습니다</ins>.</p><span class="count" lang="zh-Hans">12 个语节</span></div>
 </div>
-<p class="note" lang="zh-Hans">所用规则： <span>用助词代替间隔号连接。“-고 있습니다”（进行体）保留了下来（检查器警告）</span></p>
+<p class="note" lang="zh-Hans">所用规则： <span>用助词代替间隔号连接。语尾“-고 있습니다”保留了下来（检查器警告）</span></p>
 </div>
 <div class="drow chg">
 <div class="pair">
 <div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span><code>nc -zv &lt;호스트&gt; 5432</code><del>로</del> 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count" lang="zh-Hans">5 个语节</span></div>
 <div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span><code>nc -zv &lt;호스트&gt; 5432</code><ins>를 실행해</ins> 연결되는지 <ins>확인하세요</ins>.</p><span class="count" lang="zh-Hans">4 个语节</span></div>
 </div>
-<p class="note" lang="zh-Hans">所用规则： <span>把建议语尾改为命令形“-하세요”，并写明要做的动作（运行）</span></p>
+<p class="note" lang="zh-Hans">所用规则： <span>把建议语尾改为命令形“-하세요”</span></p>
 </div>
 <div class="drow hdr">
 <div class="pair">
@@ -166,8 +166,8 @@
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span><code>AccessDenied</code><del>가 나면</del> IAM 정책<del>·</del>버킷 정책에 읽기<del>·</del>쓰기 권한<del>(</del><code>s3:GetObject</code><del>, </del><code>s3:PutObject</code><del>)이</del> 있는지 확인하세요.</p><span class="count" lang="zh-Hans">9 个语节</span></div>
-<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span><ins>sqlpipe가 </ins><code>AccessDenied</code><ins> 오류를 내면</ins> IAM 정책<ins>과 </ins>버킷 정책에 읽기<ins> 권한 </ins><code>s3:GetObject</code><ins>와 쓰기 권한 </ins><code>s3:PutObject</code><ins>가</ins> 있는지 확인하세요.</p><span class="count" lang="zh-Hans">16 个语节</span></div>
+<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span><code>AccessDenied</code><del>가 나면</del> IAM 정책<del>·</del>버킷 정책에 읽기<del>·쓰기</del> 권한<del>(</del><code>s3:GetObject</code><del>, </del><code>s3:PutObject</code><del>)이</del> 있는지 확인하세요.</p><span class="count" lang="zh-Hans">9 个语节</span></div>
+<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span><ins>sqlpipe가 </ins><code>AccessDenied</code><ins> 오류를 내면</ins> IAM 정책<ins>과 </ins>버킷 정책에 읽기 권한<ins> </ins><code>s3:GetObject</code><ins>와 쓰기 권한 </ins><code>s3:PutObject</code><ins>가</ins> 있는지 확인하세요.</p><span class="count" lang="zh-Hans">16 个语节</span></div>
 </div>
 <p class="note" lang="zh-Hans">所用规则： <span>用“과”“와”（和）代替间隔号连接。这句有 16 个语节，超过步骤句 15 个语节的上限（检查器警告）</span></p>
 </div>
@@ -203,12 +203,12 @@
 <div>
 <dt>文档的检查器警告</dt>
 <dd class="num">1.31 → <em>0.00</em></dd>
-<dd>每 100 个语节的检查器警告数。语节是韩语中按空格分开的单位。</dd>
+<dd>每 100 个语节的检查器警告数。语节是韩语中按空格分开的单位。不计润色任务和改写任务。</dd>
 </div>
 <div>
 <dt>最长句子</dt>
 <dd class="num">16 → <em>12</em><span class="unit"> 个语节</span></dd>
-<dd>16 份文档中最长的句子。严格模式下为 13 个语节。</dd>
+<dd>16 份文档中最长的句子。严格模式下为 13 个语节。不计润色任务和改写任务。</dd>
 </div>
 </dl>
 <p class="foot">文档和回答由 claude-sonnet-5-5 编写，由 claude-opus-5-5 评判。<br>评判模型也是 Claude，所以可能偏向同一系列的模型。</p>
