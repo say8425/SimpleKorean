@@ -1,0 +1,13 @@
+{
+  "text": "## 문제 해결\n\n### Postgres 연결 타임아웃\n\nsqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽 또는 보안 그룹이 5432 포트를 막아서 생깁니다. sqlpipe를 실행하는 호스트에서 다음 명령으로 연결할 수 있는지 확인하세요.\n\n```\nnc -zv <호스트> 5432\n```\n\n### S3 권한 오류\n\n`AccessDenied` 오류가 나면 다음 순서로 확인하세요.\n\n1. `aws sts get-caller-identity`를 실행해 지금 쓰는 자격 증명(credentials)을 확인하세요.\n2. 그 자격 증명의 IAM 정책과 버킷 정책에 읽기 및 쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 1287,
+  "cost_usd": 0.0689907,
+  "duration_ms": 10498,
+  "condition": "strict",
+  "scenario": "polish",
+  "type": "procedural",
+  "run": 1
+}

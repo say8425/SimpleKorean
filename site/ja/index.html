@@ -123,7 +123,7 @@
 <li>太字 <span>2 → 0</span></li>
 <li>中点 <span>3 → 0</span></li>
 <li>勧めの語尾 <span>2 → 0</span></li>
-<li>最長の文 <span>12語節 → 11語節</span></li>
+<li>最長の文 <span>12語節 → 16語節</span></li>
 </ul>
 
 <div class="diff" lang="ko">
@@ -146,17 +146,17 @@
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">3</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="ja">下書き： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<del>·</del>보안 그룹이 5432 포트를 <del>막고 있는 것입니다</del>.</p><span class="count" lang="ja">12語節</span></div>
-<div class="side new"><span class="ln">3</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="ja">修正後： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<ins>이나 </ins>보안 그룹이 5432 포트를 <ins>막습니다</ins>.</p><span class="count" lang="ja">11語節</span></div>
+<div class="side old"><span class="ln">3</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="ja">下書き： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<del>·</del>보안 그룹이 5432 포트를 막고 <del>있는 것입니다</del>.</p><span class="count" lang="ja">12語節</span></div>
+<div class="side new"><span class="ln">3</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="ja">修正後： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<ins>이나 </ins>보안 그룹이 5432 포트를 막고 <ins>있습니다</ins>.</p><span class="count" lang="ja">12語節</span></div>
 </div>
-<p class="note" lang="ja">適用したルール： <span>中点の代わりに助詞でつなぎ、単純な現在形で書きます</span></p>
+<p class="note" lang="ja">適用したルール： <span>中点の代わりに助詞でつなぎます。「-고 있습니다」（〜しています）は残りました（リンター警告）</span></p>
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="ja">下書き： </span><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count" lang="ja">5語節</span></div>
-<div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="ja">修正後： </span><ins>sqlpipe를 실행하는 호스트에서 </ins><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <ins>확인하세요</ins>.</p><span class="count" lang="ja">6語節</span></div>
+<div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="ja">下書き： </span><code>nc -zv &lt;호스트&gt; 5432</code><del>로</del> 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count" lang="ja">5語節</span></div>
+<div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="ja">修正後： </span><code>nc -zv &lt;호스트&gt; 5432</code><ins>를 실행해</ins> 연결되는지 <ins>확인하세요</ins>.</p><span class="count" lang="ja">4語節</span></div>
 </div>
-<p class="note" lang="ja">適用したルール： <span>コマンドを実行するホストを明示し、勧めの語尾を命令形「-하세요」に変えます</span></p>
+<p class="note" lang="ja">適用したルール： <span>勧めの語尾を命令形「-하세요」に変え、する動作（実行）を明示します</span></p>
 </div>
 <div class="drow hdr">
 <div class="pair">
@@ -164,30 +164,23 @@
 <div class="side new"><span class="ln">5</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="ja">修正後： </span><ins>### </ins>S3 권한 오류</p><span class="count"></span></div>
 </div>
 </div>
-<div class="drow add">
+<div class="drow chg">
 <div class="pair">
-<div class="side old empty"></div>
-<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="ja">修正後に加えた文： </span>sqlpipe가 <code>AccessDenied</code> 오류를 내면 먼저 <code>aws sts get-caller-identity</code>로 현재 쓰는 자격 증명을 확인하세요.</p><span class="count" lang="ja">11語節</span></div>
+<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="ja">下書き： </span><code>AccessDenied</code><del>가 나면</del> IAM 정책<del>·</del>버킷 정책에 읽기<del>·</del>쓰기 권한<del>(</del><code>s3:GetObject</code><del>, </del><code>s3:PutObject</code><del>)이</del> 있는지 확인하세요.</p><span class="count" lang="ja">9語節</span></div>
+<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="ja">修正後： </span><ins>sqlpipe가 </ins><code>AccessDenied</code><ins> 오류를 내면</ins> IAM 정책<ins>과 </ins>버킷 정책에 읽기<ins> 권한 </ins><code>s3:GetObject</code><ins>와 쓰기 권한 </ins><code>s3:PutObject</code><ins>가</ins> 있는지 확인하세요.</p><span class="count" lang="ja">16語節</span></div>
 </div>
-<p class="note" lang="ja">適用したルール： <span>最初にすることを前に置きます</span></p>
+<p class="note" lang="ja">適用したルール： <span>中点の代わりに「과」「와」（と）でつなぎます。この文は16語節で、手順文の上限15語節を超えます（リンター警告）</span></p>
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="ja">下書き： </span><del><code>AccessDenied</code>가 나면 </del>IAM 정책<del>·</del>버킷 정책에 읽기<del>·</del>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count" lang="ja">10語節</span></div>
-<div class="side new"><span class="ln">7</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="ja">修正後： </span><ins>그다음 </ins>IAM 정책<ins>과 </ins>버킷 정책에 읽기<ins>와 </ins>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count" lang="ja">11語節</span></div>
+<div class="side old"><span class="ln">7</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="ja">下書き： </span>먼저 <code>aws sts get-caller-identity</code><del>로</del> 지금 쓰는 자격 증명을 <del>확인하는 것이 좋습니다</del>.</p><span class="count" lang="ja">9語節</span></div>
+<div class="side new"><span class="ln">7</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="ja">修正後： </span>먼저 <code>aws sts get-caller-identity</code><ins>를 실행해</ins> 지금 쓰는 자격 증명을 <ins>확인하세요</ins>.</p><span class="count" lang="ja">8語節</span></div>
 </div>
-<p class="note" lang="ja">適用したルール： <span>中点の代わりに「과」「와」（と）でつなぎます</span></p>
-</div>
-<div class="drow del">
-<div class="pair">
-<div class="side old"><span class="ln">7</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="ja">下書きから消した文： </span>먼저 <code>aws sts get-caller-identity</code>로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.</p><span class="count" lang="ja">9語節</span></div>
-<div class="side new empty"></div>
-</div>
-<p class="note" lang="ja">適用したルール： <span>右の6番の文に移し、勧めの語尾を消しました</span></p>
+<p class="note" lang="ja">適用したルール： <span>勧めの語尾を命令形「-하세요」に変えます</span></p>
 </div>
 </div>
 
-<p class="foot">出典：<a href="https://github.com/say8425/SimpleKorean/tree/main/evals/results/2026-10-21">evals/results/2026-10-21</a>。文の対応と適用したルールは人が付けました。ほかの比較は<a href="https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a">前後の例</a>を参照してください。</p>
+<p class="foot">出典：<a href="https://github.com/say8425/SimpleKorean/tree/main/evals/results/2026-11-16">evals/results/2026-11-16</a>。文の対応と適用したルールは人が付けました。ほかの比較は<a href="https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a">前後の例</a>を参照してください。</p>
 </div>
 </section>
 
@@ -199,22 +192,22 @@
 <dl class="metrics">
 <div>
 <dt>回答の書式の欠陥</dt>
-<dd class="num">162 → <em>0</em></dd>
+<dd class="num">163 → <em>0</em></dd>
 <dd>回答32個で画面に見える欠陥の数。em-dash、太字、表、先頭行の見出しや箇条書きを数えます。</dd>
 </div>
 <div>
 <dt>ブラインド判定</dt>
-<dd class="num">16組中 <em>12</em>組</dd>
-<dd>どちらがスキルの回答かを伏せた判定で、SimpleKorean の回答が勝った組。3組は引き分け、1組は負けでした。</dd>
+<dd class="num">16組中 <em>14</em>組</dd>
+<dd>どちらがスキルの回答かを伏せた判定で、SimpleKorean の回答が勝った組。1組は引き分け、1組は負けでした。</dd>
 </div>
 <div>
 <dt>文書のリンター警告</dt>
-<dd class="num">0.71 → <em>0.17</em></dd>
+<dd class="num">1.31 → <em>0.00</em></dd>
 <dd>100語節あたりのリンター警告。語節は分かち書きで区切った単位です。</dd>
 </div>
 <div>
 <dt>最長の文</dt>
-<dd class="num">18 → <em>15</em><span class="unit">語節</span></dd>
+<dd class="num">16 → <em>12</em><span class="unit">語節</span></dd>
 <dd>文書16個の中で最も長い文。厳格モードでは13語節です。</dd>
 </div>
 </dl>

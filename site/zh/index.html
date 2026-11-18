@@ -123,7 +123,7 @@
 <li>粗体 <span>2 → 0</span></li>
 <li>间隔号 <span>3 → 0</span></li>
 <li>建议语尾 <span>2 → 0</span></li>
-<li>最长句子 <span>12 个语节 → 11 个语节</span></li>
+<li>最长句子 <span>12 个语节 → 16 个语节</span></li>
 </ul>
 
 <div class="diff" lang="ko">
@@ -146,17 +146,17 @@
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">3</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<del>·</del>보안 그룹이 5432 포트를 <del>막고 있는 것입니다</del>.</p><span class="count" lang="zh-Hans">12 个语节</span></div>
-<div class="side new"><span class="ln">3</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<ins>이나 </ins>보안 그룹이 5432 포트를 <ins>막습니다</ins>.</p><span class="count" lang="zh-Hans">11 个语节</span></div>
+<div class="side old"><span class="ln">3</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<del>·</del>보안 그룹이 5432 포트를 막고 <del>있는 것입니다</del>.</p><span class="count" lang="zh-Hans">12 个语节</span></div>
+<div class="side new"><span class="ln">3</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<ins>이나 </ins>보안 그룹이 5432 포트를 막고 <ins>있습니다</ins>.</p><span class="count" lang="zh-Hans">12 个语节</span></div>
 </div>
-<p class="note" lang="zh-Hans">所用规则： <span>用助词代替间隔号连接，并用一般现在时</span></p>
+<p class="note" lang="zh-Hans">所用规则： <span>用助词代替间隔号连接。“-고 있습니다”（进行体）保留了下来（检查器警告）</span></p>
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count" lang="zh-Hans">5 个语节</span></div>
-<div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span><ins>sqlpipe를 실행하는 호스트에서 </ins><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <ins>확인하세요</ins>.</p><span class="count" lang="zh-Hans">6 个语节</span></div>
+<div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span><code>nc -zv &lt;호스트&gt; 5432</code><del>로</del> 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count" lang="zh-Hans">5 个语节</span></div>
+<div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span><code>nc -zv &lt;호스트&gt; 5432</code><ins>를 실행해</ins> 연결되는지 <ins>확인하세요</ins>.</p><span class="count" lang="zh-Hans">4 个语节</span></div>
 </div>
-<p class="note" lang="zh-Hans">所用规则： <span>写明运行命令的主机，并把建议语尾改为命令形“-하세요”</span></p>
+<p class="note" lang="zh-Hans">所用规则： <span>把建议语尾改为命令形“-하세요”，并写明要做的动作（运行）</span></p>
 </div>
 <div class="drow hdr">
 <div class="pair">
@@ -164,30 +164,23 @@
 <div class="side new"><span class="ln">5</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span><ins>### </ins>S3 권한 오류</p><span class="count"></span></div>
 </div>
 </div>
-<div class="drow add">
+<div class="drow chg">
 <div class="pair">
-<div class="side old empty"></div>
-<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后新增的句子： </span>sqlpipe가 <code>AccessDenied</code> 오류를 내면 먼저 <code>aws sts get-caller-identity</code>로 현재 쓰는 자격 증명을 확인하세요.</p><span class="count" lang="zh-Hans">11 个语节</span></div>
+<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span><code>AccessDenied</code><del>가 나면</del> IAM 정책<del>·</del>버킷 정책에 읽기<del>·</del>쓰기 권한<del>(</del><code>s3:GetObject</code><del>, </del><code>s3:PutObject</code><del>)이</del> 있는지 확인하세요.</p><span class="count" lang="zh-Hans">9 个语节</span></div>
+<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span><ins>sqlpipe가 </ins><code>AccessDenied</code><ins> 오류를 내면</ins> IAM 정책<ins>과 </ins>버킷 정책에 읽기<ins> 권한 </ins><code>s3:GetObject</code><ins>와 쓰기 권한 </ins><code>s3:PutObject</code><ins>가</ins> 있는지 확인하세요.</p><span class="count" lang="zh-Hans">16 个语节</span></div>
 </div>
-<p class="note" lang="zh-Hans">所用规则： <span>把先做的事放在前面</span></p>
+<p class="note" lang="zh-Hans">所用规则： <span>用“과”“와”（和）代替间隔号连接。这句有 16 个语节，超过步骤句 15 个语节的上限（检查器警告）</span></p>
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span><del><code>AccessDenied</code>가 나면 </del>IAM 정책<del>·</del>버킷 정책에 읽기<del>·</del>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count" lang="zh-Hans">10 个语节</span></div>
-<div class="side new"><span class="ln">7</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span><ins>그다음 </ins>IAM 정책<ins>과 </ins>버킷 정책에 읽기<ins>와 </ins>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count" lang="zh-Hans">11 个语节</span></div>
+<div class="side old"><span class="ln">7</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">草稿： </span>먼저 <code>aws sts get-caller-identity</code><del>로</del> 지금 쓰는 자격 증명을 <del>확인하는 것이 좋습니다</del>.</p><span class="count" lang="zh-Hans">9 个语节</span></div>
+<div class="side new"><span class="ln">7</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="zh-Hans">修改后： </span>먼저 <code>aws sts get-caller-identity</code><ins>를 실행해</ins> 지금 쓰는 자격 증명을 <ins>확인하세요</ins>.</p><span class="count" lang="zh-Hans">8 个语节</span></div>
 </div>
-<p class="note" lang="zh-Hans">所用规则： <span>用“과”“와”（和）代替间隔号连接</span></p>
-</div>
-<div class="drow del">
-<div class="pair">
-<div class="side old"><span class="ln">7</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="zh-Hans">从草稿中删除的句子： </span>먼저 <code>aws sts get-caller-identity</code>로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.</p><span class="count" lang="zh-Hans">9 个语节</span></div>
-<div class="side new empty"></div>
-</div>
-<p class="note" lang="zh-Hans">所用规则： <span>移到右边第 6 句，并删除建议语尾</span></p>
+<p class="note" lang="zh-Hans">所用规则： <span>把建议语尾改为命令形“-하세요”</span></p>
 </div>
 </div>
 
-<p class="foot">来源：<a href="https://github.com/say8425/SimpleKorean/tree/main/evals/results/2026-10-21">evals/results/2026-10-21</a>。句子之间的对应和所用规则由人工标注。更多对比请参阅<a href="https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a">前后示例</a>。</p>
+<p class="foot">来源：<a href="https://github.com/say8425/SimpleKorean/tree/main/evals/results/2026-11-16">evals/results/2026-11-16</a>。句子之间的对应和所用规则由人工标注。更多对比请参阅<a href="https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a">前后示例</a>。</p>
 </div>
 </section>
 
@@ -199,22 +192,22 @@
 <dl class="metrics">
 <div>
 <dt>回答中的格式缺陷</dt>
-<dd class="num">162 → <em>0</em></dd>
+<dd class="num">163 → <em>0</em></dd>
 <dd>32 个回答中读者能看到的缺陷数。统计 em-dash、粗体、表格，以及第一行的标题或列表。</dd>
 </div>
 <div>
 <dt>盲评</dt>
-<dd class="num"><em>12</em> / 16</dd>
-<dd>在不知道哪个是技能回答的评判中，16 组里 SimpleKorean 回答胜出的组数。3 组打平，1 组落败。</dd>
+<dd class="num"><em>14</em> / 16</dd>
+<dd>在不知道哪个是技能回答的评判中，16 组里 SimpleKorean 回答胜出的组数。1 组打平，1 组落败。</dd>
 </div>
 <div>
 <dt>文档的检查器警告</dt>
-<dd class="num">0.71 → <em>0.17</em></dd>
+<dd class="num">1.31 → <em>0.00</em></dd>
 <dd>每 100 个语节的检查器警告数。语节是韩语中按空格分开的单位。</dd>
 </div>
 <div>
 <dt>最长句子</dt>
-<dd class="num">18 → <em>15</em><span class="unit"> 个语节</span></dd>
+<dd class="num">16 → <em>12</em><span class="unit"> 个语节</span></dd>
 <dd>16 份文档中最长的句子。严格模式下为 13 个语节。</dd>
 </div>
 </dl>

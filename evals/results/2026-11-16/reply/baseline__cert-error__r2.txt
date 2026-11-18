@@ -1,0 +1,42 @@
+**무슨 일인가요**
+
+curl이 서버의 인증서를 검증하려면 그 인증서를 발급한 CA(인증 기관)까지 이어지는 체인을 신뢰할 수 있어야 합니다. 이 오류는 서버가 보낸 인증서의 발급자(issuer)를 curl의 CA 번들에서 찾지 못했다는 뜻입니다.
+
+개발·스테이징 서버에서 모두 나오고 사내 API라면, 원인은 대개 다음 중 하나입니다.
+
+1. **사내 사설 CA로 발급한 인증서**: 공인 CA 번들에는 사내 루트 CA가 없습니다.
+2. **서버가 중간 인증서를 보내지 않는 경우**: 서버 설정에서 fullchain 대신 leaf 인증서만 내보내는 경우입니다.
+3. **사내 프록시나 보안 장비의 SSL 인스펙션**: 장비가 인증서를 재서명하는데, 그 사내 CA가 내 PC에 신뢰 등록돼 있지 않은 경우입니다.
+4. **curl이 다른 CA 번들을 보는 경우**: Homebrew curl과 시스템 curl은 참조하는 번들이 다릅니다. macOS 키체인에 사내 CA를 넣어도 Homebrew curl은 이를 쓰지 않을 수 있습니다.
+
+**원인 확인**
+
+```sh
+# 서버가 보내는 체인과 발급자 확인
+openssl s_client -connect <호스트>:443 -showcerts </dev/null 2>/dev/null | grep -E 's:|i:|Verify return'
+
+# curl이 쓰는 CA 번들 확인
+curl -v https://<호스트>/ 2>&1 | grep -i -E 'CAfile|CApath'
+which -a curl
+```
+
+- 체인에 인증서가 1개뿐이고 `unable to verify the first certificate`가 보이면 서버가 중간 인증서를 빠뜨린 것입니다(원인 2).
+- 발급자(`i:`)가 사내 CA나 보안 장비 이름이면 원인 1 또는 3입니다.
+
+**해결**
+
+- **사내 루트 CA를 신뢰시키기 (권장)**: IT/보안팀이나 인프라팀에서 사내 루트 CA의 PEM 파일을 받습니다.
+  ```sh
+  curl --cacert /path/to/company-root-ca.pem https://api.dev.example.com/
+  # 또는 환경변수로 고정
+  export CURL_CA_BUNDLE=/path/to/company-root-ca.pem
+  ```
+  이 방법은 사내 CA만 인식하게 되므로, 공인 사이트도 함께 쓰려면 기존 번들(`$(brew --prefix)/etc/ca-certificates/cert.pem`)에 사내 CA를 이어 붙인 파일을 만들어 쓰세요.
+- **macOS 시스템 curl 사용**: 사내 CA를 키체인에 등록해 뒀다면 `/usr/bin/curl`은 키체인을 참조하므로 그대로 동작할 수 있습니다.
+- **서버 측 수정 (원인 2)**: 서버나 로드밸런서에 leaf 인증서만 설치했다면 fullchain(leaf + 중간 인증서)으로 교체해야 합니다. 이 경우 다른 클라이언트에서도 같은 문제가 생깁니다.
+
+**피해야 할 방법**
+
+`curl -k`(`--insecure`)는 검증을 끄는 것이라 임시 확인용으로만 쓰세요. 스크립트나 CI에 넣으면 중간자 공격에 노출됩니다.
+
+openssl 확인 결과(발급자 줄)를 알려주시면 어느 원인인지 더 정확히 짚어 드리겠습니다.

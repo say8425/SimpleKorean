@@ -26,7 +26,7 @@ DIFFS = Path("examples", "diffs")
 # examples/diffs/를 '전'에서 '후'로 바꾼 커밋(#26). 이 커밋의 diff가 예시마다 두 글의 차이를 보인다.
 DIFF_URL = "https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a"
 # DIFF_URL의 커밋을 만든 결과 디렉터리. README가 다른 결과를 가리키면 check_numbers.py가 알린다.
-DIFF_RESULTS = "evals/results/2026-10-21"
+DIFF_RESULTS = "evals/results/2026-11-16"
 STAGES = ("before", "after")
 RUN = 1
 DOC_PICKS = (

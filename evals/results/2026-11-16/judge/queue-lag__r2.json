@@ -1,0 +1,8 @@
+{
+  "scenario": "queue-lag",
+  "run": 2,
+  "judge_model": "claude-opus-5-5",
+  "order1_baseline_first": "B",
+  "order2_plain_first": "A",
+  "winner": "plain"
+}

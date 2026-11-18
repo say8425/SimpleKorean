@@ -155,7 +155,7 @@ Estos son dos documentos en los que el mismo modelo pulió el mismo borrador: un
 <tr>
 <td valign="top">
 
-<!-- draft: evals/results/2026-10-21/inputs/scenarios.json#polish -->
+<!-- draft: evals/results/2026-11-16/inputs/scenarios.json#polish -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
@@ -167,38 +167,42 @@ Estos son dos documentos en los que el mismo modelo pulió el mismo borrador: un
 </td>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-21/docs/baseline__polish__r1.json -->
+<!-- source: evals/results/2026-11-16/docs/baseline__polish__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
-> **Postgres 연결 타임아웃** — sqlpipe에서 `connection timed out` 오류가 나면 대개 방화벽이나 보안 그룹이 5432 포트를 막고 있는 경우입니다. `nc -zv <호스트> 5432`로 연결 가능 여부를 먼저 확인하세요.
+> **Postgres 연결 타임아웃** — sqlpipe가 `connection timed out` 오류를 내면 대개 방화벽이나 보안 그룹이 5432 포트를 막고 있는 경우입니다. `nc -zv <호스트> 5432`로 해당 포트에 연결되는지 먼저 확인하세요.
 >
-> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책과 버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 그 전에 `aws sts get-caller-identity`로 현재 사용 중인 자격 증명이 맞는지 먼저 확인하는 것이 좋습니다.
+> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책과 버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 그 전에 `aws sts get-caller-identity`로 현재 사용 중인 자격 증명이 의도한 것인지 확인하는 것이 좋습니다.
 <!-- simple-korean: on -->
 
 </td>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-21/docs/plain__polish__r1.json -->
+<!-- source: evals/results/2026-11-16/docs/plain__polish__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
 > ### Postgres 연결 타임아웃
 >
-> sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽이나 보안 그룹이 5432 포트를 막습니다. sqlpipe를 실행하는 호스트에서 `nc -zv <호스트> 5432`로 연결되는지 확인하세요.
+> sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽이나 보안 그룹이 5432 포트를 막고 있습니다.
+>
+> `nc -zv <호스트> 5432`를 실행해 연결되는지 확인하세요.
 >
 > ### S3 권한 오류
 >
-> sqlpipe가 `AccessDenied` 오류를 내면 먼저 `aws sts get-caller-identity`로 현재 쓰는 자격 증명을 확인하세요. 그다음 IAM 정책과 버킷 정책에 읽기와 쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요.
+> sqlpipe가 `AccessDenied` 오류를 내면 IAM 정책과 버킷 정책에 읽기 권한 `s3:GetObject`와 쓰기 권한 `s3:PutObject`가 있는지 확인하세요.
+>
+> 먼저 `aws sts get-caller-identity`를 실행해 지금 쓰는 자격 증명을 확인하세요.
 <!-- simple-korean: on -->
 
 </td>
 </tr>
 </table>
 
-Los archivos originales de los documentos pulidos son `evals/results/2026-10-21/docs/baseline__polish__r1.json` (centro) y `evals/results/2026-10-21/docs/plain__polish__r1.json` (derecha).
+Los archivos originales de los documentos pulidos son `evals/results/2026-11-16/docs/baseline__polish__r1.json` (centro) y `evals/results/2026-11-16/docs/plain__polish__r1.json` (derecha).
 
-El borrador es la tarea `polish` de [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
+El borrador es la tarea `polish` de [`evals/results/2026-11-16/inputs/scenarios.json`](../evals/results/2026-11-16/inputs/scenarios.json).
 
 Los ejemplos de respuestas y más ejemplos de documentos están en [`examples/before-after.md`](../examples/before-after.md). Los cambios de cada ejemplo se ven en el [diff de este commit](https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a).
 <!-- example:end -->
@@ -207,15 +211,15 @@ Los ejemplos de respuestas y más ejemplos de documentos están en [`examples/be
 
 Volvimos a calcular todas las cifras de abajo a partir de las salidas originales guardadas en los commits. En cada push, la CI las compara con `evals/check_numbers.py`. `claude-sonnet-5-5` (effort low) escribió los documentos y las respuestas, y `claude-opus-5-5` hizo la evaluación. Ninguna ejecución leyó la configuración del usuario, servidores MCP ni archivos de instrucciones como AGENTS.md. El modelo evaluador también es Claude, así que puede tener un sesgo a favor de su misma familia de modelos. Un eojeol es una unidad del coreano separada por espacios.
 
-<!-- benchmark:start evals/results/2026-10-21 -->
+<!-- benchmark:start evals/results/2026-11-16 -->
 ### Respuestas
 
-Hicimos 8 preguntas 2 veces en cada condición. Cada pregunta contiene un término técnico, un em-dash y un punto medio (·). Las reglas de respuesta no prohíben el punto medio, así que lo contamos aparte y no lo sumamos a los defectos. En total hay 32 respuestas. Con la skill activada, los defectos visibles para el lector (em-dash, negritas, tablas, encabezado o lista en la primera línea) bajaron un 100 % (de 162 a 0). En una evaluación a ciegas de 16 pares, la respuesta de SimpleKorean ganó 12, empató 3 y perdió 1. Aunque cada pregunta tenía un em-dash, las respuestas sin la skill no usaron ninguno. Por eso, la tarea de pulido de la sección de documentos comprueba si la skill los quita.
+Hicimos 8 preguntas 2 veces en cada condición. Cada pregunta contiene un término técnico, un em-dash y un punto medio (·). Las reglas de respuesta no prohíben el punto medio, así que lo contamos aparte y no lo sumamos a los defectos. En total hay 32 respuestas. Con la skill activada, los defectos visibles para el lector (em-dash, negritas, tablas, encabezado o lista en la primera línea) bajaron un 100 % (de 163 a 0). En una evaluación a ciegas de 16 pares, la respuesta de SimpleKorean ganó 14, empató 1 y perdió 1.
 
 | Condición | Respuestas | Media de eojeol | Media de oraciones | em-dash | Negritas | Tablas | Encabezado o lista en la primera línea | Punto medio | Encabezados | Viñetas | Saludos y despedidas |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Sin skill | 16 | 266 | 31.2 | 0 | 155 | 3 | 4 | 26 | 36 | 211 | 13 |
-| SimpleKorean | 16 | 223 | 31.0 | 0 | 0 | 0 | 0 | 2 | 54 | 173 | 5 |
+| Sin skill | 16 | 279 | 32.8 | 2 | 154 | 2 | 5 | 29 | 46 | 224 | 11 |
+| SimpleKorean | 16 | 222 | 30.2 | 0 | 0 | 0 | 0 | 2 | 48 | 151 | 5 |
 
 ### Documentos
 
@@ -223,11 +227,11 @@ El modelo escribió cada una de las 8 tareas de documentación de sqlpipe 2 vece
 
 | Condición | Documentos | Errores por 100 eojeol | Avisos por 100 eojeol | Calcos por 100 eojeol | Tasa de grafía designada | Tasa de palabras fáciles | Oración más larga |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Sin skill | 16 | 0.14 | 0.71 | 0.42 | 100.0 % | 41.9 % | 18 eojeol |
-| Modo básico | 16 | 0.00 | 0.17 | 0.17 | 100.0 % | 45.3 % | 15 eojeol |
-| Modo estricto | 16 | 0.00 | 0.00 | 0.00 | 100.0 % | 39.6 % | 13 eojeol |
+| Sin skill | 16 | 0.00 | 1.31 | 0.29 | 94.7 % | 41.1 % | 16 eojeol |
+| Modo básico | 16 | 0.00 | 0.00 | 0.00 | 100.0 % | 44.2 % | 12 eojeol |
+| Modo estricto | 16 | 0.00 | 0.00 | 0.00 | 100.0 % | 43.6 % | 13 eojeol |
 
-La tarea de pulir un borrador con em-dash, negritas y puntos medios puestos a propósito no está en la tabla anterior y se cuenta aparte. El borrador tiene estas marcas: em-dash 2, negritas 2, punto medio 3. La tabla siguiente suma estas marcas en los documentos pulidos de cada condición. Cada condición pulió el borrador 2 veces, así que si quedaran todas las marcas, las sumas serían em-dash 4, negritas 4 y punto medio 6. Las reglas de documentos tampoco prohíben el punto medio, así que solo lo contamos como referencia. El borrador es la tarea `polish` de [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
+La tarea de pulir un borrador con em-dash, negritas y puntos medios puestos a propósito no está en la tabla anterior y se cuenta aparte. El borrador tiene estas marcas: em-dash 2, negritas 2, punto medio 3. La tabla siguiente suma estas marcas en los documentos pulidos de cada condición. Cada condición pulió el borrador 2 veces, así que si quedaran todas las marcas, las sumas serían em-dash 4, negritas 4 y punto medio 6. Las reglas de documentos tampoco prohíben el punto medio, así que solo lo contamos como referencia. El borrador es la tarea `polish` de [`evals/results/2026-11-16/inputs/scenarios.json`](../evals/results/2026-11-16/inputs/scenarios.json).
 
 | Condición | Documentos | em-dash | Negritas | Punto medio |
 |---|---:|---:|---:|---:|
@@ -235,7 +239,7 @@ La tarea de pulir un borrador con em-dash, negritas y puntos medios puestos a pr
 | Modo básico | 2 | 0 | 0 | 0 |
 | Modo estricto | 2 | 0 | 0 | 0 |
 
-Las salidas originales, la distribución de grafías y las condiciones de medición están en [`evals/results/2026-10-21/RESULTS.md`](../evals/results/2026-10-21/RESULTS.md).
+Las salidas originales, la distribución de grafías y las condiciones de medición están en [`evals/results/2026-11-16/RESULTS.md`](../evals/results/2026-11-16/RESULTS.md).
 <!-- benchmark:end -->
 
 ## Reglas

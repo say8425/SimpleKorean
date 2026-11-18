@@ -1,0 +1,42 @@
+OOMKilled는 컨테이너가 메모리 limit을 넘어서 커널이 프로세스를 강제로 종료했다는 뜻입니다. 종료 코드는 137입니다. kubelet(노드에서 파드를 관리하는 에이전트)이 컨테이너를 다시 띄우고, 같은 일이 반복되면 CrashLoopBackOff(재시작 간격이 점점 늘어나는 상태)가 됩니다.
+
+## 먼저 확인할 것
+
+파드가 OOMKilled로 끝났는지 확인하세요.
+
+```
+kubectl describe pod <파드이름> -n <네임스페이스>
+```
+
+`Last State: Terminated`의 `Reason: OOMKilled`와 `Limits`의 memory 값을 보세요. 노드 메모리 부족으로 쫓겨난 경우는 OOMKilled가 아니라 `Evicted`로 표시됩니다.
+
+실제 사용량은 다음 명령으로 봅니다. 이 명령은 클러스터에 metrics-server가 있어야 동작합니다.
+
+```
+kubectl top pod -n <네임스페이스> --containers
+```
+
+## API와 워커가 함께 죽을 때의 원인 후보
+
+- 두 워크로드가 같은 기본 limit을 씁니다. 네임스페이스의 LimitRange가 값을 정했을 수 있습니다.
+- 두 워크로드가 같은 베이스 이미지나 라이브러리를 쓰고, 최근 배포에서 메모리 사용이 늘었습니다.
+- 런타임이 컨테이너 limit을 모릅니다. 예를 들어 오래된 JVM이나 Node.js는 노드 전체 메모리를 기준으로 힙을 잡습니다.
+- 트래픽이나 큐 적재량이 늘어서 동시 처리량이 커졌습니다.
+- 메모리 누수가 있습니다. 재시작 직후에는 정상이고 시간이 지날수록 사용량이 오르면 누수입니다.
+
+## 바꿀 것
+
+1. 사용량이 limit에 닿기만 하면 `resources.limits.memory`를 올리세요. `requests.memory`는 평소 사용량에 맞추고, limit은 피크의 1.2배에서 1.5배로 두세요.
+2. 런타임 힙을 limit에 맞추세요. JVM은 `-XX:MaxRAMPercentage=75`를 쓰고, Node.js는 `--max-old-space-size`를 limit의 70%에서 75% 수준으로 정하세요.
+3. 워커는 동시성(concurrency)과 배치 크기를 줄이세요. 작업 하나가 쓰는 메모리에 동시 작업 수를 곱한 값이 limit 안에 들어와야 합니다.
+4. limit을 올려도 사용량이 계속 오르면 누수입니다. 힙 프로파일을 떠서 원인 코드를 찾으세요.
+5. 최근 배포가 시작점이면 직전 버전으로 롤백해서 비교하세요.
+
+limit만 올리면 누수를 늦출 뿐 고치지 못합니다. 노드의 남은 메모리도 확인해야 합니다. requests 합계가 노드 용량을 넘으면 파드가 스케줄되지 않습니다.
+
+다음 정보를 주면 원인을 좁힐 수 있습니다.
+
+- 두 파드의 `kubectl describe` 출력 중 `Last State`와 `Limits` 부분
+- `kubectl top pod` 결과
+- 사용하는 언어와 런타임 버전
+- OOMKilled가 시작된 시점에 배포나 트래픽 변화가 있었는지

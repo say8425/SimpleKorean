@@ -155,7 +155,7 @@ Below are two documents in which the same model polished the same draft: a troub
 <tr>
 <td valign="top">
 
-<!-- draft: evals/results/2026-10-21/inputs/scenarios.json#polish -->
+<!-- draft: evals/results/2026-11-16/inputs/scenarios.json#polish -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
@@ -167,38 +167,42 @@ Below are two documents in which the same model polished the same draft: a troub
 </td>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-21/docs/baseline__polish__r1.json -->
+<!-- source: evals/results/2026-11-16/docs/baseline__polish__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
-> **Postgres 연결 타임아웃** — sqlpipe에서 `connection timed out` 오류가 나면 대개 방화벽이나 보안 그룹이 5432 포트를 막고 있는 경우입니다. `nc -zv <호스트> 5432`로 연결 가능 여부를 먼저 확인하세요.
+> **Postgres 연결 타임아웃** — sqlpipe가 `connection timed out` 오류를 내면 대개 방화벽이나 보안 그룹이 5432 포트를 막고 있는 경우입니다. `nc -zv <호스트> 5432`로 해당 포트에 연결되는지 먼저 확인하세요.
 >
-> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책과 버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 그 전에 `aws sts get-caller-identity`로 현재 사용 중인 자격 증명이 맞는지 먼저 확인하는 것이 좋습니다.
+> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책과 버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 그 전에 `aws sts get-caller-identity`로 현재 사용 중인 자격 증명이 의도한 것인지 확인하는 것이 좋습니다.
 <!-- simple-korean: on -->
 
 </td>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-21/docs/plain__polish__r1.json -->
+<!-- source: evals/results/2026-11-16/docs/plain__polish__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
 > ### Postgres 연결 타임아웃
 >
-> sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽이나 보안 그룹이 5432 포트를 막습니다. sqlpipe를 실행하는 호스트에서 `nc -zv <호스트> 5432`로 연결되는지 확인하세요.
+> sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽이나 보안 그룹이 5432 포트를 막고 있습니다.
+>
+> `nc -zv <호스트> 5432`를 실행해 연결되는지 확인하세요.
 >
 > ### S3 권한 오류
 >
-> sqlpipe가 `AccessDenied` 오류를 내면 먼저 `aws sts get-caller-identity`로 현재 쓰는 자격 증명을 확인하세요. 그다음 IAM 정책과 버킷 정책에 읽기와 쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요.
+> sqlpipe가 `AccessDenied` 오류를 내면 IAM 정책과 버킷 정책에 읽기 권한 `s3:GetObject`와 쓰기 권한 `s3:PutObject`가 있는지 확인하세요.
+>
+> 먼저 `aws sts get-caller-identity`를 실행해 지금 쓰는 자격 증명을 확인하세요.
 <!-- simple-korean: on -->
 
 </td>
 </tr>
 </table>
 
-The raw files of the polished documents are `evals/results/2026-10-21/docs/baseline__polish__r1.json` (middle) and `evals/results/2026-10-21/docs/plain__polish__r1.json` (right).
+The raw files of the polished documents are `evals/results/2026-11-16/docs/baseline__polish__r1.json` (middle) and `evals/results/2026-11-16/docs/plain__polish__r1.json` (right).
 
-The draft is the `polish` task in [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
+The draft is the `polish` task in [`evals/results/2026-11-16/inputs/scenarios.json`](../evals/results/2026-11-16/inputs/scenarios.json).
 
 Reply examples and more document examples are in [`examples/before-after.md`](../examples/before-after.md). [This commit's diff](https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a) shows what changed in each example.
 <!-- example:end -->
@@ -207,15 +211,15 @@ Reply examples and more document examples are in [`examples/before-after.md`](..
 
 We calculated all numbers below again from the committed raw outputs. On each push, CI compares them with `evals/check_numbers.py`. `claude-sonnet-5-5` (effort low) wrote the documents and the replies, and `claude-opus-5-5` judged them. No run read user settings, MCP servers, or instruction files such as AGENTS.md. The judge model is also Claude, so it can favor replies from the same model family. An eojeol is a Korean word unit separated by spaces.
 
-<!-- benchmark:start evals/results/2026-10-21 -->
+<!-- benchmark:start evals/results/2026-11-16 -->
 ### Replies
 
-We asked 8 questions 2 times in each condition. Each question contains one technical term, one em-dash, and one middle dot (·). The reply rules do not ban the middle dot, so we counted it separately and left it out of the defects. There are 32 replies in total. With the skill on, reader-visible defects (em-dashes, bold text, tables, a header or list on the first line) fell by 100% (from 162 to 0). In a blind judgment of 16 pairs, the SimpleKorean reply won 12, tied 3, and lost 1. Even with an em-dash in every question, the replies without the skill used no em-dashes. So the polishing task in the documents section below tests whether the skill removes them.
+We asked 8 questions 2 times in each condition. Each question contains one technical term, one em-dash, and one middle dot (·). The reply rules do not ban the middle dot, so we counted it separately and left it out of the defects. There are 32 replies in total. With the skill on, reader-visible defects (em-dashes, bold text, tables, a header or list on the first line) fell by 100% (from 163 to 0). In a blind judgment of 16 pairs, the SimpleKorean reply won 14, tied 1, and lost 1.
 
 | Condition | Replies | Mean eojeol | Mean sentences | em-dash | Bold | Tables | First-line header or list | Middle dot | Headers | Bullets | Greetings and sign-offs |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| No skill | 16 | 266 | 31.2 | 0 | 155 | 3 | 4 | 26 | 36 | 211 | 13 |
-| SimpleKorean | 16 | 223 | 31.0 | 0 | 0 | 0 | 0 | 2 | 54 | 173 | 5 |
+| No skill | 16 | 279 | 32.8 | 2 | 154 | 2 | 5 | 29 | 46 | 224 | 11 |
+| SimpleKorean | 16 | 222 | 30.2 | 0 | 0 | 0 | 0 | 2 | 48 | 151 | 5 |
 
 ### Documents
 
@@ -223,11 +227,11 @@ The model wrote each of 8 sqlpipe documentation tasks 2 times in each condition.
 
 | Condition | Documents | Errors per 100 eojeol | Warnings per 100 eojeol | Translationese per 100 eojeol | Designated spelling rate | Easy word rate | Longest sentence |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| No skill | 16 | 0.14 | 0.71 | 0.42 | 100.0% | 41.9% | 18 eojeol |
-| Default mode | 16 | 0.00 | 0.17 | 0.17 | 100.0% | 45.3% | 15 eojeol |
-| Strict mode | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 39.6% | 13 eojeol |
+| No skill | 16 | 0.00 | 1.31 | 0.29 | 94.7% | 41.1% | 16 eojeol |
+| Default mode | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 44.2% | 12 eojeol |
+| Strict mode | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 43.6% | 13 eojeol |
 
-The task of polishing a draft with deliberately added em-dashes, bold text, and middle dots is counted separately, not in the table above. The draft has these marks: em-dash 2, bold 2, middle dot 3. The table below sums these marks in the polished documents of each condition. Each condition polished the draft 2 times, so if every mark stayed, the sums would be em-dash 4, bold 4, and middle dot 6. The document rules do not ban the middle dot either, so we count it for reference only. The draft is the `polish` task in [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json).
+The task of polishing a draft with deliberately added em-dashes, bold text, and middle dots is counted separately, not in the table above. The draft has these marks: em-dash 2, bold 2, middle dot 3. The table below sums these marks in the polished documents of each condition. Each condition polished the draft 2 times, so if every mark stayed, the sums would be em-dash 4, bold 4, and middle dot 6. The document rules do not ban the middle dot either, so we count it for reference only. The draft is the `polish` task in [`evals/results/2026-11-16/inputs/scenarios.json`](../evals/results/2026-11-16/inputs/scenarios.json).
 
 | Condition | Documents | em-dash | Bold | Middle dot |
 |---|---:|---:|---:|---:|
@@ -235,7 +239,7 @@ The task of polishing a draft with deliberately added em-dashes, bold text, and 
 | Default mode | 2 | 0 | 0 | 0 |
 | Strict mode | 2 | 0 | 0 | 0 |
 
-The raw outputs, the spelling distribution, and the test conditions are in [`evals/results/2026-10-21/RESULTS.md`](../evals/results/2026-10-21/RESULTS.md).
+The raw outputs, the spelling distribution, and the test conditions are in [`evals/results/2026-11-16/RESULTS.md`](../evals/results/2026-11-16/RESULTS.md).
 <!-- benchmark:end -->
 
 ## Rules
