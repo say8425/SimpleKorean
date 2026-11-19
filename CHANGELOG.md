@@ -9,6 +9,13 @@
 
 * 업계의 기술 명사를 일상어로 바꾸지 않게 한다 ([#32](https://github.com/say8425/SimpleKorean/issues/32)) ([3199674](https://github.com/say8425/SimpleKorean/commit/31996740ba89e1d9d8da95dfff0a784722c50e71))
 
+
+### 측정
+
+* 측정 결과는 [`evals/results/2026-11-16/RESULTS.md`](evals/results/2026-11-16/RESULTS.md)에 있습니다. 새 규칙(#32의 커밋 e659254)으로 문서, 답변, 판정을 모두 다시 쟀습니다. DB 설계 문서를 다시 쓰는 과제(`rewrite-db`)를 더했고, 그 결과는 `RESULTS.md`의 "기술 명사" 절에 있습니다.
+* 이 과제에서는 스킬 없음, 옛 규칙, 새 규칙이 모두 기술 명사를 지켰습니다. 그래서 이 측정은 새 규칙이 기술 명사를 망치지 않는다는 것만 보입니다.
+* 린터 보정은 다시 하지 않았습니다. 이 릴리스의 린터 변경(정해진 기술 용어의 예외, "빌드 타깃" 같은 합성어의 예외) 뒤에도 `evals/calibration/RECORD.md`를 다시 만든 결과가 같습니다.
+
 ## [1.2.0](https://github.com/say8425/SimpleKorean/compare/v1.1.1...v1.2.0) (2026-10-23)
 
 
