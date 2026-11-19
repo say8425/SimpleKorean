@@ -2,6 +2,13 @@
 
 항목마다 버전, 날짜, 바뀐 것을 적습니다. 측정 결과가 바뀌면 그 릴리스에 결과 경로를 적습니다.
 
+## [1.3.0](https://github.com/say8425/SimpleKorean/compare/v1.2.0...v1.3.0) (2026-11-19)
+
+
+### 기능
+
+* 업계의 기술 명사를 일상어로 바꾸지 않게 한다 ([#32](https://github.com/say8425/SimpleKorean/issues/32)) ([3199674](https://github.com/say8425/SimpleKorean/commit/31996740ba89e1d9d8da95dfff0a784722c50e71))
+
 ## [1.2.0](https://github.com/say8425/SimpleKorean/compare/v1.1.1...v1.2.0) (2026-10-23)
 
 
