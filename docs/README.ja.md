@@ -76,7 +76,7 @@ claude plugin install simple-korean@simple-korean
 
 出力スタイルがなくても、ルールは適用されます。セッション開始フックが同じルールブロックをすでに追加するためです。Node.js がなくてセッション開始フックが動かない場合は、出力スタイルを適用してください。出力スタイルを適用するには、`/config` の Output style で選んでください。または、`~/.claude/settings.json` に `{"outputStyle": "simple-korean:simple-korean"}` を書いてください。
 
-セッション開始フックは、セッションごとに2,476文字のルールブロックを追加します。詳しくは [`src/hooks/README.md`](../src/hooks/README.md) を参照してください。
+セッション開始フックは、セッションごとに2,663文字のルールブロックを追加します。詳しくは [`src/hooks/README.md`](../src/hooks/README.md) を参照してください。
 
 ### Codex
 
@@ -155,7 +155,7 @@ prompt = prompt_block(variant="sentences", lang="en")
 <tr>
 <td valign="top">
 
-<!-- draft: evals/results/2026-10-21/inputs/scenarios.json#polish -->
+<!-- draft: evals/results/2026-11-16/inputs/scenarios.json#polish -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
@@ -167,38 +167,42 @@ prompt = prompt_block(variant="sentences", lang="en")
 </td>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-21/docs/baseline__polish__r1.json -->
+<!-- source: evals/results/2026-11-16/docs/baseline__polish__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
-> **Postgres 연결 타임아웃** — sqlpipe에서 `connection timed out` 오류가 나면 대개 방화벽이나 보안 그룹이 5432 포트를 막고 있는 경우입니다. `nc -zv <호스트> 5432`로 연결 가능 여부를 먼저 확인하세요.
+> **Postgres 연결 타임아웃** — sqlpipe가 `connection timed out` 오류를 내면 대개 방화벽이나 보안 그룹이 5432 포트를 막고 있는 경우입니다. `nc -zv <호스트> 5432`로 해당 포트에 연결되는지 먼저 확인하세요.
 >
-> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책과 버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 그 전에 `aws sts get-caller-identity`로 현재 사용 중인 자격 증명이 맞는지 먼저 확인하는 것이 좋습니다.
+> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책과 버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 그 전에 `aws sts get-caller-identity`로 현재 사용 중인 자격 증명이 의도한 것인지 확인하는 것이 좋습니다.
 <!-- simple-korean: on -->
 
 </td>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-21/docs/plain__polish__r1.json -->
+<!-- source: evals/results/2026-11-16/docs/plain__polish__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
 > ### Postgres 연결 타임아웃
 >
-> sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽이나 보안 그룹이 5432 포트를 막습니다. sqlpipe를 실행하는 호스트에서 `nc -zv <호스트> 5432`로 연결되는지 확인하세요.
+> sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽이나 보안 그룹이 5432 포트를 막고 있습니다.
+>
+> `nc -zv <호스트> 5432`를 실행해 연결되는지 확인하세요.
 >
 > ### S3 권한 오류
 >
-> sqlpipe가 `AccessDenied` 오류를 내면 먼저 `aws sts get-caller-identity`로 현재 쓰는 자격 증명을 확인하세요. 그다음 IAM 정책과 버킷 정책에 읽기와 쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요.
+> sqlpipe가 `AccessDenied` 오류를 내면 IAM 정책과 버킷 정책에 읽기 권한 `s3:GetObject`와 쓰기 권한 `s3:PutObject`가 있는지 확인하세요.
+>
+> 먼저 `aws sts get-caller-identity`를 실행해 지금 쓰는 자격 증명을 확인하세요.
 <!-- simple-korean: on -->
 
 </td>
 </tr>
 </table>
 
-整えた文書の元のファイルは、中央が `evals/results/2026-10-21/docs/baseline__polish__r1.json`、右が `evals/results/2026-10-21/docs/plain__polish__r1.json` です。
+整えた文書の元のファイルは、中央が `evals/results/2026-11-16/docs/baseline__polish__r1.json`、右が `evals/results/2026-11-16/docs/plain__polish__r1.json` です。
 
-下書きは [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json) の `polish` 課題にあります。
+下書きは [`evals/results/2026-11-16/inputs/scenarios.json`](../evals/results/2026-11-16/inputs/scenarios.json) の `polish` 課題にあります。
 
 回答の例とほかの文書の例は [`examples/before-after.md`](../examples/before-after.md) にあります。例ごとの変更点は[このコミットの diff](https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a)で確認できます。
 <!-- example:end -->
@@ -207,15 +211,15 @@ prompt = prompt_block(variant="sentences", lang="en")
 
 下の数値はすべて、コミットした生の出力から計算し直した値です。CI がプッシュのたびに `evals/check_numbers.py` で照合します。文書と回答は `claude-sonnet-5-5`（effort low）が書き、判定は `claude-opus-5-5` が行いました。どの実行も、ユーザー設定、MCP サーバー、AGENTS.md のような指示ファイルを読み込んでいません。判定モデルも Claude なので、同じ系列に有利な偏りがあるかもしれません。語節（어절）は、韓国語で空白によって区切られる単位です。
 
-<!-- benchmark:start evals/results/2026-10-21 -->
+<!-- benchmark:start evals/results/2026-11-16 -->
 ### 回答
 
-専門用語を1つずつ含む質問8個を、条件ごとに2回ずつ尋ねました。どの質問にも em-dash と中点（·）を1つずつ入れました。中点は回答ルールで禁止していないため、欠陥には含めず別に数えました。回答は全部で32個です。スキルを有効にすると、読者に見える欠陥（em-dash、太字、表、先頭行の見出しや箇条書き）が100%減りました（162個から0個）。ブラインド判定では、SimpleKorean の回答が16組のうち12組で勝ち、3組で引き分け、1組で負けました。質問に em-dash があっても、スキルなしの回答は em-dash を使いませんでした。そのため、em-dash を取り除くかどうかは、下の文書の下書きを整える課題で確かめます。
+専門用語を1つずつ含む質問8個を、条件ごとに2回ずつ尋ねました。どの質問にも em-dash と中点（·）を1つずつ入れました。中点は回答ルールで禁止していないため、欠陥には含めず別に数えました。回答は全部で32個です。スキルを有効にすると、読者に見える欠陥（em-dash、太字、表、先頭行の見出しや箇条書き）が100%減りました（163個から0個）。ブラインド判定では、SimpleKorean の回答が16組のうち14組で勝ち、1組で引き分け、1組で負けました。
 
 | 条件 | 回答数 | 平均語節数 | 平均文数 | em-dash | 太字 | 表 | 先頭行の見出し・箇条書き | 中点 | 見出し | 箇条書き | 挨拶と結び |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| スキルなし | 16 | 266 | 31.2 | 0 | 155 | 3 | 4 | 26 | 36 | 211 | 13 |
-| SimpleKorean | 16 | 223 | 31.0 | 0 | 0 | 0 | 0 | 2 | 54 | 173 | 5 |
+| スキルなし | 16 | 279 | 32.8 | 2 | 154 | 2 | 5 | 29 | 46 | 224 | 11 |
+| SimpleKorean | 16 | 222 | 30.2 | 0 | 0 | 0 | 0 | 2 | 48 | 151 | 5 |
 
 ### 文書
 
@@ -223,11 +227,11 @@ sqlpipe の文書課題8個を、条件ごとに2回ずつ書きました。比�
 
 | 条件 | 文書数 | 100語節あたりのエラー | 100語節あたりの警告 | 100語節あたりの翻訳調 | 指定表記の比率 | やさしい語の比率 | 最長の文 |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| スキルなし | 16 | 0.14 | 0.71 | 0.42 | 100.0% | 41.9% | 18語節 |
-| 基本モード | 16 | 0.00 | 0.17 | 0.17 | 100.0% | 45.3% | 15語節 |
-| 厳格モード | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 39.6% | 13語節 |
+| スキルなし | 16 | 0.00 | 1.31 | 0.29 | 94.7% | 41.1% | 16語節 |
+| 基本モード | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 44.2% | 12語節 |
+| 厳格モード | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 43.6% | 13語節 |
 
-em-dash、太字、中点をわざと入れた下書きを整える課題は、上の表に含めず別に数えます。下書きには em-dash が2個、太字が2か所、中点が3個あります。下の表は、条件ごとに整えた文書に含まれる数の合計です。条件ごとに2回整えたので、下書きの印がすべて残れば em-dash 4個、太字 4か所、中点 6個になります。中点は文書ルールでも禁止していないため、参考として数えます。下書きは [`evals/results/2026-10-21/inputs/scenarios.json`](../evals/results/2026-10-21/inputs/scenarios.json) の `polish` 課題にあります。
+em-dash、太字、中点をわざと入れた下書きを整える課題は、上の表に含めず別に数えます。下書きには em-dash が2個、太字が2か所、中点が3個あります。下の表は、条件ごとに整えた文書に含まれる数の合計です。条件ごとに2回整えたので、下書きの印がすべて残れば em-dash 4個、太字 4か所、中点 6個になります。中点は文書ルールでも禁止していないため、参考として数えます。下書きは [`evals/results/2026-11-16/inputs/scenarios.json`](../evals/results/2026-11-16/inputs/scenarios.json) の `polish` 課題にあります。
 
 | 条件 | 文書数 | em-dash | 太字 | 中点 |
 |---|---:|---:|---:|---:|
@@ -235,7 +239,7 @@ em-dash、太字、中点をわざと入れた下書きを整える課題は、�
 | 基本モード | 2 | 0 | 0 | 0 |
 | 厳格モード | 2 | 0 | 0 | 0 |
 
-生の出力、表記の分布、測定条件は [`evals/results/2026-10-21/RESULTS.md`](../evals/results/2026-10-21/RESULTS.md) にあります。
+生の出力、表記の分布、測定条件は [`evals/results/2026-11-16/RESULTS.md`](../evals/results/2026-11-16/RESULTS.md) にあります。
 <!-- benchmark:end -->
 
 ## ルール
@@ -268,6 +272,7 @@ em-dash、太字、中点をわざと入れた下書きを整える課題は、�
 | 助詞を省かず、名詞形で文を終えません | 「백업 확인 필요」（バックアップ確認必要）のような電報文 |
 | 重要さではなく事実を書きます | 「강력한」（強力な）、「원활한」（円滑な）、「단순히 X가 아니라 Y」（単に X ではなく Y） |
 | 決められた外来語の表記を使います | 1つの文書の中で混ざる「디렉토리」と「디렉터리」（どちらも「ディレクトリ」） |
+| 業界の技術名詞を日常語に置き換えません | DBの「테이블」（テーブル）を「표」（文書の中の表）と、「칼럼」（カラム）を「칸」（マス）と呼ぶこと |
 
 ## モード
 

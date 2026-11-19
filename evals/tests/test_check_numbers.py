@@ -14,7 +14,7 @@ import report  # noqa: E402
 
 PICK = mx.README_PICK[0]
 DRAFT = "**초안** — 방화벽·보안 그룹을 확인해 보세요."
-BLOCK = '헤더와 목록을 써도 됩니다. em-dash를 쓰지 마세요. 첫 문장에 답을 쓰세요. 코드는 바꾸지 마세요. "확인하다" 하나로 쓰세요. 레포지토리. 굵은 글씨와 표는 쓰지 마세요. 헤더와 목록은 첫 문장 뒤에 두세요. 사용자가 엄격 모드, 통제 언어, KS A 0001, STE, ASD-STE100을 말하면 엄격 모드를 쓰세요.'
+BLOCK = '헤더와 목록을 써도 됩니다. em-dash를 쓰지 마세요. 첫 문장에 답을 쓰세요. 코드는 바꾸지 마세요. "확인하다" 하나로 쓰세요. 레포지토리. 굵은 글씨와 표는 쓰지 마세요. 헤더와 목록은 첫 문장 뒤에 두세요. 기술 명사는 일상어로 바꾸지 마세요. 사용자가 엄격 모드, 통제 언어, KS A 0001, STE, ASD-STE100을 말하면 엄격 모드를 쓰세요.'
 SKILL = f'---\nname: simple-korean\nmetadata:\n  version: "1.0.0"\n---\n{BLOCK}\n'
 ISO = {"found": True, "claude_code_version": "2.1.294", "model": "m", "mcp_servers": [], "plugins": [],
        "output_style": "default", "memory_paths": []}

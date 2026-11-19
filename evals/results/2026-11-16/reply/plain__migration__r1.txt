@@ -1,0 +1,60 @@
+백필(backfill)은 기존 행에 새 칼럼 값을 채우는 작업입니다. DBA의 말은 NOT NULL 칼럼을 한 번에 추가하지 말고 단계로 나누라는 뜻입니다. 이 답은 PostgreSQL 기준입니다.
+
+## 왜 멈췄나
+
+NOT NULL 칼럼은 기존 행 전체에 값이 있어야 합니다. 기본값이 없으면 추가가 실패하고, 기본값이 있어도 DB 버전에 따라 테이블 전체를 다시 쓸 수 있습니다. 이때 DB는 테이블 전체 잠금(lock)을 잡습니다. 20GB 테이블은 재작성에 오래 걸리고, 그동안 읽기와 쓰기가 모두 대기합니다.
+
+잠금을 기다리는 ALTER도 뒤따르는 쿼리를 막습니다. 오래 도는 트랜잭션 하나만 있어도 같은 증상이 생길 수 있습니다.
+
+## 지금 할 일
+
+멈춘 마이그레이션을 먼저 취소하세요. `pg_stat_activity`에서 ALTER의 pid를 찾아 취소합니다.
+
+```sql
+SELECT pid, state, wait_event_type, query
+FROM pg_stat_activity
+WHERE query ILIKE 'ALTER TABLE%';
+
+SELECT pg_cancel_backend(<pid>);
+```
+
+## 다시 적용하는 순서
+
+1. 세션에 `lock_timeout`을 설정하세요. 잠금을 못 잡으면 빨리 실패해야 서비스가 막히지 않습니다.
+2. NULL을 허용하는 칼럼으로 추가하세요. 기본값이 없으면 테이블을 다시 쓰지 않습니다.
+3. 새 행에 값을 쓰도록 애플리케이션을 배포하세요.
+4. 기존 행을 나눠서 백필하세요.
+5. 제약을 검증하고 NOT NULL을 적용하세요.
+
+```sql
+SET lock_timeout = '3s';
+ALTER TABLE t ADD COLUMN new_col integer;
+```
+
+백필은 배치(batch, 행 묶음) 단위로 하세요. 한 번에 UPDATE하면 긴 트랜잭션과 부하가 생깁니다. 배치마다 커밋하고, 배치 사이에 짧게 쉬세요.
+
+```sql
+UPDATE t SET new_col = <값>
+WHERE id IN (
+  SELECT id FROM t
+  WHERE new_col IS NULL
+  ORDER BY id
+  LIMIT 10000
+);
+```
+
+영향받은 행이 0이 될 때까지 반복하세요. 백필 중 복제 지연(replication lag)을 확인해야 합니다.
+
+NOT NULL은 CHECK 제약을 거쳐 적용하세요. PostgreSQL 12 이상에서 검증된 CHECK가 있으면 `SET NOT NULL`이 전체 스캔을 건너뜁니다.
+
+```sql
+ALTER TABLE t ADD CONSTRAINT t_new_col_nn
+  CHECK (new_col IS NOT NULL) NOT VALID;
+ALTER TABLE t VALIDATE CONSTRAINT t_new_col_nn;
+ALTER TABLE t ALTER COLUMN new_col SET NOT NULL;
+ALTER TABLE t DROP CONSTRAINT t_new_col_nn;
+```
+
+`VALIDATE CONSTRAINT`는 읽기와 쓰기를 막지 않습니다.
+
+MySQL이면 방식이 다릅니다. 이 경우 `gh-ost`나 `pt-online-schema-change` 같은 온라인 스키마 변경 도구를 쓰세요.

@@ -1,0 +1,41 @@
+# 백필(backfill)이란?
+
+기존 행들의 새 컬럼을 **값으로 채워 넣는 작업**입니다. NOT NULL 컬럼을 추가하려면 기존 모든 행에 값이 있어야 하는데, 20GB 테이블에서 이걸 한 번의 DDL로 처리하면 문제가 생깁니다.
+
+## 왜 멈췄나
+
+DB 종류·버전에 따라 다르지만, 대표적인 원인은 이렇습니다.
+
+- **테이블 재작성 + 강한 락**: `ALTER TABLE ... ADD COLUMN ... NOT NULL DEFAULT ...`가 전체 테이블을 다시 쓰거나, 끝날 때까지 `ACCESS EXCLUSIVE`(PostgreSQL) / 메타데이터 락(MySQL)을 잡고 있습니다.
+- **락 큐 전파**: ALTER가 락을 기다리는 동안(오래 도는 트랜잭션 때문에) 뒤에 오는 모든 읽기·쓰기가 그 뒤에 줄을 섭니다. 그래서 읽기까지 막힙니다.
+
+## 지금 당장 할 일 (장애 완화)
+
+1. 어떤 세션이 막고 있는지 확인
+   - PostgreSQL: `SELECT pid, state, wait_event_type, query, xact_start FROM pg_stat_activity ORDER BY xact_start;`
+   - MySQL: `SHOW PROCESSLIST;` 또는 `performance_schema.metadata_locks`
+2. 마이그레이션 세션을 **취소/kill** (`pg_cancel_backend(pid)` / `KILL <id>`). 롤백되며 트래픽이 풀립니다. 이미 오래 진행됐다면 롤백 시간도 걸릴 수 있으니 DBA와 같이 하세요.
+3. 앞으로를 위해 DDL 세션에 `lock_timeout`(예: 3~5초)을 설정해, 락을 못 잡으면 빨리 포기하게 합니다.
+
+## 올바른 절차 (3단계 백필 방식)
+
+1. **nullable 컬럼으로 추가** (기본값 없이) — 메타데이터만 바뀌어 거의 즉시 끝납니다.
+   ```sql
+   ALTER TABLE t ADD COLUMN new_col INT;
+   ```
+2. **배치로 백필** — 1만~10만 행씩 PK 범위로 나눠 UPDATE하고, 배치 사이에 짧게 쉽니다(복제 지연·락 경합 방지).
+   ```sql
+   UPDATE t SET new_col = <값>
+   WHERE id BETWEEN :start AND :end AND new_col IS NULL;
+   ```
+   - 신규 쓰기는 애플리케이션이 새 컬럼을 채우도록 먼저 배포(또는 DEFAULT 설정)해서, 백필 중에 NULL 행이 새로 생기지 않게 합니다.
+3. **NOT NULL 적용**
+   - PostgreSQL: `ALTER TABLE t ADD CONSTRAINT c CHECK (new_col IS NOT NULL) NOT VALID;` → `VALIDATE CONSTRAINT c;` (가벼운 락) → 그 후 `SET NOT NULL` (PG12+는 검증된 CHECK가 있으면 스캔 생략) → CHECK 제거.
+   - MySQL: `ALGORITHM=INPLACE, LOCK=NONE` 가능 여부 확인, 또는 gh-ost / pt-online-schema-change 사용.
+
+## 참고
+
+- **상수 기본값이면** PostgreSQL 11+는 `ADD COLUMN ... NOT NULL DEFAULT 상수`가 테이블 재작성 없이 즉시 끝납니다. 사용 중인 버전이 이보다 낮거나, 기본값이 휘발성 함수(`now()` 등)거나, 값이 행마다 계산되어야 하면 백필이 필요합니다.
+- MySQL 8.0+도 `ADD COLUMN`의 INSTANT 알고리즘이 있습니다.
+
+DB 종류와 버전, 새 컬럼의 값을 어떻게 정할지(상수인지, 다른 컬럼에서 계산하는지) 알려주시면 구체적인 마이그레이션 스크립트와 배치 백필 코드를 같이 작성해 드릴게요.

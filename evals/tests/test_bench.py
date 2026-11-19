@@ -88,6 +88,38 @@ def test_build_prompt_appends_the_draft():
     assert "과제: 엄격 모드로 쓰세요. 초안을 다듬어 주세요.\n\n초안:" in run_bench.build_prompt(sc, "strict")
 
 
+def test_rewrite_tasks_append_the_source_text():
+    sc = {"id": "rewrite-db", "type": "descriptive", "prompt": "원문을 다시 써 주세요.", "source": "`orders` 테이블"}
+    assert run_bench.build_prompt(sc, "baseline") == "원문을 다시 써 주세요.\n\n원문:\n\n`orders` 테이블\n\n(원문 끝)"
+    assert "과제: 원문을 다시 써 주세요.\n\n원문:\n\n`orders` 테이블\n\n(원문 끝)" + run_bench.TAIL in run_bench.build_prompt(sc, "plain")
+
+
+def test_term_stats_count_technical_and_everyday_nouns():
+    with tempfile.TemporaryDirectory() as d:
+        root = _fake_results(d)
+        for cond, text in (("baseline", "`orders` 테이블의 칼럼입니다. 아래 표는 칼럼을 보여 줍니다."),
+                           ("plain", "`orders` 표의 칸입니다. 표기를 맞추고 문을 열어 둡니다. 행을 지웁니다."),
+                           ("strict", "테이블의 열과 로우입니다.")):
+            (root / "docs" / f"{cond}__rewrite-db__r1.json").write_text(
+                json.dumps({"condition": cond, "scenario": "rewrite-db", "text": text}, ensure_ascii=False), encoding="utf-8")
+        scenarios = [{"id": "readme-intro", "type": "descriptive"},
+                     {"id": "rewrite-db", "type": "descriptive", "source": "테이블과 표와 칼럼과 행. `표` 코드"}]
+        stats = report.term_stats(root, scenarios)
+        # 코드 안의 말과 표기, 열어 같은 다른 낱말은 세지 않는다
+        assert stats["source"] == {"n": 1, "테이블": 1, "표": 1, "칼럼": 1, "행": 1}
+        assert stats["baseline"] == {"n": 1, "테이블": 1, "칼럼": 2, "표": 1}
+        assert stats["plain"] == {"n": 1, "표": 1, "칸": 1, "행": 1}
+        assert stats["strict"] == {"n": 1, "테이블": 1, "열": 1, "로우": 1}
+        table = report.render_term_table(stats)
+        assert table.splitlines()[0].startswith("| 조건 | 문서 수 | 테이블 | 표 | 칼럼 | 열 | 칸 | 행 | 로우 |")
+        assert "| 원문 | 1 | 1 | 1 | 1 | 0 | 0 | 1 | 0 |" in table
+        assert "| 기본 모드 | 1 | 0 | 1 | 0 | 0 | 1 | 1 | 0 |" in table
+        assert report.render_term_table(report.term_stats(root, scenarios[:1])) == ""
+        # 조사가 이어 붙어도, 복수 '들'이 붙어도 센다. 다른 낱말 안의 글자는 세지 않는다
+        counts = report.term_counts('표에는 칸에서는 한 행씩 행이나 행들을 "칸"이라는 열부터 둡니다. 대표, 빈칸, 문자열, 열심히, 열면')
+        assert counts == {"표": 1, "칸": 2, "행": 3, "열": 1}
+
+
 def test_benchmark_inputs_carry_the_marks_the_readme_describes():
     # README는 질문마다 em-dash와 가운뎃점을 하나씩 넣었고, 다듬기 초안에 세 표시가 모두 있다고 쓴다
     for sc in json.loads((bc.HERE / "reply_scenarios.json").read_text(encoding="utf-8")):

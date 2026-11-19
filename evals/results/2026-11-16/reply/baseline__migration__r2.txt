@@ -1,0 +1,30 @@
+**백필(backfill)**은 새로 만든 컬럼에 기존 행들의 값을 채워 넣는 작업입니다. NOT NULL 컬럼은 모든 행에 값이 있어야 하는데, 20GB 테이블에는 기존 행이 아주 많습니다. 그 행들을 한 번에 채우려다 테이블이 잠긴 것입니다.
+
+## 왜 읽기·쓰기가 막혔나
+- DB와 버전에 따라 `ALTER TABLE ... ADD COLUMN ... NOT NULL`이 테이블 전체를 다시 쓰면서 강한 락(PostgreSQL은 ACCESS EXCLUSIVE)을 잡습니다. 이 락이 풀릴 때까지 모든 읽기·쓰기가 대기합니다.
+- 앞에 긴 트랜잭션이 있으면 ALTER가 그 트랜잭션을 기다립니다. 그 사이 뒤에 들어오는 모든 쿼리가 ALTER 뒤에 줄을 서서 함께 막힙니다.
+
+## 지금 할 일
+1. **마이그레이션을 중단합니다.** 세션을 취소하거나 kill하세요. 롤백이 끝나면 락이 풀리고 서비스가 복구됩니다. 롤백에도 시간이 걸릴 수 있으니 DBA와 같이 진행하세요.
+2. 막고 있던 긴 트랜잭션이 있었는지 확인합니다. PostgreSQL은 `pg_stat_activity`, MySQL은 `SHOW PROCESSLIST`나 `information_schema.innodb_trx`로 볼 수 있습니다.
+
+## 안전한 방식 (여러 단계로 나눠 배포)
+1. **nullable 컬럼으로 추가합니다.** 기본값 없이 추가하면 메타데이터만 바뀌어 거의 즉시 끝납니다. 이때 `lock_timeout`을 짧게(예: 3~5초) 걸어 두세요. 락을 못 잡으면 실패하고 서비스를 막지 않습니다.
+2. **앱 코드를 배포합니다.** 신규·수정 행은 새 컬럼에 값을 쓰도록 바꿉니다.
+3. **백필합니다.** 기존 행을 PK 범위 기준으로 1천~1만 건씩 나눠 UPDATE하고, 배치마다 커밋한 뒤 잠깐 쉽니다. 복제 지연과 부하를 보면서 속도를 조절하세요. 한 번에 `UPDATE 전체`를 돌리면 같은 문제가 반복됩니다.
+4. **검증합니다.** `SELECT count(*) FROM t WHERE new_col IS NULL`이 0인지 확인합니다.
+5. **NOT NULL을 적용합니다.**
+   - PostgreSQL:
+     ```sql
+     ALTER TABLE t ADD CONSTRAINT t_col_nn CHECK (col IS NOT NULL) NOT VALID;
+     ALTER TABLE t VALIDATE CONSTRAINT t_col_nn;  -- 쓰기를 막지 않음
+     ALTER TABLE t ALTER COLUMN col SET NOT NULL; -- PG12+는 위 제약을 보고 전체 스캔 생략
+     ALTER TABLE t DROP CONSTRAINT t_col_nn;
+     ```
+   - MySQL: `gh-ost`나 `pt-online-schema-change` 같은 온라인 스키마 변경 도구를 쓰거나, 버전이 지원하면 `ALGORITHM=INPLACE, LOCK=NONE`으로 실행합니다.
+
+## 참고
+- 기본값이 상수이고 PostgreSQL 11+ 또는 MySQL 8.0+라면 `ADD COLUMN ... NOT NULL DEFAULT <상수>`가 즉시 끝나는 경우도 있습니다. 지금 멈췄다면 해당 조건이 아니었거나 락 대기 때문일 가능성이 큽니다.
+- 값이 다른 컬럼에서 계산되는 경우처럼 기본값이 상수가 아니면 위의 단계 분리가 필요합니다.
+
+사용 중인 DB 종류와 버전, 새 컬럼의 기본값이 어떻게 정해지는지 알려 주시면 백필 쿼리와 배치 스크립트를 구체적으로 써 드리겠습니다.

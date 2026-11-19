@@ -1,0 +1,47 @@
+curl이 서버 인증서를 발급한 기관(CA)을 신뢰 목록에서 찾지 못해서 나는 오류입니다. 개발과 스테이징이 모두 실패하면 서버 하나의 문제가 아닙니다. 대개 사내 루트 CA를 이 컴퓨터의 curl이 모르는 경우입니다.
+
+## 원인 후보
+
+- 사내 루트 CA(인증서 체인의 최상위 발급 기관)가 curl 신뢰 목록에 없습니다.
+- 서버가 중간 인증서(루트와 서버 인증서를 잇는 인증서)를 보내지 않습니다.
+- 회사 프록시가 TLS 검사를 하면서 자체 CA로 인증서를 다시 서명합니다.
+
+## 원인 확인
+
+다음 명령으로 서버가 보내는 인증서 체인을 보세요. 호스트는 실제 주소로 바꾸세요.
+
+```
+openssl s_client -connect api.example.internal:443 -showcerts </dev/null
+```
+
+출력에서 `Verify return code`와 인증서 개수를 확인하세요.
+
+- 인증서가 하나뿐이고 `unable to verify the first certificate`가 나오면 서버가 중간 인증서를 빠뜨린 것입니다. 서버 설정에 전체 체인(fullchain)을 넣어야 합니다.
+- 체인은 완전한데 발급자가 사내 CA이면 이 컴퓨터가 그 CA를 신뢰하지 않는 것입니다.
+- 공개 사이트도 같은 방식으로 실패하면 프록시가 인증서를 바꾸는 것입니다.
+
+## 해결
+
+사내 루트 CA 인증서(PEM 파일)를 IT 팀이나 사내 위키에서 받으세요. 그다음 둘 중 하나를 쓰세요.
+
+1. 명령마다 지정합니다.
+
+```
+curl --cacert /path/to/company-root-ca.pem https://api.example.internal/health
+```
+
+2. 항상 쓰도록 설정합니다. 이 방법은 `~/.curlrc`에 한 줄을 추가합니다.
+
+```
+cacert = /path/to/company-root-ca.pem
+```
+
+macOS 기본 curl(`/usr/bin/curl`)은 시스템 키체인을 읽습니다. 키체인에 등록하면 다른 도구도 함께 신뢰합니다.
+
+```
+sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /path/to/company-root-ca.pem
+```
+
+Homebrew로 설치한 curl은 키체인을 읽지 않습니다. 이 curl에는 `--cacert`나 `~/.curlrc` 방법을 쓰세요.
+
+`curl -k`는 임시 확인에만 쓰세요. 이 옵션은 인증서 검증을 끄기 때문에 중간자 공격(통신 중간에서 내용을 가로채는 공격)에 노출됩니다. 스크립트나 운영 환경에 남기면 안 됩니다.

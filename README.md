@@ -76,7 +76,7 @@ claude plugin install simple-korean@simple-korean
 
 출력 스타일 없이도 규칙은 적용됩니다. 세션 시작 훅이 같은 규칙 블록을 이미 넣기 때문입니다. Node.js가 없어 세션 시작 훅이 동작하지 않으면 출력 스타일을 적용하세요. 출력 스타일을 적용하려면 `/config`의 Output style에서 고르세요. 또는 `~/.claude/settings.json`에 `{"outputStyle": "simple-korean:simple-korean"}`을 넣으세요.
 
-세션 시작 훅은 세션마다 규칙 블록 2,476자를 넣습니다. 자세한 내용은 [`src/hooks/README.md`](src/hooks/README.md)에 있습니다.
+세션 시작 훅은 세션마다 규칙 블록 2,663자를 넣습니다. 자세한 내용은 [`src/hooks/README.md`](src/hooks/README.md)에 있습니다.
 
 ### Codex
 
@@ -155,7 +155,7 @@ prompt = prompt_block(variant="sentences", lang="en")
 <tr>
 <td valign="top">
 
-<!-- draft: evals/results/2026-10-21/inputs/scenarios.json#polish -->
+<!-- draft: evals/results/2026-11-16/inputs/scenarios.json#polish -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
@@ -167,38 +167,42 @@ prompt = prompt_block(variant="sentences", lang="en")
 </td>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-21/docs/baseline__polish__r1.json -->
+<!-- source: evals/results/2026-11-16/docs/baseline__polish__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
-> **Postgres 연결 타임아웃** — sqlpipe에서 `connection timed out` 오류가 나면 대개 방화벽이나 보안 그룹이 5432 포트를 막고 있는 경우입니다. `nc -zv <호스트> 5432`로 연결 가능 여부를 먼저 확인하세요.
+> **Postgres 연결 타임아웃** — sqlpipe가 `connection timed out` 오류를 내면 대개 방화벽이나 보안 그룹이 5432 포트를 막고 있는 경우입니다. `nc -zv <호스트> 5432`로 해당 포트에 연결되는지 먼저 확인하세요.
 >
-> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책과 버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 그 전에 `aws sts get-caller-identity`로 현재 사용 중인 자격 증명이 맞는지 먼저 확인하는 것이 좋습니다.
+> **S3 권한 오류** — `AccessDenied`가 나면 IAM 정책과 버킷 정책에 읽기·쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요. 그 전에 `aws sts get-caller-identity`로 현재 사용 중인 자격 증명이 의도한 것인지 확인하는 것이 좋습니다.
 <!-- simple-korean: on -->
 
 </td>
 <td valign="top">
 
-<!-- source: evals/results/2026-10-21/docs/plain__polish__r1.json -->
+<!-- source: evals/results/2026-11-16/docs/plain__polish__r1.json -->
 <!-- simple-korean: off -->
 > ## 문제 해결
 >
 > ### Postgres 연결 타임아웃
 >
-> sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽이나 보안 그룹이 5432 포트를 막습니다. sqlpipe를 실행하는 호스트에서 `nc -zv <호스트> 5432`로 연결되는지 확인하세요.
+> sqlpipe가 `connection timed out` 오류를 내면 대부분 방화벽이나 보안 그룹이 5432 포트를 막고 있습니다.
+>
+> `nc -zv <호스트> 5432`를 실행해 연결되는지 확인하세요.
 >
 > ### S3 권한 오류
 >
-> sqlpipe가 `AccessDenied` 오류를 내면 먼저 `aws sts get-caller-identity`로 현재 쓰는 자격 증명을 확인하세요. 그다음 IAM 정책과 버킷 정책에 읽기와 쓰기 권한(`s3:GetObject`, `s3:PutObject`)이 있는지 확인하세요.
+> sqlpipe가 `AccessDenied` 오류를 내면 IAM 정책과 버킷 정책에 읽기 권한 `s3:GetObject`와 쓰기 권한 `s3:PutObject`가 있는지 확인하세요.
+>
+> 먼저 `aws sts get-caller-identity`를 실행해 지금 쓰는 자격 증명을 확인하세요.
 <!-- simple-korean: on -->
 
 </td>
 </tr>
 </table>
 
-다듬은 문서의 원본 파일은 가운데가 `evals/results/2026-10-21/docs/baseline__polish__r1.json`, 오른쪽이 `evals/results/2026-10-21/docs/plain__polish__r1.json`입니다.
+다듬은 문서의 원본 파일은 가운데가 `evals/results/2026-11-16/docs/baseline__polish__r1.json`, 오른쪽이 `evals/results/2026-11-16/docs/plain__polish__r1.json`입니다.
 
-초안은 [`evals/results/2026-10-21/inputs/scenarios.json`](evals/results/2026-10-21/inputs/scenarios.json)의 `polish` 과제에 있습니다.
+초안은 [`evals/results/2026-11-16/inputs/scenarios.json`](evals/results/2026-11-16/inputs/scenarios.json)의 `polish` 과제에 있습니다.
 
 답변 예시와 나머지 문서 예시는 [`examples/before-after.md`](examples/before-after.md)에 있습니다. 예시마다 바뀐 곳은 [이 커밋의 diff](https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a)에서 볼 수 있습니다.
 <!-- example:end -->
@@ -211,15 +215,15 @@ prompt = prompt_block(variant="sentences", lang="en")
 
 어절은 띄어쓰기로 나눈 단위입니다. 지정형은 단어 목록이 쓰라고 정한 표기입니다.
 
-<!-- benchmark:start evals/results/2026-10-21 -->
+<!-- benchmark:start evals/results/2026-11-16 -->
 ### 답변
 
-전문용어가 하나씩 든 질문 8개를 조건마다 2번씩 물었습니다. 질문마다 em-dash와 가운뎃점(·)을 하나씩 넣었습니다. 가운뎃점은 답변 규칙이 막지 않으므로 결함에 넣지 않고 따로 셌습니다. 답변은 모두 32개입니다. 스킬을 켜면 화면에 드러나는 결함(em-dash, 굵은 글씨, 표, 첫 줄의 헤더나 목록)이 100% 줄었습니다(162개에서 0개). 블라인드 판정에서 SimpleKorean 답변은 16쌍 가운데 12쌍에서 이겼고, 3쌍에서 비겼고, 1쌍에서 졌습니다. 질문에 em-dash가 있어도 스킬 없는 답변은 em-dash를 쓰지 않았습니다. 그래서 em-dash를 지우는지는 아래 문서의 다듬기 과제로 봅니다.
+전문용어가 하나씩 든 질문 8개를 조건마다 2번씩 물었습니다. 질문마다 em-dash와 가운뎃점(·)을 하나씩 넣었습니다. 가운뎃점은 답변 규칙이 막지 않으므로 결함에 넣지 않고 따로 셌습니다. 답변은 모두 32개입니다. 스킬을 켜면 화면에 드러나는 결함(em-dash, 굵은 글씨, 표, 첫 줄의 헤더나 목록)이 100% 줄었습니다(163개에서 0개). 블라인드 판정에서 SimpleKorean 답변은 16쌍 가운데 14쌍에서 이겼고, 1쌍에서 비겼고, 1쌍에서 졌습니다.
 
 | 조건 | 답변 수 | 평균 어절 | 평균 문장 | em-dash | 굵은 글씨 | 표 | 첫 줄 헤더·목록 | 가운뎃점 | 헤더 | 불릿 | 인사말과 맺음말 |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 스킬 없음 | 16 | 266 | 31.2 | 0 | 155 | 3 | 4 | 26 | 36 | 211 | 13 |
-| SimpleKorean | 16 | 223 | 31.0 | 0 | 0 | 0 | 0 | 2 | 54 | 173 | 5 |
+| 스킬 없음 | 16 | 279 | 32.8 | 2 | 154 | 2 | 5 | 29 | 46 | 224 | 11 |
+| SimpleKorean | 16 | 222 | 30.2 | 0 | 0 | 0 | 0 | 2 | 48 | 151 | 5 |
 
 ### 문서
 
@@ -227,11 +231,11 @@ sqlpipe 문서 과제 8개를 조건마다 2번씩 썼습니다. 비율은 린�
 
 | 조건 | 문서 수 | 100어절당 오류 | 100어절당 경고 | 100어절당 번역투 | 지정형 비율 | 쉬운 단어 비율 | 가장 긴 문장 |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| 스킬 없음 | 16 | 0.14 | 0.71 | 0.42 | 100.0% | 41.9% | 18어절 |
-| 기본 모드 | 16 | 0.00 | 0.17 | 0.17 | 100.0% | 45.3% | 15어절 |
-| 엄격 모드 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 39.6% | 13어절 |
+| 스킬 없음 | 16 | 0.00 | 1.31 | 0.29 | 94.7% | 41.1% | 16어절 |
+| 기본 모드 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 44.2% | 12어절 |
+| 엄격 모드 | 16 | 0.00 | 0.00 | 0.00 | 100.0% | 43.6% | 13어절 |
 
-em-dash, 굵은 글씨, 가운뎃점을 일부러 넣은 초안을 다듬는 과제는 위 표에 넣지 않고 따로 셉니다. 초안에는 em-dash 2개, 굵은 글씨 2개, 가운뎃점 3개가 있습니다. 아래 표는 조건마다 다듬은 문서에 든 수를 더한 값입니다. 조건마다 2번 다듬었으므로, 초안의 표시가 모두 남으면 em-dash 4개, 굵은 글씨 4개, 가운뎃점 6개입니다. 가운뎃점은 문서 규칙도 막지 않으므로 참고로 셉니다. 초안은 [`evals/results/2026-10-21/inputs/scenarios.json`](evals/results/2026-10-21/inputs/scenarios.json)의 `polish` 과제에 있습니다.
+em-dash, 굵은 글씨, 가운뎃점을 일부러 넣은 초안을 다듬는 과제는 위 표에 넣지 않고 따로 셉니다. 초안에는 em-dash 2개, 굵은 글씨 2개, 가운뎃점 3개가 있습니다. 아래 표는 조건마다 다듬은 문서에 든 수를 더한 값입니다. 조건마다 2번 다듬었으므로, 초안의 표시가 모두 남으면 em-dash 4개, 굵은 글씨 4개, 가운뎃점 6개입니다. 가운뎃점은 문서 규칙도 막지 않으므로 참고로 셉니다. 초안은 [`evals/results/2026-11-16/inputs/scenarios.json`](evals/results/2026-11-16/inputs/scenarios.json)의 `polish` 과제에 있습니다.
 
 | 조건 | 문서 수 | em-dash | 굵은 글씨 | 가운뎃점 |
 |---|---:|---:|---:|---:|
@@ -239,7 +243,7 @@ em-dash, 굵은 글씨, 가운뎃점을 일부러 넣은 초안을 다듬는 과
 | 기본 모드 | 2 | 0 | 0 | 0 |
 | 엄격 모드 | 2 | 0 | 0 | 0 |
 
-원본 출력, 표기 분포, 측정 조건은 [`evals/results/2026-10-21/RESULTS.md`](evals/results/2026-10-21/RESULTS.md)에 있습니다.
+원본 출력, 표기 분포, 측정 조건은 [`evals/results/2026-11-16/RESULTS.md`](evals/results/2026-11-16/RESULTS.md)에 있습니다.
 <!-- benchmark:end -->
 
 ## 규칙
@@ -272,6 +276,7 @@ em-dash, 굵은 글씨, 가운뎃점을 일부러 넣은 초안을 다듬는 과
 | 조사와 문장 끝 어미를 빼지 않습니다 | "백업 확인 필요" 같은 전보문 |
 | 중요성 말고 사실을 씁니다 | "강력한", "원활한", "단순히 X가 아니라 Y" |
 | 정해진 외래어 표기를 씁니다 | 한 문서 안에 섞인 "디렉토리"와 "디렉터리" |
+| 업계의 기술 명사를 일상어로 바꾸지 않습니다 | DB의 "테이블"을 "표"로, "칼럼"을 "칸"으로 바꿔 부르기 |
 
 ## 모드
 

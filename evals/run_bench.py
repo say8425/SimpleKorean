@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""문서 벤치마크. 과제 9개를 기준선, 기본 모드, 엄격 모드로 쓰게 하고 원본 출력을 저장한다.
+"""문서 벤치마크. 과제 10개를 기준선, 기본 모드, 엄격 모드로 쓰게 하고 원본 출력을 저장한다.
 
 이미 있는 원본 파일은 건너뛰므로 중간에 멈춰도 다시 이어서 돌릴 수 있다.
 
@@ -22,9 +22,11 @@ TAIL = "\n\n규칙 설명 없이 최종 글만 쓰세요."
 
 
 def task_text(scenario):
-    """과제 글. 다듬기 과제는 지시 뒤에 초안(draft)을 붙이고, 초안이 끝난 곳을 밝힌다."""
-    draft = scenario.get("draft")
-    return scenario["prompt"] + (f"\n\n초안:\n\n{draft}\n\n(초안 끝)" if draft else "")
+    """과제 글. 다듬기 과제는 지시 뒤에 초안(draft)을, 다시 쓰기 과제는 원문(source)을 붙이고 끝난 곳을 밝힌다."""
+    for key, label in (("draft", "초안"), ("source", "원문")):
+        if scenario.get(key):
+            return scenario["prompt"] + f"\n\n{label}:\n\n{scenario[key]}\n\n({label} 끝)"
+    return scenario["prompt"]
 
 
 def build_prompt(scenario, condition):

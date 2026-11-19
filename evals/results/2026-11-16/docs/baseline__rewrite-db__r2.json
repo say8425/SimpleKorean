@@ -1,0 +1,13 @@
+{
+  "text": "## 증분 동기화 설계\n\nsqlpipe는 증분 동기화를 할 때 테이블마다 워터마크 칼럼을 씁니다. 워터마크 칼럼은 `updated_at`처럼 행이 바뀔 때마다 값이 커지는 칼럼이어야 합니다. 이 칼럼에 인덱스가 없으면 Postgres가 테이블 전체를 읽어야 해서 동기화 시간이 크게 늘 수 있습니다.\n\n아래 표는 `orders` 테이블의 칼럼과, sqlpipe가 각 칼럼을 Parquet 파일에 어떤 타입으로 쓰는지 보여 줍니다.\n\n| 칼럼 | Postgres 타입 | Parquet 타입 |\n|---|---|---|\n| `id` | bigint | INT64 |\n| `status` | text | STRING |\n| `updated_at` | timestamptz | TIMESTAMP |\n\n동기화하는 도중에 행이 삭제되면, sqlpipe는 삭제된 행을 알아낼 수 없습니다. 그래서 테이블에 소프트 삭제용 칼럼(`deleted_at`)을 추가하는 것이 좋습니다. 아직 커밋되지 않은 트랜잭션의 행은 읽지 않습니다. 마이그레이션으로 테이블 스키마가 바뀌면 sqlpipe를 다시 실행해야 합니다.",
+  "model": "claude-sonnet-5-5",
+  "effort": "low",
+  "input_tokens": 2,
+  "output_tokens": 502,
+  "cost_usd": 0.030344700000000002,
+  "duration_ms": 4127,
+  "condition": "baseline",
+  "scenario": "rewrite-db",
+  "type": "descriptive",
+  "run": 2
+}

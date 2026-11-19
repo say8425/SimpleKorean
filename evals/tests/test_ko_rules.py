@@ -93,6 +93,13 @@ def test_rotation_prefers_designated_word():
     assert ko_rules.rotation_hits(mask("키를 검증하고 값을 점검합니다.")) and True
 
 
+def test_rotation_keeps_fixed_technical_terms():
+    text = "값을 확인하세요. 입력값을 검증합니다. 서명 검증합니다. 헬스 체크합니다. 유효성을 검사합니다."
+    assert ko_rules.rotation_hits(mask(text)) == []
+    hits = ko_rules.rotation_hits(mask("값을 확인하세요. 파일을 검증합니다. 서버를 체크합니다."))
+    assert [h.text for h in hits] == ["검증 (확인)", "체크 (확인)"]
+
+
 def test_strict_only_patterns():
     text = "백업을 반드시 확인해야 합니다. 서버나 클라이언트를 다시 시작하세요. 실패할 경우 로그를 보세요."
     assert cats(text) == []

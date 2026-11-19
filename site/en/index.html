@@ -123,7 +123,7 @@
 <li>Bold <span>2 → 0</span></li>
 <li>Middle dot <span>3 → 0</span></li>
 <li>Advice endings <span>2 → 0</span></li>
-<li>Longest sentence <span>12 eojeol → 11 eojeol</span></li>
+<li>Longest sentence <span>12 eojeol → 16 eojeol</span></li>
 </ul>
 
 <div class="diff" lang="ko">
@@ -146,17 +146,17 @@
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">3</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="en">Draft: </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<del>·</del>보안 그룹이 5432 포트를 <del>막고 있는 것입니다</del>.</p><span class="count" lang="en">12 eojeol</span></div>
-<div class="side new"><span class="ln">3</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="en">Revised: </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<ins>이나 </ins>보안 그룹이 5432 포트를 <ins>막습니다</ins>.</p><span class="count" lang="en">11 eojeol</span></div>
+<div class="side old"><span class="ln">3</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="en">Draft: </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<del>·</del>보안 그룹이 5432 포트를 막고 <del>있는 것입니다</del>.</p><span class="count" lang="en">12 eojeol</span></div>
+<div class="side new"><span class="ln">3</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="en">Revised: </span>sqlpipe가 <code>connection timed out</code> 오류를 내면 대부분 방화벽<ins>이나 </ins>보안 그룹이 5432 포트를 막고 <ins>있습니다</ins>.</p><span class="count" lang="en">12 eojeol</span></div>
 </div>
-<p class="note" lang="en">Rule: <span>Join words with a particle, not a middle dot. Use the simple present</span></p>
+<p class="note" lang="en">Rule: <span>Join words with a particle, not a middle dot. The progressive "-고 있습니다" stayed (a linter warning)</span></p>
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="en">Draft: </span><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count" lang="en">5 eojeol</span></div>
-<div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="en">Revised: </span><ins>sqlpipe를 실행하는 호스트에서 </ins><code>nc -zv &lt;호스트&gt; 5432</code>로 연결되는지 <ins>확인하세요</ins>.</p><span class="count" lang="en">6 eojeol</span></div>
+<div class="side old"><span class="ln">4</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="en">Draft: </span><code>nc -zv &lt;호스트&gt; 5432</code><del>로</del> 연결되는지 <del>확인해 보시기 바랍니다</del>.</p><span class="count" lang="en">5 eojeol</span></div>
+<div class="side new"><span class="ln">4</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="en">Revised: </span><code>nc -zv &lt;호스트&gt; 5432</code><ins>를 실행해</ins> 연결되는지 <ins>확인하세요</ins>.</p><span class="count" lang="en">4 eojeol</span></div>
 </div>
-<p class="note" lang="en">Rule: <span>Name the host that runs the command. Change the advice ending to the command form "-하세요"</span></p>
+<p class="note" lang="en">Rule: <span>Change the advice ending to the command form "-하세요"</span></p>
 </div>
 <div class="drow hdr">
 <div class="pair">
@@ -164,30 +164,23 @@
 <div class="side new"><span class="ln">5</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="en">Revised: </span><ins>### </ins>S3 권한 오류</p><span class="count"></span></div>
 </div>
 </div>
-<div class="drow add">
+<div class="drow chg">
 <div class="pair">
-<div class="side old empty"></div>
-<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="en">Sentence added in the revision: </span>sqlpipe가 <code>AccessDenied</code> 오류를 내면 먼저 <code>aws sts get-caller-identity</code>로 현재 쓰는 자격 증명을 확인하세요.</p><span class="count" lang="en">11 eojeol</span></div>
+<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="en">Draft: </span><code>AccessDenied</code><del>가 나면</del> IAM 정책<del>·</del>버킷 정책에 읽기<del>·쓰기</del> 권한<del>(</del><code>s3:GetObject</code><del>, </del><code>s3:PutObject</code><del>)이</del> 있는지 확인하세요.</p><span class="count" lang="en">9 eojeol</span></div>
+<div class="side new"><span class="ln">6</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="en">Revised: </span><ins>sqlpipe가 </ins><code>AccessDenied</code><ins> 오류를 내면</ins> IAM 정책<ins>과 </ins>버킷 정책에 읽기 권한<ins> </ins><code>s3:GetObject</code><ins>와 쓰기 권한 </ins><code>s3:PutObject</code><ins>가</ins> 있는지 확인하세요.</p><span class="count" lang="en">16 eojeol</span></div>
 </div>
-<p class="note" lang="en">Rule: <span>Put the first step first</span></p>
+<p class="note" lang="en">Rule: <span>Join words with "과" and "와" (and), not a middle dot. This sentence has 16 eojeol, over the 15-eojeol limit for procedures (a linter warning)</span></p>
 </div>
 <div class="drow chg">
 <div class="pair">
-<div class="side old"><span class="ln">6</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="en">Draft: </span><del><code>AccessDenied</code>가 나면 </del>IAM 정책<del>·</del>버킷 정책에 읽기<del>·</del>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count" lang="en">10 eojeol</span></div>
-<div class="side new"><span class="ln">7</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="en">Revised: </span><ins>그다음 </ins>IAM 정책<ins>과 </ins>버킷 정책에 읽기<ins>와 </ins>쓰기 권한(<code>s3:GetObject</code>, <code>s3:PutObject</code>)이 있는지 확인하세요.</p><span class="count" lang="en">11 eojeol</span></div>
+<div class="side old"><span class="ln">7</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="en">Draft: </span>먼저 <code>aws sts get-caller-identity</code><del>로</del> 지금 쓰는 자격 증명을 <del>확인하는 것이 좋습니다</del>.</p><span class="count" lang="en">9 eojeol</span></div>
+<div class="side new"><span class="ln">7</span><span class="mark" aria-hidden="true">+</span><p><span class="sr" lang="en">Revised: </span>먼저 <code>aws sts get-caller-identity</code><ins>를 실행해</ins> 지금 쓰는 자격 증명을 <ins>확인하세요</ins>.</p><span class="count" lang="en">8 eojeol</span></div>
 </div>
-<p class="note" lang="en">Rule: <span>Join words with "과" and "와" (and), not a middle dot</span></p>
-</div>
-<div class="drow del">
-<div class="pair">
-<div class="side old"><span class="ln">7</span><span class="mark" aria-hidden="true">−</span><p><span class="sr" lang="en">Sentence removed from the draft: </span>먼저 <code>aws sts get-caller-identity</code>로 지금 쓰는 자격 증명을 확인하는 것이 좋습니다.</p><span class="count" lang="en">9 eojeol</span></div>
-<div class="side new empty"></div>
-</div>
-<p class="note" lang="en">Rule: <span>Moved to sentence 6 on the right, without the advice ending</span></p>
+<p class="note" lang="en">Rule: <span>Change the advice ending to the command form "-하세요"</span></p>
 </div>
 </div>
 
-<p class="foot">Source: <a href="https://github.com/say8425/SimpleKorean/tree/main/evals/results/2026-10-21">evals/results/2026-10-21</a>. A person matched the sentences and named the rules. For more comparisons, see the <a href="https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a">before-and-after examples</a>.</p>
+<p class="foot">Source: <a href="https://github.com/say8425/SimpleKorean/tree/main/evals/results/2026-11-16">evals/results/2026-11-16</a>. A person matched the sentences and named the rules. For more comparisons, see the <a href="https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a">before-and-after examples</a>.</p>
 </div>
 </section>
 
@@ -199,23 +192,23 @@
 <dl class="metrics">
 <div>
 <dt>Format defects in replies</dt>
-<dd class="num">162 → <em>0</em></dd>
+<dd class="num">163 → <em>0</em></dd>
 <dd>Defects that readers see, in 32 replies. We count em-dashes, bold text, tables, and a header or list on the first line.</dd>
 </div>
 <div>
 <dt>Blind judgment</dt>
-<dd class="num"><em>12</em> of 16</dd>
-<dd>Pairs out of 16 where the judge chose the SimpleKorean reply without knowing which it was. 3 pairs were ties and 1 pair was a loss.</dd>
+<dd class="num"><em>14</em> of 16</dd>
+<dd>Pairs out of 16 where the judge chose the SimpleKorean reply without knowing which it was. 1 pair was a tie and 1 pair was a loss.</dd>
 </div>
 <div>
 <dt>Linter warnings in documents</dt>
-<dd class="num">0.71 → <em>0.17</em></dd>
-<dd>Linter warnings per 100 eojeol. An eojeol is a unit of Korean text between two spaces.</dd>
+<dd class="num">1.31 → <em>0.00</em></dd>
+<dd>Linter warnings per 100 eojeol. An eojeol is a unit of Korean text between two spaces. The polishing and rewriting tasks are not counted.</dd>
 </div>
 <div>
 <dt>Longest sentence</dt>
-<dd class="num">18 → <em>15</em><span class="unit"> eojeol</span></dd>
-<dd>The longest sentence in 16 documents. In strict mode, it is 13 eojeol.</dd>
+<dd class="num">16 → <em>12</em><span class="unit"> eojeol</span></dd>
+<dd>The longest sentence in 16 documents. In strict mode, it is 13 eojeol. The polishing and rewriting tasks are not counted.</dd>
 </div>
 </dl>
 <p class="foot">claude-sonnet-5-5 wrote the documents and replies. claude-opus-5-5 was the judge.<br>The judge is also Claude, so it can favor models of the same family.</p>
@@ -236,6 +229,7 @@
 <li><span class="tag">Document</span><div><p class="rule">Use the active voice and simple tenses</p><p class="before">Stops: "되어지다" (double passive), "~에 의해" (by ~), "-고 있습니다" (is doing)</p></div></li>
 <li><span class="tag">Document</span><div><p class="rule">Do not use guessing or advice endings</p><p class="before">Stops: "-ㄹ 수도 있습니다" (may), "-것 같습니다" (seems)</p></div></li>
 <li><span class="tag">Document</span><div><p class="rule">Give one word only one meaning</p><p class="before">Stops: Switching between "확인", "검증", and "점검" (all mean "check")</p></div></li>
+<li><span class="tag">Document</span><div><p class="rule">Do not replace the field's technical nouns with everyday words</p><p class="before">Stops: Calling a DB "테이블" (table) "표" (a table in a document)</p></div></li>
 </ul>
 <p class="foot">The rules come from ASD-STE100, the controlled English for aircraft maintenance documents. The full rules are in <a href="https://github.com/say8425/SimpleKorean/blob/main/skills/simple-korean/SKILL.md">SKILL.md</a>.</p>
 </div>

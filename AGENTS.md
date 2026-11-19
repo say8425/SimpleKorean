@@ -97,7 +97,7 @@ README 블록의 문장 틀은 `evals/readme_i18n.py`에 있습니다. 스크립
 - 엄격 모드 규칙을 바꾸면 `references/strict-mode.md`를 고치세요.
 - 규칙을 바꾸면 README 다섯 언어판의 규칙 표를 고치세요.
 - `data/terms.json`을 바꾸면 단어를 옮겨 적은 곳도 고치세요. `SKILL.md`의 네 무리 단어, 규칙 블록의 지정형(쓰라고 정한 표기) 문장, README 다섯 언어판의 "표기 정책" 표입니다.
-- 규칙 블록의 길이를 바꾸면 `src/hooks/README.md`의 "약 2,500자"를 확인하세요.
+- 규칙 블록의 길이를 바꾸면 `src/hooks/README.md`의 "약 2,600자"를 확인하세요.
 - README의 측정 수치, 규칙 표, 표기 정책, 설치 명령을 바꾸면 소개 페이지 문구도 고치세요. 문구는 `tools/site/strings/`의 다섯 언어판입니다. 그다음 `tools/site/build_site.py`를 실행하세요. `check_numbers.py`는 페이지의 원본 링크, 버전, 빌드 결과만 확인합니다.
 
 ## 측정과 수치
