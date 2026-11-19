@@ -1,64 +1,42 @@
-# OOMKilled 재시작: 원인과 조치
-
-현재 작업 디렉터리의 매니페스트나 메트릭은 확인하지 않았습니다. 아래는 일반적인 원인과 조치입니다.
+파드의 컨테이너가 메모리 한도(limit)를 넘겨 커널이 프로세스를 강제 종료하고 있고, 그 때문에 재시작이 반복됩니다. 한도를 올리거나 사용량을 줄여야 합니다. 이 클러스터의 설정은 볼 수 없어서 아래는 일반적인 원인과 확인 순서입니다.
 
 ## 무슨 일이 일어나는가
 
-OOMKilled는 컨테이너가 `resources.limits.memory`를 넘어서 리눅스 커널의 cgroup OOM killer가 프로세스를 SIGKILL(종료 코드 137)로 죽였다는 뜻입니다. kubelet은 `restartPolicy`에 따라 컨테이너를 다시 띄웁니다. 재시작 후에도 같은 메모리 패턴이 반복되면 CrashLoopBackOff가 됩니다. API와 워커가 둘 다 죽는다면 원인은 보통 다음 중 하나입니다.
+1. 컨테이너가 `resources.limits.memory`보다 많은 메모리를 씁니다.
+2. 커널의 OOM killer(메모리 부족 시 프로세스를 죽이는 기능)가 프로세스에 SIGKILL을 보냅니다.
+3. 종료 코드는 137이고, 파드 상태에는 `OOMKilled`가 찍힙니다.
+4. kubelet이 컨테이너를 다시 시작합니다. 이 일이 반복되면 `CrashLoopBackOff`가 됩니다.
 
-1. **limit이 너무 낮음**: 정상 동작에 필요한 메모리가 limit보다 큽니다. 새 배포나 트래픽 증가 뒤에 흔합니다.
-2. **메모리 누수**: 시간이 지날수록 메모리가 계속 늘다가 죽습니다.
-3. **런타임이 컨테이너 limit을 모름**
-   - JVM은 `-Xmx`나 `MaxRAMPercentage`가 limit에 비해 너무 큽니다. 힙 외 메모리(metaspace, 스레드 스택, 다이렉트 버퍼)까지 합치면 limit을 넘습니다.
-   - Node는 `--max-old-space-size`를 설정하지 않았습니다.
-   - Python과 Go는 워커 수나 `GOMEMLIMIT` 설정이 limit과 맞지 않습니다.
-4. **워커의 일시적 메모리 폭증**: 큰 메시지나 배치를 한꺼번에 메모리에 올리거나, 동시성(concurrency)이 높습니다.
-5. **API 쪽 요인**: 큰 요청/응답 바디, 대용량 쿼리 결과를 통째로 로드, 커넥션 풀이나 캐시 무제한 증가, 동시 요청 급증이 있습니다.
-6. **사이드카나 `emptyDir`(medium: Memory)**: 파드 안에서 메모리로 잡히는 다른 항목입니다.
+API와 워커가 함께 죽으면 공통 원인이 있을 가능성이 큽니다. 최근 배포로 한도가 낮아졌거나, 두 서비스가 같은 런타임 설정을 쓰는 경우가 흔합니다.
 
 ## 먼저 확인할 것
 
-```bash
-# 어느 컨테이너가, 언제, 몇 번 죽었는지
-kubectl describe pod <pod> | grep -A8 "Last State"
-kubectl get pod <pod> -o jsonpath='{.status.containerStatuses[*].lastState.terminated}'
-
-# 현재 사용량 vs limit
-kubectl top pod -n <ns> --containers
-kubectl get pod <pod> -o jsonpath='{.spec.containers[*].resources}'
-
-# 죽기 직전 로그
-kubectl logs <pod> --previous
+```
+kubectl describe pod <파드> -n <네임스페이스>
+kubectl top pod -n <네임스페이스> --containers
+kubectl get pod <파드> -n <네임스페이스> -o jsonpath='{.spec.containers[*].resources}'
 ```
 
-Prometheus/Grafana를 쓴다면 `container_memory_working_set_bytes`를 limit과 겹쳐서 보세요. 아래 모양으로 원인을 구분할 수 있습니다.
+- `describe`의 `Last State`에서 `Reason: OOMKilled`와 `Exit Code: 137`을 확인합니다.
+- `top`으로 사용량이 한도에 얼마나 가까운지 봅니다. `top`에는 metrics-server가 필요합니다.
+- 한도가 없거나 너무 작은지 `resources` 값을 봅니다.
+- `kubectl describe node`에서 노드 전체가 메모리 압박(MemoryPressure) 상태인지 확인합니다. 이 경우에는 파드가 쫓겨나는 Evicted가 먼저 나타날 수 있습니다.
 
-- **톱니 모양**: 천천히 올라가다 죽고 다시 시작합니다. 누수 또는 무제한 캐시입니다.
-- **시작 직후 급상승**: limit이 너무 낮거나 초기 로딩이 과합니다.
-- **특정 시점에 스파이크**: 특정 요청이나 잡이 원인입니다.
+## 바꿀 것
 
-## 무엇을 바꿔야 하나
+원인에 따라 다릅니다.
 
-1. **limit과 request를 현실에 맞추기**: 관측한 working set의 피크에 20~30% 여유를 두고 limit을 잡으세요. request는 평상시 사용량 근처로 두는 편이 좋습니다.
-   ```yaml
-   resources:
-     requests: { memory: "512Mi" }
-     limits:   { memory: "1Gi" }
-   ```
-2. **런타임 메모리를 limit의 약 70~75%로 제한하기**
-   - JVM: `-XX:MaxRAMPercentage=70`
-   - Node: `--max-old-space-size=<limit의 약 75%>`
-   - Go: `GOMEMLIMIT`
-3. **워커**: 동시성, prefetch, 배치 크기를 줄이고 큰 페이로드는 스트리밍으로 처리하세요. 워커와 API는 메모리 특성이 다르니 limit을 따로 잡으세요.
-4. **API**: 요청 크기 제한, 페이지네이션, 캐시/풀 상한을 두세요. HPA를 쓴다면 메모리나 요청량 기준으로 스케일 아웃을 걸 수 있습니다.
-5. **누수가 의심되면** limit을 올리는 것은 임시방편입니다. 힙 프로파일링(heap dump, pprof, `tracemalloc` 등)으로 근본 원인을 찾으세요.
+- 한도가 실제 필요량보다 낮으면 `limits.memory`를 올립니다. 평소 사용량에 여유 20~30%를 더한 값이 출발점입니다.
+- 스케줄링 기준인 `requests.memory`를 실제 평상시 사용량에 맞춥니다. 안정성이 중요하면 requests와 limits를 같게 둡니다.
+- 런타임이 컨테이너 한도를 모르면 힙(heap, 프로그램이 동적으로 쓰는 메모리 영역) 상한을 직접 지정합니다.
+  - JVM: `-XX:MaxRAMPercentage=70`
+  - Node.js: `--max-old-space-size=<MB>`
+  - Go: 환경 변수 `GOMEMLIMIT`
+- 메모리 누수(leak)가 의심되면 사용량 그래프를 봅니다. 시간이 지날수록 계속 오르면 한도를 올려도 늦어질 뿐이므로 코드를 고쳐야 합니다.
 
-두 파드가 동시에 죽는다면 노드 메모리 압박(노드 레벨 eviction)이나 공통 라이브러리/설정 변경도 의심해 보세요. `kubectl describe node`의 MemoryPressure와 최근 배포 변경 사항을 확인하면 됩니다.
+## 서비스별 점검
 
-원인을 더 좁히려면 아래를 알려 주세요.
-- Deployment 매니페스트의 `resources` 부분
-- 사용 언어와 런타임
-- `kubectl describe pod`의 `Last State` 출력
-- 메모리 그래프 모양
+- API: 동시 요청 수, 큰 응답 본문, 요청마다 쌓이는 캐시를 확인합니다.
+- 워커: 한 번에 가져오는 작업 수(배치 크기)와 동시 처리 수를 줄입니다. 큰 파일을 통째로 메모리에 올리는 코드도 찾습니다.
 
-그러면 구체적인 값을 제안하겠습니다.
+한도를 올린 뒤에도 같은 간격으로 죽으면 누수일 가능성이 높습니다. `describe` 출력과 `top` 결과를 붙여 주시면 원인을 더 좁힐 수 있습니다.
