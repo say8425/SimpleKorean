@@ -40,7 +40,7 @@
   "note_firewall": "Una las palabras con una partícula, no con un punto medio. La terminación «-고 있습니다» se quedó (aviso del linter)",
   "note_particle": "Una las palabras con «과» y «와» (y), no con un punto medio. Esta oración tiene 16 eojeol y supera el límite de 15 para los procedimientos (aviso del linter)",
   "note_advice": "Cambie la terminación de consejo por la forma de orden «-하세요»",
-  "ex_foot": "Fuente: <a href=\"https://github.com/say8425/SimpleKorean/tree/main/evals/results/2026-11-16\">evals/results/2026-11-16</a>. Una persona emparejó las oraciones e indicó las reglas. Para ver más comparaciones, consulte los <a href=\"https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a\">ejemplos de antes y después</a>.",
+  "ex_foot": "Fuente: <a href=\"https://github.com/say8425/SimpleKorean/tree/main/evals/results/2026-11-16\">evals/results/2026-11-16</a>. Una persona emparejó las oraciones e indicó las reglas. Para ver más comparaciones, consulte los <a href=\"https://github.com/say8425/SimpleKorean/commit/ef1c7e3a10a975a66311cd1d88d20000d644b068\">ejemplos de antes y después</a>.",
   "b_eyebrow": "02 Resultados",
   "b_title": "Qué cambia al activar la skill",
   "b_sub": "Publicamos las salidas originales que medimos. Puede volver a calcular las cifras de abajo a partir de esas salidas.",

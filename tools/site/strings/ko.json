@@ -40,7 +40,7 @@
   "note_firewall": "가운뎃점 대신 조사로 잇습니다. \"-고 있습니다\"는 남았습니다(린터 경고)",
   "note_particle": "가운뎃점 대신 \"과\", \"와\"로 잇습니다. 이 문장은 16어절이라 절차문 한도 15어절을 넘습니다(린터 경고)",
   "note_advice": "권고 어미를 \"-하세요\"로 바꿉니다",
-  "ex_foot": "원본: <a href=\"https://github.com/say8425/SimpleKorean/tree/main/evals/results/2026-11-16\">evals/results/2026-11-16</a>. 문장 사이의 짝과 적용한 규칙은 사람이 붙였습니다. 더 많은 비교는 <a href=\"https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a\">전후 예시</a>를 참고하세요.",
+  "ex_foot": "원본: <a href=\"https://github.com/say8425/SimpleKorean/tree/main/evals/results/2026-11-16\">evals/results/2026-11-16</a>. 문장 사이의 짝과 적용한 규칙은 사람이 붙였습니다. 더 많은 비교는 <a href=\"https://github.com/say8425/SimpleKorean/commit/ef1c7e3a10a975a66311cd1d88d20000d644b068\">전후 예시</a>를 참고하세요.",
   "b_eyebrow": "02 측정 결과",
   "b_title": "스킬을 켜면 이렇게 달라집니다",
   "b_sub": "측정에 쓴 원본 출력을 공개합니다. 아래 수치는 그 출력에서 다시 계산할 수 있습니다.",

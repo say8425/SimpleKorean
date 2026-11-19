@@ -40,7 +40,7 @@
   "note_firewall": "用助词代替间隔号连接。语尾“-고 있습니다”保留了下来（检查器警告）",
   "note_particle": "用“과”“와”（和）代替间隔号连接。这句有 16 个语节，超过步骤句 15 个语节的上限（检查器警告）",
   "note_advice": "把建议语尾改为命令形“-하세요”",
-  "ex_foot": "来源：<a href=\"https://github.com/say8425/SimpleKorean/tree/main/evals/results/2026-11-16\">evals/results/2026-11-16</a>。句子之间的对应和所用规则由人工标注。更多对比请参阅<a href=\"https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a\">前后示例</a>。",
+  "ex_foot": "来源：<a href=\"https://github.com/say8425/SimpleKorean/tree/main/evals/results/2026-11-16\">evals/results/2026-11-16</a>。句子之间的对应和所用规则由人工标注。更多对比请参阅<a href=\"https://github.com/say8425/SimpleKorean/commit/ef1c7e3a10a975a66311cd1d88d20000d644b068\">前后示例</a>。",
   "b_eyebrow": "02 测量结果",
   "b_title": "开启技能后的变化",
   "b_sub": "我们公开测量所用的原始输出。下面的数字都可以从这些输出重新计算。",

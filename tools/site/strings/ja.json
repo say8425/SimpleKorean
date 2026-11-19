@@ -40,7 +40,7 @@
   "note_firewall": "中点の代わりに助詞でつなぎます。「-고 있습니다」（〜しています）は残りました（リンター警告）",
   "note_particle": "中点の代わりに「과」「와」（と）でつなぎます。この文は16語節で、手順文の上限15語節を超えます（リンター警告）",
   "note_advice": "勧めの語尾を命令形「-하세요」に変えます",
-  "ex_foot": "出典：<a href=\"https://github.com/say8425/SimpleKorean/tree/main/evals/results/2026-11-16\">evals/results/2026-11-16</a>。文の対応と適用したルールは人が付けました。ほかの比較は<a href=\"https://github.com/say8425/SimpleKorean/commit/ca720c2beaed9572581ed132e99237ad2e3d794a\">前後の例</a>を参照してください。",
+  "ex_foot": "出典：<a href=\"https://github.com/say8425/SimpleKorean/tree/main/evals/results/2026-11-16\">evals/results/2026-11-16</a>。文の対応と適用したルールは人が付けました。ほかの比較は<a href=\"https://github.com/say8425/SimpleKorean/commit/ef1c7e3a10a975a66311cd1d88d20000d644b068\">前後の例</a>を参照してください。",
   "b_eyebrow": "02 測定結果",
   "b_title": "スキルをオンにすると、こう変わります",
   "b_sub": "測定に使った生の出力を公開しています。下の数値はその出力から計算し直せます。",
