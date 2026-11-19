@@ -1,7 +1,17 @@
 ## 문제 해결
 
-**Postgres 연결 타임아웃**
-`connection timed out` 오류가 나면 먼저 호스트와 포트(기본 5432)에 네트워크로 접근할 수 있는지 확인하세요. 방화벽, 보안 그룹, VPN 설정을 점검하세요. 접속은 되는데 응답이 느리면 `--connect-timeout` 값을 늘리세요(예: `--connect-timeout 30`). 클라우드 DB는 SSL이 필수일 수 있으니 연결 문자열에 `sslmode=require`를 추가하세요.
+### Postgres 연결 타임아웃
 
-**S3 권한 오류**
-`AccessDenied` 또는 `403`이 나오면 사용 중인 자격 증명이 맞는지 `aws sts get-caller-identity`로 확인하세요. 해당 IAM 정책에 대상 버킷의 `s3:GetObject`, `s3:PutObject`, `s3:ListBucket` 권한이 있는지 보세요. 버킷 정책과 리전 설정이 맞는지도 확인하세요. 임시 자격 증명을 쓴다면 만료 여부도 확인하세요.
+sqlpipe는 Postgres 포트(기본값 5432)에 연결하지 못하면 `dial tcp: i/o timeout` 오류를 내고 멈춥니다.
+
+1. sqlpipe를 실행하는 호스트에서 Postgres 포트에 연결할 수 있는지 확인하세요.
+2. 연결할 수 없으면 방화벽과 보안 그룹 규칙을 확인하세요.
+3. 데이터베이스가 관리형(RDS, Cloud SQL)이면, 인스턴스가 sqlpipe의 IP에서 오는 연결을 허용하는지 확인하세요.
+
+### S3 권한 오류
+
+S3 요청이 `AccessDenied` 오류로 실패하면, sqlpipe가 쓰는 자격 증명에 권한이 없다는 뜻입니다.
+
+1. sqlpipe를 실행하는 호스트에서 `aws sts get-caller-identity`를 실행해 자격 증명이 올바른지 확인하세요.
+2. 해당 자격 증명의 IAM 정책이 대상 버킷에 `s3:GetObject`와 `s3:PutObject`를 허용하는지 확인하세요.
+3. 버킷 정책이 해당 자격 증명을 거부하면, 거부 규칙을 고치세요.
